@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.9 2000/03/08 15:26:08 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.10 2000/03/27 04:28:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,7 @@ package org.doit.muffin;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Properties;
-import org.doit.util.SortedProperties;
+import org.doit.util.*;
 
 /**
  * @author Mark Boyns
@@ -101,9 +101,16 @@ class UserPrefs extends Prefs
 	try
 	{
 	    UserFile file = getUserFile(rcfile);
-	    OutputStream out = file.getOutputStream();
-	    props.save(out, null);
-	    out.close();
+	    if (file instanceof LocalFile)
+	    {
+		OutputStream out = file.getOutputStream();
+		props.save(out, null);
+		out.close();
+	    }
+	    else
+	    {
+		System.out.println("Can't save to " + file.getName());
+	    }
 	}
 	catch (IOException ex)
 	{
