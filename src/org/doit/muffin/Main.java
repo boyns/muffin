@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.9 1999/03/19 07:20:55 boyns Exp $ */
+/* $Id: Main.java,v 1.10 1999/03/20 22:45:38 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -49,7 +49,7 @@ import gnu.getopt.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    final static String version = "0.8.1";
+    final static String version = "0.8.2";
     static Options options;
     static Configuration configs;
     static FilterManager manager;
