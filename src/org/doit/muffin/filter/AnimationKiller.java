@@ -1,4 +1,4 @@
-/* $Id: AnimationKiller.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: AnimationKiller.java,v 1.6 2003/05/30 16:21:37 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,68 +24,30 @@ package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
 
-public class AnimationKiller implements FilterFactory
-{
-    FilterManager manager;
-    Prefs prefs;
-    AnimationKillerFrame frame = null;
-    MessageArea messages = null;
+public class AnimationKiller extends AbstractFilterFactory {
 
-    public void setManager(FilterManager manager)
-    {
-	this.manager = manager;
-    }
-    
-    public void setPrefs(Prefs prefs)
-    {
-	this.prefs = prefs;
-
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	prefs.putInteger("AnimationKiller.maxLoops", 1);
-	prefs.putBoolean("AnimationKiller.break", false);
-	prefs.setOverride(o);
-
-	messages = new MessageArea();
-    }
-
-    public Prefs getPrefs()
-    {
-	return prefs;
-    }
-
-    public void viewPrefs()
-    {
-	if (frame == null)
-	{
-	    frame = new AnimationKillerFrame(prefs, this);
+	/**
+	 * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()	 */
+	protected void doSetDefaultPrefs() {
+		putPrefsInteger("maxLoops", 1);
+		putPrefsBoolean("break", false);
 	}
-	frame.setVisible(true);
-    }
-    
-    public Filter createFilter()
-    {
-	Filter f = new AnimationKillerFilter(this);
-	f.setPrefs(prefs);
-	return f;
-    }
 
-    public void shutdown()
-    {
-	if (frame != null)
-	{
-	    frame.dispose();
+	/**
+	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()	 */
+	protected Filter doMakeFilter() {
+		return new AnimationKillerFilter(this);
 	}
-    }
+	
+	/**
+	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()	 */
+	protected AbstractFrame doMakeFrame() {
+		return new AnimationKillerFrame(this);
+	}
 
-    void save()
-    {
-	manager.save(this);
-    }
-
-    void report(Request request, String message)
-    {
-	request.addLogEntry("AnimationKiller", message);
-	messages.append(message + "\n");
-    }
+	/**
+	 * @see org.doit.muffin.filter.AbstractFilterFactory#getName()	 */
+	public String getName(){
+		return "AnimationKiller";
+	}
 }

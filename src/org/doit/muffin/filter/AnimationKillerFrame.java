@@ -1,164 +1,86 @@
-/* $Id: AnimationKillerFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
-
-/*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
- *
- * This file is part of Muffin.
- *
- * Muffin is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * Muffin is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Muffin; see the file COPYING.  If not, write to the
- * Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
- */
 package org.doit.muffin.filter;
 
 import java.awt.*;
 import java.awt.event.*;
-import org.doit.muffin.*;
-import org.doit.util.*;
 
-public class AnimationKillerFrame extends MuffinFrame implements ActionListener, WindowListener
-{
-    Prefs prefs;
-    AnimationKiller parent;
-    Checkbox breakem;
-    TextField maxLoops;
+import org.doit.muffin.FilterFactory;
+import org.doit.muffin.HelpFrame;
+import org.doit.muffin.Prefs;
+import org.doit.util.Strings;
 
-    public AnimationKillerFrame(Prefs prefs, AnimationKiller parent)
-    {
-	super(Strings.getString("AnimationKiller.title"));
+public class AnimationKillerFrame extends AbstractFrame {
 
-	this.prefs = prefs;
-	this.parent = parent;
-
-	Panel panel = new Panel();
-	GridBagLayout layout = new GridBagLayout();
-	panel.setLayout(layout);
-	GridBagConstraints c;
-
-	breakem = new Checkbox(Strings.getString("AnimationKiller.break"));
-	breakem.setState(prefs.getBoolean("AnimationKiller.break"));
-	c = new GridBagConstraints();
-	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints(breakem, c);
-	panel.add(breakem);
-
-	Label label = new Label(Strings.getString("AnimationKiller.maxLoops") + ":", Label.RIGHT);
-	c = new GridBagConstraints();
-	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints(label, c);
-	panel.add(label);
-
-	maxLoops = new TextField(2);
-	maxLoops.setText(prefs.getString("AnimationKiller.maxLoops"));
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints(maxLoops, c);
-	panel.add(maxLoops);
-
-	add("North", panel);
-
-	parent.messages.setEditable(false);
-	add("Center", parent.messages);
-
-	Button b;
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button(Strings.getString("apply"));
-	b.setActionCommand("doApply");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("help"));
-	b.setActionCommand("doHelp");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-
-	add("South", buttonPanel);
-
-	addWindowListener(this);
-
-	pack();
-	setSize(getPreferredSize());
-
-	show();
-    }
-
-    public void actionPerformed(ActionEvent event)
-    {
-	String arg = event.getActionCommand();
-
-	if ("doApply".equals(arg))
-	{
-	    prefs.putString("AnimationKiller.maxLoops", maxLoops.getText());
-	    prefs.putBoolean("AnimationKiller.break", breakem.getState());
+//	FIXME: use this constructor:
+//	public AnimationKillerFrame(String name, FilterFactory parent) {
+	public AnimationKillerFrame(AbstractFilterFactory parent) {
+		super(parent);
 	}
-	else if ("doSave".equals(arg))
-	{
-	    parent.save();
+	
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()	 */
+	protected Panel doMakeContent(){
+		Panel p = new Panel(new BorderLayout());
+		p.add("North", makeTopPanel());
+		getParent().getMessages().setEditable(false);
+		p.add("Center", getParent().getMessages());
+		p.add("South", makeButtonPanel());
+		return p;
 	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
+	
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()	 */
+	protected String[] doMakeButtonList(){
+		return new String[]{
+			 APPLY_CMD
+			,SAVE_CMD
+			,CLEAR_CMD
+			,CLOSE_CMD
+			,HELP_CMD
+		};
 	}
-	else if ("doClear".equals(arg))
-	{
-	    parent.messages.clear();
+	
+	/**
+	 * Utility method that constructs the top panel.	 * @return Panel The constructed top panel.	 */
+	private Panel makeTopPanel(){
+		Panel panel = new Panel();
+		GridBagLayout layout = new GridBagLayout();
+		panel.setLayout(layout);
+		GridBagConstraints c;
+
+		fBreakem = new Checkbox(getParent().getString("break"));
+		fBreakem.setState(getParent().getPrefsBoolean("break"));
+		c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.WEST;
+		layout.setConstraints(fBreakem, c);
+		panel.add(fBreakem);
+
+		Label label =
+			new Label(
+				getParent().getString("maxLoops") + ":",
+				Label.RIGHT);
+		c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.WEST;
+		layout.setConstraints(label, c);
+		panel.add(label);
+
+		fMaxLoops = new TextField(2);
+		fMaxLoops.setText(getParent().getPrefsString("maxLoops"));
+		c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.anchor = GridBagConstraints.WEST;
+		layout.setConstraints(fMaxLoops, c);
+		panel.add(fMaxLoops);
+		return panel;
 	}
-	else if ("doHelp".equals(arg))
-	{
-	    new HelpFrame("AnimationKiller");
+	
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
+	protected void doApply(){
+		getParent().putPrefsString("maxLoops", fMaxLoops.getText());
+		getParent().putPrefsBoolean("break", fBreakem.getState());
 	}
-    }
 
-    public void windowActivated(WindowEvent e)
-    {
-    }
+	private Checkbox fBreakem;
+	private TextField fMaxLoops;
 
-    public void windowDeactivated(WindowEvent e)
-    {
-    }
-
-    public void windowClosing(WindowEvent e)
-    {
-	setVisible(false);
-    }
-
-    public void windowClosed(WindowEvent e)
-    {
-    }
-
-    public void windowIconified(WindowEvent e)
-    {
-    }
-
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
-
-    public void windowOpened(WindowEvent e)
-    {
-    }
 }
