@@ -37,8 +37,6 @@ Refactorings:
      2.3 Make specific ContentFilter subclass of AbstractContentFilter
          2.3.1 Remaining ContentFilters to do:
           - DocumentInfo
-          - NoCodeFilter
-          - NoThanksFilter
           - PainterFilter
           - PlainHtmlFilter
           - PreviewFilter
@@ -51,4 +49,4 @@ Refactorings:
   
   Adapt the file \doc\How to write a Muffin filter.html according to new architecture.
 
-$Id: TODO,v 1.6 2003/06/05 15:33:15 forger77 Exp $
+$Id: TODO,v 1.7 2003/06/07 10:51:44 forger77 Exp $
