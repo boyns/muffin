@@ -1,7 +1,7 @@
-/* $Id: NoThanks.java,v 1.7 1999/11/09 04:11:59 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.8 2000/01/24 03:59:35 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -57,6 +57,9 @@ public class NoThanks implements FilterFactory
     private StringBuffer killBuffer = null;
     private StringBuffer commentBuffer = null;
     private StringBuffer contentBuffer = null;
+    private Vector scriptPatterns = null;
+    private Vector scriptReplace = null;
+    private Vector scriptStrip = null;
 
     private RE hyperTags = null;
     private RE hyperAttrs = null;
@@ -316,6 +319,51 @@ public class NoThanks implements FilterFactory
 	return false;
     }
 
+    Token processScript(Request request, Token token)
+    {
+	RE re;
+	String replace;
+	String script;
+	int size;
+
+	script = token.toString();
+
+	//
+	// See if any of the scriptStrip patterns match.
+	//
+	if (scriptStrip.size() > 0)
+	{
+	    for (Enumeration e = scriptStrip.elements(); e.hasMoreElements(); )
+	    {
+		re = (RE) e.nextElement();
+		if (re.getMatch(script) != null)
+		{
+		    // strip this script
+		    report(request, "script stripped " + re.toString());
+		    return null;
+		}
+	    }
+	}
+
+	//
+	// Perform regexp-based script substitution.
+	//
+	if ((size = scriptPatterns.size()) > 0)
+	{
+	    for (int i = 0; i < size; i++)
+	    {
+		re = (RE) scriptPatterns.elementAt(i);
+		replace = (String)scriptReplace.elementAt(i);
+		script = re.substituteAll(script, replace);
+	    }
+
+	    token = new Token(token.getType());
+	    token.append(script);
+	}
+
+	return token;
+    }
+
     void save()
     {
 	manager.save(this);
@@ -366,6 +414,9 @@ public class NoThanks implements FilterFactory
 	killBuffer = new StringBuffer();
 	commentBuffer = new StringBuffer();
 	contentBuffer = new StringBuffer();
+	scriptPatterns = new Vector();
+	scriptReplace = new Vector();
+	scriptStrip = new Vector();
 
 	include(reader);
 	
@@ -672,6 +723,63 @@ public class NoThanks implements FilterFactory
 		    else if ("reg-icase".equals(st.sval))
 		    {
 			cflags = RE.REG_ICASE;
+		    }
+		}
+		else if (st.sval.equals("script"))
+		{
+		    token = st.nextToken();
+		    if (token != StreamTokenizer.TT_WORD && token != '"')
+		    {
+			break;
+		    }
+		    
+		    if ("replace".equals(st.sval))
+		    {
+			String pattern;
+
+			token = st.nextToken();
+			if (token != StreamTokenizer.TT_WORD && token != '"')
+			{
+			    pattern = ".*";
+			}
+			else
+			{
+			    pattern = new String(st.sval);
+			}
+
+			RE re = new RE(pattern, cflags);
+			scriptPatterns.addElement(re);
+
+			token = st.nextToken();
+			if (token != StreamTokenizer.TT_WORD && token != '"')
+			{
+			    System.out.println("script replace missing replacement");
+			}
+			else
+			{
+			    scriptReplace.addElement(st.sval);
+			}
+		    }
+		    else if ("strip".equals(st.sval))
+		    {
+			String pattern;
+
+			token = st.nextToken();
+			if (token != StreamTokenizer.TT_WORD && token != '"')
+			{
+			    pattern = ".*";
+			}
+			else
+			{
+			    pattern = new String(st.sval);
+			}
+
+			RE re = new RE(pattern, cflags);
+			scriptStrip.addElement(re);
+		    }
+		    else
+		    {
+			System.out.println("script " + st.sval + " unknown command");
 		    }
 		}
 		else

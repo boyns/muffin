@@ -1,7 +1,7 @@
-/* $Id: NoThanksFilter.java,v 1.5 1999/05/29 17:34:24 boyns Exp $ */
+/* $Id: NoThanksFilter.java,v 1.6 2000/01/24 03:59:50 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -124,6 +124,14 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 		    }
 		    // AJP modification: Ignore everything up to endTag, if set
 		    else if (endTag == null)
+		    {
+			out.write(token);
+		    }
+		    break;
+
+		case Token.TT_SCRIPT:
+		    token = factory.processScript(request, token);
+		    if (token != null)
 		    {
 			out.write(token);
 		    }
