@@ -1,4 +1,4 @@
-/* $Id: LRUHashtable.java,v 1.1 2003/05/25 03:03:59 cmallwitz Exp $ */
+/* $Id: LRUHashtable.java,v 1.2 2005/01/10 11:12:34 flefloch Exp $ */
 
 /*
  * This file is part of Muffin.
@@ -29,8 +29,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -262,9 +260,9 @@ public class LRUHashtable implements Serializable
 
     public synchronized Enumeration elements()
     {
-        ListNodeElementEnumerator enum =
+        ListNodeElementEnumerator e =
             new ListNodeElementEnumerator(delegate.values().iterator());
-        return enum;
+        return e;
     }
 
     /**
