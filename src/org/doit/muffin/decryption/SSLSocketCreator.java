@@ -18,23 +18,38 @@
  * Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
-package org.doit.muffin;
+package org.doit.muffin.decryption;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+
+import javax.net.ssl.SSLSocketFactory;
+
+import org.doit.muffin.SocketCreator;
+
+import com.sun.net.ssl.SSLContext;
 
 /**
  * @author Fabien Le Floc'h
  */
-public interface ServerSocketCreator
+public class SSLSocketCreator extends SocketCreator
 {
+	
+	private SSLSocketFactory factory;
+	
+	public SSLSocketCreator(SSLContext context)
+	{
+		factory = context.getSocketFactory();
+	}
+	
+    /**
+     * @see org.doit.muffin.SocketCreator#createSocket(InetAddress, int)
+     */
+    public Socket createSocket(InetAddress address, int port)
+        throws IOException
+    {
+        return factory.createSocket(address,port);
+    }
 
-    ServerSocket createServerSocket(int port)
-        throws IOException;
-    Handler createHandler(
-        Monitor monitor,
-        FilterManager manager,
-        Options options,
-        Socket socket);
 }

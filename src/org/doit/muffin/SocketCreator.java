@@ -21,20 +21,37 @@
 package org.doit.muffin;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 /**
  * @author Fabien Le Floc'h
+ * 
+ * Because SocketFactory is only in JDK 1.4+
+ * 
  */
-public interface ServerSocketCreator
+public abstract class SocketCreator
 {
+	private static SocketCreator defaultCreator;
+	
+	static 
+	{
+		defaultCreator = new DefaultSocketCreator();
+	}
+	
+	public abstract Socket createSocket(InetAddress address, int port) throws IOException;
+	
+	public static SocketCreator getDefault()
+	{
+		return defaultCreator;	
+	}
+	
+	static class DefaultSocketCreator extends SocketCreator
+	{
+		public Socket createSocket(InetAddress	address, int port) throws IOException
+		{
+			return new Socket(address, port);
+		}
+	}
 
-    ServerSocket createServerSocket(int port)
-        throws IOException;
-    Handler createHandler(
-        Monitor monitor,
-        FilterManager manager,
-        Options options,
-        Socket socket);
 }

@@ -20,18 +20,9 @@
  */
 package org.doit.muffin.decryption;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Security;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -41,8 +32,8 @@ import org.doit.muffin.Handler;
 import org.doit.muffin.Monitor;
 import org.doit.muffin.Options;
 import org.doit.muffin.ServerSocketCreator;
+import org.doit.muffin.SocketCreator;
 
-import com.sun.net.ssl.KeyManagerFactory;
 import com.sun.net.ssl.SSLContext;
 
 /**
@@ -51,85 +42,26 @@ import com.sun.net.ssl.SSLContext;
 public class DecryptionServerSocketCreator implements ServerSocketCreator
 {
 
+    private SSLServerSocketFactory factory;
+    private SocketCreator socketCreator;
+
+    public DecryptionServerSocketCreator(SSLContext context)
+    {
+        this.factory = context.getServerSocketFactory();
+        this.socketCreator = new SSLSocketCreator(context);
+    }
     /**
      * @see org.doit.muffin.ServerSocketCreator#createServerSocket(int, String)
      */
-    public ServerSocket createServerSocket(int port, Options options)
-        throws IOException
+    public ServerSocket createServerSocket(int port) throws IOException
     {
-        String keystoreFileName =
-            options.getString("muffin.decryptionServer.certificate");
-        char[] keystorepw =
-            options
-                .getString("muffin.decryptionServer.keystorePassword")
-                .toCharArray();
-        char[] keypw =
-            options
-                .getString("muffin.decryptionServer.keyPassword")
-                .toCharArray();
-
-        boolean requireClientAuthentication;
-
-        try
-        {
-            // Make sure that JSSE is available
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-            // A keystore is where keys and certificates are kept
-            // Both the keystore and individual private keys should be password protected
-            KeyStore keystore = KeyStore.getInstance("JKS");
-            keystore.load(
-                DecryptionServerSocketCreator.class.getResourceAsStream(
-                    keystoreFileName),
-                keystorepw);
-            // A KeyManagerFactory is used to create key managers
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-            // Initialize the KeyManagerFactory to work with our keystore
-            kmf.init(keystore, keypw);
-            // An SSLContext is an environment for implementing JSSE
-            // It is used to create a ServerSocketFactory
-            SSLContext sslc = SSLContext.getInstance("SSLv3");
-            // Initialize the SSLContext to work with our key managers
-            sslc.init(kmf.getKeyManagers(), null, null);
-            // Create a ServerSocketFactory from the SSLContext
-            SSLServerSocketFactory ssf = sslc.getServerSocketFactory();
-            // Socket to me
-            SSLServerSocket serverSocket =
-                (SSLServerSocket) ssf.createServerSocket(port);
-            // Authenticate the client?
-            serverSocket.setNeedClientAuth(false);
-            // Return a ServerSocket on the desired port (443)
-            return serverSocket;
-        }
-        catch (KeyManagementException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (KeyStoreException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (CertificateException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (UnrecoverableKeyException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
+        // Socket to me
+        SSLServerSocket serverSocket =
+            (SSLServerSocket) factory.createServerSocket(port);
+        // Authenticate the client?
+        serverSocket.setNeedClientAuth(false);
+        // Return a ServerSocket on the desired port (443)
+        return serverSocket;
 
     }
 
@@ -142,7 +74,12 @@ public class DecryptionServerSocketCreator implements ServerSocketCreator
         Options options,
         Socket socket)
     {
-        return new DecryptionHandler(monitor, manager, options, socket);
+        return new DecryptionHandler(
+            monitor,
+            manager,
+            options,
+            socket,
+            socketCreator);
     }
 
 }

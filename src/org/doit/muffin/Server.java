@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.10 2003/05/03 09:40:04 flefloch Exp $ */
+/* $Id: Server.java,v 1.11 2003/05/10 01:01:22 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,16 +34,17 @@ import org.doit.util.*;
  * @author Mark Boyns
  * @author Fabien Le Floc'h
  */
-class Server implements Runnable
+public class Server implements Runnable
 {
     ServerSocket server = null;
     Monitor monitor = null;
     FilterManager manager = null;
     Options options = null;
     boolean running = false;
+    boolean shutdown = false;
     private ServerSocketCreator creator = null;
 
-    Server(
+    public Server(
         ServerSocketCreator creator,
         int port,
         Monitor m,
@@ -57,7 +58,7 @@ class Server implements Runnable
         
         try
         {
-	        server = creator.createServerSocket(port, options);
+	        server = creator.createServerSocket(port);
         }
         catch (IOException e)
         {
@@ -67,35 +68,43 @@ class Server implements Runnable
 
     }
     
+    public void setFilterManager(FilterManager manager)
+    {
+    	this.manager = manager;	
+    }
+    
     /**
      * @deprecated
      */
     Server(int port, Monitor m, FilterManager manager, Options options)
     {
-    	this(new DefaultServerSocketCreator(),port, m, manager, options);
+    	this(new DefaultServerSocketCreator(options),port, m, manager, options);
     }
 
-    synchronized void suspend()
+    public synchronized void suspend()
     {
         running = false;
     }
 
-    synchronized void resume()
+    public synchronized void resume()
     {
         running = true;
     }
 
-    //     synchronized void stop()
-    //     {
-    //     }
+    public synchronized void shutdown() throws IOException
+    {
+    	shutdown = true;
+    	server.close();	
+    }
 	
     public void run()
     {
         Thread.currentThread().setName("Muffin Server "+this.creator.getClass().getName());
         running = true;
-        for (;;)
+		shutdown = false;
+        for (;!shutdown;)
         {
-            Socket socket;
+            Socket socket = null;
 
             try
             {
@@ -104,7 +113,12 @@ class Server implements Runnable
             catch (IOException e)
             {
                 System.out.println(e);
-                continue;
+                if (!shutdown) {
+                	continue;
+                }
+                else {
+                	break;
+                }
             }
 
             if (!options.hostAccess(socket.getInetAddress()))

@@ -1,4 +1,4 @@
-/* $Id: RetryRequestException.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: RetryRequestException.java,v 1.6 2003/05/10 01:01:22 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,7 +22,7 @@
  */
 package org.doit.muffin;
 
-class RetryRequestException extends Exception
+public class RetryRequestException extends Exception
 {
     RetryRequestException()
     {

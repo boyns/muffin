@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.12 2003/05/08 17:00:28 flefloch Exp $ */
+/* $Id: FilterManager.java,v 1.13 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -41,6 +41,7 @@ public class FilterManager implements ConfigurationListener
 	"Cache",
 	"CookieMonster",
 	"Decaf",
+	"org.doit.muffin.decryption.Decryption",
 	"DocumentInfo",
 	"EmptyFont",
 	"ForwardedFor",

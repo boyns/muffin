@@ -24,8 +24,6 @@ package org.doit.muffin.decryption;
 import java.io.IOException;
 import java.net.Socket;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import org.doit.muffin.Client;
 import org.doit.muffin.FilterManager;
 import org.doit.muffin.Handler;
@@ -35,6 +33,7 @@ import org.doit.muffin.Httpd;
 import org.doit.muffin.Monitor;
 import org.doit.muffin.Options;
 import org.doit.muffin.Request;
+import org.doit.muffin.SocketCreator;
 
 /**
  * @author Fabien Le Floc'h
@@ -42,6 +41,7 @@ import org.doit.muffin.Request;
 public class DecryptionHandler extends Handler
 {
 
+	private SocketCreator socketCreator;
     /**
      * Constructor for DecryptionHandler.
      * @param m
@@ -53,9 +53,12 @@ public class DecryptionHandler extends Handler
         Monitor m,
         FilterManager manager,
         Options options,
-        Socket socket)
+        Socket socket,
+        SocketCreator creator)
     {
         super(m, manager, options, socket);
+        this.socketCreator = creator;
+        System.out.println("DECRYPTION - DecryptionHandler constructed");
     }
 
     /**
@@ -73,22 +76,23 @@ public class DecryptionHandler extends Handler
         throws IOException
     {
         HttpRelay http;
+        System.out.println("DecryptionHandler request:");
         System.out.println(request.toString());
-        System.out.println(
-            "host=" + request.getHost() + " port=" + request.getPort());
+        //System.out.println(
+        //    "host=" + request.getHost() + " port=" + request.getPort());
         if (Httpd.sendme(request))
         {
             http = new Httpd(socket);
         }
         else
         {
-            System.out.println("---creating SSL socket");
+            //System.out.println("---creating SSL socket");
             http =
                 Http.open(
-                    SSLSocketFactory.getDefault(),
+                    this.socketCreator,
                     request.getHost(),
                     request.getPort());
-            System.out.println("---created SSL socket");
+            //System.out.println("---created SSL socket");
         }
 
         return http;

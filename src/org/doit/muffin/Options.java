@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.12 2003/05/03 09:40:05 flefloch Exp $ */
+/* $Id: Options.java,v 1.13 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -101,12 +101,6 @@ public class Options extends UserPrefs
  	putInteger("muffin.readTimeout", 90000);
  	putString("muffin.nameservers", "");
 
-    /* Internal HTTPS decryption server defaults */
-	putInteger("muffin.decryptionServer.port", -1);
-	putString("muffin.decryptionServer.certificate","certs");
-	putString("muffin.decryptionServer.keystorePassword","serverkspw");
-	putString("muffin.decryptionServer.keyPassword","serverpw");
-	
 // 	include(configs.getUserPrefs());
 // 	configs.addConfigurationListener(this);
 

@@ -1,8 +1,7 @@
-/* $Id: Request.java,v 1.11 2003/05/03 09:40:05 flefloch Exp $ */
+/* $Id: Request.java,v 1.12 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
- * Copyright (C) 2003 Fabien Le Floch <fabien@31416.org>
  * 
  * This file is part of Muffin.
  *
@@ -35,7 +34,6 @@ import org.doit.io.*;
 
 /** Http/https request.
  * @author Mark Boyns
- * @author Fabien Le Floc'h
  */
 public class Request extends Message
 {
@@ -46,7 +44,7 @@ public class Request extends Message
     private static final int HttpPrefixLength = HttpPrefix.length();
     private static final int HttpsPrefixLength = HttpsPrefix.length();
 
-    private int defaultPort = 80;
+    private int defaultPort;
     private String command = null;
     private String url = null;
     private String protocol = null;
@@ -66,19 +64,15 @@ public class Request extends Message
         }
     }
 
+    {
+        defaultPort = 80;
+    }
     /** Creates an http/https request.
      * @param c The client making the request.
-     * @deprecated
      */
-    Request(Client c)
+    protected Request(Client c)
     {
         client = c;
-    }
-
-    public Request(Client c, int defaultPort)
-    {
-        this.client = c;
-        this.defaultPort = defaultPort;
     }
 
     /** Read a request from an input stream.
@@ -177,6 +171,15 @@ public class Request extends Message
         return command;
     }
 
+    /**
+     * Is this a SSL tunneling request?
+     * @return true if command is "CONNECT"
+     */
+    public boolean isSecure()
+    {
+        return getCommand().equals("CONNECT");
+    }
+
     /** Set the command for a request, e.g. "GET", "HEAD", "POST", or "PUT".
      * @param command The command.
      */
@@ -222,11 +225,7 @@ public class Request extends Message
      */
     public String getHost()
     {
-        String s = getHeaderField("Host");
-        if (s == null)
-        {
-            s = stripUrl(getURL());
-        }
+        String s = stripUrl(getURL());
         int at = s.indexOf('@');
         if (at != -1)
         {
@@ -271,12 +270,8 @@ public class Request extends Message
      */
     public int getPort()
     {
+        String s = stripUrl(getURL());
         int port = defaultPort;
-        String s = getHeaderField("Host");
-        if (s == null)
-        {
-            s = stripUrl(getURL());
-        }
         int at = s.indexOf('@');
         if (at != -1)
         {
@@ -297,6 +292,7 @@ public class Request extends Message
             }
         }
         return port;
+
     }
 
     /** Get the data.
@@ -330,7 +326,10 @@ public class Request extends Message
             pos++;
         }
         pos--;
-        return str.substring(pos);
+        if (pos >= 0)
+            return str.substring(pos);
+        else
+            return "/";
     }
 
     /** Get the document, i.e. the last component of the path, after any '/' characters.

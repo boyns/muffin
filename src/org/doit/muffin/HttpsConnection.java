@@ -20,21 +20,18 @@
  */
 package org.doit.muffin;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
 /**
- * @author Fabien Le Floc'h
+ * @author Fabien Le Floc'h <fabien@31416.org>
  */
-public interface ServerSocketCreator
-{
+public interface HttpsConnection extends HttpRelay
+{   
 
-    ServerSocket createServerSocket(int port)
-        throws IOException;
-    Handler createHandler(
-        Monitor monitor,
-        FilterManager manager,
-        Options options,
-        Socket socket);
+	void setTimeout(int timeout) throws SocketException;
+	OutputStream getOutputStream();
+	InputStream getInputStream();
+
+
 }

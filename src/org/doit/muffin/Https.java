@@ -1,4 +1,4 @@
-/* $Id: Https.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Https.java,v 1.7 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,16 +27,18 @@ import java.io.IOException;
 /**
  * @author Mark Boyns
  */
-class Https extends HttpConnection
+public class Https extends HttpConnection implements HttpsConnection
 {
     boolean proxy = false;
+    
     
     Https(String host, int port) throws IOException
     {
 	super(host, port);
+	System.out.println("HTTPS - port = "+port);
     }
 
-    Https(String host, int port, boolean isProxy) throws IOException
+    public Https(String host, int port, boolean isProxy) throws IOException
     {
 	this(host, port);
 	proxy = isProxy;

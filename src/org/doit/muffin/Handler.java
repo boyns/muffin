@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.16 2003/05/08 17:01:54 flefloch Exp $ */
+/* $Id: Handler.java,v 1.17 2003/05/10 01:01:22 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -30,8 +30,6 @@ import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.zip.GZIPInputStream;
-
-import javax.net.SocketFactory;
 
 import org.doit.io.ByteArray;
 import org.doit.io.HtmlObjectStream;
@@ -261,10 +259,9 @@ public class Handler implements Runnable
         while (reply == null)
         {
             boolean secure = false;
-
             filterList = manager.createFilters(request.getURL());
 
-            if (request.getCommand().equals("CONNECT"))
+            if (request.isSecure())
             {
                 secure = true;
             }
@@ -311,6 +308,12 @@ public class Handler implements Runnable
                 {
                     http = createHttpRelay(request, socket);
                 }
+            }
+            else if (secure && !(http instanceof HttpsConnection))
+            {
+                System.out.println(
+                    "ignoring non https filter " + http.getClass());
+                http = createHttpsRelay();
             }
 
             try
@@ -385,9 +388,9 @@ public class Handler implements Runnable
 
                 if (secure)
                 {
-                    Https https = (Https) http;
-                    int timeout = options.getInteger("muffin.readTimeout");
+                    HttpsConnection https = (HttpsConnection) http;
 
+                    int timeout = options.getInteger("muffin.readTimeout");
                     client.write(reply);
 
                     try
@@ -470,15 +473,9 @@ public class Handler implements Runnable
                     options.getInteger("muffin.httpsProxyPort"),
                     true);
         }
-        else if (options.useDecryptionServer())
-        {
-            http = new Https("localhost",
-                //Main.getMuffinHost(),
-    options.getInteger("muffin.decryptionServer.port"), false);
-        }
         else
         {
-            http = new Https(request.getHost(), request.getPort());
+            http = new Https(request.getHost(), request.getPort(), false);
         }
 
         return http;
@@ -497,7 +494,7 @@ public class Handler implements Runnable
         {
             http =
                 Http.open(
-                    SocketFactory.getDefault(),
+                    SocketCreator.getDefault(),
                     options.getString("muffin.httpProxyHost"),
                     options.getInteger("muffin.httpProxyPort"),
                     true);
@@ -506,7 +503,7 @@ public class Handler implements Runnable
         {
             http =
                 Http.open(
-                    SocketFactory.getDefault(),
+                    SocketCreator.getDefault(),
                     request.getHost(),
                     request.getPort());
         }
@@ -521,8 +518,10 @@ public class Handler implements Runnable
             if (filterList[i] instanceof HttpFilter)
             {
                 HttpFilter filter = (HttpFilter) filterList[i];
-                if (filter.wantRequest(request))
+
+                if ((filter != null) && filter.wantRequest(request))
                 {
+                    System.out.println("___filter___" + filter.toString());
                     return filter;
                 }
             }

@@ -48,7 +48,7 @@ public class DecryptionClient extends Client
      */
     public Request createRequest()
     {
-    	return new Request(this, 443);
+    	return new DecryptionRequest(this);
     }
 
 }

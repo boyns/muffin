@@ -1,4 +1,4 @@
-/* $Id: HttpConnection.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: HttpConnection.java,v 1.6 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,54 +27,56 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-abstract class HttpConnection extends Connection implements HttpRelay
+abstract class HttpConnection
+    extends Connection
+    implements HttpsConnection
 {
     HttpConnection(String host, int port) throws IOException
     {
-	super(host, port);
+        super(host, port);
     }
 
     HttpConnection(Socket s) throws IOException
     {
-	super(s);
+        super(s);
     }
 
     public void sendRequest(Request request)
-	throws IOException, RetryRequestException
+        throws IOException, RetryRequestException
     {
-	request.write(getOutputStream());
+        request.write(getOutputStream());
     }
-    
+
     public Reply recvReply(Request request)
-	throws IOException, RetryRequestException
+        throws IOException, RetryRequestException
     {
-	Reply reply = new Reply(getInputStream());
-	reply.read();
-	return reply;
+        Reply reply = new Reply(getInputStream());
+        reply.read();
+        return reply;
     }
-    
+
     public void setInputStream(InputStream in)
     {
-	super.setInputStream(in);
+        super.setInputStream(in);
     }
-    
+
     public void setOutputStream(OutputStream out)
     {
-	super.setOutputStream(out);
+        super.setOutputStream(out);
     }
 
     public InputStream getInputStream()
     {
-	return super.getInputStream();
+        return super.getInputStream();
     }
-    
+
     public OutputStream getOutputStream()
     {
-	return super.getOutputStream();
+        return super.getOutputStream();
     }
 
     public void close()
     {
-	super.close();
+        super.close();
     }
 }

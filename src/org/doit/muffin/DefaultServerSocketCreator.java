@@ -30,15 +30,25 @@ import java.net.Socket;
  */
 class DefaultServerSocketCreator implements ServerSocketCreator
 {
+	Prefs prefs = null;
+	
+	public DefaultServerSocketCreator(Prefs prefs)
+	{
+		this.prefs = prefs;		
+	}
 
+	public DefaultServerSocketCreator() {
+		this.prefs = Main.getOptions();		
+	}
+	
     /**
      * @see org.doit.muffin.ServerSocketCreator#createServerSocket(int, String)
      */
-    public ServerSocket createServerSocket(int port, Options options)
+    public ServerSocket createServerSocket(int port)
         throws IOException
     {
         ServerSocket server = null;
-        String bindaddr = options.getString("muffin.bindaddress");
+        String bindaddr = prefs.getString("muffin.bindaddress");
 
         if (bindaddr != null && bindaddr.length() > 0)
         {

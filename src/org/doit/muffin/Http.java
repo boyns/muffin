@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.9 2003/05/03 09:40:05 flefloch Exp $ */
+/* $Id: Http.java,v 1.10 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,8 +27,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.net.SocketFactory;
-
 /**
  * @author Mark Boyns
  */
@@ -50,13 +48,13 @@ public class Http extends HttpConnection
     long idle = 0;
     Vector queue = new Vector();
 	
-	Http(SocketFactory factory, String host, int port)
+	Http(SocketCreator factory, String host, int port)
 		throws IOException
 	{
 		this(factory,host,port,false);	
 	}
 	
-	Http(SocketFactory factory, String host, int port, boolean isProxy)
+	Http(SocketCreator factory, String host, int port, boolean isProxy)
 		throws IOException
 	{
 		super(factory.createSocket(MuffinResolver.getByName(host),port));
@@ -77,7 +75,7 @@ public class Http extends HttpConnection
 	 */
     Http(String host, int port, boolean isProxy) throws IOException
     {
-        this(SocketFactory.getDefault(),host, port, isProxy);
+        this(SocketCreator.getDefault(),host, port, isProxy);
     }
 
     public synchronized void sendRequest(Request request)
@@ -206,7 +204,7 @@ public class Http extends HttpConnection
             head.append(" ");
             head.append("HTTP/1.0");
             request.statusLine = head.toString();
-
+			System.out.println("____Request again="+request);
             request.write(getOutputStream());
 
             /* flush? */
@@ -321,7 +319,7 @@ public class Http extends HttpConnection
         }
     }
 
-    static Http open(SocketFactory factory, String host, int port, boolean isProxy) throws IOException
+    static Http open(SocketCreator factory, String host, int port, boolean isProxy) throws IOException
     {
         Http http = null;
 
@@ -364,7 +362,7 @@ public class Http extends HttpConnection
         return http;
     }
 
-    public static Http open(SocketFactory factory, String host, int port) throws IOException
+    public static Http open(SocketCreator factory, String host, int port) throws IOException
     {
         return open(factory, host, port, false);
     }

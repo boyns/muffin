@@ -1,4 +1,4 @@
-/* $Id: Client.java,v 1.6 2003/05/03 09:40:05 flefloch Exp $ */
+/* $Id: Client.java,v 1.7 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -48,7 +48,7 @@ public class Client extends Connection
 
 	protected Request createRequest()
 	{
-		return new Request(this, 80);
+		return new Request(this);
 	}
     /**
      * Read a Request.

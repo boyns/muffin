@@ -18,23 +18,42 @@
  * Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
-package org.doit.muffin;
+package org.doit.muffin.decryption;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import com.sun.net.ssl.X509TrustManager;
 
 /**
- * @author Fabien Le Floc'h
+ * @author Fabien Le Floc'h <fabien@31416.org>
  */
-public interface ServerSocketCreator
+public class DummyTrustManager implements X509TrustManager
 {
 
-    ServerSocket createServerSocket(int port)
-        throws IOException;
-    Handler createHandler(
-        Monitor monitor,
-        FilterManager manager,
-        Options options,
-        Socket socket);
+
+    /**
+     * @see com.sun.net.ssl.X509TrustManager#getAcceptedIssuers()
+     */
+    public X509Certificate[] getAcceptedIssuers()
+    {
+        return new X509Certificate[0];
+    }
+
+    /**
+     * @see com.sun.net.ssl.X509TrustManager#isClientTrusted(X509Certificate[])
+     */
+    public boolean isClientTrusted(X509Certificate[] arg0)
+    {
+        return true;
+    }
+
+    /**
+     * @see com.sun.net.ssl.X509TrustManager#isServerTrusted(X509Certificate[])
+     */
+    public boolean isServerTrusted(X509Certificate[] arg0)
+    {
+        return true;
+    }
+
 }

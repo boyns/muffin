@@ -1,4 +1,4 @@
-/* $Id: TextMonitor.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: TextMonitor.java,v 1.7 2003/05/10 01:01:23 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,13 +30,13 @@ import java.util.Vector;
 /**
  * @author Mark Boyns
  */
-class TextMonitor implements Monitor
+public class TextMonitor implements Monitor
 {
     Vector handlers;
     boolean suspended = false;
     String infoString;
     
-    TextMonitor(String infoString)
+    public TextMonitor(String infoString)
     {
 	this.infoString = infoString;
 	handlers = new Vector(100);
