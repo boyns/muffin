@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.9 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Message.java,v 1.10 2000/03/08 15:20:57 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,11 +25,8 @@ package org.doit.muffin;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.io.PushbackInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
+import org.doit.io.*;
 
 /**
  * Abstract class to represent message headers.
@@ -248,18 +245,13 @@ public abstract class Message
 
 	return v.elements();
     }
+
+    private final static byte[] COLON_SPACE = ": ".getBytes();
+    private final static byte[] CRLF = "\r\n".getBytes();
     
-    public String toString()
+    private ByteArray toByteArray(byte[] sep)
     {
-	return toString("\r\n");
-    }
-    
-    /**
-     * Return a string represenation of the headers.
-     */
-    public String toString(String sep)
-    {
-	StringBuffer buf = new StringBuffer();
+	ByteArray buf = new ByteArray();
 	Key key;
 	String value;
 	Vector v;
@@ -274,14 +266,41 @@ public abstract class Message
 	    v = (Vector) headers.get(key);
 	    for (i = 0; i < v.size(); i++)
 	    {
-		buf.append(key);
-		buf.append(": ");
-		buf.append(v.elementAt(i));
+		buf.append(key.toString());
+		buf.append(COLON_SPACE);
+		buf.append(v.elementAt(i).toString());
 		buf.append(sep);
 	    }
 	}
 	buf.append(sep);
 
-	return buf.toString();
+	return buf;
+    }
+
+    private ByteArray toByteArray()
+    {
+	return toByteArray(CRLF);
+    }
+
+    private ByteArray toByteArray(String sep)
+    {
+	return toByteArray(sep.getBytes());
+    }
+    
+    public String toString()
+    {
+	return toByteArray().toString();
+    }
+    
+    public String toString(String sep)
+    {
+	return toByteArray(sep).toString();
+    }
+
+    public void write(OutputStream out)
+	throws IOException
+    {
+	toByteArray().writeTo(out);
+	out.flush();
     }
 }
