@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.7 1999/05/27 06:10:00 boyns Exp $ */
+/* $Id: Options.java,v 1.8 1999/09/16 04:12:07 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -93,6 +93,7 @@ public class Options extends UserPrefs
 
 	/* Other defaults */
  	putBoolean("muffin.proxyKeepAlive", false);
+ 	putInteger("muffin.readTimeout", 90000);
  	putString("muffin.nameservers", "");
 
 // 	include(configs.getUserPrefs());
