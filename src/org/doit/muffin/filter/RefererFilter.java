@@ -1,4 +1,4 @@
-/* $Id: RefererFilter.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: RefererFilter.java,v 1.6 2000/03/30 06:34:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -98,7 +98,7 @@ public class RefererFilter implements RequestFilter
 	}
 	else
 	{
-	    r.setHeaderField("Referer", s);
+	    r.setHeaderFields("Referer", s);
 	}
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: ForwardedForFilter.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: ForwardedForFilter.java,v 1.6 2000/03/30 06:32:54 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -48,7 +48,7 @@ public class ForwardedForFilter implements RequestFilter
 	}
 	else
 	{
-	    request.setHeaderField("X-Forwarded-For", addr);
+	    request.setHeaderFields("X-Forwarded-For", addr);
 	}
     }
 }

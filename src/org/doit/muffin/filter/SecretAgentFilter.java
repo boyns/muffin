@@ -1,4 +1,4 @@
-/* $Id: SecretAgentFilter.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: SecretAgentFilter.java,v 1.6 2000/03/30 06:35:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -50,7 +50,7 @@ public class SecretAgentFilter implements RequestFilter
 	    }
 	    else
 	    {
-		r.setHeaderField("User-Agent", s);
+		r.setHeaderFields("User-Agent", s);
 	    }
 	}
     }
