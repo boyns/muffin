@@ -1,4 +1,4 @@
-/* $Id: HostnameExpanderFrame.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: HostnameExpanderFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class HostnameExpanderFrame extends MuffinFrame implements ActionListener, WindowListener
 {
@@ -34,10 +35,10 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
     TextField domain;
     TextField prefix;
     TextField suffix;
-    
+
     public HostnameExpanderFrame(Prefs prefs, HostnameExpander parent)
     {
-	super("Muffin: HostnameExpander");
+	super(Strings.getString("HostnameExpander.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -46,8 +47,8 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	GridBagLayout layout = new GridBagLayout();
 	GridBagConstraints c;
         panel.setLayout(layout);
-	
-	panel.add(new Label("Default Domain:"));
+
+	panel.add(new Label(Strings.getString("HostnameExpander.defaultDomain")+":"));
 	domain = new TextField(50);
 	domain.setText(prefs.getString("HostnameExpander.defaultDomain"));
 	c = new GridBagConstraints();
@@ -56,7 +57,7 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	layout.setConstraints(domain, c);
 	panel.add(domain);
 
-	panel.add(new Label("Host Prefix:"));
+	panel.add(new Label(Strings.getString("HostnameExpander.prefix")+":"));
 	prefix = new TextField(50);
 	prefix.setText(prefs.getString("HostnameExpander.prefix"));
 	c = new GridBagConstraints();
@@ -65,7 +66,7 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	layout.setConstraints(prefix, c);
 	panel.add(prefix);
 
-	panel.add(new Label("Host Suffix:"));
+	panel.add(new Label(Strings.getString("HostnameExpander.suffix")+":"));
 	suffix = new TextField(50);
 	suffix.setText(prefs.getString("HostnameExpander.suffix"));
 	c = new GridBagConstraints();
@@ -82,23 +83,23 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -106,7 +107,7 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -116,7 +117,7 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doClose".equals(arg))
 	{
 	    setVisible(false);
@@ -144,28 +145,28 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.11 2003/01/08 16:55:38 dougporter Exp $ */
+/* $Id: OptionsFrame.java,v 1.12 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,23 +22,9 @@
  */
 package org.doit.muffin;
 
-import java.awt.Button;
-import java.awt.Checkbox;
-import java.awt.Color;
-import java.awt.Event;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowEvent;
-import org.doit.util.ColorSample;
+import java.awt.*;
+import java.awt.event.*;
+import org.doit.util.*;
 
 /**
  * @author Mark Boyns
@@ -68,14 +54,14 @@ class OptionsFrame extends MuffinFrame
 
     OptionsFrame(Options options)//, Configuration configs)
     {
-	super("Muffin: Options");
+	super(Strings.getString("options.title"));
 
 	this.options = options;
 
 // 	this.configs = configs;
 
 	setResizable(false);
-	
+
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
 	panel.setLayout(layout);
@@ -92,7 +78,7 @@ class OptionsFrame extends MuffinFrame
 // 	layout.setConstraints(currentLabel, c);
 // 	panel.add(currentLabel);
 
-	l = new Label("HTTP Proxy:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.httpProxyHost")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -103,11 +89,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(httpProxyHost, c);
 	panel.add(httpProxyHost);
 
-	l = new Label("Port:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.httpProxyPort")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	httpProxyPort = new TextField(10);
 	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
 	c = new GridBagConstraints();
@@ -116,7 +102,7 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(httpProxyPort, c);
 	panel.add(httpProxyPort);
 
-	l = new Label("HTTPS Proxy:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.httpsProxyHost")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -127,11 +113,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(httpsProxyHost, c);
 	panel.add(httpsProxyHost);
 
-	l = new Label("Port:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.httpsProxyPort")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	httpsProxyPort = new TextField(10);
 	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
 	c = new GridBagConstraints();
@@ -140,11 +126,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(httpsProxyPort, c);
 	panel.add(httpsProxyPort);
 
-	l = new Label("HostsAllow:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.hostsAllow")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	hostsAllowList = new TextField(50);
 	hostsAllowList.setText(options.getString("muffin.hostsAllow"));
 	c = new GridBagConstraints();
@@ -152,23 +138,23 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(hostsAllowList, c);
 	panel.add(hostsAllowList);
 
-	l = new Label("HostsDeny:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.hostsDeny")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	hostsDenyList = new TextField(50);
 	hostsDenyList.setText(options.getString("muffin.hostsDeny"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(hostsDenyList, c);
 	panel.add(hostsDenyList);
-	
-	l = new Label("AdminAllow:", Label.RIGHT);
+
+	l = new Label(Strings.getString("options.muffin.adminAllow")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminAllowList = new TextField(50);
 	adminAllowList.setText(options.getString("muffin.adminAllow"));
 	c = new GridBagConstraints();
@@ -176,11 +162,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(adminAllowList, c);
 	panel.add(adminAllowList);
 
-	l = new Label("AdminDeny:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.adminDeny")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminDenyList = new TextField(50);
 	adminDenyList.setText(options.getString("muffin.adminDeny"));
 	c = new GridBagConstraints();
@@ -188,11 +174,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(adminDenyList, c);
 	panel.add(adminDenyList);
 
-	l = new Label("AdminUser:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.adminUser")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminUser = new TextField(8);
 	adminUser.setText(options.getString("muffin.adminUser"));
 	c = new GridBagConstraints();
@@ -200,11 +186,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(adminUser, c);
 	panel.add(adminUser);
 
-	l = new Label("AdminPassword:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.adminPassword")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminPassword = new TextField(8);
 	adminPassword.setText(options.getString("muffin.adminPassword"));
 	c = new GridBagConstraints();
@@ -213,11 +199,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(adminPassword, c);
 	panel.add(adminPassword);
 
-	l = new Label("Geometry:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.geometry")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	geometry = new TextField(16);
 	geometry.setText(options.getString("muffin.geometry"));
                           //MuffinFrame.getFrame("Muffin").getGeometry());
@@ -228,8 +214,8 @@ class OptionsFrame extends MuffinFrame
 	panel.add(geometry);
 
 	Panel colorPanel = new Panel();
-	
-	l = new Label("Foreground:", Label.RIGHT);
+
+	l = new Label(Strings.getString("options.muffin.foreground")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	colorPanel.add(l);
@@ -249,7 +235,7 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(fgSample, c);
 	colorPanel.add(fgSample);
 
-	l = new Label("Background:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.background")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	colorPanel.add(l);
@@ -275,11 +261,11 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(colorPanel, c);
 	panel.add(colorPanel);
 
-	l = new Label("Nameservers:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.nameservers")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	nameservers = new TextField(50);
 	nameservers.setText(options.getString("muffin.nameservers"));
 	c = new GridBagConstraints();
@@ -287,28 +273,28 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(nameservers, c);
 	panel.add(nameservers);
 
-	l = new Label("Read timeout:", Label.RIGHT);
+	l = new Label(Strings.getString("options.muffin.readTimeout")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
         Panel timeoutPanel = new Panel ();
         timeoutPanel.setLayout (new BorderLayout ());
-            
+
 	readTimeout = new TextField(16);
 	readTimeout.setText(options.getString("muffin.readTimeout"));
 	timeoutPanel.add(readTimeout, BorderLayout.WEST);
 
-	l = new Label("milliseconds", Label.LEFT);
+	l = new Label(Strings.getString("options.milliseconds"), Label.LEFT);
 	timeoutPanel.add(l, BorderLayout.EAST);
-        
+
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(timeoutPanel, c);
         panel.add(timeoutPanel);
 
-	proxyKeepAlive = new Checkbox("Enable Proxy Keep-Alive",
+	proxyKeepAlive = new Checkbox(Strings.getString("options.muffin.proxyKeepAlive"),
 				      options.getBoolean("muffin.proxyKeepAlive"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -316,8 +302,8 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(proxyKeepAlive, c);
 	panel.add(proxyKeepAlive);
 
-	logFilters = new Checkbox("Enable Filter Logging",
-				  !options.getBoolean("muffin.dontLogFilters"));
+	logFilters = new Checkbox(Strings.getString("options.muffin.dontLogFilters"),
+				  options.getBoolean("muffin.dontLogFilters"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.WEST;
@@ -328,15 +314,15 @@ class OptionsFrame extends MuffinFrame
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 2));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -349,7 +335,7 @@ class OptionsFrame extends MuffinFrame
 	pack();
 	setSize(getPreferredSize());
     }
-    
+
     void hideshow()
     {
 	if (isShowing())
@@ -401,9 +387,9 @@ class OptionsFrame extends MuffinFrame
 	options.putString("muffin.bg", bg.getText());
 	fgSample.setColor(fg.getText());
 	bgSample.setColor(bg.getText());
-	MuffinFrame.getFrame("Muffin").updateGeometry(options.getString("muffin.geometry"));
+	MuffinFrame.getFrame(Strings.getString("muffin.title")).updateGeometry(options.getString("muffin.geometry"));
 	options.putBoolean("muffin.proxyKeepAlive", proxyKeepAlive.getState());
-	options.putBoolean("muffin.dontLogFilters", !logFilters.getState());
+	options.putBoolean("muffin.dontLogFilters", logFilters.getState());
 	options.putString("muffin.nameservers", nameservers.getText());
 	options.putString("muffin.readTimeout", readTimeout.getText());
 	options.sync();
@@ -432,28 +418,28 @@ class OptionsFrame extends MuffinFrame
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

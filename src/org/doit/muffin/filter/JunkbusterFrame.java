@@ -1,4 +1,4 @@
-/* $Id: JunkbusterFrame.java,v 1.1 2003/01/08 17:01:26 dougporter Exp $ */
+/* $Id: JunkbusterFrame.java,v 1.2 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,6 +28,7 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class JunkbusterFrame extends MuffinFrame implements ActionListener, WindowListener
 {
@@ -35,10 +36,10 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
     Junkbuster parent;
     TextField blockfile = null;
     final int TextFieldSize = 50;
-    
+
     public JunkbusterFrame(Prefs prefs, Junkbuster parent)
     {
-	super("Muffin: Junkbuster");
+	super(Strings.getString("Junkbuster.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -47,14 +48,14 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
-	     
-	panel.add(new Label("Blockfile:", Label.RIGHT));
+
+	panel.add(new Label(Strings.getString("Junkbuster.blockfileLocation")+":", Label.RIGHT));
 
 	blockfile = new TextField (TextFieldSize);
 	blockfile.setText (prefs.getString(Junkbuster.BlockfileLocation));
 	panel.add(blockfile);
 
-	Button browse = new Button("Browse...");
+	Button browse = new Button(Strings.getString("browse")+"...");
 	browse.setActionCommand("doBrowse");
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
@@ -67,15 +68,15 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	panel = new Panel();
 	layout = new GridBagLayout();
         panel.setLayout(layout);
-        
-	Label l = new Label("Message Log");
+
+	Label l = new Label(Strings.getString("Junkbuster.messages"));
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.CENTER;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -89,19 +90,19 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -109,7 +110,7 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
         add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 	show();
@@ -118,10 +119,10 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doBrowse".equals(arg))
 	{
-	    FileDialog dialog = new FileDialog(this, "Rewrite Load");
+	    FileDialog dialog = new FileDialog(this, Strings.getString("load"));
 	    dialog.show();
 	    if (dialog.getFile() != null)
 	    {
@@ -150,28 +151,28 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: ThreadsFrame.java,v 1.7 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: ThreadsFrame.java,v 1.8 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,6 +22,7 @@
  */
 package org.doit.muffin;
 
+import org.doit.util.*;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
@@ -47,7 +48,7 @@ class ThreadsFrame
 
     ThreadsFrame(Thread startThread)
     {
-	super("Muffin: Threads");
+	super(Strings.getString("threads.title"));
 
 	this.startThread = startThread;
 
@@ -60,11 +61,11 @@ class ThreadsFrame
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 2));
-	b = new Button("Update");
+	b = new Button(Strings.getString("threads.update"));
 	b.setActionCommand("doUpdate");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -121,10 +122,6 @@ class ThreadsFrame
 	    buf.append(list[i].getPriority());
 	    buf.append("\n");
 	    appendString(buf.toString());
-	}
-	if (count == 0)
-	{
-	    text.append("No threads?\n");
 	}
     }
 

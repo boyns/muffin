@@ -1,4 +1,4 @@
-/* $Id: SecretaryFrame.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: SecretaryFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,17 +25,18 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class SecretaryFrame extends MuffinFrame implements ActionListener, WindowListener
 {
     Prefs prefs;
     Secretary parent;
-    
+
     TextField input = null;
-    
+
     public SecretaryFrame(Prefs prefs, Secretary parent)
     {
-	super("Muffin: Secretary");
+	super(Strings.getString("Secretary.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -44,13 +45,13 @@ public class SecretaryFrame extends MuffinFrame implements ActionListener, Windo
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 
-	panel.add(new Label("Form File:", Label.RIGHT));
+	panel.add(new Label(Strings.getString("Secretary.formfile")+":", Label.RIGHT));
 
 	input = new TextField(50);
 	input.setText(prefs.getString("Secretary.formfile"));
 	panel.add(input);
 
-	Button browse = new Button("Browse...");
+	Button browse = new Button(Strings.getString("browse")+"...");
 	browse.setActionCommand("doBrowse");
 	browse.addActionListener(this);
 	panel.add(browse);
@@ -60,30 +61,30 @@ public class SecretaryFrame extends MuffinFrame implements ActionListener, Windo
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 5));
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Reload File");
+	b = new Button(Strings.getString("Secretary.reload"));
 	b.setActionCommand("doReload");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -93,7 +94,7 @@ public class SecretaryFrame extends MuffinFrame implements ActionListener, Windo
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("Secretary.formfile", input.getText());
@@ -128,28 +129,28 @@ public class SecretaryFrame extends MuffinFrame implements ActionListener, Windo
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

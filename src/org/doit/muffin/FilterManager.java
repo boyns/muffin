@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.10 2003/01/08 16:52:27 dougporter Exp $ */
+/* $Id: FilterManager.java,v 1.11 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,9 +22,8 @@
  */
 package org.doit.muffin;
 
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.*;
+import org.doit.util.*;
 
 /**
  * Class to manage all filters.  This class maintains the list of
@@ -36,8 +35,8 @@ import java.util.Enumeration;
  */
 public class FilterManager implements ConfigurationListener
 {
-    final String defaultSupportedList[] = 
-    { 
+    final String defaultSupportedList[] =
+    {
 	"AnimationKiller",
 	"Cache",
 	"CookieMonster",
@@ -221,7 +220,7 @@ public class FilterManager implements ConfigurationListener
 	{
 	    clazz = "org.doit.muffin.filter." + clazz;
 	}
-	
+
 	try
 	{
 	    //System.out.println("Enabling " + shortName(clazz) + " in " + config);
@@ -236,6 +235,14 @@ public class FilterManager implements ConfigurationListener
 	    {
 		frame.updateEnabledFiltersList();
 	    }
+
+            try
+            {
+                Strings.addBundle(ResourceBundle.getBundle(clazz + "Strings"));
+            }
+            catch (MissingResourceException e)
+            {
+            }
 	}
 	catch (Exception e)
 	{
@@ -303,7 +310,7 @@ public class FilterManager implements ConfigurationListener
 	uprefs.putStringList("FilterManager.enabledFilters", list);
 	uprefs.save();
     }
-    
+
     void save()
     {
 	save(configs.getCurrent());
@@ -329,4 +336,4 @@ public class FilterManager implements ConfigurationListener
 	userPrefs.merge(ff.getPrefs());
 	userPrefs.save();
     }
-}    
+}

@@ -1,4 +1,4 @@
-/* $Id: About.java,v 1.7 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: About.java,v 1.8 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,6 +36,7 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
 import java.util.StringTokenizer;
+import org.doit.util.*;
 
 /**
  * Create an about window.
@@ -50,7 +51,7 @@ class About extends MuffinFrame implements ActionListener, WindowListener
      */
     About(Options options)
     {
-	super("About Muffin");
+	super(Strings.getString("about.muffin"));
 
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
@@ -105,7 +106,7 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 
 	add("Center", panel);
 
-	Button b = new Button("OK");
+	Button b = new Button(Strings.getString("ok"));
 	b.addActionListener(this);
 	add("South", b);
 

@@ -1,4 +1,4 @@
-/* $Id: Httpd.java,v 1.7 2000/03/08 15:18:36 boyns Exp $ */
+/* $Id: Httpd.java,v 1.8 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,7 +36,7 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
 import java.net.Socket;
-import org.doit.util.Base64;
+import org.doit.util.*;
 
 class Httpd extends HttpConnection
 {
@@ -44,7 +44,7 @@ class Httpd extends HttpConnection
     static FilterManager manager = null;
     static Monitor monitor = null;
     static Server server = null;
-    
+
     Request request = null;
 
     Httpd(Socket socket) throws IOException
@@ -90,12 +90,12 @@ class Httpd extends HttpConnection
     String getDateString()
     {
 	String str;
-	
-	SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US); 
+
+	SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 	TimeZone tz = TimeZone.getDefault();
 	format.setTimeZone(tz.getTimeZone("GMT"));
 	str = format.format(new Date());
-	
+
 	return str;
     }
 
@@ -122,12 +122,18 @@ class Httpd extends HttpConnection
     String admin()
     {
 	StringBuffer html = new StringBuffer();
-	html.append(head("Muffin: Remote Admin"));
-	
+	html.append(head(Strings.getString("admin.title")));
+
 	html.append("<ul>\n");
-	html.append("<li><a href=/admin/configs>Configurations</a>\n");
-	html.append("<li><a href=/admin/connections>Connections</a>\n");
-	html.append("<li><a href=/admin/vm>Virtual Machine</a>\n");
+	html.append("<li><a href=/admin/configs>")
+            .append(Strings.getString("admin.item.configurations"))
+            .append("</a>\n");
+	html.append("<li><a href=/admin/connections>")
+            .append(Strings.getString("admin.item.connections"))
+            .append("</a>\n");
+	html.append("<li><a href=/admin/vm>")
+            .append(Strings.getString("admin.item.vm"))
+            .append("</a>\n");
 	html.append("</ul>\n");
 
 	html.append(tail());
@@ -137,7 +143,7 @@ class Httpd extends HttpConnection
     String configs()
     {
 	StringBuffer html = new StringBuffer();
-	html.append(head("Muffin: Configurations"));
+	html.append(head(Strings.getString("config.title")));
 
 	html.append("<ul>\n");
 	Enumeration e = manager.configs.sortedKeys();
@@ -154,10 +160,10 @@ class Httpd extends HttpConnection
 
 	html.append("<form method=POST action=/admin/createConfig>\n");
 	html.append("<input name=config type=text size=10>\n");
-	html.append("<input type=submit value=New>\n");
+	html.append("<input type=submit value=").append(Strings.getString("config.new")).append(">\n");
 	html.append("</form>\n");
 
-	html.append("<p><hr><b>Auto Configuration</b></b><br>\n");
+	html.append("<p><hr><b>").append(Strings.getString("config.auto")).append("</b></b><br>\n");
 	html.append("<form method=POST action=/admin/autoConfig>\n");
 	html.append("<textarea name=text rows=10 cols=50>\n");
 	for (int i = 0; i < manager.configs.autoConfigPatterns.size(); i++)
@@ -168,17 +174,17 @@ class Httpd extends HttpConnection
 	    html.append("\n");
 	}
 	html.append("</textarea>\n");
-	html.append("<br><input type=submit value=Apply>\n");
+	html.append("<br><input type=submit value=").append(Strings.getString("apply")).append(">\n");
 	html.append("</form>\n");
 
 	html.append(tail());
 	return html.toString();
     }
-	
+
     String connections()
     {
 	StringBuffer html = new StringBuffer();
-	html.append(head("Muffin: Connections"));
+	html.append(head(Strings.getString("connections.title")));
 
 	Enumeration e;
 
@@ -201,17 +207,17 @@ class Httpd extends HttpConnection
 	html.append(tail());
 	return html.toString();
     }
-    
+
     String filters(String config)
     {
 	StringBuffer html = new StringBuffer();
-	html.append(head("Muffin: Filters " + config));
+	html.append(head(Strings.getString("fm.title")));
 
 	Vector supported = manager.getSupportedFilters(config);
 	Vector enabled = manager.getEnabledFilters(config);
 
 	html.append("<table><tr><td>\n");
-	html.append("<h2>Supported Filters</h2>\n");
+	html.append("<h2>").append(Strings.getString("fm.available")).append("</h2>\n");
 	html.append("<form method=POST action=/admin/enable>\n");
 	html.append("<input type=hidden name=config value=\"" + config + "\">\n");
 	html.append("<select size=10 name=filter>\n");
@@ -220,12 +226,12 @@ class Httpd extends HttpConnection
 	    html.append("<option>" + (String) supported.elementAt(i) + "\n");
 	}
 	html.append("</select>\n");
-	html.append("<br><input type=submit value=Enable>\n");
+	html.append("<br><input type=submit value=").append(Strings.getString("fm.enable")).append(">\n");
 	html.append("</form>\n");
-	
+
 	html.append("</td><td>\n");
 
-	html.append("<h2>Enabled Filters</h2>\n");
+	html.append("<h2>").append(Strings.getString("fm.enabled")).append("</h2>\n");
 	html.append("<form method=POST action=/admin/disable>\n");
 	html.append("<input type=hidden name=config value=\"" + config + "\">\n");
 	html.append("<select size=10 name=index>\n");
@@ -237,7 +243,7 @@ class Httpd extends HttpConnection
 	}
 	html.append("</select>\n");
 	html.append("<br>");
-	html.append("<input type=submit value=Disable>\n");
+	html.append("<input type=submit value=").append(Strings.getString("fm.disable")).append(">\n");
 	html.append("</form>\n");
 
 	html.append("</td></tr></table>\n");
@@ -250,16 +256,16 @@ class Httpd extends HttpConnection
 
 	    html.append("<hr>\n");
 	    html.append("<h2>" + filter + "</h2>");
-	    html.append("<a href=/doc/"
-			 + filter.substring(filter.lastIndexOf(".") + 1)
-			 + ".txt>[Help]</a><br>\n");
-	    
+	    html.append("<a href=/doc/")
+                .append(filter.substring(filter.lastIndexOf(".") + 1))
+                .append(".txt>[").append(Strings.getString("fm.help")).append("]</a><br>\n");
+
 	    if (prefs.isEmpty())
 	    {
-		html.append("No Preferences.\n");
+		html.append(Strings.getString("fm.noprefs")).append("\n");
 		continue;
 	    }
-	    
+
 	    html.append("<form method=POST action=/admin/set>\n");
 	    html.append("<input type=hidden name=config value=\"" + config + "\">\n");
 	    html.append("<input type=hidden name=filter value=\"" + filter + "\">\n");
@@ -273,7 +279,10 @@ class Httpd extends HttpConnection
 		html.append("<td><input name=\"" + key + "\" size=" + value.length() + " type=text value='" + value + "'></input></td></tr>\n");
 	    }
 	    html.append("</table>\n");
-	    html.append("<br><input type=submit value=Submit><input type=reset value=Reset>\n");
+	    html.append("<br><input type=submit value=")
+                .append(Strings.getString("apply"))
+                .append("><input type=reset value=")
+                .append(Strings.getString("reset")).append(">\n");
 	    html.append("</form>");
 	}
 	html.append(tail());
@@ -283,9 +292,9 @@ class Httpd extends HttpConnection
     String vm()
     {
 	Runtime rt = Runtime.getRuntime();
-	
+
 	StringBuffer html = new StringBuffer();
-	html.append(head("Muffin: Virtual Machine"));
+	html.append(head(Strings.getString("vm.title")));
 
 	html.append("<table>\n");
 	html.append("<tr><td>free memory</td><td>" + rt.freeMemory() + "</td></tr>\n");
@@ -336,7 +345,7 @@ class Httpd extends HttpConnection
 		attrs.put(key, value);
 	    }
 	}
-	
+
 	return attrs;
     }
 
@@ -364,14 +373,14 @@ class Httpd extends HttpConnection
 	}
 	return false;
     }
-    
+
     public Reply recvReply(Request request) throws IOException, RetryRequestException
     {
 	Reply reply = new Reply(getInputStream());
 
 	reply.setHeaderField("Server", "Muffin/" + Main.getMuffinVersion());
 	reply.setHeaderField("Date", getDateString());
-	
+
 	if (request.getPath().startsWith("/images/"))
 	{
 	    String path = request.getPath(); //.substring(1);
@@ -397,7 +406,7 @@ class Httpd extends HttpConnection
 	}
 	else if (!options.adminInetAccess(getInetAddress()))
 	{
-	    HttpError error = new HttpError(options, 403, "Administrative access denied");
+	    HttpError error = new HttpError(options, 403, Strings.getString("admin.denied"));
 	    reply = error.getReply();
 	    reply.setContent((InputStream) new ByteArrayInputStream(error.getContent().getBytes()));
 	}
@@ -405,7 +414,7 @@ class Httpd extends HttpConnection
 		 && options.getString("muffin.adminPassword").length() > 0
 		 && !authenticated(request))
 	{
-	    HttpError error = new HttpError(options, 401, "Administrative access unauthorized");
+	    HttpError error = new HttpError(options, 401, Strings.getString("admin.denied"));
 	    reply = error.getReply();
 	    reply.setHeaderField("WWW-Authenticate", "Basic realm=\"MuffinAdmin\"");
 	    reply.setContent((InputStream) new ByteArrayInputStream(error.getContent().getBytes()));
@@ -495,7 +504,7 @@ class Httpd extends HttpConnection
 	    {
 		manager.enable(config, filter);
 	    }
-	    
+
 	    reply = Reply.createRedirect("/admin/filters?config=" + config);
  	    byte buf[] = new String("Document Moved").getBytes();
  	    reply.setContent((InputStream) new ByteArrayInputStream(buf));
@@ -519,7 +528,7 @@ class Httpd extends HttpConnection
 	    {
 		manager.disable(config, i);
 	    }
-	    
+
 	    reply = Reply.createRedirect("/admin/filters?config=" + config);
  	    byte buf[] = new String("Document Moved").getBytes();
  	    reply.setContent((InputStream) new ByteArrayInputStream(buf));
@@ -532,7 +541,7 @@ class Httpd extends HttpConnection
 
 	    attrs.remove("config");
 	    attrs.remove("filter");
-	    
+
 	    if (config != null && filter != null && attrs.size() > 0)
 	    {
 		Vector enabled = manager.getEnabledFilters(config);
@@ -558,7 +567,7 @@ class Httpd extends HttpConnection
 		    }
 		}
 	    }
-	    
+
 	    reply = Reply.createRedirect("/admin/filters?config=" + config);
  	    byte buf[] = new String("Document Moved").getBytes();
  	    reply.setContent((InputStream) new ByteArrayInputStream(buf));
@@ -586,7 +595,7 @@ class Httpd extends HttpConnection
 	return request.getHost().equalsIgnoreCase(Main.getMuffinHost())
 	    && request.getPort() == options.getInteger("muffin.port");
     }
-    
+
     static String getLocation()
     {
 	StringBuffer buf = new StringBuffer();

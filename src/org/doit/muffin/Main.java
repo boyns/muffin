@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.24 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: Main.java,v 1.25 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -22,23 +22,12 @@
  */
 package org.doit.muffin;
 
-import java.awt.Button;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Event;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.Panel;
-import java.awt.Label;
-import java.awt.event.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import gnu.getopt.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.net.*;
+import java.text.*;
+import java.util.*;
 import org.doit.util.*;
 
 /**
@@ -50,25 +39,30 @@ import org.doit.util.*;
 public class Main
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    private static String version = "0.9.4";
-    private static String url = "http://muffin.doit.org/";
-    private static String host;
+    private final static String       version = "0.9.4";
+    private final static String       url = "http://muffin.doit.org/";
 
-    static Options options;
-    static Configuration configs;
-    static FilterManager manager;
-    static LogFile logfile;
-    static ThreadPool pool;
+    private static String               host;
+    private static Options              options;
+    private static Configuration        configs;
+    private static FilterManager        manager;
+    private static LogFile              logfile;
+    private static ThreadPool           pool;
 
-    String localhost;
-    Server server;
-    String infoString;
-    Button suspendButton;
-    MenuBar menuBar;
-    Monitor monitor;
-    Label infoLabel;
-    Panel controlPanel;
-    MuffinFrame frame;
+    static
+    {
+        Strings.addBundle(ResourceBundle.getBundle("org.doit.muffin.LocalStrings"));
+    }
+
+    private String      localhost;
+    private Server      server;
+    private String      infoString;
+    private Button      suspendButton;
+    private MenuBar     menuBar;
+    private Monitor     monitor;
+    private Label       infoLabel;
+    private Panel       controlPanel;
+    private MuffinFrame frame;
 
     /**
      * Create Main.
@@ -77,9 +71,9 @@ public class Main
     {
 	pool = new ThreadPool("Muffin Threads");
 
-	infoString = new String("Muffin " + Main.getMuffinVersion() +
-				 " running on " + Main.getMuffinHost() +
-				 " port " + options.getString("muffin.port"));
+	infoString = Strings.getString("muffin.status",
+                                       new Object[]{getMuffinVersion(), getMuffinHost(),
+                                                    options.getString("muffin.port")});
 
 	manager = new FilterManager(options, configs);
 
@@ -90,7 +84,7 @@ public class Main
 	}
 	else
 	{
-	    frame = new MuffinFrame("Muffin");
+	    frame = new MuffinFrame(Strings.getString("muffin.title"));
 	    monitor = new CanvasMonitor(this);
 	    gui();
 	}
@@ -133,60 +127,59 @@ public class Main
     {
 	menuBar = new MenuBar();
 
-	Menu menu = new Menu("File");
+	Menu menu = new Menu(Strings.getString("menu.file"));
 	//menu.setFont(new Font("Helvetica", Font.BOLD, 12));
 	MenuItem item;
-	item = new MenuItem("Disable Filtering");
+	item = new MenuItem(Strings.getString("menu.file.disable"));
 	item.setActionCommand("doDisable");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("Suspend");
+	item = new MenuItem(Strings.getString("menu.file.suspend"));
 	item.setActionCommand("doSuspend");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("Quit");
+	item = new MenuItem(Strings.getString("menu.file.quit"));
 	item.setActionCommand("doQuit");
 	item.addActionListener(this);
-	//item.setFont(new Font("Helvetica", Font.BOLD, 12));
 	menu.add(item);
 	menuBar.add(menu);
 
-	menu = new Menu("Edit");
-	item = new MenuItem("Configurations...");
+	menu = new Menu(Strings.getString("menu.edit"));
+	item = new MenuItem(Strings.getString("menu.edit.configs"));
 	item.setActionCommand("doConfigs");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("Filters...");
+	item = new MenuItem(Strings.getString("menu.edit.filters"));
 	item.setActionCommand("doFilters");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("Options...");
+	item = new MenuItem(Strings.getString("menu.edit.options"));
 	item.setActionCommand("doOptions");
 	item.addActionListener(this);
 	menu.add(item);
 	menuBar.add(menu);
 
-	menu = new Menu("View");
-	item = new MenuItem("Connections...");
+	menu = new Menu(Strings.getString("menu.view"));
+	item = new MenuItem(Strings.getString("menu.view.connections"));
 	item.setActionCommand("doConnections");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("Regex Tester...");
+	item = new MenuItem(Strings.getString("menu.view.regex"));
 	item.setActionCommand("doRegex");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("Threads...");
+	item = new MenuItem(Strings.getString("menu.view.threads"));
 	item.setActionCommand("doThreads");
 	item.addActionListener(this);
 	menu.add(item);
 	menuBar.add(menu);
 
-	menu = new Menu("Help");
-	item = new MenuItem("About Muffin...");
+	menu = new Menu(Strings.getString("menu.help"));
+	item = new MenuItem(Strings.getString("menu.help.about"));
 	item.setActionCommand("doAbout");
 	item.addActionListener(this);
 	menu.add(item);
-	item = new MenuItem("License...");
+	item = new MenuItem(Strings.getString("menu.help.license"));
 	item.setActionCommand("doLicense");
 	item.addActionListener(this);
 	menu.add(item);
@@ -234,21 +227,21 @@ public class Main
 	{
 	    MenuItem item = (MenuItem) event.getSource();
 	    item.setActionCommand("doEnable");
-	    item.setLabel("Enable Filtering");
+	    item.setLabel(Strings.getString("menu.file.enable"));
 	    options.putBoolean("muffin.passthru", true);
 	}
 	else if ("doEnable".equals(arg))
 	{
 	    MenuItem item = (MenuItem) event.getSource();
 	    item.setActionCommand("doDisable");
-	    item.setLabel("Disable Filtering");
+	    item.setLabel(Strings.getString("menu.file.disable"));
 	    options.putBoolean("muffin.passthru", false);
 	}
 	else if ("doSuspend".equals(arg))
 	{
 	    MenuItem item = (MenuItem) event.getSource();
 	    item.setActionCommand("doResume");
-	    item.setLabel("Resume");
+	    item.setLabel(Strings.getString("menu.file.resume"));
 	    server.suspend();
 	    monitor.suspend();
 	}
@@ -256,7 +249,7 @@ public class Main
 	{
 	    MenuItem item = (MenuItem) event.getSource();
 	    item.setActionCommand("doSuspend");
-	    item.setLabel("Suspend");
+	    item.setLabel(Strings.getString("menu.file.suspend"));
 	    server.resume();
 	    monitor.resume();
 	}
@@ -724,6 +717,5 @@ public class Main
             e.printStackTrace();
 	    System.exit(1);
         }
-	System.out.println("done");
     }
 }

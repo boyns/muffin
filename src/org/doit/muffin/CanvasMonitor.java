@@ -1,4 +1,4 @@
-/* $Id: CanvasMonitor.java,v 1.7 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: CanvasMonitor.java,v 1.8 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,6 +36,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import org.doit.util.*;
 
 /**
  * Graphical display of what Muffin is doing.
@@ -62,7 +63,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
     CanvasMonitor(Main parent)
     {
 	this.parent = parent;
-	
+
 	handlers = new Vector(100);
 
 	font = Main.getOptions().getFont("muffin.smallfont");
@@ -72,7 +73,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	colorTable = new Hashtable();
 	colorTable.put("text/html", Color.cyan);
 	colorTable.put("text/plain", Color.cyan);
-	
+
 	colorTable.put("image/gif", Color.green);
 	colorTable.put("image/jpeg", Color.green);
 	colorTable.put("image/jpg", Color.green);
@@ -83,7 +84,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	colorTable.put("audio/x-wav", Color.orange);
 	colorTable.put("audio/x-aiff", Color.orange);
 	colorTable.put("audio/x-realaudio", Color.orange);
-	
+
 	colorTable.put("secure", Color.yellow);
 	colorTable.put("default", Color.white);
 
@@ -112,7 +113,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 		}
 		painting = true;
 	    }
-		
+
 	    while (handlers.size() > 0)
 	    {
 		try
@@ -212,7 +213,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
     {
 	paint(g);
     }
-    
+
     public void paint(Graphics g)
     {
         Dimension d = getSize();
@@ -220,7 +221,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	draw(dbuf.getGraphics());
 	g.drawImage(dbuf, 0, 0, this);
     }
-    
+
     /**
      * Draw the status of all handlers using colored
      * progress bars.
@@ -246,9 +247,9 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	    g.setColor(c);
 	    g.draw3DRect(2, 2, d.width-4, d.height-4, false);
 	}
-	
+
 	int y = insets.top;
-	
+
 	Enumeration e = handlers.elements();
  	while (e.hasMoreElements())
  	{
@@ -273,7 +274,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 		    buf.append(contentType);
 		    buf.append(" ");
 		}
-		
+
 		if (totalBytes > 0)
 		{
 		    double percentComplete = (double)currentBytes/totalBytes;
@@ -284,16 +285,16 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 		    }
 		    meterLength = (int)(percentComplete*meterMax);
 		    buf.append((int)(percentComplete*100));
-		    buf.append("% of ");
+		    buf.append('%').append(Strings.getString("monitor.of")).append(' ');
 		    if (totalBytes >= 1024)
 		    {
 			buf.append(totalBytes/1024);
-			buf.append("k");
+			buf.append(Strings.getString("monitor.k"));
 		    }
 		    else
 		    {
 			buf.append(totalBytes);
-			buf.append(" bytes");
+			buf.append(' ').append(Strings.getString("monitor.bytes"));
 		    }
 		}
 		else
@@ -301,12 +302,12 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 		    if (currentBytes >= 1024)
 		    {
 			buf.append(currentBytes/1024);
-			buf.append("k");
+			buf.append(Strings.getString("monitor.k"));
 		    }
 		    else
 		    {
 			buf.append(currentBytes);
-			buf.append(" bytes");
+			buf.append(' ').append(Strings.getString("monitor.bytes"));
 		    }
 		}
 
@@ -340,7 +341,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	    }
 	    else if (request != null)
 	    {
-		buf.append("Contacting ");
+		buf.append(Strings.getString("monitor.contacting")).append(' ');
 		String url = request.getURL();
 
 		if (request.getCommand().equals("CONNECT"))
@@ -379,7 +380,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	    }
 
 	    boolean isSecure = request.getCommand().equals("CONNECT");
-	    
+
 	    if (minimized)
 	    {
 		g.setColor(Main.getOptions().getColor("muffin.fg"));
@@ -390,7 +391,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 		g.setColor(Main.getOptions().getColor("muffin.bg"));
 		g.fill3DRect(insets.left, y, meterMax, h, true);
 	    }
-	    
+
 	    if (isSecure)
 	    {
 		g.setColor((Color) colorTable.get("secure"));
@@ -418,7 +419,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 		g.setColor(Color.black);
 		g.drawString(buf.toString(), insets.left + 5, y+h-fontMetrics.getMaxDescent());
 	    }
-	    
+
 	    y += h + (minimized ? 2 : 3);
 	}
     }
@@ -431,7 +432,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 	    parent.minimize(minimized);
 	}
     }
-    
+
     public void mouseEntered(MouseEvent e)
     {
     }
@@ -443,7 +444,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
     public void mousePressed(MouseEvent e)
     {
     }
-          
+
     public void mouseReleased(MouseEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: SecretAgentFrame.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: SecretAgentFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,17 +25,18 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class SecretAgentFrame extends MuffinFrame implements ActionListener, ItemListener, WindowListener
 {
     Prefs prefs;
     SecretAgent parent;
-    
+
     TextField input = null;
-    
+
     public SecretAgentFrame(Prefs prefs, SecretAgent parent)
     {
-	super("Muffin: Secret Agent");
+	super(Strings.getString("SecretAgent.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -78,13 +79,13 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
 	    "NCSA_Mosaic/2.7b5(X11;SunOS 5.5 sun4m)",
 	    "PRODIGY-WB 3.1d",
 	};
-	
+
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
 	GridBagConstraints c;
         panel.setLayout(layout);
 
-	panel.add(new Label("User-Agent:", Label.RIGHT));
+	panel.add(new Label(Strings.getString("SecretAgent.userAgent")+":", Label.RIGHT));
 
 	input = new TextField(32);
 	input.setText(prefs.getString("SecretAgent.userAgent"));
@@ -94,7 +95,7 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
 	layout.setConstraints(input, c);
 	panel.add(input);
 
-	panel.add(new Label("Sample Agents:", Label.RIGHT));
+	panel.add(new Label(Strings.getString("SecretAgent.samples")+":", Label.RIGHT));
 
 	Choice choice = new Choice();
 	choice.addItemListener(this);
@@ -102,37 +103,37 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
 	{
 	    choice.addItem(sampleAgents[i]);
 	}
-	
+
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(choice, c);
 	panel.add(choice);
-	
+
 	add("Center", panel);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -147,7 +148,7 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("SecretAgent.userAgent", input.getText());
@@ -169,28 +170,28 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: PreviewDialog.java,v 1.6 2000/02/10 20:08:27 boyns Exp $ */
+/* $Id: PreviewDialog.java,v 1.7 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 import java.io.*;
 
 class PreviewDialog extends Dialog implements ActionListener, WindowListener
@@ -34,14 +35,14 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
     TextArea text = null;
     Image image = null;
     Frame frame = null;
-    
+
     PreviewDialog(Frame frame, Request request, Reply reply, byte content[])
     {
-	super(frame, "Muffin: Preview " + request.getURL(), true);
+	super(frame, Strings.getString("Preview.title") + " " + request.getURL(), true);
 
 	this.content = content;
 	this.frame = frame;
-	    
+
 	if (reply.getContentType().startsWith("text"))
 	{
 	    text = new TextArea();
@@ -59,16 +60,16 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
 	Button b;
-	b = new Button("Accept");
+	b = new Button(Strings.getString("Preview.accept"));
 	b.setActionCommand("doAccept");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Reject");
+	b = new Button(Strings.getString("Preview.reject"));
 	b.setActionCommand("doReject");
 	b.addActionListener(this);
 	buttonPanel.add(b);
         // Also propose to save the content as a file:
-        b = new Button("Save as");
+        b = new Button(Strings.getString("Preview.save"));
         b.setActionCommand("doSaveAs");
         b.addActionListener(this);
 	buttonPanel.add(b);
@@ -92,7 +93,7 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doAccept".equals(arg))
 	{
 	    accepted = true;
@@ -111,7 +112,7 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
         {
 	    try
 	    {
-		FileDialog dialog = new FileDialog(frame, "Save Content");
+		FileDialog dialog = new FileDialog(frame, Strings.getString("Preview.save"));
 		dialog.show();
 		if ( dialog.getFile() != null )
 		{
@@ -120,7 +121,8 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
 		    fos.write(content);
 		    fos.close();
 		}
-	    } catch (IOException exc)
+	    }
+            catch (IOException exc)
 	    {
 		// too bad!
 	    }
@@ -130,28 +132,28 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

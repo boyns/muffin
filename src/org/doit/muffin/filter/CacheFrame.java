@@ -26,9 +26,10 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
-public class CacheFrame  
-extends MuffinFrame 
+public class CacheFrame
+extends MuffinFrame
 implements ActionListener, WindowListener
 {
     static final String Name = "Cache";
@@ -36,25 +37,25 @@ implements ActionListener, WindowListener
     final String SaveCommand = "doSave";
     final String CloseCommand = "doClose";
     final String HelpCommand = "doHelp";
-    
+
     final int TextFieldSize = 50;
-    
+
     private Prefs prefs;
     private FilterFactory factory;
-    
+
     final String BrowseCacheDirCommand = "doBrowseCacheDir";
     final String BrowseRulesCommand = "doBrowseRules";
-    
+
     private TextField cacheDirectory = null;
     private TextField patternsFilename = null;
     private TextArea patterns = null;
     private Checkbox checkForUpdatesOncePerSession = null;
     private Checkbox checkForUpdatesAlways = null;
     private Checkbox checkForUpdatesNever = null;
-    
+
     public CacheFrame(Prefs prefs, Cache factory)
     {
-	super("Muffin: " + Name);
+	super(Strings.getString("Cache.title"));
 
 	this.prefs = prefs;
 	this.factory = factory;
@@ -64,30 +65,30 @@ implements ActionListener, WindowListener
         add("South", getSouthPanel ());
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 	show();
     }
-    
+
     public Prefs getPrefs () {
         return prefs;
     }
-    
+
     public FilterFactory getFactory () {
         return factory;
     }
-    
+
     protected Panel getNorthPanel () {
 
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
-        
+
         // this blank row is needed to keep the first real row from being trimmed from the display area
         addBlankRow (panel, layout);
 
-        Label cacheDirectoryLabel = new Label("Cache directory:", Label.RIGHT);
+        Label cacheDirectoryLabel = new Label(Strings.getString("Cache.cacheDirectory")+":", Label.RIGHT);
 	layout.setConstraints(cacheDirectoryLabel, getGridBagNext ());
 	panel.add(cacheDirectoryLabel);
 
@@ -107,24 +108,24 @@ implements ActionListener, WindowListener
         CheckboxGroup checkRadioButtons = new CheckboxGroup ();
         Panel checkPanel = new Panel ();
         checkPanel.setLayout(new FlowLayout ());
-        checkPanel.add (new Label ("Check for updates:", Label.RIGHT));
-        
-	checkForUpdatesOncePerSession = new Checkbox ("Once per session", 
-                                                      checkRadioButtons, 
+        checkPanel.add (new Label (Strings.getString("Cache.checkForUpdates")+":", Label.RIGHT));
+
+	checkForUpdatesOncePerSession = new Checkbox (Strings.getString("Cache.checkForUpdates.oncePerSession"),
+                                                      checkRadioButtons,
                                                       getCache(). checkForUpdatesOncePerSession ());
         checkPanel.add (checkForUpdatesOncePerSession);
-	checkForUpdatesAlways = new Checkbox ("Always", 
-                                              checkRadioButtons, 
+	checkForUpdatesAlways = new Checkbox (Strings.getString("Cache.checkForUpdates.always"),
+                                              checkRadioButtons,
                                               getCache(). checkForUpdatesAlways ());
         checkPanel.add (checkForUpdatesAlways);
-	checkForUpdatesNever = new Checkbox ("Never", 
-                                             checkRadioButtons, 
+	checkForUpdatesNever = new Checkbox (Strings.getString("Cache.checkForUpdates.never"),
+                                             checkRadioButtons,
                                              getCache(). checkForUpdatesNever ());
         checkPanel.add (checkForUpdatesNever);
-        
+
 	layout.setConstraints(checkPanel, getGridBagEndRow ());
 	panel.add(checkPanel);
-	
+
         /*
         Label noCacheFileLabel = new Label("\"Do not cache\" patterns file:", Label.RIGHT);
 	layout.setConstraints(noCacheFileLabel, getGridBagNext ());
@@ -144,13 +145,13 @@ implements ActionListener, WindowListener
 
         return panel;
     }
-    
+
     protected Panel getCenterPanel () {
-        
+
         /*
 	Panel panel = new Panel();
 	panel.setLayout(new GridLayout(2, 1));
-        
+
         panel.add (getNoCachePanel ());
         panel.add (getMessageLogPanel ());
 
@@ -158,24 +159,24 @@ implements ActionListener, WindowListener
         */
         return getMessageLogPanel (getMessages());
     }
-    
+
     protected Panel getNoCachePanel () {
-        
+
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
-        
+
         addBlankRow (panel, layout);
 
-	Label l = new Label("Do not cache these patterns");
+	Label l = new Label(Strings.getString("Cache.noCachePatterns"));
 	c = new GridBagConstraints();
 	// c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.CENTER;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	patterns = new TextArea();
 	c = new GridBagConstraints();
 	c.gridheight = 3;
@@ -195,45 +196,45 @@ implements ActionListener, WindowListener
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
-        
+
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand(ApplyCommand);
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand(SaveCommand);
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand(CloseCommand);
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand(HelpCommand);
 	b.addActionListener(this);
 	buttonPanel.add(b);
-        
+
         return buttonPanel;
     }
-    
+
     protected Panel getMessageLogPanel (MessageArea messages) {
-        
+
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
 
         addBlankRow (panel, layout);
-        
-	Label l = new Label("Message Log");
+
+	Label l = new Label(Strings.getString("Cache.messages"));
 	c = new GridBagConstraints();
 	// c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.CENTER;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	c = new GridBagConstraints();
 	// c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -243,33 +244,33 @@ implements ActionListener, WindowListener
 	panel.add(messages);
 
         return panel;
-    }    
+    }
 
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }
@@ -278,7 +279,7 @@ implements ActionListener, WindowListener
     {
 	String arg = event.getActionCommand();
         // System.out.println ("action:" + arg); //DEBUG
-	
+
 	if (BrowseCacheDirCommand.equals(arg))
 	{
             browseCacheDir ();
@@ -300,7 +301,7 @@ implements ActionListener, WindowListener
             help ();
 	}
     }
-    
+
     private void browseCacheDir () {
         FileDialog dialog = new FileDialog(this, "Select cache directory");
         dialog.show();
@@ -312,58 +313,58 @@ implements ActionListener, WindowListener
         }
         // else System.out.println ("dialog is null"); //DEBUG
     }
-    
+
     private void apply () {
         prefs.putString(Cache.CacheDirectory, cacheDirectory.getText());
         prefs.putBoolean(Cache.CheckForUpdatesOncePerSession, checkForUpdatesOncePerSession.getState ());
         prefs.putBoolean(Cache.CheckForUpdatesAlways, checkForUpdatesAlways.getState ());
         prefs.putBoolean(Cache.CheckForUpdatesNever, checkForUpdatesNever.getState ());
     }
-    
+
     private void save () {
         apply ();
         getCache ().save();
     }
-    
+
     private void close () {
 	setVisible(false);
     }
-    
+
     private void help () {
         new HelpFrame(Name);
     }
-    
+
     public Insets getInsets () {
         return new Insets(0, 10, 5, 10);
     }
-    
+
     private Cache getCache () {
         return (Cache) getFactory ();
     }
-    
+
     private MessageArea getMessages() {
         return getCache ().getMessages ();
     }
-    
+
     protected GridBagConstraints getGridBagNext () {
 	GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         return c;
     }
-    
+
     protected GridBagConstraints getGridBagEndRow () {
 	GridBagConstraints c = getGridBagNext ();
 	c.gridwidth = GridBagConstraints.REMAINDER;
         return c;
     }
-    
+
     protected GridBagConstraints getGridBagEndColumn () {
 	GridBagConstraints c = getGridBagNext ();
 	c.gridheight = GridBagConstraints.REMAINDER;
         return c;
     }
-    
+
     protected GridBagConstraints getGridBagAnchor (int anchor) {
 	GridBagConstraints c = getGridBagNext ();
 	c.anchor = GridBagConstraints.NORTHWEST;
@@ -390,5 +391,5 @@ implements ActionListener, WindowListener
 	layout.setConstraints(label, c);
 	panel.add(label);
     }
-    
+
 }

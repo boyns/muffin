@@ -1,4 +1,4 @@
-/* $Id: HelpFrame.java,v 1.6 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: HelpFrame.java,v 1.7 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,12 +27,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import java.io.InputStream;
+import org.doit.util.*;
 
 public class HelpFrame extends MuffinFrame implements ActionListener, WindowListener
 {
     public HelpFrame(String helpFile)
     {
-	super("Help: " + helpFile);
+	super(Strings.getString("help.title", helpFile));
 
 	TextArea text = new TextArea();
 	text.setEditable(false);
@@ -58,7 +59,7 @@ public class HelpFrame extends MuffinFrame implements ActionListener, WindowList
 	}
 	else
 	{
-	    text.append("No help available.");
+	    text.append(Strings.getString("help.none"));
 	}
 
 	add("Center", text);
@@ -66,7 +67,7 @@ public class HelpFrame extends MuffinFrame implements ActionListener, WindowList
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 1));
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);

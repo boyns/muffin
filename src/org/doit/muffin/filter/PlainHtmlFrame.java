@@ -25,16 +25,17 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
-public class PlainHtmlFrame 
-extends MuffinFrame 
+public class PlainHtmlFrame
+extends MuffinFrame
 implements ActionListener, WindowListener
 {
     Prefs prefs;
     PlainHtml parent;
     Checkbox noJava, noJavaScript, noVBScript, noOtherScript;
     Checkbox noEncodedScript, noEvalInScript;
-    
+
     public PlainHtmlFrame (Prefs prefs, PlainHtml parent)
     {
 	super ("Muffin: PlainHtml");
@@ -46,34 +47,34 @@ implements ActionListener, WindowListener
 	GridBagLayout layout = new GridBagLayout ();
 	panel.setLayout (layout);
 	GridBagConstraints c;
-        
+
         // if we need any controls, they go here
-	
+
 	add ("North", panel);
-	
+
 	parent.messages.setEditable (false);
 	add ("Center", parent.messages);
 
 	Button b;
 	Panel buttonPanel = new Panel ();
 	buttonPanel.setLayout (new GridLayout (1, 5));
-	b = new Button ("Apply");
+	b = new Button (Strings.getString("apply"));
 	b.setActionCommand ("doApply");
 	b.addActionListener (this);
 	buttonPanel.add (b);
-	b = new Button ("Save");
+	b = new Button (Strings.getString("save"));
 	b.setActionCommand ("doSave");
 	b.addActionListener (this);
 	buttonPanel.add (b);
-	b = new Button ("Clear");
+	b = new Button (Strings.getString("clear"));
 	b.setActionCommand ("doClear");
 	b.addActionListener (this);
 	buttonPanel.add (b);
-	b = new Button ("Close");
+	b = new Button (Strings.getString("close"));
 	b.setActionCommand ("doClose");
 	b.addActionListener (this);
 	buttonPanel.add (b);
-	b = new Button ("Help");
+	b = new Button (Strings.getString("help"));
 	b.setActionCommand ("doHelp");
 	b.addActionListener (this);
 	buttonPanel.add (b);
@@ -81,7 +82,7 @@ implements ActionListener, WindowListener
 	add ("South", buttonPanel);
 
 	addWindowListener (this);
-	
+
 	pack ();
 	setSize (getPreferredSize ());
 
@@ -91,7 +92,7 @@ implements ActionListener, WindowListener
     public void actionPerformed (ActionEvent event)
     {
 	String arg = event.getActionCommand ();
-	
+
 	if ("doApply".equals (arg))
 	{
             // save any prefs here
@@ -118,28 +119,28 @@ implements ActionListener, WindowListener
     public void windowActivated (WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated (WindowEvent e)
     {
     }
-  
+
     public void windowClosing (WindowEvent e)
     {
 	setVisible (false);
     }
-  
+
     public void windowClosed (WindowEvent e)
     {
     }
-  
+
     public void windowIconified (WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified (WindowEvent e)
     {
     }
-  
+
     public void windowOpened (WindowEvent e)
     {
     }

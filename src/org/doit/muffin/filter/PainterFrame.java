@@ -1,4 +1,4 @@
-/* $Id: PainterFrame.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: PainterFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,7 +28,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import org.doit.muffin.*;
-import org.doit.util.ColorSample;
+import org.doit.util.*;
 
 public class PainterFrame extends MuffinFrame implements ActionListener, WindowListener, ItemListener
 {
@@ -37,11 +37,14 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
     TextField bgcolor, link, alink, vlink, background, text;
     ColorSample bgcolorSample, linkSample, alinkSample, vlinkSample, textSample;
     Hashtable styleTable = null;
-    String styles[] = { "None", "Dark", "Light", "Christmas" };
-	
+    String styles[] = { Strings.getString("Painter.none"),
+                        Strings.getString("Painter.dark"),
+                        Strings.getString("Painter.light"),
+                        Strings.getString("Painter.xmas") };
+
     public PainterFrame(Prefs prefs, Painter parent)
     {
-	super("Muffin: Painter");
+	super(Strings.getString("Painter.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -52,7 +55,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	GridBagConstraints c;
 	Label l;
 
-	l = new Label("Sample Colors:", Label.RIGHT);
+	l = new Label(Strings.getString("Painter.samples")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -70,7 +73,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	layout.setConstraints(choice, c);
 	panel.add(choice);
 
-	l = new Label("Background Image:", Label.RIGHT);
+	l = new Label(Strings.getString("Painter.background")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -82,8 +85,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	layout.setConstraints(background, c);
 	panel.add(background);
 
-
-	l = new Label("Background Color:", Label.RIGHT);
+	l = new Label(Strings.getString("Painter.bgcolor")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -100,9 +102,9 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(bgcolorSample, c);
 	panel.add(bgcolorSample);
-	
-	
-	l = new Label("Text Color:", Label.RIGHT);
+
+
+	l = new Label(Strings.getString("Painter.text")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -121,7 +123,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	panel.add(textSample);
 
 
-	l = new Label("Link Color:", Label.RIGHT);
+	l = new Label(Strings.getString("Painter.link")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -140,7 +142,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	panel.add(linkSample);
 
 
-	l = new Label("Visited Link Color:", Label.RIGHT);
+	l = new Label(Strings.getString("Painter.vlink")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -151,7 +153,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	c = new GridBagConstraints();
 	layout.setConstraints(vlink, c);
 	panel.add(vlink);
-	
+
 	vlinkSample = new ColorSample(prefs.getString("Painter.vlink"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -159,7 +161,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	panel.add(vlinkSample);
 
 
-	l = new Label("Active Link Color:", Label.RIGHT);
+	l = new Label(Strings.getString("Painter.alink")+":", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
@@ -182,19 +184,19 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -202,7 +204,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -241,7 +243,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
 	v.addElement("#551a8b"); // vlink
 	v.addElement("#ff0000"); // alink
 	styleTable.put(styles[2], v);
-	
+
 	/* Christmas */
 	v = new Vector();
 	v.addElement("#ffffff"); // bgcolor
@@ -264,7 +266,7 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("Painter.bgcolor", bgcolor.getText());
@@ -323,28 +325,28 @@ public class PainterFrame extends MuffinFrame implements ActionListener, WindowL
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: CookieMonsterFrame.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: CookieMonsterFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,17 +24,19 @@ package org.doit.muffin.filter;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class CookieMonsterFrame extends MuffinFrame implements ActionListener, WindowListener
 {
     Prefs prefs;
     CookieMonster parent;
     Checkbox eatReply, eatRequest;
-    
+
     public CookieMonsterFrame(Prefs prefs, CookieMonster parent)
     {
-	super("Muffin: Cookie Monster");
+	super(Strings.getString("CookieMonster.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -46,23 +48,23 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
 	panel = new Panel();
 	layout = new GridBagLayout();
 	panel.setLayout(layout);
-	
-	eatRequest = new Checkbox("Eat Request Cookies");
+
+	eatRequest = new Checkbox(Strings.getString("CookieMonster.eatReplyCookies"));
 	eatRequest.setState(prefs.getBoolean("CookieMonster.eatRequestCookies"));
-	eatReply = new Checkbox("Eat Reply Cookies");
+	eatReply = new Checkbox(Strings.getString("CookieMonster.eatReplyCookies"));
 	eatReply.setState(prefs.getBoolean("CookieMonster.eatReplyCookies"));
-	
+
 	c = new GridBagConstraints();
 	layout.setConstraints(eatRequest, c);
 	panel.add(eatRequest);
-	
+
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(eatReply, c);
 	panel.add(eatReply);
 
 	add("North", panel);
-	
+
 	parent.messages.setEditable(false);
 	//parent.messages.setFont(new Font("Fixed", Font.PLAIN, 10));
 	add("Center", parent.messages);
@@ -70,23 +72,23 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -94,7 +96,7 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -104,7 +106,7 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putBoolean("CookieMonster.eatReplyCookies", eatReply.getState());
@@ -131,28 +133,28 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

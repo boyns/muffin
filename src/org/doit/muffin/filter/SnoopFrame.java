@@ -1,4 +1,4 @@
-/* $Id: SnoopFrame.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: SnoopFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,15 +25,16 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class SnoopFrame extends MuffinFrame implements ActionListener, WindowListener
 {
     Prefs prefs;
     Snoop parent;
-    
+
     public SnoopFrame(Prefs prefs, Snoop parent)
     {
-	super("Muffin: Snoop");
+	super(Strings.getString("Snoop.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -44,15 +45,15 @@ public class SnoopFrame extends MuffinFrame implements ActionListener, WindowLis
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
 	Button b;
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -69,7 +70,7 @@ public class SnoopFrame extends MuffinFrame implements ActionListener, WindowLis
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doClose".equals(arg))
 	{
 	    setVisible(false);
@@ -87,28 +88,28 @@ public class SnoopFrame extends MuffinFrame implements ActionListener, WindowLis
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -16,16 +16,19 @@
     <javac srcdir="${srcdir}"
            destdir="${classes}"
 	   includes="**/*.java"
+	   deprecation="false"
+	   debug="true"
            classpath="${classpath}"/>
     <copy todir="${classes}">
-      <fileset dir="${srcdir}">
-        <include name="**/*.properties"/>
-        <include name="**/*.jpg"/>
-      </fileset>
-      <fileset dir="doc/filter">
-        <include name="**/*.txt"/>
-      </fileset>
+      <fileset dir="${srcdir}" includes="**/*.properties"/>
     </copy>
+    <copy todir="${classes}/images">
+      <fileset dir="images" includes="*.jpg"/>
+    </copy>
+    <copy todir="${classes}/doc">
+      <fileset dir="doc/filter" includes="*.txt"/>
+    </copy>
+    <copy file="${basedir}/COPYING" tofile="${classes}/doc/COPYING.txt"/>
   </target>
 
   <target name="clean" depends="init">

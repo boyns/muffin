@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.12 2000/03/29 15:13:05 boyns Exp $ */
+/* $Id: Configuration.java,v 1.13 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,6 +30,7 @@ import java.awt.Label;
 import java.awt.Choice;
 import gnu.regexp.RE;
 import gnu.regexp.REException;
+import org.doit.util.*;
 
 class Configuration extends Prefs
 {
@@ -40,7 +41,7 @@ class Configuration extends Prefs
     Vector autoConfigNames = null;
     ConfigurationFrame frame = null;
     Vector configurationListeners = null;
-    
+
     Configuration()
     {
 	autoConfigPatterns = new Vector();
@@ -64,7 +65,7 @@ class Configuration extends Prefs
 	if (obj instanceof Label)
 	{
 	    Label label = (Label) obj;
-	    label.setText("Current Configuration: " + getCurrent());
+	    label.setText(Strings.getString("config.current", getCurrent()));
 	    label.doLayout();
 	}
 	else if (obj instanceof Choice)
@@ -97,7 +98,7 @@ class Configuration extends Prefs
     {
 	return defaultConfig;
     }
-    
+
     synchronized void setCurrent(String name)
     {
 	if (!name.equals(currentConfig))
@@ -122,7 +123,7 @@ class Configuration extends Prefs
 	{
 	    name = name + ".conf";
 	}
-	System.out.println("Creating new configuration: " + name);
+	//System.out.println("Creating new configuration: " + name);
 	UserPrefs prefs = new UserPrefs(name);
 	put(name, prefs);
 	updateConfigurationListeners();
@@ -180,7 +181,7 @@ class Configuration extends Prefs
 	    System.out.println("Can't delete default configuration");
 	    return false;
 	}
-	
+
 	remove(name);
 
 	if (name.equals(getCurrent()))
@@ -195,7 +196,7 @@ class Configuration extends Prefs
     {
 	autoConfigPatterns = new Vector();
 	autoConfigNames = new Vector();
-	
+
 	try
 	{
 	    BufferedReader in = new BufferedReader(reader);
@@ -204,7 +205,7 @@ class Configuration extends Prefs
 	    {
 		StringTokenizer st = new StringTokenizer(s, " \t");
 		String pattern, name;
-		
+
 		try
 		{
 		    pattern = st.nextToken();
@@ -234,7 +235,7 @@ class Configuration extends Prefs
     void load()
     {
 	InputStream in = null;
-	
+
 	try
 	{
 	    UserFile file = getAutoConfigFile();

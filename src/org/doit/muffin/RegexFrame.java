@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.6 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: RegexFrame.java,v 1.7 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,6 +22,7 @@
  */
 package org.doit.muffin;
 
+import org.doit.util.*;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
@@ -51,7 +52,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 
     RegexFrame()
     {
-	super("Muffin: Regular Expression Tester");
+	super(Strings.getString("regex.title"));
 
 	Button b;
 	Panel panel = new Panel();
@@ -59,13 +60,13 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
         panel.setLayout(layout);
 	GridBagConstraints c;
 
-	Label l = new Label("Regular Expression:", Label.RIGHT);
+	Label l = new Label(Strings.getString("regex.label")+":", Label.RIGHT);
 	panel.add(l);
 
 	pattern = new TextField(32);
 	panel.add(pattern);
 
-	b = new Button("Match");
+	b = new Button(Strings.getString("regex.match"));
 	b.setActionCommand("doMatch");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -78,16 +79,16 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 	text = new TextArea();
 	text.setEditable(true);
 	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
-	text.setText("Insert sample text here...");
+	text.setText(Strings.getString("regex.text"));
 	add("Center", text);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 2));
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);

@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.8 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.9 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -45,7 +45,7 @@ class ConfigurationFrame extends MuffinFrame
 
     ConfigurationFrame(Configuration configs)
     {
-	super("Muffin: Configurations");
+	super(Strings.getString("config.title"));
 
 	this.configs = configs;
 
@@ -68,7 +68,7 @@ class ConfigurationFrame extends MuffinFrame
 	layout.setConstraints(currentLabel, c);
 	panel.add(currentLabel);
 
-	l = new Label("Known Configurations");
+	l = new Label(Strings.getString("config.available"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -81,7 +81,7 @@ class ConfigurationFrame extends MuffinFrame
 	layout.setConstraints(configNamesList, c);
 	panel.add(configNamesList);
 
-	b = new Button("New...");
+	b = new Button(Strings.getString("config.new"));
 	b.setActionCommand("doNew");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -90,7 +90,7 @@ class ConfigurationFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Select");
+	b = new Button(Strings.getString("config.select"));
 	b.setActionCommand("doSelect");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -99,7 +99,7 @@ class ConfigurationFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Rescan");
+	b = new Button(Strings.getString("config.scan"));
 	b.setActionCommand("doRescan");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -108,7 +108,7 @@ class ConfigurationFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Delete");
+	b = new Button(Strings.getString("config.delete"));
 	b.setActionCommand("doDelete");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -117,13 +117,13 @@ class ConfigurationFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	l = new Label("Automatic Configuration");
+	l = new Label(Strings.getString("config.auto"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
 
-	b = new Button("Example");
+	b = new Button(Strings.getString("config.example"));
 	b.setActionCommand("doExample");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -142,19 +142,19 @@ class ConfigurationFrame extends MuffinFrame
 	add("Center", panel);
 
 	Panel buttonPanel = new Panel();
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Reload");
+	b = new Button(Strings.getString("reload"));
 	b.setActionCommand("doReload");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -233,7 +233,7 @@ class ConfigurationFrame extends MuffinFrame
 	}
 	else if ("doNew".equals(arg))
 	{
-	    TextDialog dialog = new TextDialog(this, "New configuration name:");
+	    TextDialog dialog = new TextDialog(this, Strings.getString("config.new.name") + ":");
 	    dialog.show();
 	    String name = dialog.getAnswer();
 	    if (name != null && name.length() > 0)
@@ -253,7 +253,7 @@ class ConfigurationFrame extends MuffinFrame
 		{
 		    updateConfigNamesList();
 
-		    YesNoDialog dialog = new YesNoDialog(this, "Delete the " + name + " file?");
+		    YesNoDialog dialog = new YesNoDialog(this, Strings.getString("config.delete.file", name));
 		    dialog.show();
 		    if (dialog.isYes())
 		    {
@@ -300,7 +300,7 @@ class ConfigurationFrame extends MuffinFrame
 		}
 		else
 		{
-		    Dialog d = new ErrorDialog(this, "Can't save to " + file.getName());
+                    Dialog d = new ErrorDialog(this, Strings.getString("config.error.save", file.getName()));
 		    d.show();
 		    d.dispose();
 		}

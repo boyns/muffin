@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.12 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.13 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -35,6 +35,7 @@ import java.awt.image.*;
 import java.net.URL;
 import java.util.Vector;
 import gnu.regexp.*;
+import org.doit.util.*;
 
 public class MuffinFrame extends Frame
 {
@@ -56,13 +57,13 @@ public class MuffinFrame extends Frame
 
     void moveNearMuffin()
     {
-	if (getTitle().equals("Muffin"))
+	if (getTitle().equals(Strings.getString("muffin.title")))
 	{
 	    return;
 	}
 
 	Dimension screenSize = getToolkit().getScreenSize();
-	MuffinFrame muffin = getFrame("Muffin");
+	MuffinFrame muffin = getFrame(Strings.getString("muffin.title"));
 	Dimension muffinSize = muffin.getSize();
 	Point muffinLocation = muffin.getLocationOnScreen();
 	Dimension size = getSize();

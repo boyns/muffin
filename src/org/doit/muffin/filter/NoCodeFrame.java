@@ -1,4 +1,4 @@
-/* $Id: NoCodeFrame.java,v 1.1 1999/03/12 15:47:44 boyns Exp $ */
+/* $Id: NoCodeFrame.java,v 1.2 2003/01/08 18:59:52 boyns Exp $ */
 
 /* Based upon DecafFrame by Mark R. Boyns so here is his copyright notice: */
 
@@ -33,6 +33,7 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowListener
 {
@@ -40,7 +41,7 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
     NoCode parent;
     Checkbox noJava, noJavaScript, noVBScript, noOtherScript;
     Checkbox noEncodedScript, noEvalInScript;
-    
+
     public NoCodeFrame(Prefs prefs, NoCode parent)
     {
 	super("Muffin: NoCode");
@@ -53,24 +54,24 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
 	panel.setLayout(layout);
 	GridBagConstraints c;
 
-	noJavaScript = new Checkbox("No JavaScript");
+	noJavaScript = new Checkbox(Strings.getString("NoCode.noJavaScript"));
 	noJavaScript.setState(prefs.getBoolean("NoCode.noJavaScript"));
 
-	noVBScript = new Checkbox("No VBScript");
+	noVBScript = new Checkbox(Strings.getString("NoCode.noVBScript"));
 	noVBScript.setState(prefs.getBoolean("NoCode.noVBScript"));
 
-	noOtherScript = new Checkbox("No Other Script Language");
+	noOtherScript = new Checkbox(Strings.getString("NoCode.noOtherScript"));
 	noOtherScript.setState(prefs.getBoolean("NoCode.noOtherScript"));
 
-	noEncodedScript = new Checkbox("No Encoded Script");
+	noEncodedScript = new Checkbox(Strings.getString("NoCode.noEncodedScript"));
 	noEncodedScript.setState(prefs.getBoolean("NoCode.noEncodedScript"));
 
-	noEvalInScript = new Checkbox("No Eval");
+	noEvalInScript = new Checkbox(Strings.getString("NoCode.noEvalInScript"));
 	noEvalInScript.setState(prefs.getBoolean("NoCode.noEvalInScript"));
 
-	noJava = new Checkbox("No Java");
+	noJava = new Checkbox(Strings.getString("NoCode.noJava"));
 	noJava.setState(prefs.getBoolean("NoCode.noJava"));
-	
+
 	c = new GridBagConstraints();
 	layout.setConstraints(noJavaScript, c);
 	panel.add(noJavaScript);
@@ -92,32 +93,32 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(noJava, c);
 	panel.add(noJava);
-	
+
 	add("North", panel);
-	
+
 	parent.messages.setEditable(false);
 	add("Center", parent.messages);
 
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -125,7 +126,7 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -135,7 +136,7 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putBoolean("NoCode.noJavaScript", noJavaScript.getState());
@@ -166,28 +167,28 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: StopProxyFrame.java,v 1.5 2000/01/24 04:02:22 boyns Exp $ */
+/* $Id: StopProxyFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,16 +25,17 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class StopProxyFrame extends MuffinFrame implements ActionListener, WindowListener
 {
     Prefs prefs;
     StopProxy parent;
     TextField input = null;
-    
+
     public StopProxyFrame(Prefs prefs, StopProxy parent)
     {
-	super("Muffin: StopProxy");
+	super(Strings.getString("StopProxy.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -43,8 +44,8 @@ public class StopProxyFrame extends MuffinFrame implements ActionListener, Windo
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
-	
-	panel.add(new Label("Page Title:", Label.RIGHT));
+
+	panel.add(new Label(Strings.getString("StopProxy.PageTitle")+":", Label.RIGHT));
 
 	input = new TextField(40);
 	input.setText(prefs.getString("StopProxy.PageTitle"));
@@ -53,28 +54,28 @@ public class StopProxyFrame extends MuffinFrame implements ActionListener, Windo
         c.gridwidth = GridBagConstraints.REMAINDER;
         layout.setConstraints(input, c);
         panel.add(input);
-	
+
 	add("North", panel);
-	
+
 	parent.messages.setEditable(false);
 	add("Center", parent.messages);
 
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -82,7 +83,7 @@ public class StopProxyFrame extends MuffinFrame implements ActionListener, Windo
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -92,7 +93,7 @@ public class StopProxyFrame extends MuffinFrame implements ActionListener, Windo
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("StopProxy.PageTitle", input.getText());
@@ -114,28 +115,28 @@ public class StopProxyFrame extends MuffinFrame implements ActionListener, Windo
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

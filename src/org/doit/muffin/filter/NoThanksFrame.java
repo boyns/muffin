@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.8 2000/03/29 15:17:43 boyns Exp $ */
+/* $Id: NoThanksFrame.java,v 1.9 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,10 +34,10 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
     NoThanks parent;
     TextField input = null;
     TextArea text = null;
-    
+
     public NoThanksFrame(Prefs prefs, NoThanks parent)
     {
-	super("Muffin: NoThanks");
+	super(Strings.getString("NoThanks.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -46,8 +46,8 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
         setLayout(layout);
 	GridBagConstraints c;
 	Label l;
-	
-	add(new Label("Kill File:", Label.RIGHT));
+
+	add(new Label(Strings.getString("NoThanks.killfile")+":", Label.RIGHT));
 
 	input = new TextField(40);
 	input.setText(prefs.getString("NoThanks.killfile"));
@@ -57,7 +57,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	layout.setConstraints(input, c);
 	add(input);
 
-	Button browse = new Button("Browse...");
+	Button browse = new Button(Strings.getString("browse")+"...");
 	browse.setActionCommand("doBrowse");
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
@@ -66,7 +66,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	layout.setConstraints(browse, c);
 	add(browse);
 
-	
+
 	text = new TextArea();
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
@@ -82,7 +82,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	add(text);
 
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -92,7 +92,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	layout.setConstraints(b, c);
 	add(b);
 
-	b = new Button("Load");
+	b = new Button(Strings.getString("load"));
 	b.setActionCommand("doLoad");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -101,7 +101,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	layout.setConstraints(b, c);
 	add(b);
 
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -110,7 +110,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	layout.setConstraints(b, c);
 	add(b);
 
-	l = new Label("Message Log");
+	l = new Label(Strings.getString("NoThanks.messages"));
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridx = 0;
@@ -118,7 +118,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
 	add(l);
-	
+
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -134,15 +134,15 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -156,7 +156,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	add(buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -171,7 +171,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 
 	UserFile file = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
 	InputStream in = null;
-	
+
 	try
 	{
 	    in = file.getInputStream();
@@ -207,7 +207,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	    {
 	    }
 	}
-	
+
     }
 
     void saveFile()
@@ -241,7 +241,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("NoThanks.killfile", input.getText());
@@ -283,28 +283,28 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -32,8 +32,9 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
-public class ImageKillFrame extends MuffinFrame 
+public class ImageKillFrame extends MuffinFrame
   implements ActionListener, WindowListener
 {
     Prefs prefs;
@@ -137,7 +138,7 @@ public class ImageKillFrame extends MuffinFrame
 	panel.add (t_replaceURL);
 
 	add ("North", panel);
-	
+
 	parent.messages.setEditable (false);
 	add ("Center", parent.messages);
 
@@ -168,7 +169,7 @@ public class ImageKillFrame extends MuffinFrame
 	add ("South", buttonPanel);
 
 	addWindowListener (this);
-	
+
 	pack ();
 	setSize (getPreferredSize ());
 
@@ -178,7 +179,7 @@ public class ImageKillFrame extends MuffinFrame
     public void actionPerformed (ActionEvent event)
     {
 	String arg = event.getActionCommand ();
-	
+
 	if ("doApply".equals (arg))
 	{
             applyPrefs ();
@@ -204,7 +205,7 @@ public class ImageKillFrame extends MuffinFrame
 
     private void applyPrefs ()
     {
-        prefs.putInteger ("ImageKill.minheight", 
+        prefs.putInteger ("ImageKill.minheight",
 			  Integer.parseInt (t_minheight.getText ()));
 	prefs.putInteger ("ImageKill.minwidth",
 			  Integer.parseInt (t_minwidth.getText ()));
@@ -222,28 +223,28 @@ public class ImageKillFrame extends MuffinFrame
     public void windowActivated (WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated (WindowEvent e)
     {
     }
-  
+
     public void windowClosing (WindowEvent e)
     {
 	setVisible (false);
     }
-  
+
     public void windowClosed (WindowEvent e)
     {
     }
-  
+
     public void windowIconified (WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified (WindowEvent e)
     {
     }
-  
+
     public void windowOpened (WindowEvent e)
     {
     }

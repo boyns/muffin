@@ -1,4 +1,4 @@
-/* $Id: StatsFrame.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: StatsFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class StatsFrame extends MuffinFrame implements ActionListener, WindowListener
 {
@@ -37,7 +38,7 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 
     public StatsFrame(Prefs prefs, Stats parent)
     {
-	super("Muffin: Stats");
+	super(Strings.getString("Stats.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -49,19 +50,19 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
-	b = new Button("Update");
+	b = new Button(Strings.getString("Stats.update"));
 	b.setActionCommand("doUpdate");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Reset");
+	b = new Button(Strings.getString("Stats.reset"));
 	b.setActionCommand("doReset");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -69,7 +70,7 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -95,7 +96,7 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
             text.append("    " + key + ": " + count + "\n");
             total += count.intValue();
         }
-        text.append("    TOTAL: " + total + "\n");
+        text.append(Strings.getString("total")+": " + total + "\n");
     }
 
     void printUniqueServers()
@@ -109,7 +110,8 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 	    i = (Integer) parent.servers.get(s);
 	    StringTokenizer st = new StringTokenizer(s, "/");
 	    s = (String) st.nextToken();
-	    if (s.startsWith("Netscape")) {
+	    if (s.startsWith("Netscape"))
+            {
 		s = new String("Netscape");
 	    }
 	    if (servers.containsKey(s))
@@ -124,11 +126,11 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 	    }
 	}
 
-	text.append("Unique Servers: " + servers.size() + "\n");
+	text.append(Strings.getString("Stats.uniqueServers")+ ": " + servers.size() + "\n");
 	print(servers);
 	text.append("\n");
     }
-    
+
     void update()
     {
 	String key;
@@ -141,25 +143,25 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 
 //         text.append("Current date: " + (new Date()).toLocaleString());
 //         text.append("\n");
-        
-        text.append("Requests: ");
+
+        text.append(Strings.getString("Stats.requests")+": ");
         text.append(parent.requests + "\n");
 	text.append("\n");
-        
-        text.append("Replies: ");
+
+        text.append(Strings.getString("Stats.replies")+": ");
         text.append(parent.replies + "\n");
 	text.append("\n");
-        
-        text.append("Hosts: " + parent.hosts.size() + "\n");
+
+        text.append(Strings.getString("Stats.hosts")+": " + parent.hosts.size() + "\n");
         print(parent.hosts);
 	text.append("\n");
-        
-        text.append("Servers: " + parent.servers.size() + "\n");
+
+        text.append(Strings.getString("Stats.servers")+": " + parent.servers.size() + "\n");
         print(parent.servers);
 	text.append("\n");
 
 	printUniqueServers();
-        
+
         text.append("Content-types:\n");
         print(parent.contentTypes);
 	text.append("\n");
@@ -168,11 +170,11 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
         print(parent.contentLengths);
 	text.append("\n");
     }
-     
+
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doUpdate".equals(arg))
 	{
 	    update();
@@ -194,28 +196,28 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

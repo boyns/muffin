@@ -38,10 +38,10 @@ public class TranslateFrame extends MuffinFrame
     Translate parent;
     TextField input = null;
     TextArea text = null;
-    
+
     public TranslateFrame(Prefs prefs, Translate parent)
     {
-	super("Muffin: Translate");
+	super(Strings.getString("Translate.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -50,14 +50,14 @@ public class TranslateFrame extends MuffinFrame
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
-	
-	panel.add(new Label("Rules File:", Label.RIGHT));
+
+	panel.add(new Label(Strings.getString("Translate.rules")+":", Label.RIGHT));
 
 	input = new TextField(40);
 	input.setText(prefs.getString("Translate.rules"));
 	panel.add(input);
 
-	Button browse = new Button("Browse...");
+	Button browse = new Button(Strings.getString("browse")+"...");
 	browse.setActionCommand("doBrowse");
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
@@ -71,14 +71,14 @@ public class TranslateFrame extends MuffinFrame
 	layout = new GridBagLayout();
         panel.setLayout(layout);
 
-	Label l = new Label("Rules");
+	Label l = new Label(Strings.getString("Translate.header"));
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	text = new TextArea();
 	c = new GridBagConstraints();
 	c.gridheight = 3;
@@ -87,7 +87,7 @@ public class TranslateFrame extends MuffinFrame
 	panel.add(text);
 
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -96,7 +96,7 @@ public class TranslateFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Load");
+	b = new Button(Strings.getString("load"));
 	b.setActionCommand("doLoad");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -105,7 +105,7 @@ public class TranslateFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -114,14 +114,14 @@ public class TranslateFrame extends MuffinFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	l = new Label("Message Log");
+	l = new Label(Strings.getString("Translate.messages"));
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -134,22 +134,22 @@ public class TranslateFrame extends MuffinFrame
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -164,7 +164,7 @@ public class TranslateFrame extends MuffinFrame
 
 	UserFile file = prefs.getUserFile(prefs.getString("Translate.rules"));
 	InputStream in = null;
-	
+
 	try
 	{
 	    in = file.getInputStream();
@@ -200,7 +200,7 @@ public class TranslateFrame extends MuffinFrame
 	    {
 	    }
 	}
-	
+
     }
 
     void saveFile()
@@ -234,7 +234,7 @@ public class TranslateFrame extends MuffinFrame
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("Translate.rules", input.getText());
@@ -276,28 +276,28 @@ public class TranslateFrame extends MuffinFrame
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

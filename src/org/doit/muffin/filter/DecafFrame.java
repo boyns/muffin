@@ -1,4 +1,4 @@
-/* $Id: DecafFrame.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: DecafFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,16 +25,17 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class DecafFrame extends MuffinFrame implements ActionListener, WindowListener
 {
     Prefs prefs;
     Decaf parent;
     Checkbox noJava, noJavaScript;
-    
+
     public DecafFrame(Prefs prefs, Decaf parent)
     {
-	super("Muffin: Decaf");
+	super(Strings.getString("Decaf.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -44,45 +45,45 @@ public class DecafFrame extends MuffinFrame implements ActionListener, WindowLis
 	panel.setLayout(layout);
 	GridBagConstraints c;
 
-	noJavaScript = new Checkbox("No JavaScript");
+	noJavaScript = new Checkbox(Strings.getString("Decaf.noJavaScript"));
 	noJavaScript.setState(prefs.getBoolean("Decaf.noJavaScript"));
-	noJava = new Checkbox("No Java");
+	noJava = new Checkbox(Strings.getString("Decaf.noJava"));
 	noJava.setState(prefs.getBoolean("Decaf.noJava"));
-	
+
 	c = new GridBagConstraints();
 	layout.setConstraints(noJavaScript, c);
 	panel.add(noJavaScript);
-	
+
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(noJava, c);
 	panel.add(noJava);
-	
+
 	add("North", panel);
-	
+
 	parent.messages.setEditable(false);
 	add("Center", parent.messages);
 
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -90,7 +91,7 @@ public class DecafFrame extends MuffinFrame implements ActionListener, WindowLis
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -100,7 +101,7 @@ public class DecafFrame extends MuffinFrame implements ActionListener, WindowLis
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putBoolean("Decaf.noJavaScript", noJavaScript.getState());
@@ -127,28 +128,28 @@ public class DecafFrame extends MuffinFrame implements ActionListener, WindowLis
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: DocumentInfoFrame.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: DocumentInfoFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,21 +25,22 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class DocumentInfoFrame extends MuffinFrame implements ActionListener, ItemListener, WindowListener
 {
     Prefs prefs;
     DocumentInfo parent;
-    
+
     TextField info = null;
     TextField htmlBefore = null;
     TextField htmlAfter = null;
     Choice locationChoice = null;
     Choice alignChoice = null;
-    
+
     public DocumentInfoFrame(Prefs prefs, DocumentInfo parent)
     {
-	super("Muffin: DocumentInfo");
+	super(Strings.getString("DocumentInfo.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -49,7 +50,7 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
 	GridBagConstraints c;
         panel.setLayout(layout);
 
-	panel.add(new Label("Location:"));
+	panel.add(new Label(Strings.getString("DocumentInfo.location")+":"));
 	locationChoice = new Choice();
 	locationChoice.addItemListener(this);
 	locationChoice.addItem("top");
@@ -62,7 +63,7 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
 	layout.setConstraints(locationChoice, c);
  	panel.add(locationChoice);
 
-	panel.add(new Label("Align:"));
+	panel.add(new Label(Strings.getString("DocumentInfo.align")+":"));
 	alignChoice = new Choice();
 	alignChoice.addItemListener(this);
 	alignChoice.addItem("left");
@@ -75,7 +76,7 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
 	layout.setConstraints(alignChoice, c);
 	panel.add(alignChoice);
 
-	panel.add(new Label("Info:"));
+	panel.add(new Label(Strings.getString("DocumentInfo.info")+":"));
 	info = new TextField(50);
 	info.setText(prefs.getString("DocumentInfo.info"));
 	c = new GridBagConstraints();
@@ -83,8 +84,8 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(info, c);
 	panel.add(info);
-	
-	panel.add(new Label("HTML Before:"));
+
+	panel.add(new Label(Strings.getString("DocumentInfo.htmlBefore")+":"));
 	htmlBefore = new TextField(50);
 	htmlBefore.setText(prefs.getString("DocumentInfo.htmlBefore"));
 	c = new GridBagConstraints();
@@ -93,7 +94,7 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
 	layout.setConstraints(htmlBefore, c);
 	panel.add(htmlBefore);
 
-	panel.add(new Label("HTML After:"));
+	panel.add(new Label(Strings.getString("DocumentInfo.htmlAfter")+":"));
 	htmlAfter = new TextField(50);
 	htmlAfter.setText(prefs.getString("DocumentInfo.htmlAfter"));
 	c = new GridBagConstraints();
@@ -107,26 +108,26 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -149,7 +150,7 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("DocumentInfo.location", locationChoice.getSelectedItem());
@@ -175,28 +176,28 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: ConnectionsFrame.java,v 1.6 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: ConnectionsFrame.java,v 1.7 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
+import org.doit.util.*;
 
 /**
  * @author Mark Boyns
@@ -46,7 +47,7 @@ class ConnectionsFrame extends MuffinFrame implements ActionListener, WindowList
 
     ConnectionsFrame(Monitor monitor)
     {
-	super("Muffin: Connections");
+	super(Strings.getString("connections.title"));
 
 	this.monitor = monitor;
 
@@ -57,11 +58,11 @@ class ConnectionsFrame extends MuffinFrame implements ActionListener, WindowList
 	Button b;
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 2));
-	b = new Button("Update");
+	b = new Button(Strings.getString("connections.update"));
 	b.setActionCommand("doUpdate");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);

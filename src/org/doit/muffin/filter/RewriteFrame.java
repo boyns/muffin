@@ -1,4 +1,4 @@
-/* $Id: RewriteFrame.java,v 1.7 2000/03/29 15:15:03 boyns Exp $ */
+/* $Id: RewriteFrame.java,v 1.8 2003/01/08 18:59:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,10 +34,10 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
     Rewrite parent;
     TextField input = null;
     TextArea text = null;
-    
+
     public RewriteFrame(Prefs prefs, Rewrite parent)
     {
-	super("Muffin: Rewrite");
+	super(Strings.getString("Rewrite.title"));
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -46,14 +46,14 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
-	
-	panel.add(new Label("Rules File:", Label.RIGHT));
+
+	panel.add(new Label(Strings.getString("Rewrite.rules")+":", Label.RIGHT));
 
 	input = new TextField(40);
 	input.setText(prefs.getString("Rewrite.rules"));
 	panel.add(input);
 
-	Button browse = new Button("Browse...");
+	Button browse = new Button(Strings.getString("browse")+"...");
 	browse.setActionCommand("doBrowse");
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
@@ -67,14 +67,14 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	layout = new GridBagLayout();
         panel.setLayout(layout);
 
-	Label l = new Label("Rules");
+	Label l = new Label(Strings.getString("Rewrite.header"));
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	text = new TextArea();
 	c = new GridBagConstraints();
 	c.gridheight = 3;
@@ -83,7 +83,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	panel.add(text);
 
 	Button b;
-	b = new Button("Apply");
+	b = new Button(Strings.getString("apply"));
 	b.setActionCommand("doApply");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -92,7 +92,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Load");
+	b = new Button(Strings.getString("load"));
 	b.setActionCommand("doLoad");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -101,7 +101,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -110,14 +110,14 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	l = new Label("Message Log");
+	l = new Label(Strings.getString("Rewrite.messages"));
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -130,22 +130,22 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
-	b = new Button("Clear");
+	b = new Button(Strings.getString("clear"));
 	b.setActionCommand("doClear");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Help");
+	b = new Button(Strings.getString("help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	pack();
 	setSize(getPreferredSize());
 
@@ -160,7 +160,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 
 	UserFile file = prefs.getUserFile(prefs.getString("Rewrite.rules"));
 	InputStream in = null;
-	
+
 	try
 	{
 	    in = file.getInputStream();
@@ -196,7 +196,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	    {
 	    }
 	}
-	
+
     }
 
     void saveFile()
@@ -230,7 +230,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doApply".equals(arg))
 	{
 	    prefs.putString("Rewrite.rules", input.getText());
@@ -272,28 +272,28 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

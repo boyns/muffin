@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.8 2003/01/03 23:06:30 boyns Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.9 2003/01/08 18:59:51 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -44,7 +44,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import sdsu.compare.StringIgnoreCaseComparer;
 import sdsu.util.SortedList;
-import org.doit.util.TextDialog;
+import org.doit.util.*;
 
 /**
  * GUI interface to the FilterManager.
@@ -68,7 +68,7 @@ class FilterManagerFrame
      */
     FilterManagerFrame(FilterManager manager)
     {
-	super("Muffin: Filters");
+	super(Strings.getString("fm.title"));
 
 	this.manager = manager;
 
@@ -83,7 +83,7 @@ class FilterManagerFrame
 	Panel p;
 
 	p = new Panel();
-	l = new Label("Configuration:");
+	l = new Label(Strings.getString("fm.config"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	p.add(l);
 
@@ -98,7 +98,7 @@ class FilterManagerFrame
 	GridBagLayout layout = new GridBagLayout();
 	panel.setLayout(layout);
 
-	l = new Label("Supported Filters");
+	l = new Label(Strings.getString("fm.available"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -111,7 +111,7 @@ class FilterManagerFrame
 	layout.setConstraints(supportedFiltersList, c);
 	panel.add(supportedFiltersList);
 
-	b = new Button("Enable");
+	b = new Button(Strings.getString("fm.enable"));
 	b.setActionCommand("doEnable");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -120,7 +120,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("New...");
+	b = new Button(Strings.getString("fm.new"));
 	b.setActionCommand("doNewFilter");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -129,7 +129,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Delete");
+	b = new Button(Strings.getString("fm.delete"));
 	b.setActionCommand("doDelete");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -138,7 +138,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Help");
+	b = new Button(Strings.getString("fm.help"));
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -147,7 +147,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	l = new Label("Enabled Filters");
+	l = new Label(Strings.getString("fm.enabled"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -160,7 +160,7 @@ class FilterManagerFrame
 	layout.setConstraints(enabledFiltersList, c);
 	panel.add(enabledFiltersList);
 
-	b = new Button("Preferences...");
+	b = new Button(Strings.getString("fm.prefs"));
 	b.setActionCommand("doPrefs");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -169,7 +169,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Move Up");
+	b = new Button(Strings.getString("fm.up"));
 	b.setActionCommand("doUp");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -178,7 +178,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Move Down");
+	b = new Button(Strings.getString("fm.down"));
 	b.setActionCommand("doDown");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -187,7 +187,7 @@ class FilterManagerFrame
 	layout.setConstraints(b, c);
 	panel.add(b);
 
-	b = new Button("Disable");
+	b = new Button(Strings.getString("fm.disable"));
 	b.setActionCommand("doDisable");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
@@ -199,11 +199,11 @@ class FilterManagerFrame
 	add("Center", panel);
 
 	Panel buttonPanel = new Panel();
-	b = new Button("Save");
+	b = new Button(Strings.getString("save"));
 	b.setActionCommand("doSave");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	b = new Button("Close");
+	b = new Button(Strings.getString("close"));
 	b.setActionCommand("doClose");
 	b.addActionListener(this);
 	buttonPanel.add(b);
@@ -362,7 +362,7 @@ class FilterManagerFrame
 	}
 	else if ("doNewFilter".equals(arg))
 	{
-	    TextDialog dialog = new TextDialog(this, "New filter class name:");
+	    TextDialog dialog = new TextDialog(this, Strings.getString("fm.new.prompt") + ":");
 	    dialog.show();
 	    String name = dialog.getAnswer();
 	    if (name != null && name.length() > 0)
