@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 /**
- * @author Fabien Le Floc'h <fabien@31416.org>
+ * @author Fabien Le Floc'h
  */
 public interface HttpsConnection extends HttpRelay
 {   

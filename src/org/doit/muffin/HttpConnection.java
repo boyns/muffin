@@ -1,4 +1,4 @@
-/* $Id: HttpConnection.java,v 1.6 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: HttpConnection.java,v 1.7 2003/05/18 16:19:06 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,16 +27,15 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-abstract class HttpConnection
-    extends Connection
-    implements HttpsConnection
+public abstract class HttpConnection
+    extends Connection implements HttpRelay
 {
     HttpConnection(String host, int port) throws IOException
     {
         super(host, port);
     }
 
-    HttpConnection(Socket s) throws IOException
+    protected HttpConnection(Socket s) throws IOException
     {
         super(s);
     }
