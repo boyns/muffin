@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.34 2003/06/02 10:33:19 flefloch Exp $ */
+/* $Id: Main.java,v 1.35 2003/06/04 18:46:39 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -465,6 +465,16 @@ public class Main
     {
         return logfile;
     }
+    
+    public static String getBaseUrl()
+	{
+        StringBuffer buf = new StringBuffer();
+        buf.append("http://");
+        buf.append(Main.getMuffinHost().getHostName());
+        buf.append(":");
+        buf.append(HttpdFactory.getOptions().getString("muffin.port"));
+        return buf.toString();
+	}
 
     public static void stopMuffin(Main theMuffin)
     {
