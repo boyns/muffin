@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.6 1999/09/16 04:13:46 boyns Exp $ */
+/* $Id: Request.java,v 1.7 2000/01/17 06:23:46 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -185,10 +185,17 @@ public class Request extends Message
 	    s = url;
 	}
 
+	int at = s.indexOf('@');
+	if (at != -1 )
+	{
+	    s = s.substring(at+1);
+	}
+
 	if (s.indexOf(':') != -1)
 	{
 	    return s.substring(0, s.indexOf(':'));
 	}
+
 	return s;
     }
 
@@ -205,6 +212,12 @@ public class Request extends Message
 	else
 	{
 	    s = url;
+	}
+
+	int at = s.indexOf('@');
+	if (at != -1 )
+	{
+	    s = s.substring(at+1);
 	}
 
 	if (s.indexOf(':') != -1)
