@@ -7,20 +7,22 @@
     <property name="srcdir" value="src"/>
     <property name="classes" value="classes"/>
     <property name="build.compiler" value="classic"/>
+    <property name="decryption.dir" value="org/doit/muffin/decryption"/>
   </target>
 
-  <target name="compile" depends="init, muffin.compile"/>
+  <target name="compile" depends="init, core.compile, decryption.compile"/>
 
-  <target name="muffin.compile" depends="init">
+  <target name="core.compile" depends="init">
     <mkdir dir="${classes}" />
     <javac srcdir="${srcdir}"
            destdir="${classes}"
 	   includes="**/*.java"
+	   excludes="${decryption.dir}/*.java"
 	   deprecation="false"
 	   debug="true"
            classpath="${classpath}"/>
     <copy todir="${classes}">
-      <fileset dir="${srcdir}" includes="**/*.properties"/>
+      <fileset dir="${srcdir}" includes="**/*.properties" excludes="${decryption.dir}/**"/>
     </copy>
     <copy todir="${classes}/images">
       <fileset dir="images" includes="*.jpg"/>
@@ -31,6 +33,19 @@
     <copy file="${basedir}/COPYING" tofile="${classes}/doc/COPYING.txt"/>
   </target>
 
+  <target name="decryption.compile" depends="core.compile">
+    <javac srcdir="${srcdir}"
+           destdir="${classes}"
+           includes="${decryption.dir}/*.java"
+           deprecation="false"
+           debug="true"
+           classpath="${classpath}"/>
+    <copy todir="${classes}">
+      <fileset dir="${srcdir}" includes="${decryption.dir}/certs"/>
+    </copy>
+    <copy file="${srcdir}/${decryption.dir}/package.html" tofile="doc/https_sniffing_guide.html"/>
+  </target>
+  
   <target name="clean" depends="init">
     <delete dir="${classes}"/>
   </target>
@@ -42,6 +57,21 @@
     <jar jarfile="muffin.jar" basedir="${classes}"
          manifest="src/MANIFEST.MF"
          compress="true"/>
+  </target>
+    
+  <target name="javadoc" description="Create Javadoc documentation">
+    <mkdir dir="doc/api"/>
+    <javadoc sourcepath="src"
+             destdir="doc/api"
+             packagenames="org.doit.muffin.*"
+             author="true"
+             private="false"
+             version="true"
+             doctitle="&lt;h1&gt;Muffin&lt;/h1&gt;"
+             windowtitle="Muffin"
+             overview="src/overview.html"
+             classpath="${classpath}">
+     </javadoc>
   </target>
 
 </project>
