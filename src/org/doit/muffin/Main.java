@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.19 2000/03/08 15:32:46 boyns Exp $ */
+/* $Id: Main.java,v 1.20 2000/03/27 04:26:41 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -472,7 +472,7 @@ public class Main extends MuffinFrame
 
 	int c;
 	String arg;
-	LongOpt longopts[] = new LongOpt[17];
+	LongOpt longopts[] = new LongOpt[16];
 
 	longopts[0] = new LongOpt("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
 	longopts[1] = new LongOpt("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
@@ -490,7 +490,6 @@ public class Main extends MuffinFrame
 	longopts[13] = new LongOpt("geometry", LongOpt.REQUIRED_ARGUMENT, null, 'g');
 	longopts[14] = new LongOpt("bindaddress", LongOpt.REQUIRED_ARGUMENT, null, 'b');
 	longopts[15] = new LongOpt("props", LongOpt.REQUIRED_ARGUMENT, null, 10);
-	longopts[16] = new LongOpt("userHome", LongOpt.REQUIRED_ARGUMENT, null, 'u');
 
 	Prefs args = new Prefs();
 	Getopt g = new Getopt("Muffin", argv, "v", longopts, true);
@@ -587,10 +586,6 @@ public class Main extends MuffinFrame
 		args.putString("geometry", g.getOptarg());
 		break;
 
-	    case 'u': /* --userHome */
-		args.putString("userHome", g.getOptarg());
-		break;
-
 	    case 'h': /* --help */
 		System.out.println("usage: java Muffin [options]\n\n"
 				    + "-conf NAME            Default configuration (default.conf)\n"
@@ -607,8 +602,6 @@ public class Main extends MuffinFrame
 				    + "-port PORT            Listen on PORT for browser requests (51966)\n"
 				    + "-props NAME           Default muffin properties file (muffin.props)\n"
 				    + "-bindaddress IPADDR   Only bind to IPADDR\n"
-				    + "-userHome PROPERTY    Specify Java home directory property.\n"
-				    + "                      Default is \"user.home\"; try \"user.dir\"\n"
 				    + "-v                    Display muffin version\n");
 		System.exit(0);
 		break;
@@ -622,10 +615,6 @@ public class Main extends MuffinFrame
 	}
 
 	configs = new Configuration();
-	if (args.exists("userHome"))
-	{
-	    configs.setUserHomeProperty(args.getString("userHome"));
-	}
 	if (args.exists("dir"))
 	{
 	    configs.setUserDirectory(args.getString("dir"));
