@@ -1,4 +1,4 @@
-/* $Id: History.java,v 1.7 2000/03/29 15:13:36 boyns Exp $ */
+/* $Id: History.java,v 1.8 2003/06/04 21:06:33 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -143,9 +143,16 @@ public class History implements FilterFactory, AutoSaveable
 	    ObjectInputStream obj = new ObjectInputStream(in);
 	    data = (Hashtable) obj.readObject();
 	    obj.close();
+	    if (data == null) 
+	    {
+	    	System.err.println("ERROR: For unknown reason, History Filter read a null object. History will be reset");
+	    	data = new Hashtable();
+	    }
 	}
 	catch (FileNotFoundException e)
 	{
+	    System.out.println(e);
+	    data = new Hashtable();
 	}
 	catch (Exception e)
 	{
