@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.6 2000/03/08 15:15:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -40,13 +40,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Enumeration;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import org.doit.util.TextDialog;
 import org.doit.util.YesNoDialog;
 
@@ -197,25 +191,18 @@ class ConfigurationFrame extends MuffinFrame
     {
 	text.setText("");
 	
-	File file = new File(configs.getAutoConfigFile());
-	if (!file.exists())
-	{
-	    return;
-	}
+	UserFile file = configs.getAutoConfigFile();
 	
 	try
 	{
-	    BufferedReader in = new BufferedReader(new FileReader(file));
+	    BufferedReader in = new BufferedReader
+		(new InputStreamReader(file.getInputStream()));
 	    String s;
 	    while ((s = in.readLine()) != null)
 	    {
 		text.append(s + "\n");
 	    }
 	    in.close();
-	}
-	catch (FileNotFoundException e)
-	{
-	    System.out.println(e);
 	}
 	catch (IOException e)
 	{
@@ -312,14 +299,16 @@ class ConfigurationFrame extends MuffinFrame
 	{
 	    try
 	    {
-		File file = new File(configs.getAutoConfigFile());
-		if (file.exists())
+		UserFile file = configs.getAutoConfigFile();
+		if (file instanceof LocalFile)
 		{
-		    file.delete();
+		    LocalFile f = (LocalFile) file;
+		    f.delete();
+		    OutputStreamWriter writer =
+			new OutputStreamWriter(f.getOutputStream());
+		    writer.write(text.getText());
+		    writer.close();
 		}
-		FileWriter writer = new FileWriter(file);
-		writer.write(text.getText());
-		writer.close();
 	    }
 	    catch (IOException e)
 	    {
