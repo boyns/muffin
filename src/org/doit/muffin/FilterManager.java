@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.8 2000/03/08 15:16:38 boyns Exp $ */
+/* $Id: FilterManager.java,v 1.9 2000/10/10 04:51:09 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -57,6 +57,7 @@ public class FilterManager implements ConfigurationListener
 	"Secretary",
 	"SecretAgent",
 	"SecretServer",
+	"rcm.snapshot.Snapshot",
 	"Snoop",
 	"Stats",
 	"Translate",

@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.7 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.8 2000/10/10 04:51:09 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+
+import haui.gif.*;
 
 public class AnimationKillerFilter implements RequestFilter, ReplyFilter, ContentFilter
 {
@@ -88,127 +90,48 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 
 	try
 	{
-	    int b, i;
-	    int pattern[] = { 0x21, 0xff, 0x0b,
-			       'N', 'E', 'T', 'S', 'C', 'A', 'P', 'E', '2', '.', '0',
-			      0x03, 0x01 };
-// 			      '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
-// 			      '#', '#' };
-	    int undo[] = new int[pattern.length];
-	    
-	    int index = 0;
-	    boolean killed = false;
-	    
-	    PushbackInputStream gifInput = new PushbackInputStream(new ObjectStreamToInputStream(in));
-	    ObjectStreamToOutputStream gifOutput = new ObjectStreamToOutputStream(out);
+	  AnimationFilter filter;
+	  if (prefs.getBoolean("AnimationKiller.break")) {
+	    filter = new AnimationFilter(AnimationFilter.MODE_WIPE_OUT); 
+	  } else {
+	    switch (prefs.getInteger("AnimationKiller.maxLoops")) {
+	    case 0:
+	      filter = new AnimationFilter(AnimationFilter.MODE_SHOW_FIRST); 
+	      break;
 
-	    int count = 0;
+	    case 1:
+	      filter = new AnimationFilter(AnimationFilter.MODE_SHOW_LAST);
+	      break;
 
-	    /* Look for the GIF89a block extension */
-	    while ((b = gifInput.read()) != -1)
-	    {
-		count++;
-		
-		if (killed)
-		{
-		    gifOutput.write(b);
-		    continue;
-		}
-		
-		if (b == pattern[index]
-		    || (pattern[index] == '?' && b >= ' ' && b <= '~')
-		    || pattern[index] == '#')
-		{
-		    undo[index] = b;
-		    index++;
-		    if (index == pattern.length)
-		    {
-			index = 0;
-			killed = true;
+	    case 2:
+	      filter = new AnimationFilter(AnimationFilter.MODE_INTERACTIVE);
+	      break;
 
-			if (prefs.getBoolean("AnimationKiller.break"))
-			{
-			    factory.report(request, "breaking animation");
-			    while ((b = gifInput.read()) != -1)
-			    {
-				/* ignore the rest */
-			    }
-			    break;
-			}
-			else
-			{
-			    String id = null;
-			    
-			    if (prefs.getInteger("AnimationKiller.maxLoops") == -1)
-			    {
-				factory.report(request, "removing animation extension");
-				gifOutput.write(0x21);
-				gifOutput.write(0xfe); /* comment extension */
-				id = new String("XXXXXXXX1.0");
-			    }
-			    else
-			    {
-				gifOutput.write(0x21);
-				gifOutput.write(0xff); /* application extension */
-				id = new String("NETSCAPE2.0");
-			    }
-			    gifOutput.write(0x0b);
-			    gifOutput.write(id.getBytes(), 0, id.length());
-			    gifOutput.write(0x03);
-			    gifOutput.write(0x01);
-			
-			    b = gifInput.read(); // high
-			    b = gifInput.read(); // low
-			    b = gifInput.read(); // terminator
-			    
-			    if (prefs.getInteger("AnimationKiller.maxLoops") == -1)
-			    {
-				// replaced with comment extension
-			    }
-			    else
-			    {
-				int loops = prefs.getInteger("AnimationKiller.maxLoops");
-				factory.report(request, "setting maxLoops to " + loops);
-				int high = loops / 256;
-				int low = loops % 256;
-				gifOutput.write(low);
-				gifOutput.write(high);
-			    }
-			    gifOutput.write(0x00); // terminator
-			}
-		    }
-		}
-		else if (index > 0)
-		{
-		    for (i = 0; i < index; i++)
-		    {
-			gifOutput.write(undo[i]);
-		    }
-		    gifInput.unread(b);
-		    count--;
-		    index = 0;
-		}
-		else
-		{
-		    gifOutput.write(b);
-		}
+	    default:
+	      filter = new AnimationFilter(AnimationFilter.MODE_ANIMATION);
+	      break;
 	    }
+	  }
 
-	    gifOutput.flush();
-	    gifOutput.close();
+	  ObjectStreamToInputStream gin = new ObjectStreamToInputStream(in);
+	  ObjectStreamToOutputStream gout = new ObjectStreamToOutputStream(out);
+
+	  filter.filter(gin, gout);
+
+	  gout.close();
 	}
 	catch (IOException ioe)
 	{
-	    ioe.printStackTrace();
+	  ioe.printStackTrace();
 	}
 	finally
 	{
-	    try
+	  try
 	    {
-		out.flush();
-		out.close();
+	      out.flush();
+	      out.close();
 	    }
-	    catch (IOException ioe)
+	  catch (IOException ioe)
 	    {
 	    }
 	}

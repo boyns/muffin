@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.21 2000/03/29 15:11:53 boyns Exp $ */
+/* $Id: Main.java,v 1.22 2000/10/10 04:51:09 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -50,7 +50,7 @@ import org.doit.util.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    private static String version = "0.9.3a";
+    private static String version = "0.9.4";
     private static String url = "http://muffin.doit.org/";
     private static String host;
 
@@ -103,7 +103,7 @@ public class Main extends MuffinFrame
 
 	System.out.println(infoString);
 
-	server.run();
+	//server.run();
     }
 
     public static String getMuffinUrl()
@@ -407,9 +407,11 @@ public class Main extends MuffinFrame
     void closeApplication()
     {
 	/* Disable all enabled filters */
-	manager.disableAll();
-	    
-	setVisible(false);
+// 	manager.disableAll();
+// 	setVisible(false);
+// 	System.exit(0);
+
+	Main.stopMuffin(this);
 	System.exit(0);
     }
 
@@ -466,10 +468,44 @@ public class Main extends MuffinFrame
 	return logfile;
     }
 
-    public static void main(String argv[])
+    public static void stopMuffin(Main theMuffin)
     {
-	System.out.println(copyleft());
+	theMuffin.manager.disableAll();
+	theMuffin.setVisible(false);
+    }
+    
+    public static Main startMuffin(String[] argv)
+    {
+	try
+	{ 
+	    processArgs(argv); 
+	    final Main theMuffin = new Main(); 
+	    Thread t = new Thread()
+	    { 
+		public void run ()
+		{ 
+		    try
+		    { 
+			theMuffin.server.run(); 
+		    }
+		    catch (Throwable t)
+		    { 
+			System.out.println("Unexpected exception " + t); 
+		    } 
+		} 
+	    }; 
+	    t.start(); 
+	    return theMuffin; 
+	}
+	catch (Throwable exc)
+	{ 
+	    return null; 
+	} 
+    }
 
+    public static void processArgs(String[] argv)
+	throws NumberFormatException
+    {
 	int c;
 	String arg;
 	LongOpt longopts[] = new LongOpt[16];
@@ -509,7 +545,7 @@ public class Main extends MuffinFrame
 		catch (NumberFormatException e)
 		{
 		    System.out.println("invalid port: " + g.getOptarg());
-		    System.exit(1);
+		    throw e;
 		}
 		break;
 
@@ -537,7 +573,7 @@ public class Main extends MuffinFrame
 		catch (NumberFormatException e)
 		{
 		    System.out.println("invalid httpProxyPort: " + g.getOptarg());
-		    System.exit(1);
+		    throw e;
 		}
 		break;
 
@@ -553,7 +589,7 @@ public class Main extends MuffinFrame
 		catch (NumberFormatException e)
 		{
 		    System.out.println("invalid httpsProxyPort: " + g.getOptarg());
-		    System.exit(1);
+		    throw e;
 		}
 		break;
 
@@ -563,8 +599,7 @@ public class Main extends MuffinFrame
 		
 	    case 'v': /* --version */
 		systemInfo();
-		System.exit(0);
-		break;
+		throw new ThreadDeath();
 		
 	    case 7: /* --font */
 		args.putString("font", g.getOptarg());
@@ -603,11 +638,10 @@ public class Main extends MuffinFrame
 				    + "-props NAME           Default muffin properties file (muffin.props)\n"
 				    + "-bindaddress IPADDR   Only bind to IPADDR\n"
 				    + "-v                    Display muffin version\n");
-		System.exit(0);
-		break;
+		throw new ThreadDeath();
 
 	    case '?':
-		System.exit(1);
+		throw new RuntimeException("Unknown option");
 		
 	    default:
 		break;
@@ -711,7 +745,25 @@ public class Main extends MuffinFrame
 	configs.load();
 
 	pool = new ThreadPool("Muffin Threads");
-
-	new Main();
+	//new Main();
     }
+
+    public static void main(String[] argv) 
+    { 
+        System.out.println(copyleft()); 
+        try
+	{ 
+	    processArgs(argv); 
+	    Main m = new Main(); 
+	    m.server.run(); 
+        }
+	catch (ThreadDeath exc)
+	{ 
+	    System.exit(0); 
+        }
+	catch (Throwable exc)
+	{ 
+	    System.exit(1); 
+        } 
+    } 
 }

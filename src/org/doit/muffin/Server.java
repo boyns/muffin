@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.8 2000/04/03 05:06:19 boyns Exp $ */
+/* $Id: Server.java,v 1.9 2000/10/10 04:51:09 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -62,7 +62,7 @@ class Server
 	catch (IOException e)
 	{
 	    System.out.println(e);
-	    System.exit(0);
+	    throw new RuntimeException(e.toString());
 	}
 
 	/* Initialize internal Httpd */

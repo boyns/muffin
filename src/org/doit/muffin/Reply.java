@@ -1,4 +1,4 @@
-/* $Id: Reply.java,v 1.6 2000/03/08 15:23:53 boyns Exp $ */
+/* $Id: Reply.java,v 1.7 2000/10/10 04:51:09 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -57,7 +57,7 @@ public class Reply extends Message
 	return in;
     }
     
-    void read() throws IOException
+    public void read() throws IOException
     {
 	if (in != null)
 	{
@@ -65,7 +65,7 @@ public class Reply extends Message
 	}
     }
     
-    void read(InputStream in) throws IOException
+    public void read(InputStream in) throws IOException
     {
 	statusLine = readLine(in);
 	if (statusLine == null || statusLine.length() == 0)
