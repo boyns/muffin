@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.3 1998/10/01 03:14:14 boyns Exp $ */
+/* $Id: Main.java,v 1.4 1998/10/01 04:28:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin;
 import java.awt.Button;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -34,6 +35,7 @@ import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.Panel;
+import java.awt.Point;
 import java.awt.Label;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -41,6 +43,7 @@ import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
 import gnu.getopt.*;
+import gnu.regexp.*;
 
 /**
  * Startup interface to Muffin.  Parses command line options, loads user
@@ -209,8 +212,60 @@ public class Main extends MuffinFrame
 	addWindowListener (this);
 	configs.addConfigurationListener (this);
 
+	/* Parse geometry option */
+	Dimension loc = null;
+	Point pos = null;
+	if (options.exists("muffin.geometry"))	
+	{
+	    try
+	    {
+		String geometry = options.getString("muffin.geometry");
+		RE re = new RE("([0-9]+x[0-9]+)?(\\+[0-9]+\\+[0-9]+)?");
+		REMatch match = re.getMatch(geometry);
+
+		if (match != null)
+		{
+		    int i, j;
+
+		    i = match.getSubStartIndex(1);
+		    if (i != -1)
+		    {
+			j = match.getSubEndIndex(1);
+			String s = geometry.substring(i ,j);
+			int n = s.indexOf('x');
+			if (n != -1)
+			{
+			    loc = new Dimension(Integer.parseInt(s.substring(0, n)),
+						Integer.parseInt(s.substring(n+1)));
+			}
+		    }
+
+		    i = match.getSubStartIndex(2);
+		    if (i != -1)
+		    {
+			j = match.getSubEndIndex(2);
+			String s = geometry.substring(i, j);
+			int n = s.lastIndexOf('+');
+			if (n != -1)
+			{
+			    pos = new Point(Integer.parseInt(s.substring(1, n)),
+					    Integer.parseInt(s.substring(n+1)));
+			}
+		    }
+		}
+	    }
+	    catch (Exception e)
+	    {
+		e.printStackTrace();
+	    }
+	}
+
 	pack ();
-	setSize (getPreferredSize ());
+	setSize (loc != null ? loc : getPreferredSize ());
+	if (pos != null)
+	{
+	    setLocation(pos);
+	}
 	show ();
     }
 
@@ -401,7 +456,7 @@ public class Main extends MuffinFrame
 
 	int c;
 	String arg;
-	LongOpt longopts[] = new LongOpt[13];
+	LongOpt longopts[] = new LongOpt[14];
 
 	longopts[0] = new LongOpt ("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
 	longopts[1] = new LongOpt ("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
@@ -416,6 +471,7 @@ public class Main extends MuffinFrame
 	longopts[10] = new LongOpt ("bigfont", LongOpt.REQUIRED_ARGUMENT, null, 9);
 	longopts[11] = new LongOpt ("help", LongOpt.NO_ARGUMENT, null, 'h');
 	longopts[12] = new LongOpt ("version", LongOpt.NO_ARGUMENT, null, 'v');
+	longopts[13] = new LongOpt ("geometry", LongOpt.REQUIRED_ARGUMENT, null, 'g');
 
 	Prefs args = new Prefs ();
 	Getopt g = new Getopt ("Muffin", argv, "v", longopts, true);
@@ -498,6 +554,10 @@ public class Main extends MuffinFrame
 		
 	    case 9: /* --bigfont */
 		args.putString ("bigfont", g.getOptarg ());
+		break;
+
+	    case 'g': /* --geometry */
+		args.putString ("geometry", g.getOptarg ());
 		break;
 
 	    case 'h': /* --help */
@@ -588,6 +648,10 @@ public class Main extends MuffinFrame
 	if (args.exists ("bigfont"))
 	{
 	    options.putString ("muffin.bigfont", args.getString ("bigfont"));
+	}
+	if (args.exists ("geometry"))
+	{
+	    options.putString ("muffin.geometry", args.getString ("geometry"));
 	}
 
 	options.sync ();
