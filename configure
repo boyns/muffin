@@ -816,10 +816,13 @@ fi
 
 
 
+CLASSPATH=`dirname $JAVA`/../lib/classes.zip
+
+
 # Extract the first word of "zip", so it can be a program name with args.
 set dummy zip; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:823: checking for $ac_word" >&5
+echo "configure:826: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_ZIP'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -851,7 +854,7 @@ fi
 # Extract the first word of "tar", so it can be a program name with args.
 set dummy tar; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:855: checking for $ac_word" >&5
+echo "configure:858: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_TAR'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1033,6 +1036,7 @@ s%@JAVADOC@%$JAVADOC%g
 s%@JAR@%$JAR%g
 s%@JAVACFLAGS@%$JAVACFLAGS%g
 s%@JAVA_COMPILER@%$JAVA_COMPILER%g
+s%@CLASSPATH@%$CLASSPATH%g
 s%@ZIP@%$ZIP%g
 s%@TAR@%$TAR%g
 
