@@ -25,6 +25,8 @@ import java.io.IOException;
 
 import org.doit.io.*;
 import org.doit.muffin.ContentFilter;
+import org.doit.muffin.ReplyFilter;
+import org.doit.muffin.FilterException;
 import org.doit.muffin.Prefs;
 import org.doit.muffin.Reply;
 import org.doit.muffin.Request;
@@ -36,7 +38,7 @@ public class AbstractContentFilter implements ContentFilter
     {
         fFactory = factory;
     }
-
+    
     /**
      * Determines whether this Reply needs filtering.
      * Note to implementors: This method is not made final in case you want to determine the
@@ -47,11 +49,11 @@ public class AbstractContentFilter implements ContentFilter
      * 
      * Ugly little side effect: We store the Request.
      */
-    public boolean needsFiltration(Request request, Reply reply)
+    public final boolean needsFiltration(Request request, Reply reply)
     {
+//        System.out.println("++++ "+getFactory().getName()+".needsFiltration("+request+", "+reply+")");
         this.fRequest = request;
-        String s = reply.getContentType();
-        return s != null && s.startsWith(doGetContentIdentifier());
+        return doNeedsFiltration(reply.getContentType());
     }
 
     /**
@@ -61,6 +63,19 @@ public class AbstractContentFilter implements ContentFilter
     protected final Request getRequest()
     {
         return fRequest;
+    }
+    
+    /**
+     * Hook method for subclasses o AbstractContentFilter that decides whether the given
+     * Content Type needs Filtration. Default behaviour is to check whether the the given
+     * contentType starts with the String returned by 
+     * @see org.doit.muffin.AbstractContentFilter#doGetContentIdentifier() which itself
+     * should be overriden by subclasses.
+     * @param contentType To check whether filtration is needed.
+     * @return boolean True if filtration is needed.
+     */
+    protected boolean doNeedsFiltration(String contentType){
+        return contentType != null && contentType.startsWith(doGetContentIdentifier());
     }
 
     /**
@@ -154,5 +169,6 @@ public class AbstractContentFilter implements ContentFilter
     private InputObjectStream fInObjectStream = null;
     private OutputObjectStream fOutObjectStream = null;
     private Request fRequest;
+//    private Reply fReply;
 
 }
