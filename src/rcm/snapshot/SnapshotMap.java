@@ -128,4 +128,9 @@ class SnapshotMap {
     public void close () {
         mapOut.close ();
     }
+    
+    public Map getMap()
+    {
+    	return map;	
+    }
 }
