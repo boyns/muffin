@@ -5,6 +5,14 @@ Changes since 0.9.2:
 * Automatically uncompress gzip encoded content so it can be filtered.
   This can be disabled with muffin.dontUncompress=true.
 
+* Support for HTTP PUT
+
+* Support for remote configuration files.  Almost any place you can
+  specify a filename you can now also use a URL.  This can be
+  used for remote NoThanks killfiles, autoconfig, *.conf files, etc.
+
+* Disable/Enable logging from the Options window.
+
 Changes since 0.9.1:
 
 * Fix for URLs with user@host: from Kai Engert.
@@ -241,4 +249,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.15 2000/02/02 17:35:22 boyns Exp $
+$Id: NEWS,v 1.16 2000/03/08 15:31:50 boyns Exp $
