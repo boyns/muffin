@@ -1,3 +1,27 @@
+2000-03-27  Mark R. Boyns  <boyns@doit.org>
+
+	* Muffin 0.9.3 released
+	
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/UserPrefs.java: error
+ 	for non localfile saves
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Prefs.java:
+ 	automatically set userHome to user.dir for windows and user.home
+ 	for all other systems
+	added getLong
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Main.java: removed
+ 	userHome option
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/ConfigurationFrame.java:
+	error dialog for non localfile saves
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Options.java: added
+ 	muffin.maxLogFileSize and muffin.maxLogFileHistory
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/LogFile.java: support
+ 	for logfile rotation
+
 2000-02-01  Mark R. Boyns  <boyns@doit.org>
 
 	* src/org/doit/muffin/Handler.java: uncompress gzip encoded html so
