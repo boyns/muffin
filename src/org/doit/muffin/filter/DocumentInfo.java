@@ -1,4 +1,4 @@
-/* $Id: DocumentInfo.java,v 1.5 1999/05/29 17:34:23 boyns Exp $ */
+/* $Id: DocumentInfo.java,v 1.6 1999/09/16 04:15:05 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -183,19 +183,26 @@ public class DocumentInfo implements FilterFactory, ContentFilter
 
     void addHeader(StringBuffer buf, String header)
     {
+	Message msg = null;
+	
 	if (request.containsHeaderField(header))
 	{
-	    buf.append(header);
-	    buf.append(": ");
-	    buf.append(request.getHeaderField(header));
-	    buf.append("<br>\n");
+	    msg = request;
 	}
 	else if (reply.containsHeaderField(header))
 	{
-	    buf.append(header);
-	    buf.append(": ");
-	    buf.append(reply.getHeaderField(header));
-	    buf.append("<br>\n");
+	    msg = reply;
+	}
+
+	if (msg != null)
+	{
+	    for (int i = msg.getHeaderValueCount(header)-1; i >= 0; i--) 
+	    {
+		buf.append(header);
+		buf.append(": ");
+		buf.append(msg.getHeaderField(header, i));
+		buf.append("<br>\n");
+	    }
 	}
     }
     
