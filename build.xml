@@ -8,6 +8,7 @@
     <property name="classes" value="classes"/>
     <property name="build.compiler" value="classic"/>
     <property name="decryption.dir" value="org/doit/muffin/decryption"/>
+    <property name="webadmin.dir" value="org/doit/muffin/webadmin"/>
     <property name="libdir" value="lib"/>
 
 		<path id="classpath.muffin">
@@ -16,7 +17,9 @@
 						<include name="*.jar"/>
 				</fileset>
 		</path>
+   </target>
 
+   <target name="dependencies" depends="init">
     <available property="jsse.present" classname="javax.net.ssl.SSLServerSocket" classpathref="classpath.muffin"/>
     <available property="regexp.jdk14.present" classname="java.util.regex.Pattern" classpathref="classpath.muffin"/>
     <available property="regexp.apache.present" classname="org.apache.regexp.RE" classpathref="classpath.muffin"/>
@@ -40,9 +43,9 @@
     <echo>JUnit detected</echo>
   </target>
   
-  <target name="compile" depends="init, core.compile, decryption.compile"/>
+  <target name="compile" depends="dependencies, core.compile, decryption.compile"/>
 
-  <target name="core.compile" depends="init">
+  <target name="core.compile" depends="dependencies">
     <mkdir dir="${classes}" />
     <javac 
 			srcdir="${srcdir}"
@@ -51,16 +54,17 @@
 			deprecation="false"
 			debug="true"
 			classpathref="classpath.muffin">
-	<!--exclude name="${decryption.dir}/*.java" unless="jsse.present"/-->
-        <exclude name="org/doit/muffin/regexp/jdk14/**/*.java" unless="regexp.jdk14.present"/>
+	<exclude name="${decryption.dir}/**/*.java"/>
+        <exclude name="${webadmin.dir}/**/*.java"/>
+	<exclude name="org/doit/muffin/regexp/jdk14/**/*.java" unless="regexp.jdk14.present"/>
 	<exclude name="org/doit/muffin/regexp/jakarta/**/*.java" unless="regexp.apache.present"/>
 	<exclude name="org/doit/muffin/test/**/*.java" unless="junit.present"/>
     </javac>
     <copy todir="${classes}">
       <fileset 
-				dir="${srcdir}"
-				includes="**/*.properties"
-				excludes="${decryption.dir}/**"/>
+		dir="${srcdir}"
+		includes="**/*.properties"
+		excludes="${decryption.dir}/**,${webadmin.dir}/**"/>
     </copy>
     <copy todir="${classes}/images">
       <fileset dir="images" includes="*.jpg"/>
@@ -71,7 +75,7 @@
     <copy file="${basedir}/COPYING" tofile="${classes}/doc/COPYING.txt"/>
   </target>
 
-  <target name="decryption.compile" depends="core.compile" if="jsse.present">
+  <target name="decryption.compile" depends="dependencies, core.compile" if="jsse.present">
     <javac srcdir="${srcdir}"
            destdir="${classes}"
            includes="${decryption.dir}/*.java"
@@ -79,13 +83,34 @@
            debug="true"
            classpathref="classpath.muffin"/>
     <copy todir="${classes}">
-      <fileset dir="${srcdir}" includes="${decryption.dir}/certs"/>
+      <fileset dir="${srcdir}" includes="${decryption.dir}/certs,${decryption.dir}/*.properties"/>
     </copy>
     <copy 
-			file="${srcdir}/${decryption.dir}/package.html"
-			tofile="doc/https_sniffing_guide.html"/>
+	file="${srcdir}/${decryption.dir}/package.html"
+	tofile="doc/https_sniffing_guide.html"/>
   </target>
-  
+
+  <target name="webadmin" depends="dependencies, core.compile">
+    <available property="velocity.present" classname="org.apache.velocity.app.Velocity" classpathref="classpath.muffin"/>
+    <available property="webmacro.present" classname="org.webmacro.WM" classpathref="classpath.muffin"/>
+    <javac srcdir="${srcdir}"
+         destdir="${classes}"
+         includes="${webadmin.dir}/**/*.java"
+	 deprecation="false"
+         debug="true"
+         classpathref="classpath.muffin">
+	 <exclude name="${webadmin.dir}/velocity/**/*.java" unless="velocity.present"/>
+	 <exclude name="${velocity.dir}/webmacro/**/*.java" unless="webmacro.present"/>
+    </javac>
+    <copy todir="${classes}">
+      <fileset dir="${srcdir}" includes="${webadmin.dir}/**/*.vm,${webadmin.dir}/**/*.wm,${webadmin.dir}/**/*.properties"/>
+      <fileset dir=".">
+        <include name="vm/**/*.vm"/>
+        <include name="wm/**/*.wm"/>
+      </fileset>
+    </copy>
+  </target>
+
   <target name="clean" depends="init">
     <delete dir="${classes}"/>
   </target>
