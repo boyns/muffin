@@ -1,5 +1,9 @@
 Muffin NEWS - user-visible changes
 
+Changes since 0.8:
+
+* Upgraded to GNU regexp 1.0.7.
+
 Changes since 0.7:
 
 * New filter ImageKill written by Heinrich Opgenoorth.  This filter
@@ -177,4 +181,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.7 1999/03/17 05:37:59 boyns Exp $
+$Id: NEWS,v 1.8 1999/03/19 07:23:42 boyns Exp $
