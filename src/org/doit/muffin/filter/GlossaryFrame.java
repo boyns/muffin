@@ -1,4 +1,4 @@
-/* $Id: GlossaryFrame.java,v 1.9 2003/06/03 23:09:29 forger77 Exp $ */
+/* $Id: GlossaryFrame.java,v 1.10 2003/06/07 14:27:34 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,8 +29,6 @@ import org.doit.util.*;
 
 public class GlossaryFrame extends AbstractFrame
 {
-
-    TextField input = null;
 
     /**
      * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)
@@ -71,11 +69,11 @@ public class GlossaryFrame extends AbstractFrame
                 getFactory().getString(Glossary.GLOSSARY_FILE_KEY) + ":",
                 Label.RIGHT));
 
-        input = new TextField(50);
-        input.setText(getFactory().getPrefsString(Glossary.GLOSSARY_FILE_KEY));
-        panel.add(input);
+        fInput = new TextField(50);
+        fInput.setText(getFactory().getPrefsString(Glossary.GLOSSARY_FILE_KEY));
+        panel.add(fInput);
 
-        panel.add(makeButton(Strings.getString("browse") + "...", BROWSE_CMD));
+        panel.add(makeButton(Strings.getString("browse") + "...", AbstractFrame.BROWSE_CMD));
 
         return panel;
     }
@@ -101,30 +99,9 @@ public class GlossaryFrame extends AbstractFrame
     protected Action[] doMakeActions()
     {
         return new Action[] {
-            new BrowseAction(),
-            // Button added in makeBrowseGui()
-            new LoadAction(RELOAD_CMD)};
-    }
-
-    /**
-     * Action invoked when clicking the button
-     * @see org.doit.muffin.filter.GlossaryFrame#BROWSE_CMD
-     */
-    class BrowseAction implements Action
-    {
-        public String getName()
-        {
-            return BROWSE_CMD;
-        }
-        public void perform()
-        {
-            FileDialog dialog = new FileDialog(getFrame(), "Glossary Load");
-            dialog.show();
-            if (dialog.getFile() != null)
-            {
-                input.setText(dialog.getDirectory() + dialog.getFile());
-            }
-        }
+            new LoadAction(RELOAD_CMD),
+            new BrowseAction("Glossary Load")
+        };
     }
 
     /**
@@ -135,10 +112,18 @@ public class GlossaryFrame extends AbstractFrame
     {
         getFactory().putPrefsString(
             Glossary.GLOSSARY_FILE_KEY,
-            input.getText());
+            fInput.getText());
+    }
+    
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doBrowse(String)
+     */
+    protected void doBrowse(String filename)
+    {
+        fInput.setText(filename);
     }
 
-    protected static final String BROWSE_CMD = "browse";
+    private TextField fInput = null;
     protected final String RELOAD_CMD = "Glossary.reload";
 
 }

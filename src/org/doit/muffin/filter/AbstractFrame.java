@@ -149,6 +149,27 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
     protected void doApply()
     {}
 
+    /**
+     * Hook method to be overridden by subclasses. This method gets called when the Button
+     * @see org.doit.muffin.filter.AbstractFrame#LOAD_CMD gets clicked.
+     */
+    protected void doLoad()
+    {}
+
+    /**
+     * Hook method to be overridden by subclasses. This method gets called when the Button
+     * @see org.doit.muffin.filter.AbstractFrame#SAVE_CMD gets clicked.
+     */
+    protected void doSave()
+    {}
+
+    /**
+     * Hook method to be overridden by subclasses. This method gets called when the Button
+     * @see org.doit.muffin.filter.AbstractFrame#BROWSE_CMD gets clicked.
+     */
+    protected void doBrowse(String filename)
+    {}
+
     class ApplyAction implements Action
     {
         public String getName()
@@ -169,6 +190,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
         }
         public void perform()
         {
+            doSave();
             doApply();
             fFactory.save();
         }
@@ -212,7 +234,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
     }
 
     /**
-     * Note that this is the only inner Action-class that will not be added by default.
+     * Note that this is an inner Action-class that will not be added by default.
      */
     class LoadAction implements Action
     {
@@ -238,9 +260,39 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
         }
         public void perform()
         {
+            doLoad();
             fFactory.doLoad();
         }
         private String fName = LOAD_CMD;
+    }
+    
+    /**
+     * Action invoked when clicking the button
+     * @see org.doit.muffin.filter.GlossaryFrame#BROWSE_CMD
+     */
+    class BrowseAction implements Action
+    {
+        /**
+         * Constructor
+         * @param title Title of the FileDialog
+         */
+        public BrowseAction(String title){
+            fTitle = title;
+        }
+        public String getName()
+        {
+            return BROWSE_CMD;
+        }
+        public void perform()
+        {
+            FileDialog dialog = new FileDialog(getFrame(), fTitle);
+            dialog.show();
+            if (dialog.getFile() != null)
+            {
+                doBrowse(dialog.getDirectory() + dialog.getFile());
+            }
+        }
+        private String fTitle;
     }
 
     /**
@@ -423,6 +475,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
     protected static final String SAVE_CMD = "save";
     protected static final String APPLY_CMD = "apply";
     protected static final String LOAD_CMD = "load";
+    protected static final String BROWSE_CMD = "browse";
 
     private Frame fFrame;
     //	private FilterFactory fFactory;

@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.10 2003/06/07 10:44:13 forger77 Exp $ */
+/* $Id: NoThanksFrame.java,v 1.11 2003/06/07 14:27:34 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -71,16 +71,16 @@ public class NoThanksFrame extends AbstractFrame
 
 	panel.add(new Label(getFactory().getString(NoThanks.KILLFILE)+":", Label.RIGHT));
 
-	input = new TextField(40);
-	input.setText(getFactory().getPrefsString(NoThanks.KILLFILE));
+	fInput = new TextField(40);
+	fInput.setText(getFactory().getPrefsString(NoThanks.KILLFILE));
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
 	c.gridwidth = 2;
-	layout.setConstraints(input, c);
-	panel.add(input);
+	layout.setConstraints(fInput, c);
+	panel.add(fInput);
 
 	Button browse = new Button(Strings.getString("browse")+"...");
-	browse.setActionCommand(BROWSE_CMD);
+	browse.setActionCommand(AbstractFrame.BROWSE_CMD);
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
@@ -89,7 +89,7 @@ public class NoThanksFrame extends AbstractFrame
 	panel.add(browse);
 
 
-	text = new TextArea();
+	fText = new TextArea();
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
 	c.fill = GridBagConstraints.BOTH;
@@ -100,8 +100,8 @@ public class NoThanksFrame extends AbstractFrame
 	c.weightx = 1.0;
 	c.weighty = 1.0;
 	c.insets = new Insets(0, 10, 5, 10);
-	layout.setConstraints(text, c);
-	panel.add(text);
+	layout.setConstraints(fText, c);
+	panel.add(fText);
 
 	l = new Label(Strings.getString("NoThanks.messages"));
 	c = new GridBagConstraints();
@@ -133,7 +133,7 @@ public class NoThanksFrame extends AbstractFrame
 
     void loadFile()
     {
-	text.setText("");
+	fText.setText("");
 
     UserFile file =
         getFactory().getPrefs().getUserFile(getFactory().getPrefsString(NoThanks.KILLFILE));
@@ -147,12 +147,12 @@ public class NoThanksFrame extends AbstractFrame
 	    String s;
 	    while ((s = br.readLine()) != null)
 	    {
-		text.append(s + "\n");
+		fText.append(s + "\n");
 	    }
 	    br.close();
 	    in.close();
 	    in = null;
-	    text.setCaretPosition(0);
+	    fText.setCaretPosition(0);
 	}
 	catch (FileNotFoundException e)
 	{
@@ -189,7 +189,7 @@ public class NoThanksFrame extends AbstractFrame
 		f.delete();
 		OutputStream out = file.getOutputStream();
 		Writer writer = new OutputStreamWriter(out);
-		writer.write(text.getText());
+		writer.write(fText.getText());
 		writer.close();
 		out.close();
 	    }
@@ -207,85 +207,30 @@ public class NoThanksFrame extends AbstractFrame
     }
     
     /**     * @see org.doit.muffin.filter.AbstractFrame#doApply()     */
-    protected void doApply(){
-        getFactory().putPrefsString(NoThanks.KILLFILE, input.getText());
-        fFactory.load(new StringReader(text.getText()));
+    protected void doApply()
+    {
+        getFactory().putPrefsString(NoThanks.KILLFILE, fInput.getText());
+        fFactory.load(new StringReader(fText.getText()));
     }
     
-    /**
-     * Since save also saves fFactory, we need to override the standard SaveAction
-     */
-    class SaveAction implements Action {
-        /**
-         * @see org.doit.muffin.filter.Action#perform()
-         */
-        public void perform()
-        {
-        doApply();
-        fFactory.save();
-        saveFile();
-        }
-        /**
-         * @see org.doit.muffin.filter.Action#getName()
-         */
-        public String getName()
-        {
-            return AbstractFrame.SAVE_CMD;
-        }
-    }
-    
-    /**
-     * Since load also loads fFactory, we need to override the standard LoadAction
-     */
-    class LoadAction implements Action {
-        /**
-         * @see org.doit.muffin.filter.Action#perform()
-         */
-        public void perform()
-        {
-        fFactory.doLoad();
+    /**     * @see org.doit.muffin.filter.AbstractFrame#doLoad()     */
+    protected void doLoad()
+    {
         loadFile();
-        }
-        /**
-         * @see org.doit.muffin.filter.Action#getName()
-         */
-        public String getName()
-        {
-            return RELOAD_CMD;
-        }
     }
-
-
-    /**
-     * Action invoked when clicking the button
-     * @see org.doit.muffin.filter.GlossaryFrame#BROWSE_CMD
-     */
-    class BrowseAction implements Action
+    
+    /**     * @see org.doit.muffin.filter.AbstractFrame#doSave()     */
+    protected void doSave()
     {
-        public String getName()
-        {
-            return BROWSE_CMD;
-        }
-        public void perform()
-        {
-            FileDialog dialog = new FileDialog(getFrame(), "NoThanks Load");
-            dialog.show();
-            if (dialog.getFile() != null)
-            {
-                input.setText(dialog.getDirectory() + dialog.getFile());
-            }
-        }
+        saveFile();
+    }
+    
+    /**     * @see org.doit.muffin.filter.AbstractFrame#doBrowse(String)     */
+    protected void doBrowse(String filename)
+    {
+        fInput.setText(filename);
     }
 
-    /**
-     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
-     */
-    protected Action[] doOverrideActions()
-    {
-        return new Action[]{
-            new SaveAction()
-        };
-    }
 
     /**
      * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
@@ -293,15 +238,14 @@ public class NoThanksFrame extends AbstractFrame
     protected Action[] doMakeActions()
     {
         return new Action[]{
-            new LoadAction(),
-            new BrowseAction()
+            new LoadAction(RELOAD_CMD),
+            new BrowseAction("NoThanks Load")
         };
     }
 
-    protected static final String BROWSE_CMD = "browse";
     protected final String RELOAD_CMD = "NoThanks.reload";
 
     private NoThanks fFactory;
-    private TextField input = null;
-    private TextArea text = null;
+    private TextField fInput;
+    private TextArea fText;
 }
