@@ -8,8 +8,7 @@ JAVACFLAGS = @JAVACFLAGS@
 JAR = @JAR@
 
 SRCS = $(shell $(srcdir)/srclist $(srcdir))
-
-OBJS = $(patsubst %.java,%.class,$(SRCS))
+OBJS = $(shell $(srcdir)/objlist $(srcdir))
 
 img_dir = org/doit/muffin/images
 doc_dir = org/doit/muffin/doc
