@@ -1,4 +1,4 @@
-/* $Id: StatsFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
+/* $Id: StatsFrame.java,v 1.7 2003/06/07 19:35:54 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,9 +24,11 @@ package org.doit.muffin.filter;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
@@ -38,49 +40,49 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 
     public StatsFrame(Prefs prefs, Stats parent)
     {
-	super(Strings.getString("Stats.title"));
+        super(Strings.getString("Stats.title"));
 
-	this.prefs = prefs;
-	this.parent = parent;
+        this.prefs = prefs;
+        this.parent = parent;
 
-	text = new TextArea();
+        text = new TextArea();
         text.setEditable(false);
         add("Center", text);
 
-	Button b;
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 4));
-	b = new Button(Strings.getString("Stats.update"));
-	b.setActionCommand("doUpdate");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("Stats.reset"));
-	b.setActionCommand("doReset");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("help"));
-	b.setActionCommand("doHelp");
-	b.addActionListener(this);
-	buttonPanel.add(b);
+        Button b;
+        Panel buttonPanel = new Panel();
+        buttonPanel.setLayout(new GridLayout(1, 4));
+        b = new Button(Strings.getString("Stats.update"));
+        b.setActionCommand("doUpdate");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("Stats.reset"));
+        b.setActionCommand("doReset");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("close"));
+        b.setActionCommand("doClose");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("help"));
+        b.setActionCommand("doHelp");
+        b.addActionListener(this);
+        buttonPanel.add(b);
 
-	add("South", buttonPanel);
+        add("South", buttonPanel);
 
-	addWindowListener(this);
+        addWindowListener(this);
 
-	pack();
-	setSize(getPreferredSize());
+        pack();
+        setSize(getPreferredSize());
 
-	show();
+        show();
     }
 
     void reset()
     {
-	text.setText("");
-	parent.reset();
+        text.setText("");
+        parent.reset();
     }
 
     void print(Hashtable h)
@@ -89,9 +91,9 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
         Integer count;
         int total = 0;
 
-        for (Enumeration e = h.keys(); e.hasMoreElements(); )
+        for (Iterator i = (new TreeSet(h.keySet())).iterator(); i.hasNext(); )
         {
-            key = (String) e.nextElement();
+            key = (String) i.next();
             count = (Integer) h.get(key);
             text.append("    " + key + ": " + count + "\n");
             total += count.intValue();
@@ -101,39 +103,39 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 
     void printUniqueServers()
     {
-	String s ;
-	Integer i, y;
-	Hashtable servers = new Hashtable(100);
-	for (Enumeration e = parent.servers.keys(); e.hasMoreElements();)
-	{
-	    s = (String) e.nextElement();
-	    i = (Integer) parent.servers.get(s);
-	    StringTokenizer st = new StringTokenizer(s, "/");
-	    s = (String) st.nextToken();
-	    if (s.startsWith("Netscape"))
+        String s ;
+        Integer i, y;
+        Hashtable servers = new Hashtable(100);
+        for (Enumeration e = parent.servers.keys(); e.hasMoreElements();)
+        {
+            s = (String) e.nextElement();
+            i = (Integer) parent.servers.get(s);
+            StringTokenizer st = new StringTokenizer(s, "/");
+            s = (String) st.nextToken();
+            if (s.startsWith("Netscape"))
             {
-		s = new String("Netscape");
-	    }
-	    if (servers.containsKey(s))
-	    {
-		y = (Integer) servers.get(s);
-		y = new Integer(y.intValue() + i.intValue());
-		servers.put(s, y);
-	    }
-	    else
-	    {
-		servers.put(s, i);
-	    }
-	}
+                s = new String("Netscape");
+            }
+            if (servers.containsKey(s))
+            {
+                y = (Integer) servers.get(s);
+                y = new Integer(y.intValue() + i.intValue());
+                servers.put(s, y);
+            }
+            else
+            {
+                servers.put(s, i);
+            }
+        }
 
-	text.append(Strings.getString("Stats.uniqueServers")+ ": " + servers.size() + "\n");
-	print(servers);
-	text.append("\n");
+        text.append(Strings.getString("Stats.uniqueServers")+ ": " + servers.size() + "\n");
+        print(servers);
+        text.append("\n");
     }
 
     void update()
     {
-	String key;
+        String key;
         Integer count;
 
         text.setText("");
@@ -146,51 +148,51 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 
         text.append(Strings.getString("Stats.requests")+": ");
         text.append(parent.requests + "\n");
-	text.append("\n");
+        text.append("\n");
 
         text.append(Strings.getString("Stats.replies")+": ");
         text.append(parent.replies + "\n");
-	text.append("\n");
+        text.append("\n");
 
         text.append(Strings.getString("Stats.hosts")+": " + parent.hosts.size() + "\n");
         print(parent.hosts);
-	text.append("\n");
+        text.append("\n");
 
         text.append(Strings.getString("Stats.servers")+": " + parent.servers.size() + "\n");
         print(parent.servers);
-	text.append("\n");
+        text.append("\n");
 
-	printUniqueServers();
+        printUniqueServers();
 
         text.append("Content-types:\n");
         print(parent.contentTypes);
-	text.append("\n");
+        text.append("\n");
 
         text.append("Content-lengths:\n");
         print(parent.contentLengths);
-	text.append("\n");
+        text.append("\n");
     }
 
     public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand();
+        String arg = event.getActionCommand();
 
-	if ("doUpdate".equals(arg))
-	{
-	    update();
-	}
-	else if ("doReset".equals(arg))
-	{
-	    reset();
-	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
-	}
-	else if ("doHelp".equals(arg))
-	{
-	    new HelpFrame("Stats");
-	}
+        if ("doUpdate".equals(arg))
+        {
+            update();
+        }
+        else if ("doReset".equals(arg))
+        {
+            reset();
+        }
+        else if ("doClose".equals(arg))
+        {
+            setVisible(false);
+        }
+        else if ("doHelp".equals(arg))
+        {
+            new HelpFrame("Stats");
+        }
     }
 
     public void windowActivated(WindowEvent e)
@@ -203,7 +205,7 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 
     public void windowClosing(WindowEvent e)
     {
-	setVisible(false);
+        setVisible(false);
     }
 
     public void windowClosed(WindowEvent e)
