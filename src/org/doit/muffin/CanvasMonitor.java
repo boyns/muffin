@@ -1,4 +1,4 @@
-/* $Id: CanvasMonitor.java,v 1.2 1998/08/13 06:00:56 boyns Exp $ */
+/* $Id: CanvasMonitor.java,v 1.3 1998/10/01 03:13:41 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -34,25 +34,34 @@ import java.awt.Insets;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 /**
  * Graphical display of what Muffin is doing.
  *
  * @author Mark Boyns
  */
-class CanvasMonitor extends Canvas implements Monitor
+class CanvasMonitor extends Canvas implements Monitor, MouseListener
 {
+    static final Dimension normalSize = new Dimension(200, 150);
+    static final Dimension smallSize = new Dimension(100, 75);
+
+    Main parent;
     Vector handlers;
     Font font;
     FontMetrics fontMetrics;
     boolean suspended = false;
     Hashtable colorTable;
+    boolean minimized = false;
 
     /**
      * Create the CanvasMonitor.
      */
-    CanvasMonitor ()
+    CanvasMonitor (Main parent)
     {
+	this.parent = parent;
+	
 	handlers = new Vector (100);
 
 	font = Main.getOptions ().getFont ("muffin.smallfont");
@@ -76,6 +85,8 @@ class CanvasMonitor extends Canvas implements Monitor
 	
 	colorTable.put ("secure", Color.yellow);
 	colorTable.put ("default", Color.white);
+
+	addMouseListener (this);
     }
 
     /**
@@ -133,6 +144,12 @@ class CanvasMonitor extends Canvas implements Monitor
 	return handlers.elements ();
     }
 
+    public void minimize(boolean enable)
+    {
+	minimized = enable;
+	setSize(minimized ? smallSize : normalSize);
+    }
+
     /**
      * Make sure the canvas is a fixed size.
      */
@@ -146,7 +163,7 @@ class CanvasMonitor extends Canvas implements Monitor
      */
     public Dimension getMinimumSize ()
     {
-	return new Dimension (200, 150);
+	return minimized ? smallSize : normalSize;
     }
 
     public void update (Graphics g)
@@ -196,7 +213,7 @@ class CanvasMonitor extends Canvas implements Monitor
 	    Reply reply = handler.reply;
 	    Request request = handler.request;
 
-	    int h = fontMetrics.getHeight ();
+	    int h = minimized ? 5 : fontMetrics.getHeight ();
 	    int currentBytes = handler.getCurrentBytes ();
 	    int totalBytes = handler.getTotalBytes ();
 	    int meterLength = 0;
@@ -319,8 +336,16 @@ class CanvasMonitor extends Canvas implements Monitor
 
 	    boolean isSecure = request.getCommand ().equals ("CONNECT");
 	    
-	    g.setColor (Main.getOptions ().getColor ("muffin.bg"));
-	    g.fill3DRect (insets.left, y, meterMax, h, true);
+	    if (minimized)
+	    {
+		g.setColor (Main.getOptions ().getColor ("muffin.fg"));
+		g.drawRect (insets.left, y, meterMax, h);
+	    }
+	    else
+	    {
+		g.setColor (Main.getOptions ().getColor ("muffin.bg"));
+		g.fill3DRect (insets.left, y, meterMax, h, true);
+	    }
 	    
 	    if (isSecure)
 	    {
@@ -344,11 +369,39 @@ class CanvasMonitor extends Canvas implements Monitor
 		g.fillRect (insets.left + 1, y + 1, meterLength - 2, h - 2);
 	    }
 
-	    g.setColor (Color.black);
+	    if (!minimized)
+	    {
+		g.setColor (Color.black);
+		g.drawString (buf.toString (), insets.left + 5, y+h-fontMetrics.getMaxDescent ());
+	    }
 	    
-	    g.drawString (buf.toString (), insets.left + 5, y+h-fontMetrics.getMaxDescent ());
-	    y += h + 5;
+	    y += h + (minimized ? 2 : 5);
 	}
+    }
+
+    public void mouseClicked(MouseEvent e)
+    {
+	if (e.getClickCount() == 2)
+	{
+	    minimized = !minimized;
+	    parent.minimize(minimized);
+	}
+    }
+    
+    public void mouseEntered(MouseEvent e)
+    {
+    }
+
+    public void mouseExited(MouseEvent e)
+    {
+    }
+
+    public void mousePressed(MouseEvent e)
+    {
+    }
+          
+    public void mouseReleased(MouseEvent e)
+    {
     }
 }
 

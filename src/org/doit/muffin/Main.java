@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.2 1998/08/13 06:01:28 boyns Exp $ */
+/* $Id: Main.java,v 1.3 1998/10/01 03:14:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -48,19 +48,22 @@ import gnu.getopt.*;
  *
  * @author Mark Boyns
  */
-public class Main extends MuffinFrame implements ActionListener, WindowListener, ConfigurationListener
+public class Main extends MuffinFrame
+    implements ActionListener, WindowListener, ConfigurationListener
 {
-    final static String version = "0.7.2";
+    final static String version = "0.7.3";
     static Options options;
     static Configuration configs;
     static FilterManager manager;
     String localhost;
-    Monitor monitor;
     Server server;
     String infoString;
-    Label infoLabel;
     Button suspendButton;
-
+    MenuBar menuBar;
+    Monitor monitor;
+    Label infoLabel;
+    Panel controlPanel;
+    
     /**
      * Create Main.
      */
@@ -81,7 +84,7 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
 	}
 	else
 	{
-	    monitor = new CanvasMonitor ();
+	    monitor = new CanvasMonitor (this);
 	    gui ();
 	}
 
@@ -101,15 +104,17 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
      */
     void gui ()
     {
-	MenuBar bar = new MenuBar ();
+	menuBar = new MenuBar ();
+
 	Menu menu = new Menu ("File");
 	//menu.setFont (new Font ("Helvetica", Font.BOLD, 12));
-	MenuItem item = new MenuItem ("Quit");
+	MenuItem item;
+	item = new MenuItem ("Quit");
 	item.setActionCommand ("doQuit");
 	item.addActionListener (this);
 	//item.setFont (new Font ("Helvetica", Font.BOLD, 12));
 	menu.add (item);
-	bar.add (menu);
+	menuBar.add (menu);
 
 	menu = new Menu ("View");
 	item = new MenuItem ("Configurations...");
@@ -136,7 +141,7 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
 	item.setActionCommand ("doThreads");
 	item.addActionListener (this);
 	menu.add (item);
-	bar.add (menu);
+	menuBar.add (menu);
 
 	menu = new Menu ("Help");
 	item = new MenuItem ("About Muffin...");
@@ -147,9 +152,9 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
 	item.setActionCommand ("doLicense");
 	item.addActionListener (this);
 	menu.add (item);
-	bar.setHelpMenu (menu);
+	menuBar.setHelpMenu (menu);
 	
-	setMenuBar (bar);
+	setMenuBar (menuBar);
 
 	if (monitor instanceof Canvas)
 	{
@@ -158,7 +163,7 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
 	}
 
 	GridBagLayout layout = new GridBagLayout ();
-	Panel controlPanel = new Panel ();
+	controlPanel = new Panel ();
 	controlPanel.setLayout (layout);
 
 	GridBagConstraints c = new GridBagConstraints ();
@@ -253,17 +258,18 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
 	}
 	else if ("doSuspend".equals (arg))
 	{
- 	    suspendButton.setLabel ("Resume");
-	    suspendButton.setActionCommand ("doResume");
-	    server.suspend ();
-	    monitor.suspend ();
+  	    suspendButton.setLabel ("Resume");
+ 	    suspendButton.setActionCommand ("doResume");
+ 	    server.suspend ();
+ 	    monitor.suspend ();
+
 	}
 	else if ("doResume".equals (arg))
 	{
- 	    suspendButton.setLabel ("Suspend");
-	    suspendButton.setActionCommand ("doSuspend");
-	    server.resume ();
-	    monitor.resume ();
+  	    suspendButton.setLabel ("Suspend");
+ 	    suspendButton.setActionCommand ("doSuspend");
+ 	    server.resume ();
+ 	    monitor.resume ();
 	}
 	else if ("doFilters".equals (arg))
 	{
@@ -277,6 +283,31 @@ public class Main extends MuffinFrame implements ActionListener, WindowListener,
 	{
 	    configs.createFrame ();
 	}
+	else
+	{
+	    minimize(false);
+	}
+    }
+
+    void minimize(boolean enable)
+    {
+	if (enable)
+	{
+ 	    infoLabel.setVisible(false);
+ 	    controlPanel.setVisible(false);
+	    remove(menuBar);
+ 	    monitor.minimize(true);
+	}
+	else
+	{
+ 	    infoLabel.setVisible(true);
+ 	    controlPanel.setVisible(true);
+ 	    setMenuBar(menuBar);
+	    monitor.minimize(false);
+	}
+
+ 	pack();
+ 	setSize(getPreferredSize());
     }
 
     public void windowActivated (WindowEvent e)
