@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.5 1999/03/12 15:47:41 boyns Exp $ */
+/* $Id: Request.java,v 1.6 1999/09/16 04:13:46 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import gnu.regexp.*;
+import org.doit.io.*;
 
 /**
  * @author Mark Boyns
@@ -115,16 +116,9 @@ public class Request extends Message
 
     void write(OutputStream out) throws IOException
     {
-	StringBuffer buf = new StringBuffer();
-	String s = toString("\r\n");
-	buf.append(s);
-	
-	if (command.equals("POST"))
-	{
-	    buf.append(new String(data, 0, data.length));
-	}
-
-	out.write(buf.toString().getBytes(), 0, buf.length());
+	ByteArray buf = new ByteArray();
+	buf.append(toString("\r\n"));
+	buf.writeTo(out);
     }
 
     public String toString(String sep)
