@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.13 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: Options.java,v 1.14 2003/06/27 21:51:47 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -23,13 +23,12 @@
  */
 package org.doit.muffin;
 
+import java.awt.SystemColor;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.awt.Color;
 
 /**
  * @author Mark Boyns
@@ -82,8 +81,8 @@ public class Options extends UserPrefs
 	putString("muffin.adminPassword", "");
 
 	/* Default colors */
-	putColor("muffin.bg", Color.lightGray);
-	putColor("muffin.fg", Color.black);
+	putColor("muffin.bg", SystemColor.control);
+	putColor("muffin.fg", SystemColor.controlText);
 
 	/* Default fonts */
  	putString("muffin.font", "helvetica-bold-12");
@@ -100,6 +99,7 @@ public class Options extends UserPrefs
  	putBoolean("muffin.proxyKeepAlive", false);
  	putInteger("muffin.readTimeout", 90000);
  	putString("muffin.nameservers", "");
+ 	putBoolean("muffin.dns",false);
 
 // 	include(configs.getUserPrefs());
 // 	configs.addConfigurationListener(this);
@@ -168,7 +168,7 @@ public class Options extends UserPrefs
 	updateAdminAllow();
 	updateAdminDeny();
 
-	MuffinResolver.init(getStringList("muffin.nameservers"));
+	MuffinResolver.init(getStringList("muffin.nameservers"),getBoolean("muffin.dns"));
     }
     
     boolean hostAccess(InetAddress addr)

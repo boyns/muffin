@@ -1,7 +1,7 @@
-/* $Id: MuffinResolver.java,v 1.4 2003/05/18 16:13:35 flefloch Exp $ */
+/* $Id: MuffinResolver.java,v 1.5 2003/06/27 21:51:47 flefloch Exp $ */
 
 /*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
  * Copyright (C) 2002-2003 Fabien Le Floc'h <fabien@31416.org>
  *
  * This file is part of Muffin.
@@ -42,7 +42,12 @@ public class MuffinResolver
 {
     private static Resolver resolver = null;
 
-    static void init(String[] servers)
+    /**
+     * @param servers a list of name server to use
+     * @param useXbillDns if true and servers is empty then we will
+     * still use xbill but name servers will be retrieved from the system.
+     */
+    static void init(String[] servers, boolean useXbillDns)
     {
         resolver = null;
 
@@ -51,6 +56,11 @@ public class MuffinResolver
             if (servers != null && servers.length > 0)
             {
                 resolver = new ExtendedResolver(servers);
+                dns.setResolver(resolver);
+            }
+            else if (useXbillDns) 
+            {
+                resolver = new ExtendedResolver();
                 dns.setResolver(resolver);
             }
         }
@@ -99,8 +109,6 @@ public class MuffinResolver
 
             StringTokenizer st = new StringTokenizer(host, ".");
             int segmentsNumber = st.countTokens();
-            //LOGGER.log(Level.DEBUG, "host=[" + host + "]");
-
             try
             {
                 if (segmentsNumber == 1)
@@ -112,17 +120,6 @@ public class MuffinResolver
                     b[1] = (byte) ((decimalAddress % 16777216) >> 16);
                     b[2] = (byte) ((decimalAddress % 65536) >> 8);
                     b[3] = (byte) ((decimalAddress % 256));
-                    //                LOGGER.log(
-                    //                    Level.DEBUG,
-                    //                    "decimal/octal or hexadecimal ip address detected, b="
-                    //                        + b[3]
-                    //                        + "."
-                    //                        + b[2]
-                    //                        + "."
-                    //                        + b[1]
-                    //                        + "."
-                    //                        + b[0]);
-                    // JDK 1.4
                     addr = InetAddressHelper.getByAddress(b);
                 }
                 else if (segmentsNumber == 4)
@@ -131,16 +128,7 @@ public class MuffinResolver
                     {
                         b[i] = (byte) (convertSegment(st.nextToken()) % 256);
                     }
-                    //                LOGGER.log(
-                    //                    Level.DEBUG,
-                    //                    "decimal/octal or hexadecimal ip address detected, b="
-                    //                        + b[3]
-                    //                        + "."
-                    //                        + b[2]
-                    //                        + "."
-                    //                        + b[1]
-                    //                        + "."
-                    //                        + b[0]);
+
                     addr = InetAddressHelper.getByAddress(b);
                 }
             }
