@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.6 1999/09/16 04:11:48 boyns Exp $ */
+/* $Id: Message.java,v 1.7 1999/11/06 23:20:38 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -236,7 +236,14 @@ public abstract class Message
 
     public Enumeration getHeaders()
     {
-	return headers.keys();
+	Vector v = new Vector();
+
+	for (Enumeration e = headers.keys(); e.hasMoreElements(); )
+	{
+	    v.addElement(e.nextElement().toString());
+	}
+
+	return v.elements();
     }
     
     public String toString()
