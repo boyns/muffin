@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.13 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: Request.java,v 1.14 2003/06/11 20:57:36 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -86,9 +87,16 @@ public class Request extends Message
         }
 
         StringTokenizer st = new StringTokenizer(statusLine);
-        command = (String) st.nextToken();
-        url = (String) st.nextToken();
-        protocol = (String) st.nextToken();
+        try
+        {
+            command = (String) st.nextToken();
+            url = (String) st.nextToken();
+            protocol = (String) st.nextToken();
+        }
+        catch(NoSuchElementException nsee)
+        {
+            throw new IOException("Malformed request, bad status line: "+statusLine);
+        }
 
         if (!url.startsWith("http"))
         {
