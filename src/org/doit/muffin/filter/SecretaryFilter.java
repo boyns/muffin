@@ -1,4 +1,4 @@
-/* $Id: SecretaryFilter.java,v 1.2 1998/08/13 06:02:54 boyns Exp $ */
+/* $Id: SecretaryFilter.java,v 1.3 1998/09/25 04:53:57 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -98,12 +98,11 @@ public class SecretaryFilter implements ContentFilter
 		    {
 			selectName = null;
 		    }
-		    /* <input type=text name=xxx> */
-		    else if (inform && tag.is ("input")
-			     && tag.has ("name")
-			     && (!tag.has ("type") /* type can be missing */
-			         || (tag.has ("type")
-				     && tag.get ("type").equalsIgnoreCase ("text"))))
+		    /* <input type=(text|password) name=xxx> */
+		    else if (inform && tag.is("input") && tag.has("name")
+			     && (!tag.has("type") /* type can be missing */
+			         || tag.get("type").equalsIgnoreCase("text")
+			         || tag.get("type").equalsIgnoreCase("password")))
 		    {
 			String name = tag.get ("name").toLowerCase ();
 			if (factory.containsKey (name))
