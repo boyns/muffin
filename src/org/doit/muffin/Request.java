@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.8 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Request.java,v 1.9 2000/03/08 15:25:25 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -90,7 +90,7 @@ public class Request extends Message
 
 	readHeaders(in);
 
-	if (command.equals("POST"))
+	if ("POST".equals(command) || "PUT".equals(command))
 	{
 	    try
 	    {
@@ -102,37 +102,26 @@ public class Request extends Message
 		    n = in.read(data, offset, data.length - offset);
 		    if (n < 0)
 		    {
-			throw new IOException("Not enough POST data");
+			throw new IOException("Not enough " + command + " data");
 		    }
 		    offset += n;
 		}
 	    }
 	    catch (NumberFormatException e)
 	    {
-		System.out.println("Malformed or missing POST Content-length");
+		System.out.println("Malformed or missing " + command + " Content-length");
 	    }
 	}
     }
 
-    void write(OutputStream out) throws IOException
+    public void write(OutputStream out)
+	throws IOException
     {
-	ByteArray buf = new ByteArray();
-	buf.append(toString("\r\n"));
-	buf.writeTo(out);
-    }
-
-    public String toString(String sep)
-    {
-	if (command.equals("POST"))
+	super.write(out);
+	if (data != null)
 	{
-	    StringBuffer buf = new StringBuffer(super.toString(sep));
-	    buf.append(getData());
-	    buf.append(sep);
-	    return buf.toString();
-	}
-	else
-	{
-	    return super.toString(sep);
+	    out.write(data);
+	    out.flush();
 	}
     }
 
