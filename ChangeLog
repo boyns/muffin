@@ -1,5 +1,21 @@
+2000-03-29  Mark R. Boyns  <boyns@doit.org>
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Message.java:
+	* made readLine public (Lucas Gonze)
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/NoThanksFrame.java, /cvsroot/muffin/muffin/src/org/doit/muffin/UserPrefs.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/TranslateFrame.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Translate.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Secretary.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/RewriteFrame.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Rewrite.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/NoThanks.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/History.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Glossary.java, /cvsroot/muffin/muffin/src/org/doit/muffin/Configuration.java:
+	* don't complain about missing files
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Main.java:
+	* updated to 0.9.3a
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/NoThanks.java:
+	* create some hashtables to handle missing killfile better
+
 2000-03-27  Mark R. Boyns  <boyns@doit.org>
 
+	* Muffin 0.9.3 released
+	
 	* /cvsroot/muffin/muffin/src/org/doit/muffin/UserPrefs.java: error
  	for non localfile saves
 
