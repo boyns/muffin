@@ -1,7 +1,7 @@
-/* $Id: Main.java,v 1.14 1999/11/09 04:19:05 boyns Exp $ */
+/* $Id: Main.java,v 1.15 2000/01/24 04:00:52 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -50,7 +50,7 @@ import org.doit.util.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    private static String version = "0.9.1";
+    private static String version = "0.9.2";
     private static String url = "http://muffin.doit.org/";
     private static String host;
 
@@ -444,7 +444,7 @@ public class Main extends MuffinFrame
     {
 	StringBuffer buf = new StringBuffer();
 	buf.append("Muffin version " + version +
-		   ", Copyright (C) 1996-1999 Mark R. Boyns <boyns@doit.org>\n");
+		   ", Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>\n");
 	buf.append("Muffin comes with ABSOLUTELY NO WARRANTY; for details see Help/License.\n");
 	buf.append("This is free software, and you are welcome to redistribute it\n");
 	buf.append("under certain conditions; see Help/License for details.\n");
