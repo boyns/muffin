@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.10 2000/02/11 02:33:58 boyns Exp $ */
+/* $Id: Configuration.java,v 1.11 2000/03/08 15:15:26 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,11 +22,7 @@
  */
 package org.doit.muffin;
 
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Reader;
-import java.io.IOException;
+import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.NoSuchElementException;
@@ -37,7 +33,7 @@ import gnu.regexp.REException;
 
 class Configuration extends Prefs
 {
-    final String autoConfigFile = "autoconfig";
+    String autoConfigFile = "autoconfig";
     String currentConfig = null;
     String defaultConfig = null;
     Vector autoConfigPatterns = null;
@@ -50,6 +46,11 @@ class Configuration extends Prefs
 	autoConfigPatterns = new Vector();
 	autoConfigNames = new Vector();
 	configurationListeners = new Vector();
+    }
+
+    void setAutoConfigFile(String file)
+    {
+	autoConfigFile = file;
     }
 
     void addConfigurationListener(Object obj)
@@ -152,20 +153,24 @@ class Configuration extends Prefs
 	return defaultConfig;
     }
 
-    String getAutoConfigFile()
+    UserFile getAutoConfigFile()
     {
 	return getUserFile(autoConfigFile);
     }
 
-    String getUserConfigFile(String name)
+    UserFile getUserConfigFile(String name)
     {
 	return getUserFile(name);
     }
 
     boolean deleteUserConfigFile(String name)
     {
-	File file = new File(getUserConfigFile(name));
-	return file.delete();
+	UserFile file = getUserConfigFile(name);
+	if (file instanceof LocalFile)
+	{
+	    return ((LocalFile)file).delete();
+	}
+	return false;
     }
 
     boolean delete(String name)
@@ -228,21 +233,31 @@ class Configuration extends Prefs
 
     void load()
     {
-	File file = new File(getAutoConfigFile());
-	if (!file.exists())
-	{
-	    //System.out.println(file.getAbsolutePath() + " does not exist");
-	    return;
-	}
-
-	System.out.println("Using " + file.getAbsolutePath());
+	InputStream in = null;
+	
 	try
 	{
-	    load(new FileReader(file));
+	    UserFile file = getAutoConfigFile();
+	    System.out.println("Using " + file.getName());
+	    in = file.getInputStream();
+	    load(new InputStreamReader(in));
 	}
 	catch (IOException e)
 	{
 	    System.out.println(e);
+	}
+	finally
+	{
+	    try
+	    {
+		if (in != null)
+		{
+		    in.close();
+		}
+	    }
+	    catch (IOException e)
+	    {
+	    }
 	}
     }
 
