@@ -20,8 +20,6 @@
  */
 package org.doit.muffin;
 
-import org.doit.muffin.webadmin.VelocityInitializer;
-
 /**
  * 
  * @author Fabien Le Floc'h
