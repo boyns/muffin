@@ -29,7 +29,7 @@ public class Muffin
 {
     private final String        TMP_PREFIX = "Muffin-";
     private final String        TMP_SUFFIX = ".jar";
-    private URLClassLoader      classLoader;
+    private ClassLoader      classLoader;
 
     Muffin(String[] args)
         throws Exception
@@ -86,6 +86,11 @@ public class Muffin
             }
 
             classLoader = new URLClassLoader((URL[])urls.toArray(new URL[0]));
+        }
+        else {
+            // when we start Muffin without muffin.jar,
+            // using a manual classpath.
+            classLoader = this.getClass().getClassLoader();
         }
     }
 
