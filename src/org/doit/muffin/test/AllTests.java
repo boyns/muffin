@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -29,16 +29,19 @@ import junit.framework.TestSuite;
  * @author bernhard.wagner
  *
  */
-public class AllTests {
+public class AllTests
+{
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for org.doit.muffin.test");
-		//$JUnit-BEGIN$
-		suite.addTest(new TestSuite(RegexpTest.class));
-		suite.addTest(new TestSuite(GlossaryTest.class));
-		suite.addTest(new TestSuite(EmptyFontTest.class));
-		suite.addTest(new TestSuite(ImageKillTest.class));
-		//$JUnit-END$
-		return suite;
-	}
+    public static Test suite()
+    {
+        TestSuite suite = new TestSuite("Test for org.doit.muffin.test");
+        //$JUnit-BEGIN$
+        suite.addTest(new TestSuite(RegexpTest.class));
+        suite.addTest(new TestSuite(GlossaryTest.class));
+        suite.addTest(new TestSuite(EmptyFontTest.class));
+        suite.addTest(new TestSuite(ImageKillTest.class));
+        suite.addTest(new TestSuite(DecafTest.class));
+        //$JUnit-END$
+        return suite;
+    }
 }
