@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.12 2000/03/29 14:57:42 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.13 2000/03/29 15:14:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -449,6 +449,9 @@ public class NoThanks implements FilterFactory
 	    UserFile file = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
 	    in = file.getInputStream();
 	    load(new InputStreamReader(in));
+	}
+	catch (FileNotFoundException e)
+	{
 	}
 	catch (IOException e)
 	{

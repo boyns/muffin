@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.11 2000/03/08 15:15:26 boyns Exp $ */
+/* $Id: Configuration.java,v 1.12 2000/03/29 15:13:05 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -238,9 +238,12 @@ class Configuration extends Prefs
 	try
 	{
 	    UserFile file = getAutoConfigFile();
-	    System.out.println("Using " + file.getName());
 	    in = file.getInputStream();
 	    load(new InputStreamReader(in));
+	    System.out.println("Using " + file.getName());
+	}
+	catch (FileNotFoundException e)
+	{
 	}
 	catch (IOException e)
 	{

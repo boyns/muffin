@@ -180,6 +180,9 @@ public class TranslateFrame extends MuffinFrame
 	    in = null;
 	    text.setCaretPosition(0);
 	}
+	catch (FileNotFoundException e)
+	{
+	}
 	catch (IOException e)
 	{
 	    System.out.println(e);

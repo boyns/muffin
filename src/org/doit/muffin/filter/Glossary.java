@@ -1,4 +1,4 @@
-/* $Id: Glossary.java,v 1.6 2000/03/08 15:26:28 boyns Exp $ */
+/* $Id: Glossary.java,v 1.7 2000/03/29 15:13:22 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -111,6 +111,9 @@ public class Glossary extends Hashtable implements FilterFactory
 		put(term.toLowerCase(), url);
 	    }
 	    in.close();
+	}
+	catch (FileNotFoundException e)
+	{
 	}
 	catch (Exception e)
 	{

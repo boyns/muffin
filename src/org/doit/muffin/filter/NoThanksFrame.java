@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.7 2000/03/08 15:26:28 boyns Exp $ */
+/* $Id: NoThanksFrame.java,v 1.8 2000/03/29 15:17:43 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -186,6 +186,9 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	    in.close();
 	    in = null;
 	    text.setCaretPosition(0);
+	}
+	catch (FileNotFoundException e)
+	{
 	}
 	catch (IOException e)
 	{

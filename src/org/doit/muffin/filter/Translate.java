@@ -177,6 +177,9 @@ public class Translate implements FilterFactory
 	    in = file.getInputStream();
 	    load(new InputStreamReader(in));
 	}
+	catch (FileNotFoundException e)
+	{
+	}
 	catch (IOException e)
 	{
 	    System.out.println(e);

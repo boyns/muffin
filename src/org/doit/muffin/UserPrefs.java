@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.10 2000/03/27 04:28:52 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.11 2000/03/29 15:16:58 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -80,6 +80,9 @@ class UserPrefs extends Prefs
 		put(key, props.get(key));
 	    }
 	    in.close();
+	}
+	catch (FileNotFoundException e)
+	{
 	}
 	catch (IOException e)
 	{
