@@ -1,0 +1,4 @@
+Obscure filter allows a more anonymous www usage by
+rewriting host name, ip, or url path in an obscured way. See
+http://www.searchlores.org/obscure.htm for more information on
+how this topic.

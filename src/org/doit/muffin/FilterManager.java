@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.11 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: FilterManager.java,v 1.12 2003/05/08 17:00:28 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -50,6 +50,7 @@ public class FilterManager implements ConfigurationListener
 	"Junkbuster",
 	"HostnameExpander",
 	"NoCode",
+	"Obscure",
 	"Painter",
 	"PlainHtml",
 	"Preview",
