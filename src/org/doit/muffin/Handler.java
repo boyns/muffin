@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.15 2003/05/03 09:40:04 flefloch Exp $ */
+/* $Id: Handler.java,v 1.16 2003/05/08 17:01:54 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -231,7 +231,7 @@ public class Handler implements Runnable
         {
             request.setURL(
                 "http://"
-                    + Main.getMuffinHost()
+                    + Main.getMuffinHost().getHostName()
                     + ":"
                     + options.getString("muffin.port")
                     + url);

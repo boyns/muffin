@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.27 2003/05/03 14:27:13 flefloch Exp $ */
+/* $Id: Main.java,v 1.28 2003/05/08 17:01:54 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -45,7 +45,7 @@ public class Main
     private final static String version = "0.9.4";
     private final static String url = "http://muffin.doit.org/";
 
-    private static String host;
+    private static InetAddress host;
     private static Options options;
     private static Configuration configs;
     private static FilterManager manager;
@@ -136,7 +136,7 @@ public class Main
         return version;
     }
 
-    public static String getMuffinHost()
+    public static InetAddress getMuffinHost()
     {
         return host;
     }
@@ -686,11 +686,16 @@ public class Main
 
         try
         {
-            host = InetAddress.getLocalHost().getHostName();
+            host = InetAddress.getLocalHost(); //.getHostName();
         }
         catch (UnknownHostException e)
         {
-            host = "127.0.0.1";
+        	try {
+            	host = InetAddress.getByName("127.0.0.1");
+        	} catch (UnknownHostException uhe)
+        	{
+        		System.err.println("can not start muffin: "+uhe.getMessage());	
+        	}
         }
 
         if (args.exists("port"))
