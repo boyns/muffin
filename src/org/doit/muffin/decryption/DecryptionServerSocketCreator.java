@@ -21,6 +21,7 @@
 package org.doit.muffin.decryption;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -50,6 +51,17 @@ class DecryptionServerSocketCreator implements ServerSocketCreator
         this.factory = context.getServerSocketFactory();
         this.socketCreator = new SSLSocketCreator(context);
     }
+
+    public ServerSocket createServerSocket(int port, InetAddress address) throws IOException
+    {
+        // Socket to me
+        SSLServerSocket serverSocket =
+            (SSLServerSocket) factory.createServerSocket(port, 512, address);
+        // Authenticate the client?
+        serverSocket.setNeedClientAuth(false);
+        // Return a ServerSocket on the desired port (443)
+        return serverSocket;
+    }        
     /**
      * @see org.doit.muffin.ServerSocketCreator#createServerSocket(int, String)
      */
