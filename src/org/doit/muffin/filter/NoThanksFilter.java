@@ -1,4 +1,4 @@
-/* $Id: NoThanksFilter.java,v 1.8 2000/01/25 21:19:33 boyns Exp $ */
+/* $Id: NoThanksFilter.java,v 1.9 2000/03/08 19:26:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -50,6 +50,8 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 
     public void filter(Request request) throws FilterException
     {
+	this.request = request;
+
 	String url = request.getURL();
 
 	/* Check for redirect */
@@ -73,6 +75,8 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 
     public void filter(Reply reply) throws FilterException
     {
+	this.reply = reply;
+
 	String content = reply.getContentType();
 	if (content != null && factory.killContent(content))
 	{
