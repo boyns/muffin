@@ -1,3 +1,25 @@
+/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+
+/*
+ * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ *
+ * This file is part of Muffin.
+ *
+ * Muffin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Muffin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Muffin; see the file COPYING.  If not, write to the
+ * Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
 package org.doit.muffin.test;
 
 import java.util.*;
@@ -7,7 +29,9 @@ import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 
 /**
- * @author bernhard.wagner
+ * @author Bernhard Wagner <bw@xmlizer.biz>
+ * 
+ * TestCase testing the Regexes.
  *
  */
 public class RegexpTest extends TestCase {
@@ -30,7 +54,10 @@ public class RegexpTest extends TestCase {
 			System.out.println(patternAdapter);
 			Factory.instance().setRegexType(patternAdapter);
 			Pattern pattern = Factory.instance().getPattern("(a|b)");
-			assertEquals(patternAdapter, pattern.getClass().getName());			
+			patternAdapter = patternAdapter.substring(0, patternAdapter.lastIndexOf("."));
+			String checkName = pattern.getClass().getName();
+			checkName = checkName.substring(0, checkName.lastIndexOf("."));
+			assertEquals(patternAdapter, checkName);			
 		}
 	}
 
@@ -165,12 +192,6 @@ public class RegexpTest extends TestCase {
 	}
 
 
-	/**
-	 * 
-	 * 
-	 * This method uses the implicit knowledge that gnu regexp engine has number 0 and
-	 * jdk14 regexp engin has number 1 in Factory.
-	 * 	 * @param regexpType	 */
 	private void testStartEndIndex(String regexpType){
 		Factory.instance().setRegexType(regexpType);
         final String INPUT = "google is the door to iinformation.";
@@ -187,7 +208,7 @@ public class RegexpTest extends TestCase {
 		assertEquals("regextype:<"+regexpType+">",4, matcher.getEndIndex(2));
 	}
 
-	private static Map IMPLS = Factory.instance().getImplementors();
+	private static Map IMPLS = Factory.instance().getFactoryMap();
 	private static int NOF_IMPLS = IMPLS.size();
 
 }
