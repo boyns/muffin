@@ -6,6 +6,7 @@ VPATH = @srcdir@
 JAVAC = @JAVAC@
 JAVACFLAGS = @JAVACFLAGS@
 JAR = @JAR@
+CLASSPATH = @CLASSPATH@
 
 SRCS = $(shell $(srcdir)/srclist $(srcdir))
 OBJS = $(shell $(srcdir)/objlist $(srcdir))
@@ -16,19 +17,22 @@ doc_dir = org/doit/muffin/doc
 all:	classes jar
 
 classes:
-	CLASSPATH=$(srcdir):$(CLASSPATH) $(JAVAC) -d . $(JAVACFLAGS) $(SRCS)
+	@echo compiling with $(JAVAC)
+	@CLASSPATH=$(srcdir):$(CLASSPATH) $(JAVAC) -d . $(JAVACFLAGS) $(SRCS)
 
 jar:
-	$(RM) muffin.jar
-	rm -rf $(img_dir) $(doc_dir)
-	mkdir -p $(img_dir) $(doc_dir)
-	cp $(srcdir)/../images/*.jpg $(img_dir)
-	cp $(srcdir)/../doc/filter/*.txt $(doc_dir)
-	cp $(srcdir)/../COPYING $(doc_dir)/COPYING.txt
-	$(JAR) cvf muffin.jar $(OBJS) $(img_dir)/*.jpg $(doc_dir)/*.txt
+	@$(RM) muffin.jar
+	@rm -rf $(img_dir) $(doc_dir)
+	@mkdir -p $(img_dir) $(doc_dir)
+	@cp $(srcdir)/../images/*.jpg $(img_dir)
+	@cp $(srcdir)/../doc/filter/*.txt $(doc_dir)
+	@cp $(srcdir)/../COPYING $(doc_dir)/COPYING.txt
+	@echo building muffin.jar
+	@$(JAR) cf muffin.jar $(OBJS) $(img_dir)/*.jpg $(doc_dir)/*.txt 2>/dev/null
 
 clean:
 	$(RM) $(OBJS) muffin
 	$(RM) -rf $(img_dir) $(doc_dir)
 
 distclean: clean
+	$(RM) Makefile
