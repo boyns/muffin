@@ -68,7 +68,7 @@ public class Token extends ByteArray
 
 	while (start < offset)
 	{
-	    switch (bytes[++start])
+	    switch ((char)bytes[++start])
 	    {
 	    case ' ':
 	    case '\t':
@@ -83,7 +83,7 @@ public class Token extends ByteArray
 	end = start;
  loop:  while (end < offset)
 	{
-	    switch (bytes[++end])
+	    switch ((char)bytes[++end])
 	    {
 	    case ' ':
 	    case '\t':

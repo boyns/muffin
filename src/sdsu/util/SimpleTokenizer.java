@@ -112,7 +112,7 @@ public class SimpleTokenizer
 			}
 		catch (IOException readError ) 
 			//abstraction does not require IO here, hide IO to allow changes
-			{};							
+			{}							
 		}
 
 	
@@ -136,7 +136,7 @@ public class SimpleTokenizer
 		catch (IOException readError )
 			{
 			return false;
-			};
+			}
 
 	 	}
 

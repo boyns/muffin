@@ -17,7 +17,7 @@ doc_dir = org/doit/muffin/doc
 all:	classes jar
 
 classes:
-	CLASSPATH=$(srcdir) $(JAVAC) -d . $(JAVACFLAGS) $(SRCS)
+	CLASSPATH=$(srcdir):$(CLASSPATH) $(JAVAC) -d . $(JAVACFLAGS) $(SRCS)
 
 jar:
 	$(RM) muffin.jar
@@ -26,7 +26,7 @@ jar:
 	cp $(srcdir)/../images/*.jpg $(img_dir)
 	cp $(srcdir)/../doc/filter/*.txt $(doc_dir)
 	cp $(srcdir)/../COPYING $(doc_dir)/COPYING.txt
-	$(JAR) cvf muffin.jar Muffin.class UK gnu org sdsu
+	$(JAR) cvf muffin.jar $(OBJS) $(img_dir)/*.jpg $(doc_dir)/*.txt
 
 clean:
 	$(RM) $(OBJS) muffin
