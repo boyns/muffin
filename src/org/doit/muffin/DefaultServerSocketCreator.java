@@ -40,7 +40,12 @@ class DefaultServerSocketCreator implements ServerSocketCreator
 	public DefaultServerSocketCreator() {
 		this.prefs = Main.getOptions();		
 	}
-	
+
+    public ServerSocket createServerSocket(int port, InetAddress address)
+        throws IOException
+    {
+        return new ServerSocket(port, 512, address);
+    }
     /**
      * @see org.doit.muffin.ServerSocketCreator#createServerSocket(int, String)
      */
@@ -48,19 +53,8 @@ class DefaultServerSocketCreator implements ServerSocketCreator
         throws IOException
     {
         ServerSocket server = null;
-        String bindaddr = prefs.getString("muffin.bindaddress");
-
-        if (bindaddr != null && bindaddr.length() > 0)
-        {
-            server =
-                new ServerSocket(port, 512, InetAddress.getByName(bindaddr));
-        }
-        else
-        {
-            server = new ServerSocket(port, 512);
-        }
+        server = new ServerSocket(port, 512);
         return server;
-
     }
 
     /**
