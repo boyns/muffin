@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.5 1999/05/29 17:34:24 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.6 1999/11/09 04:05:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -62,6 +62,9 @@ public class NoThanks implements FilterFactory
     private RE hyperAttrs = null;
     private RE hyperEnd = null;
     private RE requiredTags = null;
+
+    // RE compilation cflags
+    private int cflags = 0;
 
     public NoThanks()
     {
@@ -331,7 +334,7 @@ public class NoThanks implements FilterFactory
 	    }
 	}
 	buf.append(")");
-	return new RE(buf.toString());
+	return new RE(buf.toString(), cflags);
     }
 
     void load()
@@ -366,9 +369,12 @@ public class NoThanks implements FilterFactory
 	
 	try
 	{
-	    kill = (killBuffer.length() > 0) ? new RE("(" + killBuffer.toString() + ")") : null;
-	    comment = (commentBuffer.length() > 0) ? new RE("(" + commentBuffer.toString() + ")") : null;
-	    content = (contentBuffer.length() > 0) ? new RE("(" + contentBuffer.toString() + ")") : null;
+	    kill = (killBuffer.length() > 0) ?
+		new RE("(" + killBuffer.toString() + ")", cflags) : null;
+	    comment = (commentBuffer.length() > 0) ?
+		new RE("(" + commentBuffer.toString() + ")", cflags) : null;
+	    content = (contentBuffer.length() > 0) ?
+		new RE("(" + contentBuffer.toString() + ")", cflags) : null;
 
 	    /* Build regular expressions for tagattr */
 	    Enumeration e = tagattrStrip.keys();
@@ -502,7 +508,7 @@ public class NoThanks implements FilterFactory
 		    }
 		    try
 		    {
-			RE re = new RE(pattern);
+			RE re = new RE(pattern, cflags);
 			redirectPatterns.addElement(re);
 			redirectLocations.addElement(location);
 		    }
@@ -584,7 +590,7 @@ public class NoThanks implements FilterFactory
 			pattern = new String(st.sval);
 		    }
 
-		    RE re = new RE(pattern);
+		    RE re = new RE(pattern, cflags);
 		
 		    if (command.equals("strip"))
 		    {
@@ -647,6 +653,23 @@ public class NoThanks implements FilterFactory
 		    else
 		    {
 			System.out.println("tagattr " + command + " unknown command");
+		    }
+		}
+		else if (st.sval.equals("options"))
+		{
+		    token = st.nextToken();
+		    if (token != StreamTokenizer.TT_WORD && token != '"')
+		    {
+			break;
+		    }
+
+		    if ("reg-case".equals(st.sval))
+		    {
+			cflags = 0;
+		    }
+		    else if ("reg-icase".equals(st.sval))
+		    {
+			cflags = RE.REG_ICASE;
 		    }
 		}
 		else
