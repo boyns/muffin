@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.11 2003/05/10 01:01:22 flefloch Exp $ */
+/* $Id: Server.java,v 1.12 2003/05/20 21:11:27 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -148,7 +148,7 @@ public class Server implements Runnable
         {
             DataOutputStream out =
                 new DataOutputStream(socket.getOutputStream());
-            out.writeBytes((new HttpError(options, code, message)).toString());
+            out.writeBytes((HttpErrorFactory.getFactory().createError(code, message)).toString());
             out.close();
             socket.close();
         }

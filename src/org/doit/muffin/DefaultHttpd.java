@@ -42,15 +42,11 @@ import org.doit.util.*;
  * @author Mark R. Boyns
  * @author Fabien Le Floc'h (sendme fix)
  */
-public class Httpd extends HttpConnection
+public class DefaultHttpd extends HttpConnection
 {
-    static Options options = null;
-    static FilterManager manager = null;
-    static Monitor monitor = null;
-
     Request request = null;
 
-    public Httpd(Socket socket) throws IOException
+    public DefaultHttpd(Socket socket) throws IOException
     {
         super(socket);
     }
@@ -111,9 +107,9 @@ public class Httpd extends HttpConnection
             "<title>"
                 + title
                 + "</title><body bgcolor="
-                + options.getString("muffin.bg")
+                + HttpdFactory.getOptions().getString("muffin.bg")
                 + " text="
-                + options.getString("muffin.fg")
+                + HttpdFactory.getOptions().getString("muffin.fg")
                 + ">\n");
         html.append("<h1>" + title + "</h1>\n");
         html.append("<hr size=4 noshade>\n");
@@ -159,7 +155,7 @@ public class Httpd extends HttpConnection
         html.append(head(Strings.getString("config.title")));
 
         html.append("<ul>\n");
-        Enumeration e = manager.configs.sortedKeys();
+        Enumeration e = HttpdFactory.getManager().configs.sortedKeys();
         while (e.hasMoreElements())
         {
             String name = (String) e.nextElement();
@@ -184,13 +180,13 @@ public class Httpd extends HttpConnection
             "</b></b><br>\n");
         html.append("<form method=POST action=/admin/autoConfig>\n");
         html.append("<textarea name=text rows=10 cols=50>\n");
-        for (int i = 0; i < manager.configs.autoConfigPatterns.size(); i++)
+        for (int i = 0; i < HttpdFactory.getManager().configs.autoConfigPatterns.size(); i++)
         {
             html.append(
-                manager.configs.autoConfigPatterns.elementAt(i).toString());
+                HttpdFactory.getManager().configs.autoConfigPatterns.elementAt(i).toString());
             html.append("\t");
             html.append(
-                manager.configs.autoConfigNames.elementAt(i).toString());
+                HttpdFactory.getManager().configs.autoConfigNames.elementAt(i).toString());
             html.append("\n");
         }
         html.append("</textarea>\n");
@@ -211,7 +207,7 @@ public class Httpd extends HttpConnection
 
         Enumeration e;
 
-        e = monitor.enumerate();
+        e = HttpdFactory.getMonitor().enumerate();
         while (e.hasMoreElements())
         {
             Object obj = e.nextElement();
@@ -236,8 +232,8 @@ public class Httpd extends HttpConnection
         StringBuffer html = new StringBuffer();
         html.append(head(Strings.getString("fm.title")));
 
-        Vector supported = manager.getSupportedFilters(config);
-        Vector enabled = manager.getEnabledFilters(config);
+        Vector supported = HttpdFactory.getManager().getSupportedFilters(config);
+        Vector enabled = HttpdFactory.getManager().getEnabledFilters(config);
 
         html.append("<table><tr><td>\n");
         html.append("<h2>").append(Strings.getString("fm.available")).append(
@@ -268,7 +264,7 @@ public class Httpd extends HttpConnection
         for (int i = 0; i < enabled.size(); i++)
         {
             FilterFactory ff = (FilterFactory) enabled.elementAt(i);
-            String filter = manager.shortName((ff.getClass()).getName());
+            String filter = HttpdFactory.getManager().shortName((ff.getClass()).getName());
             html.append("<option value=" + i + ">" + filter + "\n");
         }
         html.append("</select>\n");
@@ -284,7 +280,7 @@ public class Httpd extends HttpConnection
         for (int i = 0; i < enabled.size(); i++)
         {
             FilterFactory ff = (FilterFactory) enabled.elementAt(i);
-            String filter = manager.shortName((ff.getClass()).getName());
+            String filter = HttpdFactory.getManager().shortName((ff.getClass()).getName());
             Prefs prefs = ff.getPrefs();
 
             html.append("<hr>\n");
@@ -451,9 +447,9 @@ public class Httpd extends HttpConnection
         String user = st.nextToken();
         String pass = st.nextToken();
         if (user != null
-            && user.equals(options.getString("muffin.adminUser"))
+            && user.equals(HttpdFactory.getOptions().getString("muffin.adminUser"))
             && pass != null
-            && pass.equals(options.getString("muffin.adminPassword")))
+            && pass.equals(HttpdFactory.getOptions().getString("muffin.adminPassword")))
         {
             return true;
         }
@@ -491,10 +487,10 @@ public class Httpd extends HttpConnection
             }
             reply.setContent(content);
         }
-        else if (!options.adminInetAccess(getInetAddress()))
+        else if (!HttpdFactory.getOptions().adminInetAccess(getInetAddress()))
         {
-            HttpError error =
-                new HttpError(options, 403, Strings.getString("admin.denied"));
+            DefaultHttpError error =
+                new DefaultHttpError(HttpdFactory.getOptions(), 403, Strings.getString("admin.denied"));
             reply = error.getReply();
             reply.setContent(
                 (InputStream) new ByteArrayInputStream(error
@@ -502,12 +498,12 @@ public class Httpd extends HttpConnection
                     .getBytes()));
         }
         else if (
-            options.getString("muffin.adminUser").length() > 0
-                && options.getString("muffin.adminPassword").length() > 0
+            HttpdFactory.getOptions().getString("muffin.adminUser").length() > 0
+                && HttpdFactory.getOptions().getString("muffin.adminPassword").length() > 0
                 && !authenticated(request))
         {
-            HttpError error =
-                new HttpError(options, 401, Strings.getString("admin.denied"));
+            DefaultHttpError error =
+                new DefaultHttpError(HttpdFactory.getOptions(), 401, Strings.getString("admin.denied"));
             reply = error.getReply();
             reply.setHeaderField(
                 "WWW-Authenticate",
@@ -534,7 +530,7 @@ public class Httpd extends HttpConnection
             System.out.println("text=" + text);
             if (text != null)
             {
-                manager.configs.load(new StringReader(text));
+                HttpdFactory.getManager().configs.load(new StringReader(text));
             }
 
             reply = Reply.createRedirect("/admin/configs");
@@ -568,7 +564,7 @@ public class Httpd extends HttpConnection
             if (config != null)
             {
                 config.trim();
-                manager.configs.createConfig(config);
+                HttpdFactory.getManager().configs.createConfig(config);
             }
 
             reply = Reply.createRedirect("/admin/configs");
@@ -582,7 +578,7 @@ public class Httpd extends HttpConnection
             if (config != null)
             {
                 config.trim();
-                manager.configs.createConfig(config);
+                HttpdFactory.getManager().configs.createConfig(config);
             }
 
             byte buf[] = filters(config).getBytes();
@@ -610,7 +606,7 @@ public class Httpd extends HttpConnection
             String filter = (String) attrs.get("filter");
             if (config != null && filter != null)
             {
-                manager.enable(config, filter);
+                HttpdFactory.getManager().enable(config, filter);
             }
 
             reply = Reply.createRedirect("/admin/filters?config=" + config);
@@ -634,7 +630,7 @@ public class Httpd extends HttpConnection
 
             if (config != null && i != -1)
             {
-                manager.disable(config, i);
+                HttpdFactory.getManager().disable(config, i);
             }
 
             reply = Reply.createRedirect("/admin/filters?config=" + config);
@@ -652,12 +648,12 @@ public class Httpd extends HttpConnection
 
             if (config != null && filter != null && attrs.size() > 0)
             {
-                Vector enabled = manager.getEnabledFilters(config);
+                Vector enabled = HttpdFactory.getManager().getEnabledFilters(config);
                 FilterFactory factory = null;
                 for (int i = 0; i < enabled.size(); i++)
                 {
                     FilterFactory ff = (FilterFactory) enabled.elementAt(i);
-                    String name = manager.shortName((ff.getClass()).getName());
+                    String name = HttpdFactory.getManager().shortName((ff.getClass()).getName());
                     if (name.equals(filter))
                     {
                         factory = ff;
@@ -682,8 +678,8 @@ public class Httpd extends HttpConnection
         }
         else
         {
-            HttpError error =
-                new HttpError(options, 404, request.getPath() + " not found");
+            DefaultHttpError error =
+                new DefaultHttpError(HttpdFactory.getOptions(), 404, request.getPath() + " not found");
             reply = error.getReply();
             reply.setContent(
                 (InputStream) new ByteArrayInputStream(error
@@ -694,19 +690,12 @@ public class Httpd extends HttpConnection
         return reply;
     }
 
-    static void init(Options o, FilterManager m, Monitor mon)
-    {
-        options = o;
-        manager = m;
-        monitor = mon;
-    }
-
     public static boolean sendme(Request request)
     {
         return (
             request.getClient().getInetAddress().equals(
             	Main.getMuffinHost()) &&
-        	request.getPort() == options.getInteger("muffin.port"));
+        	request.getPort() == HttpdFactory.getOptions().getInteger("muffin.port"));
     }
 
     static String getLocation()
@@ -715,7 +704,7 @@ public class Httpd extends HttpConnection
         buf.append("http://");
         buf.append(Main.getMuffinHost().getHostName());
         buf.append(":");
-        buf.append(options.getString("muffin.port"));
+        buf.append(HttpdFactory.getOptions().getString("muffin.port"));
         return buf.toString();
     }
 
@@ -725,7 +714,7 @@ public class Httpd extends HttpConnection
         buf.append("<a href=\"" + Main.getMuffinUrl() + "\">");
         buf.append(
             "<i><img border=0 alt=\"\" src=\""
-                + Httpd.getLocation()
+                + DefaultHttpd.getLocation()
                 + "/images/mufficon.jpg\">");
         buf.append(
             "Generated by Muffin " + Main.getMuffinVersion() + "</a></i>");
