@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.11 2000/03/29 15:19:59 boyns Exp $ */
+/* $Id: Message.java,v 1.12 2000/03/30 06:33:58 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -167,7 +167,7 @@ public abstract class Message
 	{
 	    return null;
 	}
-	return(String) v.elementAt(index);
+	return (String) v.elementAt(index);
     }
 
     public void setHeaderField(String name, String value)
@@ -204,6 +204,25 @@ public abstract class Message
     public void setHeaderField(String name, int value, int index)
     {
 	setHeaderField(name, new Integer(value).toString(), index);
+    }
+
+    /**
+     * Set all header fields with the give name to the
+     * specified value.
+     */
+    public void setHeaderFields(String name, String value)
+    {
+	Vector v;
+	Key key = new Key(name);
+
+	v = (Vector) headers.get(key);
+	if (v != null)
+	{
+	    for (int i = 0; i < v.size(); i++)
+	    {
+		v.setElementAt(value, i);
+	    }
+	}
     }
 
     public void appendHeaderField(String name, String value)
