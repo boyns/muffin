@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.8 2003/05/10 22:52:55 cmallwitz Exp $ */
+/* $Id: Tag.java,v 1.9 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,8 @@ package org.doit.html;
 
 import java.util.Hashtable;
 import java.util.Enumeration;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Factory;
+import org.doit.muffin.regexp.Pattern;
 
 public class Tag
 {
@@ -152,10 +153,8 @@ public class Tag
         return attributes != null ? attributes.size() : 0;
     }
 
-    public boolean matches(RE re)
-    {
-        REMatch match = re.getMatch(name);
-        return match != null;
+    public boolean matches(String pattern) {
+        return (Factory.instance().getPattern(pattern).matches(name));
     }
 
     public String toString()

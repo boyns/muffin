@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.13 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: Configuration.java,v 1.14 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,12 +28,18 @@ import java.util.Vector;
 import java.util.NoSuchElementException;
 import java.awt.Label;
 import java.awt.Choice;
-import gnu.regexp.RE;
-import gnu.regexp.REException;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Factory;
 import org.doit.util.*;
 
 class Configuration extends Prefs
 {
+	// FIXME: these instance vars ought to be private
+	// FIXME: why are we using Vectors and not ArrayLists ?
+	// FIXME: autoConfigPatterns and autoConfigNames:
+	//        create a new kind of HashMap that matches regexes instead of keys
+	//        because this functionality is used in several places.
+	
     String autoConfigFile = "autoconfig";
     String currentConfig = null;
     String defaultConfig = null;
@@ -141,17 +147,16 @@ class Configuration extends Prefs
 	return prefs;
     }
 
-    String autoConfig(String pattern)
-    {
-	for (int i = 0; i < autoConfigPatterns.size(); i++)
-	{
-	    RE re = (RE) autoConfigPatterns.elementAt(i);
-	    if (re.getMatch(pattern) != null)
-	    {
-		return (String) autoConfigNames.elementAt(i);
-	    }
-	}
-	return defaultConfig;
+	/**
+	 * Returns first autoConfigName that matches the given regexp pattern.	 * @param pattern The regexp pattern for which to find an autoConfigName.	 * @return String The first autoConfigName that matches the given regexp pattern.	 */
+    String autoConfig(String pattern) {
+		for (int i = 0; i < autoConfigPatterns.size(); i++) {
+		    Pattern re = (Pattern) autoConfigPatterns.elementAt(i);
+		    if (re.matches(pattern)){
+				return (String) autoConfigNames.elementAt(i);
+		    }
+		}
+		return defaultConfig;
     }
 
     UserFile getAutoConfigFile()
@@ -192,44 +197,34 @@ class Configuration extends Prefs
 	return true;
     }
 
-    void load(Reader reader)
-    {
-	autoConfigPatterns = new Vector();
-	autoConfigNames = new Vector();
-
-	try
-	{
-	    BufferedReader in = new BufferedReader(reader);
-	    String s;
-	    while ((s = in.readLine()) != null)
-	    {
-		StringTokenizer st = new StringTokenizer(s, " \t");
-		String pattern, name;
-
-		try
-		{
-		    pattern = st.nextToken();
-		    name = st.nextToken();
+	/**
+	 * Loads our config patterns and associated names from the given Reader.	 * @param reader The Reader from which to load config patterns and names.	 */
+    void load(Reader reader) {
+		autoConfigPatterns = new Vector();
+		autoConfigNames = new Vector();
+	
+		try {
+		    BufferedReader in = new BufferedReader(reader);
+		    String s;
+		    while ((s = in.readLine()) != null) {
+				StringTokenizer st = new StringTokenizer(s, " \t");
+				String pattern, name;
+		
+				try {
+				    pattern = st.nextToken();
+				    name = st.nextToken();
+				} catch (NoSuchElementException nsee) {
+				    continue;
+				}
+		
+				Pattern re = Factory.instance().getPattern(pattern);
+				autoConfigPatterns.addElement(re);
+				autoConfigNames.addElement(name);
+		    }
+		    in.close();
+		} catch (IOException e) {
+		    System.out.println(e);
 		}
-		catch (NoSuchElementException nsee)
-		{
-		    continue;
-		}
-
-		RE re = new RE(pattern);
-		autoConfigPatterns.addElement(re);
-		autoConfigNames.addElement(name);
-	    }
-	    in.close();
-	}
-	catch (REException e)
-	{
-	    System.out.println(e);
-	}
-	catch (IOException e)
-	{
-	    System.out.println(e);
-	}
     }
 
     void load()

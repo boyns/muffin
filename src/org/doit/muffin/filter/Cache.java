@@ -26,7 +26,6 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.text.DateFormat;
-import gnu.regexp.*;
 
 /** Web cache.
  */

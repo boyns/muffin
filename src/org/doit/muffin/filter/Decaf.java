@@ -1,4 +1,4 @@
-/* $Id: Decaf.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: Decaf.java,v 1.6 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,8 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 import java.util.Hashtable;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Factory;
 
 public class Decaf implements FilterFactory
 {
@@ -34,22 +35,16 @@ public class Decaf implements FilterFactory
     DecafFrame frame = null;
     MessageArea messages = null;
 
-    private RE javaScriptTags = null;
-    private RE javaScriptAttrs = null;
+    private Pattern javaScriptTags = null;
+    private Pattern javaScriptAttrs = null;
 
-    public void setManager(FilterManager manager)
-    {
-	this.manager = manager;
-
-	try
-	{
-	    javaScriptTags = new RE("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
-	    javaScriptAttrs = new RE("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+	/**
+	 * 	 * @see org.doit.muffin.FilterFactory#setManager(FilterManager)	 */
+    public void setManager(FilterManager manager) {
+		this.manager = manager;
+	
+	    javaScriptTags = Factory.instance().getPattern("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
+	    javaScriptAttrs = Factory.instance().getPattern("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
     }
     
     public void setPrefs(Prefs prefs)
@@ -96,12 +91,12 @@ public class Decaf implements FilterFactory
 
     public boolean isJavaScriptTag(String pattern)
     {
-	return javaScriptTags.getMatch(pattern) != null;
+	return javaScriptTags.matches(pattern);
     }
 
     public boolean isJavaScriptAttr(String pattern)
     {
-	return javaScriptAttrs.getMatch(pattern) != null;
+	return javaScriptAttrs.matches(pattern);
     }
     
     void save()

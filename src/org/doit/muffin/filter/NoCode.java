@@ -1,4 +1,4 @@
-/* $Id: NoCode.java,v 1.2 1999/05/29 17:34:24 boyns Exp $ */
+/* $Id: NoCode.java,v 1.3 2003/05/19 23:06:54 forger77 Exp $ */
 
 /* Based upon Decaf by Mark R. Boyns so here is his copyright notice: */
 
@@ -33,7 +33,8 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 import java.util.Hashtable;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Factory;
+import org.doit.muffin.regexp.Pattern;
 
 public class NoCode implements FilterFactory
 {
@@ -42,23 +43,19 @@ public class NoCode implements FilterFactory
     NoCodeFrame frame = null;
     MessageArea messages = null;
 
-    private RE javaScriptTags = null;
-    private RE javaScriptAttrs = null;
+    private Pattern javaScriptTags = null;
+    private Pattern javaScriptAttrs = null;
 
-    public void setManager(FilterManager manager)
-    {
-	this.manager = manager;
+	public void setManager(FilterManager manager) {
+		this.manager = manager;
 
-	try
-	{
-	    javaScriptTags = new RE("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
-	    javaScriptAttrs = new RE("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
+		javaScriptTags =
+			Factory.instance().getPattern(
+				"^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
+		javaScriptAttrs =
+			Factory.instance().getPattern(
+				"^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
 	}
-	catch (REException e)
-	{
-	    e.printStackTrace();
-	}
-    }
     
     public void setPrefs(Prefs prefs)
     {
@@ -108,12 +105,12 @@ public class NoCode implements FilterFactory
 
     public boolean isJavaScriptTag(String pattern)
     {
-	return javaScriptTags.getMatch(pattern) != null;
+	return javaScriptTags.matches(pattern);
     }
 
     public boolean isJavaScriptAttr(String pattern)
     {
-	return javaScriptAttrs.getMatch(pattern) != null;
+	return javaScriptAttrs.matches(pattern);
     }
     
     void save()
