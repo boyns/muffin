@@ -1,4 +1,4 @@
-/* $Id: HtmlTokenizer.java,v 1.5 2000/01/24 04:02:05 boyns Exp $ */
+/* $Id: HtmlTokenizer.java,v 1.6 2003/05/10 23:13:09 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,153 +36,153 @@ public class HtmlTokenizer extends PushbackInputStream
 
     public HtmlTokenizer(InputStream in)
     {
-	super(in, 32);
+        super(in, 32);
     }
 
     public Token getToken() throws IOException
     {
-	int ch;
-	boolean quoted = false;
-	int quoteChar = 0;
-	int badIndex = 0;
-	int scriptIndex = 0;
-	ByteArray undo = new ByteArray();
+        int ch;
+        boolean quoted = false;
+        int quoteChar = 0;
+        int badIndex = 0;
+        int scriptIndex = 0;
+        ByteArray undo = new ByteArray();
 
-	Token token = new Token(nextTokenType);
-	nextTokenType = Token.TT_NONE;
+        Token token = new Token(nextTokenType);
+        nextTokenType = Token.TT_NONE;
 
-	while ((ch = read()) != -1)
-	{
-	    switch (token.type)
-	    {
-	    case Token.TT_COMMENT:
-		break;
-		
-	    case Token.TT_SCRIPT:
-		if (scriptPattern[scriptIndex] == ' ')
-		{
-		    if (Character.isWhitespace((char)ch))
-		    {
-			undo.append((byte)ch);
-			break; /* XXX */
-		    }
-		    scriptIndex++;
-		}
-		if ((char)scriptPattern[scriptIndex] == Character.toLowerCase((char)ch))
-		{
-		    undo.append((byte)ch);
-		    scriptIndex++;
-		    if (scriptIndex == scriptPattern.length)
-		    {
-			/* put back the end tag for next time */
-			for (int i = undo.length() - 1; i >= 0; i--)
-			{
-			    unread(undo.get(i));
-			}
-			token.chop(undo.length() - 1);
-			return token;
-		    }
-		}
-		else if (scriptIndex > 0)
-		{
-		    scriptIndex = 0;
-		    undo.erase();
-		}
-		break;
+        while ((ch = read()) != -1)
+        {
+            switch (token.type)
+            {
+            case Token.TT_COMMENT:
+                break;
 
-	    default:
-		/* look for end quote */
-		if (quoted)
-		{
-		    if (ch == quoteChar)
-		    {
-			quoted = false;
-		    }
-		    // AJP modification - Allow for tags inside a tag!
-		    // Example: <img src="......" alt="<B>Title</B>" ...>
-		    else if (ch == badPattern[(badIndex < 0) ? 0 : badIndex])
-		    {
-			badIndex++;
-			if (badIndex == badPattern.length)
-			{
-			    badIndex = 0;
-			    quoted = false;
-			    System.out.println("HTML: Missing start or end quote");
-			    System.out.println();
-			    System.out.println(new String(token.bytes));
-			    System.out.println();
-			}
-		    }
-		    // AJP modification - Allow for tags inside a tag!
-		    else if (ch == '<') /* Start tag */
-		    {
-			badIndex = -1;
+            case Token.TT_SCRIPT:
+                if (scriptPattern[scriptIndex] == ' ')
+                {
+                    if (Character.isWhitespace((char)ch))
+                    {
+                        undo.append((byte)ch);
+                        break; /* XXX */
                     }
-		}
-		/* look for start tag */
-		else if (ch == '<')
-		{
-		    if (token.type != Token.TT_NONE)
-		    {
-			unread(ch);
-			return token;
-		    }
-		    token.type = Token.TT_TAG;
-		}
-		/* look for start quote */
-		else if (token.type == Token.TT_TAG && (ch == '"' || ch == '\''))
-		{
-		    quoted = true;
-		    quoteChar = ch;
-		}
-		/* otherwise it's text */
-		else if (token.type == Token.TT_NONE)
-		{
-		    token.type = Token.TT_TEXT;
-		}
-	    }
+                    scriptIndex++;
+                }
+                if ((char)scriptPattern[scriptIndex] == Character.toLowerCase((char)ch))
+                {
+                    undo.append((byte)ch);
+                    scriptIndex++;
+                    if (scriptIndex == scriptPattern.length)
+                    {
+                        /* put back the end tag for next time */
+                        for (int i = undo.length() - 1; i >= 0; i--)
+                        {
+                            unread(undo.get(i));
+                        }
+                        token.chop(undo.length() - 1);
+                        return token;
+                    }
+                }
+                else if (scriptIndex > 0)
+                {
+                    scriptIndex = 0;
+                    undo.erase();
+                }
+                break;
 
-	    token.append((byte)ch);
+            default:
+                /* look for end quote */
+                if (quoted)
+                {
+                    if (ch == quoteChar)
+                    {
+                        quoted = false;
+                    }
+                    // AJP modification - Allow for tags inside a tag!
+                    // Example: <img src="......" alt="<B>Title</B>" ...>
+                    else if (ch == badPattern[(badIndex < 0) ? 0 : badIndex])
+                    {
+                        badIndex++;
+                        if (badIndex == badPattern.length)
+                        {
+                            badIndex = 0;
+                            quoted = false;
+                            // System.out.println("HTML: Missing start or end quote");
+                            // System.out.println();
+                            // System.out.println(new String(token.bytes));
+                            // System.out.println();
+                        }
+                    }
+                    // AJP modification - Allow for tags inside a tag!
+                    else if (ch == '<') /* Start tag */
+                    {
+                        badIndex = -1;
+                    }
+                }
+                /* look for start tag */
+                else if (ch == '<')
+                {
+                    if (token.type != Token.TT_NONE)
+                    {
+                        unread(ch);
+                        return token;
+                    }
+                    token.type = Token.TT_TAG;
+                }
+                /* look for start quote */
+                else if (token.type == Token.TT_TAG && (ch == '"' || ch == '\''))
+                {
+                    quoted = true;
+                    quoteChar = ch;
+                }
+                /* otherwise it's text */
+                else if (token.type == Token.TT_NONE)
+                {
+                    token.type = Token.TT_TEXT;
+                }
+            }
 
-	    /* see if the tag is really a comment */
-	    if (token.type == Token.TT_TAG && token.offset == 4)
-	    {
-		if (token.bytes[0] == '<'
-		    && token.bytes[1] == '!'
-		    && token.bytes[2] == '-'
-		    && token.bytes[3] == '-')
-		{
-		    token.type = Token.TT_COMMENT;
-		}
-	    }
+            token.append((byte)ch);
 
-	    /* look for end tag */
-	    if (ch == '>' && !quoted)
-	    {
-	        if (token.type == Token.TT_COMMENT
-		    && token.bytes[token.offset-1] == '>'
-		    && token.bytes[token.offset-2] == '-'
-		    && token.bytes[token.offset-3] == '-')
-		{
-		    break;
-		}
-		else if (token.type == Token.TT_TAG)
-		{
-		    break;
-		}
-	    }
-	}
+            /* see if the tag is really a comment */
+            if (token.type == Token.TT_TAG && token.offset == 4)
+            {
+                if (token.bytes[0] == '<'
+                    && token.bytes[1] == '!'
+                    && token.bytes[2] == '-'
+                    && token.bytes[3] == '-')
+                {
+                    token.type = Token.TT_COMMENT;
+                }
+            }
 
-	if (token.type == Token.TT_TAG)
-	{
-	    /* force the tag to be parsed */
-	    Tag tag = token.createTag();
-	    if (tag.is("script"))
-	    {
-		nextTokenType = Token.TT_SCRIPT;
-	    }
-	}
+            /* look for end tag */
+            if (ch == '>' && !quoted)
+            {
+                if (token.type == Token.TT_COMMENT
+                    && token.bytes[token.offset-1] == '>'
+                    && token.bytes[token.offset-2] == '-'
+                    && token.bytes[token.offset-3] == '-')
+                {
+                    break;
+                }
+                else if (token.type == Token.TT_TAG)
+                {
+                    break;
+                }
+            }
+        }
 
-	return token.type == Token.TT_NONE ? null : token;
+        if (token.type == Token.TT_TAG)
+        {
+            /* force the tag to be parsed */
+            Tag tag = token.createTag();
+            if (tag.is("script"))
+            {
+                nextTokenType = Token.TT_SCRIPT;
+            }
+        }
+
+        return token.type == Token.TT_NONE ? null : token;
     }
 }
