@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.9 2000/01/25 06:52:36 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.10 2000/01/25 06:56:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -93,7 +93,7 @@ public class MuffinFrame extends Frame
 	    MediaTracker tracker = new MediaTracker(this);
 	    URL url = getClass().getResource("/images/mufficon.jpg");
 	    Object obj;
-	    if (url != null && ((obj = url.getContent) instanceof ImageProducer))
+	    if (url != null && ((obj = url.getContent()) instanceof ImageProducer))
 	    {
 		image = Toolkit.getDefaultToolkit().createImage((ImageProducer) obj);
 		tracker.addImage(image, 1);
