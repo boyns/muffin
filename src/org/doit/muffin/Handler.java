@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.7 1999/05/27 06:09:59 boyns Exp $ */
+/* $Id: Handler.java,v 1.8 1999/09/16 04:09:46 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -112,7 +112,7 @@ class Handler implements Runnable
 	try
 	{
 	    client = new Client(socket);
-	    client.setTimeout(30000);
+	    client.setTimeout(options.getInteger("muffin.readTimeout"));
 	}
 	catch (IOException e)
 	{
@@ -184,7 +184,12 @@ class Handler implements Runnable
 	    {
 		error(client.getOutputStream(), reason, request);
 	    }
-	    reason.printStackTrace();
+
+	    // don't print filter exceptions
+	    if (! (reason instanceof FilterException))
+	    {
+		reason.printStackTrace();
+	    }
 	}
 	
 	close();
@@ -263,7 +268,7 @@ class Handler implements Runnable
 		http.sendRequest(request);
 		if (http instanceof Http)
 		{
-		    ((Http)http).setTimeout(30000);
+		    ((Http)http).setTimeout(options.getInteger("muffin.readTimeout"));
 		}
 		reply = http.recvReply(request);
 	    }
@@ -321,7 +326,7 @@ class Handler implements Runnable
 	    if (secure)
 	    {
 		Https https = (Https) http;
-		int timeout = 30000;
+		int timeout = options.getInteger("muffin.readTimeout");
 		
 		client.write(reply);
 
