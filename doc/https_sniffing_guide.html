@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>Package Documentation for org.doit.muffin.decryption</title>
+</head>
+<body>
+<p>
+The decryption package provides for HTTPS man-in-the-middle decryption.
+<br>
+<br>
+<a name="doc.Description"></a>
+<div align="center">
+<a href="#doc.Depend">[Dependencies]</a>
+<a href="#doc.Intro">[Introduction]</a>
+<a href="#doc.Properties">[Configuration Properties]</a>
+<a href="#doc.Usage">[Usage Example]</a>
+<a href="#doc.FAQ">[FAQ]</a>
+</div>
+<a name="doc.Depend"></a>
+<h3>External Dependencies</h3>
+
+<ul>
+  <li>A JSSE implementation: it is included by default in JDK 1.4+. For previous JDKs you need to download JSSE from <a href="http://java.sun.com/products/jsse/">here</a> and extract the jars in $JAVA_HOME/jre/lib/ext.
+  </li>
+  <li>org.doit.muffin package.</li>
+</ul>
+
+<a name="doc.Intro"></a>
+<h3>Introduction</h3>
+
+<p>I was looking for a tool allowing me to "sniff" HTTPS connection in order to debug my program. The only one I found was proxomitron and it was not working properly for my test. After several days of searching the web, I decided to code it myself. And it proved to be quicker to code than to search thanks to the <a href="http://muffin.doit.org">Muffin</a> open-source project.</p>
+
+<p>This package provides a new kind of https proxy server that allows you to see the content of requests and responses. Normal HTTPS proxy won't allow you that because from the RFC specifications they are only tunneling an SSL connection.</p>
+
+<p>This project was started in February 2002.</p>
+
+
+<a name="doc.Properties"></a>
+<h3>Configuration Properties</h3>
+<p>
+Configuration properties can be set in a muffin configuration file (default is default.conf located in the user $HOME/Muffin directory). If it is not existing you can create one in this directory. Following is the list of properties used by the decryption package:
+</p>
+<p><ul>
+<li><code>Decryption.port</code>: port number for the internal fake HTTPS server. Default value is -1 which indicates that you don't want to decrypt HTTPS.</li>
+<li><code>Decryption.certificate</code>: location of the server certificate file in the CLASSPATH. Default value is "certs" which corresponds to the default certificate present in this package.</li>
+<li><code>Decryption.keystorePassword</code>: java keystore password.</li>
+<li><code>Decryption.keyPassword</code>: certificate key password.</li>
+<li><code>Decryption.dummyTrust</code>: do you want to accept every www server certificate (=true) or use the JDK default trustore (=false)? Default value is "true". Please note that this default value is highly risky as you can't know anymore if a www server certificate is valid or not because the only one your browser will see is the one from muffin, but the default JDK trustore is never uptodate and Decryption main use should be for debugging purposes.
+</ul>
+</p>
+
+<a name="doc.Usage"></a>
+<h3>Usage Example</h3>
+<p>
+The easiest way to try HTTPS sniffing is to start Muffin and use the GUI to add the org.doit.muffin.decryption.Decryption filter (Options,filters,select the filter and save/apply). Then you should wait a second or two so that you see the filter being added to the active filter list. It takes little bit of time because it needs to start a new ServerSocket and initialize the Random number generator.
+</p>
+
+<a name="doc.FAQ"></a>
+<h3>Frequently Asked Questions</h3>
+<p><ul>
+<li><strong>How does it work?</strong>
+<p>When an HTTPS request is received by Muffin (Server running on port 51966), it is forwarded to a simple HTTPS server (in fact just an SSLServerSocket). This HTTPS server will log the decrypted request and forward it through an SSL socket to the real destination. Then it will log and forward the response to the proxy, which will in turn forward it to the client. Alert in the browser should popup to tell you the server certificate does not correspond to the website you are trying to access (the server certificate will be the custom muffin one).</p>
+<p>To summarize, BROWSER &lt;==&gt; PROXY &lt;==&gt; fake HTTPS server &lt;==&gt; real HTTPS server.</p>
+</li>
+<li><strong>Why do I have alert popups in my favorite browser?</strong>
+<p>several reasons: unregistered certificate, certificate date, certificate does not match requested host.</p>
+</li>
+<li><strong>How do I change my certificate?</strong>
+<p>The first thing is to have another certificate. It's best to get it from the java keystore using the keytool java tool because there are many certificate formats and only the "JFS" type will be recognized.
+<br>Then put your certificate in your classpath and modify Decryption.* properties to match keystore name, file, and passwords.
+<p>Note: if this does not satisfy your needs, you are always welcome to modify org.doit.muffin.decryption.SSLContextFactory class and send me a copy of your new file.
+</li>
+<li><strong>How can I create a new certificate?</strong>
+<p>A good way to do it is to use keytool. You can look in the Java Tools Documentation to get help on it. As there are many steps, there are tutorials on the web like <a href="http://www-106.ibm.com/developerworks/java/library/j-customssl/sidebar.html">this one</a>. If would highly suggest to read more on JSSE but if you just don't remember the important steps, I think these are the following (taken from JSSE reference documentation):
+<br>1)    keytool -genkey -alias duke -keystore keystore -keyalg rsa
+<br>2)    keytool -export -alias duke -keystore keystore -rfc -file duke.cer
+</li>
+</ul>
+</body>
+</html>
