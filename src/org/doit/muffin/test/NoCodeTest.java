@@ -28,41 +28,41 @@ import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.regexp.*;
 
-import org.doit.muffin.filter.Decaf;
+import org.doit.muffin.filter.NoCode;
 
 /**
  * @author Bernhard Wagner <bw@xmlizer.biz>
  * 
- * TestCase testing the Decaf.
+ * TestCase testing the NoCode.
  *
  */
-public class DecafTest extends TestCase
+public class NoCodeTest extends TestCase
 {
 
     /**
-     * Constructor for DecafTest.
+     * Constructor for NoCodeTest.
      * @param arg0
      */
-    public DecafTest(String arg0)
+    public NoCodeTest(String arg0)
     {
         super(arg0);
     }
 
     public void setUp()
     {
-        fDecaf = new Decaf();
+        fNoCode = new NoCode();
         fPrefs = new Prefs();
-        fPrefs.putBoolean("Decaf.noJava", true);
-        fPrefs.putBoolean("Decaf.noJavaScript", true);
-        fDecaf.setPrefs(fPrefs);
-        fDecafFilter = (ContentFilter) fDecaf.createFilter();
+        fPrefs.putBoolean("NoCode.noJava", true);
+        fPrefs.putBoolean("NoCode.noJavaScript", true);
+        fNoCode.setPrefs(fPrefs);
+        fNoCodeFilter = (ContentFilter) fNoCode.createFilter();
     }
 
 //    public void testException()
 //    {
 //        try
 //        {
-//            fDecafFilter.setPrefs(fPrefs);
+//            fNoCodeFilter.setPrefs(fPrefs);
 //        } catch (RuntimeException e)
 //        {
 //            return;
@@ -70,14 +70,14 @@ public class DecafTest extends TestCase
 //        fail("Should have thrown RuntimeException.");
 //    }
 //
-    public void testDecafFilterPresence() throws IOException
+    public void testNoCodeFilterPresence() throws IOException
     {
-        assertNotNull(fDecafFilter);
+        assertNotNull(fNoCodeFilter);
 
         Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
         assertNotNull(reply);
 
-        assertTrue(fDecafFilter.needsFiltration(null, reply));
+        assertTrue(fNoCodeFilter.needsFiltration(null, reply));
     }
 
     public void testReplacing()
@@ -85,7 +85,7 @@ public class DecafTest extends TestCase
         Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
         OutputStream os = new ByteArrayOutputStream();
         Utils.filter(
-            fDecafFilter,
+            fNoCodeFilter,
             reply.getContent(),
             os,
             SAMPLE_PAGE.length(),
@@ -100,7 +100,7 @@ public class DecafTest extends TestCase
         Reply reply = Utils.makeReply(SAMPLE_RESPONSEJS);
         OutputStream os = new ByteArrayOutputStream();
         Utils.filter(
-            fDecafFilter,
+            fNoCodeFilter,
             reply.getContent(),
             os,
             SAMPLE_PAGEJS.length(),
@@ -191,8 +191,8 @@ public class DecafTest extends TestCase
             + SAMPLE_PAGEJS
             + "";
 
-    private Decaf fDecaf;
-    private ContentFilter fDecafFilter;
+    private NoCode fNoCode;
+    private ContentFilter fNoCodeFilter;
     private Reply fReply;
     private Prefs fPrefs;
 

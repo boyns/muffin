@@ -1,4 +1,4 @@
-/* $Id: NoCode.java,v 1.3 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: NoCode.java,v 1.4 2003/06/05 15:33:14 forger77 Exp $ */
 
 /* Based upon Decaf by Mark R. Boyns so here is his copyright notice: */
 
@@ -30,98 +30,66 @@
 
 package org.doit.muffin.filter;
 
-import org.doit.muffin.*;
-import org.doit.html.*;
-import java.util.Hashtable;
+import org.doit.muffin.Filter;
 import org.doit.muffin.regexp.Factory;
 import org.doit.muffin.regexp.Pattern;
 
-public class NoCode implements FilterFactory
+public class NoCode extends AbstractFilterFactory
 {
-    FilterManager manager;
-    Prefs prefs;
-    NoCodeFrame frame = null;
-    MessageArea messages = null;
-
-    private Pattern javaScriptTags = null;
-    private Pattern javaScriptAttrs = null;
-
-	public void setManager(FilterManager manager) {
-		this.manager = manager;
-
-		javaScriptTags =
-			Factory.instance().getPattern(
-				"^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
-		javaScriptAttrs =
-			Factory.instance().getPattern(
-				"^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
-	}
     
-    public void setPrefs(Prefs prefs)
+    static final String NOJAVA = "noJava";
+    static final String NOJAVASCRIPT = "noJavaScript";
+    static final String NOVBSCRIPT = "noVBScript";
+    static final String NOOTHERSCRIPT = "noOtherScript";
+    static final String NOENCODEDSCRIPT = "noEncodedScript";
+    static final String NOEVALINSCRIPT = "noEvalInScript";
+
+    private static Pattern javaScriptTags = Factory.instance().getPattern(
+                "^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
+    private static Pattern javaScriptAttrs = Factory.instance().getPattern(
+                "^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");;
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()     */
+    protected void doSetDefaultPrefs()
     {
-	this.prefs = prefs;
-
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	prefs.putBoolean("NoCode.noJavaScript", true);
-	prefs.putBoolean("NoCode.noVBScript", true);
-	prefs.putBoolean("NoCode.noOtherScript", true);
-	prefs.putBoolean("NoCode.noEncodedScript", true);
-	prefs.putBoolean("NoCode.noEvalInScript", true);
-	prefs.putBoolean("NoCode.noJava", false);
-	prefs.setOverride(o);
-
-	messages = new MessageArea();
+	putPrefsBoolean(NOJAVASCRIPT, true);
+	putPrefsBoolean(NOVBSCRIPT, true);
+	putPrefsBoolean(NOOTHERSCRIPT, true);
+	putPrefsBoolean(NOENCODEDSCRIPT, true);
+	putPrefsBoolean(NOEVALINSCRIPT, true);
+	putPrefsBoolean(NOJAVA, false);
     }
 
-    public Prefs getPrefs()
+    protected AbstractFrame doMakeFrame()
     {
-	return prefs;
-    }
-
-    public void viewPrefs()
-    {
-	if (frame == null)
-	{
-	    frame = new NoCodeFrame(prefs, this);
-	}
-	frame.setVisible(true);
+    return new NoCodeFrame(this);
     }
     
-    public Filter createFilter()
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()     */
+    protected Filter doMakeFilter()
     {
-	Filter f = new NoCodeFilter(this);
-	f.setPrefs(prefs);
-	return f;
+	return new NoCodeFilter(this);
     }
 
-    public void shutdown()
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName()
     {
-	if (frame != null)
-	{
-	    frame.dispose();
-	}
+        return "NoCode";
     }
 
-    public boolean isJavaScriptTag(String pattern)
+    static boolean isJavaScriptTag(String pattern)
     {
 	return javaScriptTags.matches(pattern);
     }
 
-    public boolean isJavaScriptAttr(String pattern)
+    static boolean isJavaScriptAttr(String pattern)
     {
 	return javaScriptAttrs.matches(pattern);
     }
     
-    void save()
-    {
-	manager.save(this);
-    }
-
-    void report(Request request, String message)
-    {
-	request.addLogEntry("NoCode", message);
-	messages.append(message + "\n");
-    }
 }
 
