@@ -120,5 +120,33 @@ public class Utils {
 		}
     }
 
+	
+	public static InputStream makeInputStreamFromString(String str) {
+		byte[] bytes = str.getBytes();
+		return new ByteArrayInputStream(bytes);
+	}
+	
+	public static BufferedReader makeBufferedReaderFromString(String str){
+		return new BufferedReader(
+			new InputStreamReader(
+				makeInputStreamFromString(str)
+			)
+		);
+	}
+	
+	/** 
+	 * Constructs a Reply object containing a simple Web-Response.
+	 * @return Reply The constructed Reply object.
+	 */
+	public static Reply makeReply(String str) {
+		Reply reply = null;
+		try {
+			reply = new Reply(makeInputStreamFromString(str));
+			reply.read();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return reply;
+	}
 
 }

@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: EmptyFontFrame.java,v 1.7 2003/05/30 21:54:05 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,115 +27,73 @@ import java.awt.event.*;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
-public class EmptyFontFrame extends MuffinFrame implements ActionListener, WindowListener
-{
-    Prefs prefs;
-    EmptyFont parent;
-    Checkbox debug;
+public class EmptyFontFrame extends AbstractFrame {
 
-    public EmptyFontFrame(Prefs prefs, EmptyFont parent)
-    {
-	super(Strings.getString("EmptyFont.title"));
-
-	this.prefs = prefs;
-	this.parent = parent;
-
-	Panel panel = new Panel();
-	GridBagLayout layout = new GridBagLayout();
-	panel.setLayout(layout);
-	GridBagConstraints c;
-
-	debug = new Checkbox(Strings.getString("EmptyFont.debug"));
-	debug.setState(prefs.getBoolean("EmptyFont.debug"));
-
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(debug, c);
-	panel.add(debug);
-
-	add("North", panel);
-
-	parent.messages.setEditable(false);
-	add("Center", parent.messages);
-
-	Button b;
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 4));
-	b = new Button(Strings.getString("apply"));
-	b.setActionCommand("doApply");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-
-	add("South", buttonPanel);
-
-	addWindowListener(this);
-
-	pack();
-	setSize(getPreferredSize());
-
-	show();
-    }
-
-    public void actionPerformed(ActionEvent event)
-    {
-	String arg = event.getActionCommand();
-
-	if ("doApply".equals(arg))
-	{
-	    prefs.putBoolean("EmptyFont.debug", debug.getState());
+//	FIXME: use this constructor:
+//	public EmptyFontFrame(String name, FilterFactory parent) {
+	/**
+	 * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)
+	 */
+	public EmptyFontFrame(AbstractFilterFactory parent) {
+		super(parent);
 	}
-	else if ("doSave".equals(arg))
-	{
-	    parent.save();
+	
+	/**
+	 * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()	 */
+	protected Panel doMakeContent() {
+
+		Panel panel = new Panel(new BorderLayout());
+
+		panel.add("North", makeDebugPanel());
+
+		getParent().getMessages().setEditable(false);
+		panel.add("Center", getParent().getMessages());
+
+		panel.add("South", makeButtonPanel());
+		
+		return panel;
+
 	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
+	
+	/**
+	 * Utility method that constructs the Panel containing the debug Button.
+	 * @return Panel The constructed Panel containing the debug Button.
+	 */
+	private Panel makeDebugPanel(){
+		Panel panel = new Panel();
+		GridBagLayout layout = new GridBagLayout();
+		panel.setLayout(layout);
+		GridBagConstraints c;
+
+		fDebug = new Checkbox(getParent().getString(EmptyFont.DEBUG));
+		fDebug.setState(getParent().getPrefsBoolean(EmptyFont.DEBUG));
+
+		c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		layout.setConstraints(fDebug, c);
+		panel.add(fDebug);
+		return panel;
 	}
-	else if ("doClear".equals(arg))
-	{
-	    parent.messages.clear();
+
+	/**
+	 * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+	 */
+	protected String[] doMakeButtonList(){
+		return new String[]{
+			 APPLY_CMD
+			,SAVE_CMD
+			,CLEAR_CMD
+			,CLOSE_CMD
+		};
 	}
-    }
+	
+	/**
+	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
+	protected void doApply(){
+		getParent().putPrefsBoolean(EmptyFont.DEBUG, fDebug.getState());
+	}
+	
+	private Checkbox fDebug;
 
-    public void windowActivated(WindowEvent e)
-    {
-    }
-
-    public void windowDeactivated(WindowEvent e)
-    {
-    }
-
-    public void windowClosing(WindowEvent e)
-    {
-	setVisible(false);
-    }
-
-    public void windowClosed(WindowEvent e)
-    {
-    }
-
-    public void windowIconified(WindowEvent e)
-    {
-    }
-
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
-
-    public void windowOpened(WindowEvent e)
-    {
-    }
+	
 }
