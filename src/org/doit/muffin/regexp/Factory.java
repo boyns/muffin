@@ -103,13 +103,15 @@ public class Factory {
      *
      * @param type
      */
-    public void setRegexType(String className){
-//            if(gcImplMap.containsKey(className)){
-//                    fRegexType = (Constructor)gcImplMap.get(className);
-        if(gcFactoryMap.containsKey(className)){
-            fRegexType = (PatternFactory)gcFactoryMap.get(className);
-        } else {
-            System.out.println("setRegexType: not changing because inexistant:"+className);
+    public void setRegexType(String className)
+    {
+        if (gcFactoryMap.containsKey(className))
+        {
+            fRegexType = (PatternFactory) gcFactoryMap.get(className);
+        }
+        else
+        {
+            System.out.println("setRegexType: not changing because inexistent: "+className);
         }
     }
 
@@ -136,7 +138,8 @@ public class Factory {
      * Retrieves the Map with PatternFactories.
      * @return Map The available PatternFactories.
      */
-    public static Map getFactoryMap(){
+    public static Map getFactoryMap()
+    {
         return gcFactoryMap;
     }
 
@@ -151,9 +154,10 @@ public class Factory {
     /**
      * Default ctor private. Singleton Design Pattern.
      */
-    private Factory(){
-//            fRegexType = (Constructor)gcImplMap.values().iterator().next();
-        fRegexType = (PatternFactory)gcFactoryMap.values().iterator().next();
+    private Factory()
+    {
+        fRegexType = (PatternFactory) gcFactoryMap.get(gcFactoryVector.iterator().next());
+        System.out.println("Factory is using " + fRegexType.getClass().getName() + " by default");
     }
 
 //    /**
@@ -184,45 +188,59 @@ public class Factory {
 //                    throw new FactoryException(e);
 //            }
 //    }
-//
-//    private Constructor fRegexType;
+
+
+    // this is the pattern factor which will be used to run regexp pattern matching
     private PatternFactory fRegexType;
 
-    // These are held as strings to remove static dependency of these implementations.
-    // I'd love to learn about a more elegant way, e.g. some mechanism in java lang
-    // reflection that allows me to find all classes implementing a specific interface.
-//    private static final String[] gcPotentialImplementations = { ""
-//            ,"org.doit.muffin.regexp.gnu.PatternAdapter"
-//            ,"org.doit.muffin.regexp.jdk14.PatternAdapter"
-//            ,"org.doit.muffin.regexp.jakarta.regexp.PatternAdapter"
-////          ,"org.doit.muffin.regexp.jakarta.oro.PatternAdapter"
-//    };
-
-    private static final String[] gcPotentialFactories = { ""
-                                                           ,"org.doit.muffin.regexp.gnu.PatternFactory"
-                                                           ,"org.doit.muffin.regexp.jdk14.PatternFactory"
-                                                           ,"org.doit.muffin.regexp.jakarta.regexp.PatternFactory"
-//            ,"org.doit.muffin.regexp.jakarta.oro.PatternFactory"
+    // define desired order of regexp pattern factories
+    private static final String[] gcPotentialFactories =
+    {
+         "org.doit.muffin.regexp.jdk14.PatternFactory"
+        ,"org.doit.muffin.regexp.jakarta.regexp.PatternFactory"
+        ,"org.doit.muffin.regexp.gnu.PatternFactory"
+        // ,"org.doit.muffin.regexp.jakarta.oro.PatternFactory"
     };
 
-    private static final void getFactories(String[] classNames, Map implMap){
-        for (int i = 0; i < classNames.length; i++) {
+    private static final void getFactories(String[] classNames, Map implMap)
+    {
+        for (int i = 0; i < classNames.length; i++)
+        {
             if(classNames[i].length()==0) { continue; }
-            try {
-                Class classDefinition =
-                    Class.forName(classNames[i]);
+
+            try
+            {
+                Class classDefinition = Class.forName(classNames[i]);
                 Method m = classDefinition.getMethod("instance", null);
-                gcFactoryMap.put(classNames[i], m.invoke(null, new Object[0]));
-            } catch (NoClassDefFoundError e) {
-                System.out.println(classNames[i]+":This class is not available"+e);
-            } catch (ClassNotFoundException e) {
-                System.out.println(classNames[i]+":This class is not available"+e);
-            } catch (NoSuchMethodException e) {
-                System.out.println(classNames[i]+":This class does not have the requested constructor."+e);
-            } catch (IllegalAccessException e) {
-                System.out.println(classNames[i]+" "+e);
-            } catch (InvocationTargetException e) {
-                System.out.println(classNames[i]+" "+e);
+                PatternFactory pf = (PatternFactory) m.invoke(null, new Object[0]);
+
+                // try getting of a dummy pattern...
+                // if 3rd party classes/jars where available at compile time but are not at runtime
+                // this will throw a java.lang.NoClassDefFoundError while loading the PatternAdapter impl
+                pf.getPattern("", true);
+
+                gcFactoryMap.put(classNames[i], pf);
+                gcFactoryVector.add(classNames[i]);
+            }
+            catch (NoClassDefFoundError e)
+            {
+                System.out.println(classNames[i] + ": This class is not available " + e);
+            }
+            catch (ClassNotFoundException e)
+            {
+                System.out.println(classNames[i] + ": This class is not available " + e);
+            }
+            catch (NoSuchMethodException e)
+            {
+                System.out.println(classNames[i] + ": This class does not have the requested constructor. " + e);
+            }
+            catch (IllegalAccessException e)
+            {
+                System.out.println(classNames[i] + " " + e);
+            }
+            catch (InvocationTargetException e)
+            {
+                System.out.println(classNames[i] + " " + e);
             }
         }
     }
@@ -250,18 +268,18 @@ public class Factory {
 //            }
 //    }
 
-//    private static final Map gcImplMap = new HashMap();
-    private static final Map gcFactoryMap = new HashMap();
+    // we want to make sure while iterating through pattern factories they are in proper order
+    // Note: LinkedHashMap works perfectly but is only available with JDK 1.4 :-(
+    private static final Map    gcFactoryMap    = new HashMap();
+    private static final Vector gcFactoryVector = new Vector();
 
-
-    static {
+    static
+    {
         getFactories(gcPotentialFactories, gcFactoryMap);
-//                    getConstructors(gcPotentialImplementations, gcImplMap);
     }
 
     // must come AFTER static initializer since static initialization happens in
     // the order of declaration in the source code. See
     // http://java.sun.com/docs/books/vmspec/2nd-edition/html/Concepts.doc.html#32316
     private static Factory gcInstance = new Factory();
-
 }
