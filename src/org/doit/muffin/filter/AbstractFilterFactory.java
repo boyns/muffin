@@ -91,6 +91,17 @@ public abstract class AbstractFilterFactory implements FilterFactory {
     }
     
 	/**
+	 * Gets an int value for a given key in Prefs.
+	 * The key will be prepended by the name of the concrete FilterFactory.
+	 * @param key The key, prepended by the name of the concrete FilterFactory, for which
+	 * to retrieve the int value from Prefs.
+	 * @return The int value retrieved.
+	 */
+    final int getPrefsInteger(String key){
+    	return fPrefs.getInteger(makeNameSpace(key));
+    }
+    
+	/**
 	 * Sets a String value for a given key in Prefs.
 	 * The key will be prepended by the name of the concrete FilterFactory.
 	 * @param key The key, prepended by the name of the concrete FilterFactory, under which
@@ -185,22 +196,24 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 	/**
 	 * 	 * @see org.doit.muffin.FilterFactory#createFilter()	 */
 	public final Filter createFilter() {
-		Filter f = doMakeFilter();
-		f.setPrefs(fPrefs);
-		return f;
+		return doMakeFilter();
 	}
 
 	/**
 	 * Reports a message to the given Requests logger and to the MessageArea.	 * @param request The Request to whose logger to report the given message.	 * @param message The message to report.	 */
 	protected void report(Request request, String message) {
-		request.addLogEntry(getName(), message);
+		if(request!=null) {
+			request.addLogEntry(getName(), message);
+		}
 		report(message);
 	}
 
 	/**
 	 * Reports a message to the MessageArea.	 * @param message	 */
 	protected void report(String message) {
-		fMessages.append(message + "\n");
+		if(fMessages != null) {
+			fMessages.append(message + "\n");
+		}
 	}
 
 	/**

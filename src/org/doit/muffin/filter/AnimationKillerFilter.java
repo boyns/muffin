@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.8 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.9 2003/06/01 01:01:09 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,109 +31,60 @@ import java.io.IOException;
 
 import haui.gif.*;
 
-public class AnimationKillerFilter implements RequestFilter, ReplyFilter, ContentFilter
-{
-    Prefs prefs;
-    AnimationKiller factory;
-    InputObjectStream in = null;
-    OutputObjectStream out = null;
-    Request request;
+public class AnimationKillerFilter extends AbstractContentFilter
+	implements RequestFilter, ReplyFilter {
+	Request request;
 
-    AnimationKillerFilter(AnimationKiller factory)
-    {
-	this.factory = factory;
-    }
-    
-    public void setPrefs(Prefs prefs)
-    {
-	this.prefs = prefs;
-    }
-
-    public void filter(Request request) throws FilterException
-    {
-	this.request = request;
-    }
-
-    public void filter(Reply reply) throws FilterException
-    {
-// 	String s = reply.getContentType();
-// 	if (s != null && s.startsWith("multipart/x-mixed-replace"))
-// 	{
-// 	    factory.process("Found server push " + request.getURL() + "\n");
-// 	    throw new FilterException("Killed server push " + request.getURL());
-// 	}
-    }
-
-    public boolean needsFiltration(Request request, Reply reply)
-    {
-	String s = reply.getContentType();
-	if (s == null)
-	{
-	    return false;
+	AnimationKillerFilter(AnimationKiller factory) {
+		super(factory);
 	}
-	return s.startsWith("image/gif");
-    }
-    
-    public void setInputObjectStream(InputObjectStream in)
-    {
-	this.in = in;
-    }
 
-    public void setOutputObjectStream(OutputObjectStream out)
-    {
-	this.out = out;
-    }
-
-    public void run()
-    {
-	Thread.currentThread().setName("AnimationKiller");
-
-	try
-	{
-	  AnimationFilter filter;
-	  if (prefs.getBoolean("AnimationKiller.break")) {
-	    filter = new AnimationFilter(AnimationFilter.MODE_WIPE_OUT); 
-	  } else {
-	    switch (prefs.getInteger("AnimationKiller.maxLoops")) {
-	    case 0:
-	      filter = new AnimationFilter(AnimationFilter.MODE_SHOW_FIRST); 
-	      break;
-
-	    case 1:
-	      filter = new AnimationFilter(AnimationFilter.MODE_SHOW_LAST);
-	      break;
-
-	    case 2:
-	      filter = new AnimationFilter(AnimationFilter.MODE_INTERACTIVE);
-	      break;
-
-	    default:
-	      filter = new AnimationFilter(AnimationFilter.MODE_ANIMATION);
-	      break;
-	    }
-	  }
-
-	  ObjectStreamToInputStream gin = new ObjectStreamToInputStream(in);
-	  ObjectStreamToOutputStream gout = new ObjectStreamToOutputStream(out);
-
-	  filter.filter(gin, gout);
-
-	  gout.close();
+	/**	 * @see org.doit.muffin.RequestFilter#filter(Request)	 */
+	public void filter(Request request) throws FilterException {
+		this.request = request;
 	}
-	catch (IOException ioe)
-	{
-	  ioe.printStackTrace();
+
+	/**	 * @see org.doit.muffin.ReplyFilter#filter(Reply)	 */
+	public void filter(Reply reply) throws FilterException {
 	}
-	finally
-	{
-	  try
-	    {
-	      out.flush();
-	      out.close();
-	    }
-	  catch (IOException ioe)
-	    {
-	    }
+
+	/**	 * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()	 */
+	protected String doGetContentIdentifier(){
+		return "image/gif";	
 	}
-    }
+
+	/**	 * @see java.lang.Runnable#run()	 */
+	protected void doRun(ObjectStreamToInputStream ostis, ObjectStreamToOutputStream ostos)
+		throws IOException {
+
+		AnimationFilter filter;
+		if (getFactory().getPrefsBoolean(AnimationKiller.BREAK)) {
+			filter = new AnimationFilter(AnimationFilter.MODE_WIPE_OUT);
+		} else {
+			switch (getFactory().getPrefsInteger(AnimationKiller.MAXLOOPS)) {
+				case 0 :
+					filter =
+						new AnimationFilter(
+							AnimationFilter.MODE_SHOW_FIRST);
+					break;
+
+				case 1 :
+					filter =
+						new AnimationFilter(AnimationFilter.MODE_SHOW_LAST);
+					break;
+
+				case 2 :
+					filter =
+						new AnimationFilter(
+							AnimationFilter.MODE_INTERACTIVE);
+					break;
+
+				default :
+					filter =
+						new AnimationFilter(AnimationFilter.MODE_ANIMATION);
+					break;
+			}
+		}
+		filter.filter(ostis, ostos);
+	}
 }

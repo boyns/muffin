@@ -37,6 +37,7 @@ public class AllTests {
 		suite.addTest(new TestSuite(RegexpTest.class));
 		suite.addTest(new TestSuite(GlossaryTest.class));
 		suite.addTest(new TestSuite(EmptyFontTest.class));
+		suite.addTest(new TestSuite(ImageKillTest.class));
 		//$JUnit-END$
 		return suite;
 	}

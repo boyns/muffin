@@ -1,4 +1,4 @@
-/* $Id: GlossaryFrame.java,v 1.7 2003/05/30 16:21:37 forger77 Exp $ */
+/* $Id: GlossaryFrame.java,v 1.8 2003/06/01 01:01:09 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,8 +31,6 @@ public class GlossaryFrame extends AbstractFrame  {
 
 	TextField input = null;
 
-//	FIXME: use this constructor:
-//	public AnimationKillerFrame(String name, FilterFactory parent) {
 	/**
 	 * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)	 */
 	public GlossaryFrame(AbstractFilterFactory parent) {
@@ -61,11 +59,11 @@ public class GlossaryFrame extends AbstractFrame  {
 
 		panel.add(
 			new Label(
-				getParent().getString(Glossary.GLOSSARY_FILE_KEY) + ":",
+				getFactory().getString(Glossary.GLOSSARY_FILE_KEY) + ":",
 				Label.RIGHT));
 
 		input = new TextField(50);
-		input.setText(getParent().getPrefsString(Glossary.GLOSSARY_FILE_KEY));
+		input.setText(getFactory().getPrefsString(Glossary.GLOSSARY_FILE_KEY));
 		panel.add(input);
 
 		panel.add(makeButton(Strings.getString("browse") + "...", BROWSE_CMD));
@@ -114,7 +112,7 @@ public class GlossaryFrame extends AbstractFrame  {
 	/**
 	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
 	protected void doApply(){
-		getParent().putPrefsString(Glossary.GLOSSARY_FILE_KEY, input.getText());
+		getFactory().putPrefsString(Glossary.GLOSSARY_FILE_KEY, input.getText());
 	}
 	
 	protected static final String BROWSE_CMD = "browse";

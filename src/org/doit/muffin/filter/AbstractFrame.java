@@ -43,15 +43,16 @@ import org.doit.util.Strings;
 
 public abstract class AbstractFrame implements ActionListener, WindowListener {
 
-//    public AbstractFrame(String name, Prefs prefs, FilterFactory parent){
+//	FIXME: use this constructor:
+//    public AbstractFrame(String name, FilterFactory parent){
 	/**
 	 * Constructor for AbstractFrame
 	 * @param name The name of the FilterFactory associated with this Frame.
 	 * @param parent The FilterFactory associated with this Frame.	 */
     public AbstractFrame(AbstractFilterFactory parent){
     	fName = new StringBuffer(parent.getName());
-    	fParent = parent;
-    	fFrame = new MuffinFrame(Strings.getString(fParent.makeNameSpace("title")));
+    	fFactory = parent;
+    	fFrame = new MuffinFrame(Strings.getString(fFactory.makeNameSpace("title")));
 		fFrame.addWindowListener(this);
 		appendAction(new ApplyAction());
 		appendAction(new SaveAction());
@@ -75,8 +76,8 @@ public abstract class AbstractFrame implements ActionListener, WindowListener {
     protected abstract Panel doMakeContent();
     
 //    protected FilterFactory getParent(){
-    protected final AbstractFilterFactory getParent(){
-    	return fParent;
+    protected final AbstractFilterFactory getFactory(){
+    	return fFactory;
     }
 
 	/**
@@ -143,7 +144,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener {
 		}
 		public void perform(){
 			doApply();
-			fParent.save();
+			fFactory.save();
 		}
 	}
 	
@@ -152,7 +153,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener {
 			return CLEAR_CMD;
 		}
 		public void perform(){
-			if(fParent.getMessages() != null) fParent.getMessages().clear();
+			if(fFactory.getMessages() != null) fFactory.getMessages().clear();
 		}
 	}
 	
@@ -192,7 +193,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener {
 			return fName;
 		}
 		public void perform() {
-			fParent.doLoad();
+			fFactory.doLoad();
 		}
 		private String fName = LOAD_CMD;
 	}
@@ -292,8 +293,8 @@ public abstract class AbstractFrame implements ActionListener, WindowListener {
 	protected static final String LOAD_CMD  = "load";
 	
 	private Frame fFrame;
-//	private FilterFactory fParent;
-	private AbstractFilterFactory fParent; // FIXME: replace FilterFactory by AbstractFilterFactory
+//	private FilterFactory fFactory;
+	private AbstractFilterFactory fFactory; // FIXME: replace FilterFactory by AbstractFilterFactory
 	private StringBuffer fName;
 	private Map fActions = new HashMap();
 
