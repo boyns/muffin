@@ -4,7 +4,7 @@ the WWW Security FAQ by Lincoln D. Stein located at:
     http://www.w3.org/Security/Faq/
 
 There are serious privacy issues regarding cookies that are very well
-convered in the above FAQ.  Basically it is possible for web sites to
+covered in the above FAQ.  Basically it is possible for web sites to
 build user profiles based on the web sites a particular user has
 visited.  This is commonly referred to as "user tracking".
 
