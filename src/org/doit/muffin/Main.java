@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.35 2003/06/04 18:46:39 flefloch Exp $ */
+/* $Id: Main.java,v 1.36 2003/06/05 19:57:45 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -68,7 +68,6 @@ public class Main
             ResourceBundle.getBundle("org.doit.muffin.LocalStrings"));
     }
 
-    private String localhost;
     private Server server;
     private String infoString;
     private Button suspendButton;
@@ -85,9 +84,10 @@ public class Main
     {
         pool = new ThreadPool("Muffin Threads");
 
-        String hostName = options.getString("muffin.bindaddress") == null
-            ? getMuffinHost().toString()
-            : options.getString("muffin.bindaddress");
+        String hostName =
+            options.getString("muffin.bindaddress") == null
+                ? getMuffinHost().toString()
+                : options.getString("muffin.bindaddress");
 
         infoString =
             Strings.getString(
@@ -111,14 +111,19 @@ public class Main
             gui();
         }
 
-       server =
+        InetAddress bindAddr =
+            options.getString("muffin.bindaddress") == null
+                ? null
+                : getMuffinHost();
+        server =
             new Server(
                 new DefaultServerSocketCreator(),
                 options.getInteger("muffin.port"),
-                host,
+                bindAddr,
                 monitor,
                 manager,
                 options);
+
         /* Initialize internal Httpd */
 
         HttpErrorFactory.init(options);
@@ -144,6 +149,13 @@ public class Main
     public static InetAddress getMuffinHost()
     {
         return host;
+    }
+
+    public static boolean isMuffinAddress(InetAddress address)
+    {
+        return address.equals(getMuffinHost())
+            || (address.getAddress()[0] == 127
+                && options.getString("muffin.bindaddress") == null);
     }
 
     public static ReusableThread getThread()
@@ -465,16 +477,16 @@ public class Main
     {
         return logfile;
     }
-    
+
     public static String getBaseUrl()
-	{
+    {
         StringBuffer buf = new StringBuffer();
         buf.append("http://");
         buf.append(Main.getMuffinHost().getHostName());
         buf.append(":");
         buf.append(HttpdFactory.getOptions().getString("muffin.port"));
         return buf.toString();
-	}
+    }
 
     public static void stopMuffin(Main theMuffin)
     {
@@ -491,13 +503,13 @@ public class Main
         {
             processArgs(argv);
             final Main theMuffin = new Main();
-                        Thread t = new Thread(theMuffin.server);
-                        t.start();
+            Thread t = new Thread(theMuffin.server);
+            t.start();
             return theMuffin;
         }
         catch (Throwable exc)
         {
-                exc.printStackTrace();
+            exc.printStackTrace();
             return null;
         }
     }
@@ -691,7 +703,6 @@ public class Main
 
         options = new Options(defaultProps);
 
-
         if (args.exists("port"))
         {
             options.putInteger("muffin.port", args.getInteger("port"));
@@ -745,7 +756,7 @@ public class Main
             options.putString(
                 "muffin.bindaddress",
                 args.getString("bindaddress"));
-        }        
+        }
 
         String bindaddr = options.getString("muffin.bindaddress");
         try
@@ -770,7 +781,7 @@ public class Main
             }
             catch (UnknownHostException uhe)
             {
-                System.err.println("can not start muffin: "+uhe.getMessage());
+                System.err.println("can not start muffin: " + uhe.getMessage());
             }
         }
 
@@ -795,7 +806,7 @@ public class Main
         System.out.println(copyleft());
         try
         {
-           startMuffin(argv);
+            startMuffin(argv);
         }
         catch (ThreadDeath e)
         {

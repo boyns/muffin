@@ -692,10 +692,8 @@ public class DefaultHttpd extends HttpConnection
 
     public static boolean sendme(Request request)
     {
-        return (
-            request.getClient().getInetAddress().equals(
-            	Main.getMuffinHost()) &&
-        	request.getPort() == HttpdFactory.getOptions().getInteger("muffin.port"));
+        return Main.isMuffinAddress(request.getClient().getInetAddress())&&
+        	request.getPort() == HttpdFactory.getOptions().getInteger("muffin.port");
     }
 
     static String getLocation()
