@@ -1,4 +1,4 @@
-/* $Id: DecafFilter.java,v 1.6 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: DecafFilter.java,v 1.7 2000/01/26 03:53:34 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -140,7 +140,8 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 			    }
 
 			    if (tag.has("href")
-				&& tag.get("href").startsWith("javascript:"))
+				&& ((value = tag.get("href")) != null)
+				&& "javascript:".startsWith(value))
 			    {
 				value = tag.remove("href");
 				str.append("<");
