@@ -28,4 +28,24 @@ Possible filters:
 
 * Basic authentication
 
-$Id: TODO,v 1.4 1999/03/12 15:47:28 boyns Exp $
+Refactorings:
+  Constist of:
+  1. Implement Test of existing code.
+  2. Refactor
+     2.1 Make specific FilterFactory subclass of AbstractFilterFactory
+     2.2 Make specific Frame subclass of AbstractFrame
+     2.3 Make specific ContentFilter subclass of AbstractContentFilter
+         2.3.1 Remaining ContentFilters to do:
+          - DocumentInfo
+          - NoCodeFilter
+          - NoThanksFilter
+          - PainterFilter
+          - PlainHtmlFilter
+          - PreviewFilter
+          - SecretaryFilter
+          - StopProxyFilter
+  3. Run tests
+
+  Work out how to refactor other filters.
+
+$Id: TODO,v 1.5 2003/06/03 23:06:53 forger77 Exp $
