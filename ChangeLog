@@ -1,3 +1,27 @@
+1999-11-08  Mark R. Boyns  <boyns@doit.org>
+
+	* doc/filter/NoThanks.txt: documented options.
+
+	* src/org/doit/muffin/filter/NoThanks.java: new options command
+ 	with reg-case and reg-icase parameters to turn on and off regexp
+ 	case sensitivity.
+
+	* src/org/doit/muffin/filter/NoThanksFrame.java: fixed resize
+ 	behavior.
+
+1999-11-07  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/Main.java: added Suspend/Resume to File menu.
+
+1999-11-06  Mark R. Boyns  <boyns@doit.org>
+
+	* return Enumeration of Strings instead of Keys in getHeaders
+
+1999-10-14  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/filter/Translate.java, src/org/doit/muffin/filter/TranslateFilter.java, src/org/doit/muffin/filter/TranslateFrame.java, doc/filter/Translate.txt, src/org/xbill/DNS/KXRecord.java, src/org/xbill/DNS/LOCRecord.java, src/org/xbill/DNS/MX_KXRecord.java:
+	* added missing files
+
 1999-10-14  Mark R. Boyns  <boyns@doit.org>
 
 	* Muffin 0.9 released

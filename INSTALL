@@ -43,7 +43,7 @@ MACINTOSH INSTALLATION:
  Once you have these and the muffin.jar file, drag muffin.jar onto the 
  JBindery application.  Enter "org.doit.muffin.Main" in the class name 
  field, and check the classpath sectin to make sure that the muffin.jar
- file is in the classpath.  Save it as an applet and you're done! 
+ file is in the classpath.  Save it as an application and you're done! 
 
  Now double-click the applet when you want to use Muffin. 
 
@@ -93,4 +93,4 @@ can be specified and "ALL" matches all IP addresses.  An example
 partial IP address would be 130.191.13. which is the same as all hosts
 in the range 130.191.13.1 to 130.191.13.255.
 
-$Id: INSTALL,v 1.6 1999/03/19 07:38:48 boyns Exp $
+$Id: INSTALL,v 1.7 1999/11/09 04:19:01 boyns Exp $
