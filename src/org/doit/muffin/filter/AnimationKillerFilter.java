@@ -1,7 +1,7 @@
-/* $Id: AnimationKillerFilter.java,v 1.4 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.5 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -126,10 +126,9 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 			index = 0;
 			killed = true;
 
-			factory.report(request, "GIF animation detected");
-
 			if (prefs.getBoolean("AnimationKiller.break"))
 			{
+			    factory.report(request, "breaking animation");
 			    while ((b = gifInput.read()) != -1)
 			    {
 				/* ignore the rest */
@@ -142,6 +141,7 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 			    
 			    if (prefs.getInteger("AnimationKiller.maxLoops") == -1)
 			    {
+				factory.report(request, "removing animation extension");
 				gifOutput.write(0x21);
 				gifOutput.write(0xfe); /* comment extension */
 				id = new String("XXXXXXXX1.0");
@@ -163,12 +163,12 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 			    
 			    if (prefs.getInteger("AnimationKiller.maxLoops") == -1)
 			    {
-				gifOutput.write(0x00); // low
-				gifOutput.write(0x00); // high
+				// replaced with comment extension
 			    }
 			    else
 			    {
 				int loops = prefs.getInteger("AnimationKiller.maxLoops");
+				factory.report(request, "setting maxLoops to " + loops);
 				int high = loops / 256;
 				int low = loops % 256;
 				gifOutput.write(low);

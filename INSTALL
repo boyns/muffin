@@ -1,5 +1,3 @@
-$Id: INSTALL,v 1.4 1998/09/24 03:03:53 boyns Exp $
-
 Muffin INSTALL - installation instructions
 
 This file explains how to install Muffin on Unix, Win32, and MacOS.
@@ -92,3 +90,4 @@ can be specified and "ALL" matches all IP addresses.  An example
 partial IP address would be 130.191.13. which is the same as all hosts
 in the range 130.191.13.1 to 130.191.13.255.
 
+$Id: INSTALL,v 1.5 1999/03/12 15:47:27 boyns Exp $

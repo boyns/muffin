@@ -1,7 +1,7 @@
-/* $Id: AnimationKiller.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: AnimationKiller.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -44,13 +44,9 @@ public class AnimationKiller implements FilterFactory
 	prefs.setOverride(false);
 	prefs.putInteger("AnimationKiller.maxLoops", 1);
 	prefs.putBoolean("AnimationKiller.break", false);
-	prefs.putInteger("AnimationKiller.historySize", 500);
-	prefs.putString("AnimationKiller.logfile", Main.getOptions().getString("muffin.logfile"));
 	prefs.setOverride(o);
 
-	messages = new MessageArea(prefs.getUserFile(prefs.getString("AnimationKiller.logfile")),
-				   "AnimationKiller",
-				   prefs.getInteger("AnimationKiller.historySize"));
+	messages = new MessageArea();
     }
 
     public Prefs getPrefs()
@@ -89,11 +85,7 @@ public class AnimationKiller implements FilterFactory
 
     void report(Request request, String message)
     {
-	report("[" + request.getRequest() + "] " + message);
-    }
-
-    void report(String message)
-    {
+	request.addLogEntry("AnimationKiller", message);
 	messages.append(message + "\n");
     }
 }

@@ -1,7 +1,7 @@
-/* $Id: NoThanksFilter.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
+/* $Id: NoThanksFilter.java,v 1.4 1999/03/12 15:47:44 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -62,7 +62,7 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	/* Check for killed URL */
 	if (factory.isKilled(url))
 	{
-	    factory.report(request, "rejected");
+	    factory.report(request, "rejected " + url);
 	    throw new FilterException("NoThanks URL " + url + " rejected");
 	}
     }
@@ -72,7 +72,7 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	String content = reply.getContentType();
 	if (content != null && factory.killContent(content))
 	{
-	    factory.report("rejected " + content);
+	    factory.report(request, "rejected " + content);
 	    throw new FilterException("NoThanks content-type " + content + " rejected");
 	}
     }

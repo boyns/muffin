@@ -11,8 +11,10 @@ CLASSPATH = @CLASSPATH@
 SRCS = $(shell $(srcdir)/srclist $(srcdir))
 OBJS = $(shell $(srcdir)/objlist $(srcdir))
 
-img_dir = org/doit/muffin/images
-doc_dir = org/doit/muffin/doc
+#img_dir = org/doit/muffin/images
+#doc_dir = org/doit/muffin/doc
+img_dir = images
+doc_dir = doc
 
 all:	classes jar
 

@@ -1,14 +1,32 @@
-$Id: NEWS,v 1.4 1998/09/24 03:04:17 boyns Exp $
-
 Muffin NEWS - user-visible changes
 
 Changes since 0.7:
 
-* New filter ImageKill written by Heinrich Opgenoorth.
+* New filter ImageKill written by Heinrich Opgenoorth.  This filter
+  can block images based on their width/height ratio.
 
 * Mac install instructions from Dave Caplinger.
 
-* Fixed AnimationKiller bug which make netscape do bad things.
+* Fixed AnimationKiller bug which made netscape do bad things, like
+  crash.
+
+* Browser KeepAlive support is now optional.  Turning off KeepAlive
+  should make Muffin appear to be faster.
+
+* Double clicking in the Muffin progress bar display will toggle
+  a normal and mini display mode -- good for saving desktop space.
+
+* New filter NoCode written by Neil Hodgson.  This filter
+  can remove Java, JavaScript, VBScript, and other languages
+  such as Python and Perl.  Encoded scripts can also be removed.
+
+* Muffin now logs all accesses in ~/Muffin/muffin.log.  This file
+  uses the common log format along with some extra stuff to display
+  filter results.
+
+* Removed the Logger filter.
+
+* Fixed the Muffin POST bug!
 
 * Bug fixes.
 
@@ -154,3 +172,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
+$Id: NEWS,v 1.5 1999/03/12 15:47:27 boyns Exp $

@@ -1,7 +1,7 @@
-/* $Id: Main.java,v 1.6 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: Main.java,v 1.7 1999/03/12 15:47:40 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -40,6 +40,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import gnu.getopt.*;
 
 /**
@@ -55,6 +56,8 @@ public class Main extends MuffinFrame
     static Options options;
     static Configuration configs;
     static FilterManager manager;
+    static LogFile logfile;
+
     String localhost;
     Server server;
     String infoString;
@@ -404,6 +407,11 @@ public class Main extends MuffinFrame
 	return manager;
     }
 
+    public static LogFile getLogFile()
+    {
+	return logfile;
+    }
+
     public static void main(String argv[])
     {
 	System.out.println(copyleft());
@@ -442,7 +450,7 @@ public class Main extends MuffinFrame
 		{
 		    args.putInteger("port", Integer.parseInt(g.getOptarg()));
 		}
-		catch (Exception e)
+		catch (NumberFormatException e)
 		{
 		    System.out.println("invalid port: " + g.getOptarg());
 		    System.exit(1);
@@ -466,7 +474,7 @@ public class Main extends MuffinFrame
 		{
 		    args.putInteger("httpProxyPort", Integer.parseInt(g.getOptarg()));
 		}
-		catch (Exception e)
+		catch (NumberFormatException e)
 		{
 		    System.out.println("invalid httpProxyPort: " + g.getOptarg());
 		    System.exit(1);
@@ -482,7 +490,7 @@ public class Main extends MuffinFrame
 		{
 		    args.putInteger("httpsProxyPort", Integer.parseInt(g.getOptarg()));
 		}
-		catch (Exception e)
+		catch (NumberFormatException e)
 		{
 		    System.out.println("invalid httpsProxyPort: " + g.getOptarg());
 		    System.exit(1);
@@ -563,7 +571,7 @@ public class Main extends MuffinFrame
 	{
 	    options.putString("muffin.host", (InetAddress.getLocalHost()).getHostName());
 	}
-	catch (Exception e)
+	catch (UnknownHostException e)
 	{
 	    options.putString("muffin.host", "127.0.0.1");
 	}
@@ -609,6 +617,8 @@ public class Main extends MuffinFrame
 	}
 
 	options.sync();
+
+	logfile = new LogFile(options.getUserFile(options.getString("muffin.logfile")));
 
 	new Main();
     }

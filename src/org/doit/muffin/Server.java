@@ -1,7 +1,7 @@
-/* $Id: Server.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: Server.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -25,6 +25,7 @@ package org.doit.muffin;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.ServerSocket;
+import java.io.IOException;
 import java.io.DataOutputStream;
 
 /**
@@ -46,7 +47,7 @@ class Server
 	{
 	    server = new ServerSocket(port, 512);
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
 	    System.out.println(e);
 	    System.exit(0);
@@ -161,7 +162,7 @@ class Server
 	    {
 		socket = server.accept();
 	    }
-	    catch (Exception e)
+	    catch (IOException e)
 	    {
 		System.out.println(e);
 		continue;
@@ -175,7 +176,8 @@ class Server
 	    }
 	    else if (running)
 	    {
-		Handler h = new Handler(handlers, thread, monitor, manager, options);
+		Handler h = new Handler(handlers, thread, monitor,
+					manager, options);
 		h.doit(socket);
 	    }
 	    else
@@ -194,8 +196,9 @@ class Server
 	    out.close();
 	    socket.close();
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
+	    e.printStackTrace();
 	}
     }
 }

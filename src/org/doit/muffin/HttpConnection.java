@@ -1,7 +1,7 @@
-/* $Id: HttpConnection.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
+/* $Id: HttpConnection.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -39,12 +39,14 @@ abstract class HttpConnection extends Connection implements HttpRelay
 	super(s);
     }
 
-    public void sendRequest(Request request) throws IOException, RetryRequestException
+    public void sendRequest(Request request)
+	throws IOException, RetryRequestException
     {
 	request.write(getOutputStream());
     }
     
-    public Reply recvReply(Request request) throws IOException, RetryRequestException
+    public Reply recvReply(Request request)
+	throws IOException, RetryRequestException
     {
 	Reply reply = new Reply(getInputStream());
 	reply.read();

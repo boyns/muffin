@@ -1,7 +1,7 @@
-/* $Id: Httpd.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
+/* $Id: Httpd.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -74,7 +74,7 @@ class Httpd extends HttpConnection
 		    int val = Integer.parseInt(str.substring(i+1, i+3), 16);
 		    buf.append((char)val);
 		}
-		catch (Exception e)
+		catch (NumberFormatException e)
 		{
 		}
 		i+=2;
@@ -511,7 +511,7 @@ class Httpd extends HttpConnection
 	    {
 		i = Integer.parseInt(index);
 	    }
-	    catch (Exception e)
+	    catch (NumberFormatException e)
 	    {
 	    }
 

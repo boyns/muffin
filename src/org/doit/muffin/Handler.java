@@ -1,7 +1,7 @@
-/* $Id: Handler.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
+/* $Id: Handler.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import org.doit.io.*;
@@ -63,7 +64,8 @@ class Handler extends Thread
     /**
      * Create a Handler.
      */
-    Handler(ThreadGroup t, Runnable r, Monitor m, FilterManager manager, Options options)
+    Handler(ThreadGroup t, Runnable r, Monitor m,
+	    FilterManager manager, Options options)
     {
 	super(t, r);
 	this.monitor = m;
@@ -89,6 +91,7 @@ class Handler extends Thread
     {
 	if (client != null)
 	{
+	    //flush();
 	    client.close();
 	    client = null;
 	}
@@ -110,8 +113,9 @@ class Handler extends Thread
 	    {
 		client.getOutputStream().flush();
 	    }
-	    catch (Exception e)
+	    catch (IOException e)
 	    {
+		e.printStackTrace();
 	    }
 	}
     }
@@ -124,6 +128,9 @@ class Handler extends Thread
 
     public void run()
     {
+	boolean keepAlive = false;
+	Exception reason = null;
+
 	Thread.currentThread().setName("Handler("
 					 + socket.getInetAddress().getHostAddress()
 					 + ")");
@@ -135,12 +142,12 @@ class Handler extends Thread
 	{
 	    client = new Client(socket);
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
+	    e.printStackTrace();
 	    return;
 	}
 
-	boolean keepAlive = false;
 	monitor.register(this);
 	do
 	{
@@ -167,23 +174,39 @@ class Handler extends Thread
 	    {
 		keepAlive = processRequest();
 	    }
-	    catch (Exception e)
+	    catch (IOException ioe)
 	    {
-		if (client != null && request != null)
-		{
-		    error(client.getOutputStream(), e, request);
-		}
-		e.printStackTrace();
-		break; /* XXX */
+		ioe.printStackTrace();
+		reason = ioe;
+		keepAlive = false;
+	    }
+	    catch (FilterException fe)
+	    {
+		reason = fe;
+		keepAlive = false;
+	    }
+
+	    if (request != null && reply != null)
+	    {
+		Main.getLogFile().log(request, reply);
 	    }
 	}
 	while (keepAlive);
+
+	if (reason != null)
+	{
+	    if (client != null && request != null)
+	    {
+		error(client.getOutputStream(), reason, request);
+	    }
+	    reason.printStackTrace();
+	}
 	
 	monitor.unregister(this);
 	close();
     }
 
-    boolean processRequest() throws Exception
+    boolean processRequest() throws IOException, FilterException
     {
 	boolean keepAlive = false;
 	
@@ -193,9 +216,6 @@ class Handler extends Thread
 
 	    manager.checkAutoConfig(request.getURL());
 
-	    /* Obtain a list of filters to use. */
-	    filterList = manager.createFilters();
-	    
 	    if (request.getCommand().equals("CONNECT"))
 	    {
 		secure = true;
@@ -218,9 +238,15 @@ class Handler extends Thread
 	    }
 
 	    /* Client wants Keep-Alive */
-	    keepAlive = (request.containsHeaderField("Proxy-Connection")
-			 && request.getHeaderField("Proxy-Connection").equals("Keep-Alive"));
+	    if (!options.getBoolean("muffin.noKeepAlive"))
+	    {
+		keepAlive = (request.containsHeaderField("Proxy-Connection")
+			     && request.getHeaderField("Proxy-Connection").equals("Keep-Alive"));
+	    }
 
+	    /* Obtain a list of filters to use. */
+	    filterList = manager.createFilters();
+	    
 	    /* Filter the request. */
 	    if (!options.getBoolean("muffin.passthru"))
 	    {
@@ -268,7 +294,8 @@ class Handler extends Thread
 	    if (reply.headerCount() == 0)
 	    {
 		String url = request.getURL();
-		if (url.endsWith("/") || url.endsWith(".html") || url.endsWith(".htm"))
+		if (url.endsWith("/")
+		    || url.endsWith(".html") || url.endsWith(".htm"))
 		{
 		    reply.setHeaderField("Content-type", "text/html");
 		}
@@ -302,7 +329,7 @@ class Handler extends Thread
 	    catch (NumberFormatException e)
 	    {
 	    }
-		
+
 	    /* update content-length reply */
 	    monitor.update(this);
 
@@ -335,7 +362,7 @@ class Handler extends Thread
 			http.close();
 		    }
 		    http = null;
-		    
+
 		    client.close();
 		    client = null;
 		    return false; /* XXX */
@@ -456,7 +483,7 @@ class Handler extends Thread
 	    System.out.println("No inputstream");
 	    return;
 	}
-	
+
 	if (options.getBoolean("muffin.passthru"))
 	{
 	    client.write(reply);
@@ -464,12 +491,21 @@ class Handler extends Thread
 	}
 	else if (contentNeedsFiltration())
 	{
-	    ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
-	    filter(in, buffer, contentLength, chunked ? false : true);
-	    reply.setHeaderField("Content-length", buffer.size());
-	    client.write(reply);
-	    copy(new ByteArrayInputStream(buffer.toByteArray()),
-		  client.getOutputStream(), buffer.size(), false);
+	    if (options.getBoolean("muffin.noKeepAlive"))
+	    {
+		reply.removeHeaderField("Content-length");
+		client.write(reply);
+		filter(in, client.getOutputStream(), -1, chunked ? false : true);
+	    }
+	    else
+	    {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
+		filter(in, buffer, contentLength, chunked ? false : true);
+		reply.setHeaderField("Content-length", buffer.size());
+		client.write(reply);
+		copy(new ByteArrayInputStream(buffer.toByteArray()),
+		     client.getOutputStream(), buffer.size(), false);
+	    }
 	}
 	else
 	{
@@ -548,7 +584,8 @@ class Handler extends Thread
 	return false;
     }
 
-    void filter(InputStream in, OutputStream out, int length, boolean monitored) throws java.io.IOException
+    void filter(InputStream in, OutputStream out, int length, boolean monitored)
+	throws IOException
     {
 	InputObjectStream inputObjects = new InputObjectStream();
 	SourceObjectStream srcObjects;
@@ -577,14 +614,7 @@ class Handler extends Thread
 		    filter.setOutputObjectStream(oo);
 		
 		    Thread t = new Thread(filterGroup, filter);
-		    try
-		    {
-			t.setPriority(Thread.MIN_PRIORITY);
-		    }
-		    catch (Exception e)
-		    {
-			e.printStackTrace();
-		    }
+		    t.setPriority(Thread.MIN_PRIORITY);
 		    t.start();
 
 		    inputObjects = io;
@@ -652,7 +682,7 @@ class Handler extends Thread
      * @param monitored Update the Monitor
      */
     void copy(InputStream in, OutputStream out, int length, boolean monitored)
-	throws java.io.IOException
+	throws IOException
     {
 	if (length == 0)
 	{
@@ -679,12 +709,14 @@ class Handler extends Thread
 	    }
 	    
 	    out.write(buffer, 0, n);
+
 	    if (monitored)
 	    {
 		currentLength += n;
 		monitor.update(this);
 	    }
-	    bytesPerSecond = currentLength / ((System.currentTimeMillis() - start) / 1000.0);
+	    bytesPerSecond = currentLength /
+		((System.currentTimeMillis() - start) / 1000.0);
 	    if (length != -1)
 	    {
 		length -= n;
@@ -694,12 +726,14 @@ class Handler extends Thread
 		}
 	    }
 	}
+
 	out.flush();
 
 	if (DEBUG)
 	{
 	    System.out.println(currentLength + " bytes processed in "
-				+ ((System.currentTimeMillis() - start) / 1000.0) + " seconds "
+			       + ((System.currentTimeMillis() - start)
+				  / 1000.0) + " seconds "
 				+ ((int)bytesPerSecond / 1024) + " kB/s");
 	}
     }
@@ -712,7 +746,7 @@ class Handler extends Thread
      * @param monitored Update the Monitor
      */
     void flushCopy(InputStream in, OutputStream out, int length, boolean monitored)
-	throws java.io.IOException
+	throws IOException
     {
 	if (length == 0)
 	{
@@ -772,7 +806,8 @@ class Handler extends Thread
      * @param out OutputStream
      * @param monitored Update the Monitor
      */
-    void copy(InputObjectStream in, OutputStream out, boolean monitored) throws java.io.IOException
+    void copy(InputObjectStream in, OutputStream out, boolean monitored)
+	throws IOException
     {
 	Object obj;
 	long start = System.currentTimeMillis();

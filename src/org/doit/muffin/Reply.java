@@ -1,7 +1,7 @@
-/* $Id: Reply.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: Reply.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 public class Reply extends Message
 {
     InputStream in = null;
+    int statusCode = -1;
 
     public Reply()
     {
@@ -104,7 +105,7 @@ public class Reply extends Message
 		{
 		    contentLength = Integer.parseInt(getHeaderField("Content-length"));
 		}
-		catch (Exception e)
+		catch (NumberFormatException e)
 		{
 		}
 		int n;
@@ -123,7 +124,7 @@ public class Reply extends Message
     {
 	String s = toString();
 	out.write(s.getBytes(), 0, s.length());
-	//out.flush();
+	out.flush();
     }
 
     public boolean hasContent()
@@ -148,19 +149,24 @@ public class Reply extends Message
 
     public int getStatusCode()
     {
-	StringTokenizer st = new StringTokenizer(statusLine);
-	String protocol = (String) st.nextToken();
-	String status = (String) st.nextToken();
-	int code = 0;
-	try
+	if (statusCode == -1)
 	{
-	    code = Integer.parseInt(status);
+	    StringTokenizer st = new StringTokenizer(statusLine);
+	    String protocol = (String) st.nextToken();
+	    String status = (String) st.nextToken();
+
+	    try
+	    {
+		statusCode = Integer.parseInt(status);
+	    }
+	    catch (NumberFormatException e)
+	    {
+		System.out.println("Malformed or missing status code");
+		statusCode = 0;
+	    }
 	}
-	catch (Exception e)
-	{
-	    System.out.println("Malformed or missing status code");
-	}
-	return code;
+	
+	return statusCode;
     }
 
     private Hashtable headerParser(String header)
@@ -234,7 +240,7 @@ public class Reply extends Message
 	{
 	    size = Integer.valueOf(line, 16).intValue();
 	}
-	catch (Exception e)
+	catch (NumberFormatException e)
 	{
 	    System.out.println(e);
 	}

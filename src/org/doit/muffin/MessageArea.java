@@ -1,7 +1,7 @@
-/* $Id: MessageArea.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: MessageArea.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -30,32 +30,20 @@ import java.util.*;
 
 public class MessageArea extends java.awt.TextArea
 {
-    private static SimpleDateFormat format;
-
     private int maxLines;
     private int lines;
-    private String logFile = null;
-    private String logHeader = null;
 
-    static
+    public MessageArea()
     {
-	format = new SimpleDateFormat("MMM dd HH:mm:ss", Locale.US); 
-	format.setTimeZone(TimeZone.getDefault());
+	this(500);
     }
-    
+
     public MessageArea(int maxLines)
     {
-	this(null, null, maxLines);
-    }
-
-    public MessageArea(String logFile, String logHeader, int maxLines)
-    {
-	this.logFile = logFile;
-	this.logHeader = logHeader;
 	this.maxLines = maxLines;
 	lines = 0;
     }
-    
+
     public void append(String message)
     {
 	lines++;
@@ -69,38 +57,11 @@ public class MessageArea extends java.awt.TextArea
 	    replaceRange("", 0, offset);
 	}
 	super.append(message);
-
-	if (logFile != null)
-	{
-	    log(message);
-	}
     }
 
     public void clear()
     {
 	setText("");
 	lines = 0;
-    }
-
-    private synchronized void log(String message)
-    {
-	StringBuffer buf = new StringBuffer();
-
-	buf.append(format.format(new Date()));
-	buf.append(" ");
-	buf.append(logHeader);
-	buf.append(" ");
-	buf.append(message);
-	
-	try
-	{
-	    FileOutputStream out = new FileOutputStream(logFile, true);
-	    out.write(buf.toString().getBytes());
-	    out.close();
-	}
-	catch (IOException e)
-	{
-	    e.printStackTrace();
-	}
     }
 }

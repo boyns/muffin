@@ -1,7 +1,7 @@
-/* $Id: EmptyFont.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: EmptyFont.java,v 1.4 1999/03/12 15:47:42 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -44,10 +44,9 @@ public class EmptyFont implements FilterFactory
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
         prefs.putBoolean("EmptyFont.debug", false);
-        prefs.putInteger("EmptyFont.historySize", 500);
         prefs.setOverride(o);
 
-        messages = new MessageArea(prefs.getInteger("EmptyFont.historySize"));
+        messages = new MessageArea();
     }
 
     public Prefs getPrefs()

@@ -1,7 +1,7 @@
-/* $Id: RegexFrame.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: RegexFrame.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -133,7 +133,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 		    text.select(match.getStartIndex(), match.getEndIndex());
 		}
 	    }
-	    catch (Exception e)
+	    catch (REException e)
 	    {
 		System.out.println(e);
 	    }

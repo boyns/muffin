@@ -1,3 +1,18 @@
+1998-10-05  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/UserPrefs.java: don't use SortedProperties
+ 	stack overflow bug reported by Klaus Mueller.
+
+1998-09-27  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/Request.java: downcase non-lowercase http
+ 	URLs.
+
+1998-09-24  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/filter/SecretaryFilter.java: also fill-in
+	type=password fields.
+
 1998-09-23  Mark R. Boyns  <boyns@doit.org>
 
 	* Muffin 0.7.2 released.

@@ -1,7 +1,7 @@
-/* $Id: Rewrite.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
+/* $Id: Rewrite.java,v 1.4 1999/03/12 15:47:45 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -60,13 +60,9 @@ public class Rewrite implements FilterFactory
 	prefs.setOverride(false);
 	String filename = prefs.getUserFile("rewrite");
 	prefs.putString("Rewrite.rules", filename);
-	prefs.putInteger("Rewrite.historySize", 500);
-	prefs.putString("Rewrite.logfile", Main.getOptions().getString("muffin.logfile"));
 	prefs.setOverride(o);
 
-	messages = new MessageArea(prefs.getUserFile(prefs.getString("Rewrite.logfile")),
-				   "Rewrite",
-				   prefs.getInteger("Rewrite.historySize"));
+	messages = new MessageArea();
 
 	load();
     }
@@ -122,16 +118,9 @@ public class Rewrite implements FilterFactory
 	if (match != null)
 	{
 	    String s = (String) rewrite.elementAt(index - 1);
-	    try
-	    {
-		String sub = match.substituteInto(s);
-		report(request, "RULE #" + index + ": " + url + " -> " + sub);
-		url = sub;
-	    }
-	    catch (REException ex)
-	    {
-		System.out.println("rewrite: " + ex);
-	    }
+	    String sub = match.substituteInto(s);
+	    report(request, "RULE #" + index + ": " + url + " -> " + sub);
+	    url = sub;
 	}
 	
 	return url;
@@ -188,11 +177,7 @@ public class Rewrite implements FilterFactory
 
     void report(Request request, String message)
     {
-	report("[" + request.getRequest() + "] " + message);
-    }
-
-    void report(String message)
-    {
+	request.addLogEntry("Rewrite", message);
 	messages.append(message + "\n");
     }
 }

@@ -1,7 +1,7 @@
-/* $Id: Message.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: Message.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -68,6 +68,7 @@ abstract class Message
 		{
 		    if (! (in instanceof PushbackInputStream))
 		    {
+			System.out.println("creaing PushbackInputStream");
 			in = new PushbackInputStream(in);
 		    }
 		    ((PushbackInputStream) in).unread(tmpch);
@@ -112,7 +113,8 @@ abstract class Message
 		    break;
 		}
 		/* multi-line headers */
-		else if (key != null && (s.startsWith(" ") || s.startsWith("\t")))
+		else if (key != null
+			 && (s.startsWith(" ") || s.startsWith("\t")))
 		{
 		    int index = getHeaderValueCount(key.toString());
 		    index--;
@@ -263,7 +265,10 @@ abstract class Message
 	    v = (Vector) headers.get(key);
 	    for (i = 0; i < v.size(); i++)
 	    {
-		buf.append(key + ": " + v.elementAt(i) + sep);
+		buf.append(key);
+		buf.append(": ");
+		buf.append(v.elementAt(i));
+		buf.append(sep);
 	    }
 	}
 	buf.append(sep);

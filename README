@@ -1,7 +1,5 @@
-$Id: README,v 1.4 1998/09/19 19:33:21 boyns Exp $
-
 Muffin 0.7 README
-Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
 
 Muffin - a filtering proxy server for the World Wide Web.
 
@@ -52,3 +50,5 @@ Also included in this distribution:
   http://www.urbanophile.com/arenn/hacking/download.html
 
 Send suggestions and bug reports to <boyns@doit.org>
+
+$Id: README,v 1.5 1999/03/12 15:47:27 boyns Exp $

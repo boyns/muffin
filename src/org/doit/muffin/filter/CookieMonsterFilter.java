@@ -1,7 +1,7 @@
-/* $Id: CookieMonsterFilter.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: CookieMonsterFilter.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -47,11 +47,10 @@ public class CookieMonsterFilter implements RequestFilter, ReplyFilter
 	if (r.containsHeaderField("Cookie"))
 	{
 	    String cookie = r.getHeaderField("Cookie");
-	    factory.report(r, "Cookie \"" + cookie + "\"");
 	    if (prefs.getBoolean("CookieMonster.eatRequestCookies"))
 	    {
 		r.removeHeaderField("Cookie");
-		factory.report(r, "ate \"" + cookie + "\"");
+		factory.report(r, "cookie \"" + cookie + "\"");
 	    }
 	}
     }
@@ -61,11 +60,10 @@ public class CookieMonsterFilter implements RequestFilter, ReplyFilter
 	if (r.containsHeaderField("Set-Cookie"))
 	{
 	    Cookie cookie = new Cookie(r.getHeaderField("Set-Cookie"), request);
-	    factory.report(request, "Set-Cookie \"" + cookie.toString() + "\"");
 	    if (prefs.getBoolean("CookieMonster.eatReplyCookies"))
 	    {
 		r.removeHeaderField("Set-Cookie");
-		factory.report(request, "ate " + cookie.toString());
+		factory.report(request, "set-cookie " + cookie.toString());
 	    }
 	}
     }

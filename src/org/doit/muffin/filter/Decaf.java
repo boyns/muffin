@@ -1,7 +1,7 @@
-/* $Id: Decaf.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: Decaf.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -60,13 +60,9 @@ public class Decaf implements FilterFactory
 	prefs.setOverride(false);
 	prefs.putBoolean("Decaf.noJavaScript", true);
 	prefs.putBoolean("Decaf.noJava", false);
-	prefs.putInteger("Decaf.historySize", 500);
-	prefs.putString("Decaf.logfile", Main.getOptions().getString("muffin.logfile"));
 	prefs.setOverride(o);
 
-	messages = new MessageArea(prefs.getUserFile(prefs.getString("Decaf.logfile")),
-				   "Decaf",
-				   prefs.getInteger("Decaf.historySize"));
+	messages = new MessageArea();
     }
 
     public Prefs getPrefs()
@@ -115,11 +111,7 @@ public class Decaf implements FilterFactory
 
     void report(Request request, String message)
     {
-	report("[" + request.getRequest() + "] " + message);
-    }
-
-    void report(String message)
-    {
+	request.addLogEntry("Decaf", message);
 	messages.append(message + "\n");
     }
 }

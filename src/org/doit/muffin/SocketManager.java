@@ -1,7 +1,7 @@
-/* $Id: SocketManager.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: SocketManager.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

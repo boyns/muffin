@@ -1,7 +1,7 @@
-/* $Id: HostnameExpander.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
+/* $Id: HostnameExpander.java,v 1.4 1999/03/12 15:47:44 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -46,15 +46,11 @@ public class HostnameExpander implements FilterFactory
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
 	prefs.putString("HostnameExpander.defaultDomain", "");
-	prefs.putInteger("HostnameExpander.historySize", 500);
 	prefs.putStringList("HostnameExpander.prefix", prefix);
 	prefs.putStringList("HostnameExpander.suffix", suffix);
-	prefs.putString("HostnameExpander.logfile", Main.getOptions().getString("muffin.logfile"));
 	prefs.setOverride(o);
 
-	messages = new MessageArea(prefs.getUserFile(prefs.getString("HostnameExpander.logfile")),
-				   "HostnameExpander",
-				   prefs.getInteger("HostnameExpander.historySize"));
+	messages = new MessageArea();
     }
 
     public Prefs getPrefs()
@@ -93,11 +89,7 @@ public class HostnameExpander implements FilterFactory
     
     void report(Request request, String message)
     {
-	report("[" + request.getRequest() + "] " + message);
-    }
-
-    void report(String message)
-    {
+	request.addLogEntry("HostnameExpander", message);
 	messages.append(message + "\n");
     }
 }

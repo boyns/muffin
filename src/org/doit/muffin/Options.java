@@ -1,7 +1,7 @@
-/* $Id: Options.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: Options.java,v 1.5 1999/03/12 15:47:40 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -33,7 +33,7 @@ import java.awt.Color;
 /**
  * @author Mark Boyns
  */
-class Options extends Prefs implements ConfigurationListener
+public class Options extends Prefs implements ConfigurationListener
 {
     OptionsFrame frame;
     Vector hostsAllow;
@@ -63,7 +63,7 @@ class Options extends Prefs implements ConfigurationListener
 	    putString("muffin.hostsAllow", "127.0.0.1," + thishost.getHostAddress());
 	}
 	/* If this fails allow access to everyone */
-	catch (Exception e)
+	catch (UnknownHostException e)
 	{
 	    putString("muffin.hostsAllow", "ALL");
 	}

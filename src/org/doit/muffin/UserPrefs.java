@@ -1,7 +1,7 @@
-/* $Id: UserPrefs.java,v 1.4 1998/12/19 21:24:17 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.5 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -25,6 +25,8 @@ package org.doit.muffin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 import org.doit.util.SortedProperties;
@@ -82,7 +84,11 @@ class UserPrefs extends Prefs
 	    }
 	    in.close();
 	}
-	catch (Exception e)
+	catch (FileNotFoundException e)
+	{
+	    System.out.println(e);
+	}
+	catch (IOException e)
 	{
 	    System.out.println(e);
 	}
@@ -110,9 +116,13 @@ class UserPrefs extends Prefs
 	    props.save(out, null);
 	    out.close();
 	}
-	catch (Exception ex)
+	catch (FileNotFoundException ex)
 	{
-	    System.out.println(ex);
+	    System.out.println(e);
+	}
+	catch (IOException ex)
+	{
+	    System.out.println(e);
 	}
     }
 }

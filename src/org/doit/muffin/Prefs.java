@@ -1,7 +1,7 @@
-/* $Id: Prefs.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: Prefs.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -139,7 +139,7 @@ public class Prefs extends Hashtable
 
     public String getString(String key)
     {
-	return(String) get(key);
+	return (String) get(key);
     }
 
     public boolean getBoolean(String key)
@@ -159,7 +159,7 @@ public class Prefs extends Hashtable
 	{
 	    val = Integer.parseInt(getString(key));
 	}
-	catch (Exception e)
+	catch (NumberFormatException e)
 	{
 	    val = -1;
 	}
@@ -193,7 +193,7 @@ public class Prefs extends Hashtable
 	{
 	    c = Color.decode(getString(key));
 	}
-	catch (Exception e)
+	catch (NumberFormatException e)
 	{
 	}
 	return c;

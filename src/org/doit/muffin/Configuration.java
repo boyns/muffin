@@ -1,7 +1,7 @@
-/* $Id: Configuration.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
+/* $Id: Configuration.java,v 1.4 1999/03/12 15:47:38 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -26,11 +26,13 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
+import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.awt.Label;
 import java.awt.Choice;
 import gnu.regexp.RE;
+import gnu.regexp.REException;
 
 class Configuration extends Prefs
 {
@@ -202,7 +204,11 @@ class Configuration extends Prefs
 	    }
 	    in.close();
 	}
-	catch (Exception e)
+	catch (REException e)
+	{
+	    System.out.println(e);
+	}
+	catch (IOException e)
 	{
 	    System.out.println(e);
 	}
@@ -222,7 +228,7 @@ class Configuration extends Prefs
 	{
 	    load(new FileReader(file));
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
 	    System.out.println(e);
 	}

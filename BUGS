@@ -1,5 +1,3 @@
-$Id: BUGS,v 1.3 1998/08/23 06:15:05 boyns Exp $
-
 Muffin BUGS - Known bugs
 
 * Fast Snoop scrolling may hang the Motif AWT screen updates under X11.
@@ -7,3 +5,4 @@ Muffin BUGS - Known bugs
 
 * Glossary reads entire document into memory before processing.
 
+$Id: BUGS,v 1.4 1999/03/12 15:47:27 boyns Exp $

@@ -1,7 +1,7 @@
-/* $Id: Http.java,v 1.4 1998/12/19 21:24:15 boyns Exp $ */
+/* $Id: Http.java,v 1.5 1999/03/12 15:47:39 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -124,8 +124,8 @@ class Http extends HttpConnection
 	    System.out.println("REALLY CLOSE " + this);
 	close();
     }
-    
-    synchronized public void close()
+
+    public synchronized void close()
     {
 	if (persistent)
 	{
@@ -291,7 +291,8 @@ class Http extends HttpConnection
 	}
     }
     
-    static synchronized Http open(String host, int port, boolean isProxy) throws IOException
+    static synchronized Http open(String host, int port, boolean isProxy)
+	throws IOException
     {
 	Http http = null;
 

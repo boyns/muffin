@@ -1,7 +1,7 @@
-/* $Id: Client.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
+/* $Id: Client.java,v 1.4 1999/03/12 15:47:38 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -22,7 +22,8 @@
  */
 package org.doit.muffin;
 
-import java.io.IOException;
+import org.doit.io.*;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -32,7 +33,7 @@ import java.net.Socket;
  * @see muffin.Reply
  * @author Mark Boyns
  */
-class Client extends Connection
+public class Client extends Connection
 {
     /**
      * Create a Client from a Socket.
@@ -40,7 +41,11 @@ class Client extends Connection
     Client(Socket s) throws IOException
     {
 	super(s);
+	in = new BufferedInputStream(in);
+	//out = new DebugOutputStream(new BufferedOutputStream(out));
+	out = new BufferedOutputStream(out);
     }
+
 
     /**
      * Read a Request.
@@ -51,7 +56,7 @@ class Client extends Connection
     Request read() throws IOException
     {
 	Request request = new Request(this);
-	request.read(in);
+	request.read(getInputStream());
 	return request;
     }
 
@@ -62,6 +67,6 @@ class Client extends Connection
      */
     void write(Reply reply) throws IOException
     {
-	reply.write(out);
+	reply.write(getOutputStream());
     }
 }

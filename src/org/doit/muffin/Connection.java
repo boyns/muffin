@@ -1,7 +1,7 @@
-/* $Id: Connection.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
+/* $Id: Connection.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -105,7 +105,7 @@ class Connection
 	    {
 		socket.close();
 	    }
-	    catch (Exception e)
+	    catch (IOException e)
 	    {
 		System.out.println("Connection: " + e);
 	    }

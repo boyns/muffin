@@ -1,5 +1,3 @@
-$Id: TODO,v 1.3 1998/08/23 06:15:11 boyns Exp $
-
 Muffin TODO
 
 General:
@@ -8,13 +6,11 @@ General:
 
 * Maybe implement a disk cache.
 
-* Save filter messages to files.
+* Proxy authentication
 
-Ideas from Junkbuster
+* Content-length padding
 
-* logfile - log of killed URLs
-
-* jarfile - log of cookies
+* Optional Keep-alive with browser
 
 Possible filters:
 
@@ -32,3 +28,4 @@ Possible filters:
 
 * Basic authentication
 
+$Id: TODO,v 1.4 1999/03/12 15:47:28 boyns Exp $

@@ -1,7 +1,7 @@
-/* $Id: Request.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
+/* $Id: Request.java,v 1.5 1999/03/12 15:47:41 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 import gnu.regexp.*;
 
 /**
@@ -33,22 +36,21 @@ import gnu.regexp.*;
  */
 public class Request extends Message
 {
-    private static String pattern = "^(http|https):";
     private static RE httpRegex;
-    private static RE httpRegexIcase;
     
     private String command = null;
     private String url = null;
     private String protocol = null;
     private byte[] data = null;
     private Client client = null;
+    private Hashtable log;
+    private Vector logHeaders;
 
     static
     {
 	try
 	{
-	    httpRegex = new RE(pattern);
-	    httpRegexIcase = new RE(pattern, RE.REG_ICASE);
+	    httpRegex = new RE("^(http|https):", RE.REG_ICASE);
 	}
 	catch (REException e)
 	{
@@ -74,9 +76,9 @@ public class Request extends Message
 	url = (String) st.nextToken();
 	protocol = (String) st.nextToken();
 
-	if (httpRegex.getMatch(url) == null)
+	if (!url.startsWith("http"))
 	{
-	    REMatch match = httpRegexIcase.getMatch(url);
+	    REMatch match = httpRegex.getMatch(url);
 	    if (match != null)
 	    {
 		url = url.substring(match.getStartIndex(),
@@ -97,10 +99,14 @@ public class Request extends Message
 		while (offset < data.length)
 		{
 		    n = in.read(data, offset, data.length - offset);
+		    if (n < 0)
+		    {
+			throw new IOException("Not enough POST data");
+		    }
 		    offset += n;
 		}
 	    }
-	    catch (Exception e)
+	    catch (NumberFormatException e)
 	    {
 		System.out.println("Malformed or missing POST Content-length");
 	    }
@@ -109,9 +115,16 @@ public class Request extends Message
 
     void write(OutputStream out) throws IOException
     {
-	String s = toString();
-	out.write(s.getBytes(), 0, s.length());
-	//out.flush();
+	StringBuffer buf = new StringBuffer();
+	String s = toString("\r\n");
+	buf.append(s);
+	
+	if (command.equals("POST"))
+	{
+	    buf.append(new String(data, 0, data.length));
+	}
+
+	out.write(buf.toString().getBytes(), 0, buf.length());
     }
 
     public String toString(String sep)
@@ -120,6 +133,7 @@ public class Request extends Message
 	{
 	    StringBuffer buf = new StringBuffer(super.toString(sep));
 	    buf.append(getData());
+	    buf.append(sep);
 	    return buf.toString();
 	}
 	else
@@ -205,7 +219,7 @@ public class Request extends Message
 	    {
 		port = Integer.parseInt(s.substring(s.indexOf(':') + 1));
 	    }
-	    catch (Exception e)
+	    catch (NumberFormatException e)
 	    {
 		System.out.println("Invalid port in " + url);
 	    }
@@ -267,5 +281,34 @@ public class Request extends Message
 	    return null;
 	}
 	return path.substring(n + 1);
+    }
+
+    public synchronized void addLogEntry(String header,
+					 String message)
+    {
+	if (log == null)
+	{
+	    log = new Hashtable();
+	    logHeaders = new Vector();
+	}
+
+	Vector v = (Vector)log.get(header);
+	if (log.get(header) == null)
+	{
+	    v = new Vector();
+	    log.put(header, v);
+	    logHeaders.addElement(header);
+	}
+	v.addElement(message);
+    }
+
+    public Enumeration getLogHeaders()
+    {
+	return logHeaders != null ? logHeaders.elements() : null;
+    }
+
+    public Enumeration getLogEntries(String header)
+    {
+	return log != null ? ((Vector)log.get(header)).elements() : null;
     }
 }
