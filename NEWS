@@ -19,6 +19,8 @@ Changes since 0.8.1:
   previous settings.  Also note that the muffin.enabledFilters
   property has been renamed to FilterManager.enabledFilters.
 
+* Support for reusable threads. 
+
 * Added Edit menu and include Disable Filtering in File menu.
 
 * upgraded to dnsjava-1.0.2 and gnu.regexp-1.0.8.
@@ -206,4 +208,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.10 1999/09/16 04:18:09 boyns Exp $
+$Id: NEWS,v 1.11 1999/10/14 20:15:30 boyns Exp $
