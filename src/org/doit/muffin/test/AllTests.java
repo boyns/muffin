@@ -41,6 +41,8 @@ public class AllTests
         suite.addTest(new TestSuite(DecafTest.class));
         suite.addTest(new TestSuite(NoCodeTest.class));
         suite.addTest(new TestSuite(NoThanksTest.class));
+        suite.addTest(new TestSuite(PainterTest.class));
+        
         //$JUnit-END$
         return suite;
     }
