@@ -1,6 +1,6 @@
 /* $Id$ */
 /*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -67,7 +67,7 @@ public class AbstractContentFilter implements ContentFilter
     }
 
     /**
-     * Hook method for subclasses o AbstractContentFilter that decides whether the given
+     * Hook method for subclasses of AbstractContentFilter that decides whether the given
      * Content Type needs Filtration. Default behaviour is to check whether the the given
      * contentType starts with the String returned by
      * @see org.doit.muffin.AbstractContentFilter#doGetContentIdentifier() which itself
@@ -117,6 +117,10 @@ public class AbstractContentFilter implements ContentFilter
 
     /**
      * @see org.doit.muffin.Filter#setPrefs(org.doit.muffin.Prefs)
+     * This is a legacy method. It is here to make AbstractContentFilter
+     * implement the @see org.doit.muffin.filter.ContentFilter interface.
+     * Once all Filters have been adapted to the new architecture
+     * this method will be removed from the interface and all implementors.
      */
     public final void setPrefs(Prefs prefs)
     {
