@@ -1,3 +1,29 @@
+2000-01-26  Mark R. Boyns  <boyns@doit.org>
+
+	* Muffin 0.9.2 released
+
+	* NEWS: updated for 0.9.2
+
+	* src/org/doit/muffin/filter/DecafFilter.java: check return value
+ 	of has
+
+	* src/org/doit/muffin/Configuration.java, src/org/doit/muffin/LogFile.java:
+	kaffe fix and dontLogFilters
+
+	* src/org/doit/muffin/filter/NoThanksFilter.java: filter
+ 	application/x-javascript (.js files) using NoThanks script rules.
+
+2000-01-24  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/filter/NoThanks.java: added header and script
+	commands.
+
+	* src/org/doit/muffin/MuffinFrame.java: check for ImageProducer
+ 	suggested by Aaron Place.
+
+	* src/org/doit/muffin/Configuration.java: kaffe fix from Aaron
+ 	Place.
+
 2000-01-16  Mark R. Boyns  <boyns@doit.org>
 
 	* src/org/doit/muffin/Request.java: added user@host: patch from

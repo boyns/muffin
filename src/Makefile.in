@@ -30,7 +30,7 @@ jar:
 	@cp $(srcdir)/../doc/filter/*.txt $(doc_dir)
 	@cp $(srcdir)/../COPYING $(doc_dir)/COPYING.txt
 	@echo building muffin.jar
-	@$(JAR) cf muffin.jar $(OBJS) $(img_dir)/*.jpg $(doc_dir)/*.txt 2>/dev/null
+	@$(JAR) cfm muffin.jar MANIFEST.MF $(OBJS) $(img_dir)/*.jpg $(doc_dir)/*.txt 2>/dev/null
 
 clean:
 	$(RM) $(OBJS) muffin
