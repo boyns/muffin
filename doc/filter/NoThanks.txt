@@ -6,8 +6,8 @@ Muffin.
 NoThanks is configured using a killfile which is typically located in
 the Muffin preferences directory.  This killfile supports a small
 control language comprised of the "strip", "kill", "redirect",
-"content", "replace", and "tagattr" commands.  "#include filename" can
-be used include other killfiles.
+"content", "replace", "tagattr", "header", and "script" commands.
+"#include filename" can be used include other killfiles.
 
 The syntax used in the killfile may seem complex at first but really
 all that's required is understanding of HTML and basic regular
@@ -195,6 +195,28 @@ NoThanks Command Set:
 
       script replace \S+\s*=\s*window.open\s*\(([^,]+),[^\)]+\) location=$1;return
 
+* header header-name command [regex]
+
+  Process HTTP headers in both requests and replies.
+  Supported commands:
+
+      * strip [regex] - Strip header if regex matches any value.
+
+      * replace regex new-value - Replace value if regex matches header value.
+                                  $0..$9 substitution is performed on new-value.
+
+  The regex ".*" (match everything) is used when a regex is not supplied.
+
+  Examples:
+
+  In User-Agent change Mozilla to Muffzilla and change Linux to Debian GNU/Linux:
+
+      header user-agent replace (.*)Mozilla(.*) $1Muffzilla$2
+      header User-Agent replace (.*)Linux(.*) $1Debian GNU/Linux$2
+
+  Remove any compressed encoding:
+
+      header Accept-Encoding strip (zip|compress)
 
 Complete example:
 
