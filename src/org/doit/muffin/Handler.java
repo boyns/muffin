@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
+/* $Id: Handler.java,v 1.6 1999/03/17 06:00:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -180,6 +180,12 @@ class Handler extends Thread
 
 	    if (request != null && reply != null)
 	    {
+		// XXX insert the number of bytes read into the
+		// reply content-length for logging.
+		if (reply != null && currentLength > 0)
+		{
+		    reply.setHeaderField("Content-length", currentLength);
+		}
 		Main.getLogFile().log(request, reply);
 	    }
 	}
