@@ -31,7 +31,6 @@ package gnu.regexp;
  * </OL>
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.7
  */
 
 public class REException extends Exception {

@@ -26,7 +26,6 @@ package gnu.regexp;
  * or submatch.
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.7
  */
 public class REMatch {
   private String m_match;

@@ -25,7 +25,11 @@ public class Tests {
     System.out.println(" test #"+x);
   }
 
-  /** Runs the testsuite.  No command line arguments are necessary. */
+  /**
+   * Runs the testsuite.  No command line arguments are necessary. 
+   *
+   * @exception REException An error occurred compiling a regular expression.
+   */
   public static void main(String[] argv) throws REException {
     RE e;
 

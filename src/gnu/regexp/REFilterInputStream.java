@@ -25,7 +25,6 @@ import java.io.InputStream;
  * Replaces instances of a given RE with replacement text. 
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.7
  * @since gnu.regexp 1.0.5
  */
 

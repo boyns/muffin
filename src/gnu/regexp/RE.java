@@ -79,12 +79,12 @@ class CharUnit {
  * combination of execution flags (constants listed below).
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.7, 2 March 1999
+ * @version 1.0.8, 21 March 1999
  */
 
 public class RE extends REToken {
   // This String will be returned by getVersion()
-  private static final String s_version = "1.0.7";
+  private static final String s_version = "1.0.8";
 
   // These are, respectively, the first and last tokens in our linked list
   // If there is only one token, firstToken == lastToken
@@ -374,7 +374,7 @@ public class RE extends REToken {
 	  }
 	  if (index == pLength) throw new REException("no end of list",REException.REG_EBRACK,index);
 	} // while in list
-	// Out of list, index is on ']'
+	// Out of list, index is one past ']'
 	    
 	if (lastChar != 0) options.addElement(new RETokenChar(m_subIndex,lastChar,insens));
 	    
@@ -622,7 +622,6 @@ public class RE extends REToken {
       branches.trimToSize(); // compact the Vector
       firstToken = lastToken = new RETokenOneOf(m_subIndex,branches,false);
     }
-
   }
 
   private static int getCharUnit(char[] input, int index, CharUnit unit) throws REException {
@@ -1044,7 +1043,7 @@ public class RE extends REToken {
     int i;
     for (i=index; i<(pattern.length-1); i++) {
       if ((pattern[i] == ':') && (pattern[i+1] == ']'))
-	return i+1;
+	return i+2;
       buf.append(pattern[i]);
     }
     return index; // didn't match up
