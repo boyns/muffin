@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.3 1998/08/23 06:15:13 boyns Exp $
+dnl $Id: configure.in,v 1.4 1998/09/19 19:24:29 boyns Exp $
 
 AC_INIT(configure.in)
 AC_PROG_INSTALL
@@ -40,6 +40,9 @@ AC_PATH_PROG(JAR, jar, jar, $JAVABINDIRS:$PATH)
 
 AC_SUBST(JAVACFLAGS)
 AC_SUBST(JAVA_COMPILER)
+
+CLASSPATH=`dirname $JAVA`/../lib/classes.zip
+AC_SUBST(CLASSPATH)
 
 AC_PATH_PROG(ZIP, zip, false)
 AC_PATH_PROG(TAR, tar, false)
