@@ -29,6 +29,51 @@ import org.doit.muffin.regexp.*;
 public class Utils
 {
     /**
+     * A Wrapper around 
+     * @see org.doit.muffin.test.Utils#filter(ContentFilter,InputStream,int,Reply)
+     * removing the need to supply an InputStream.
+     * 
+     * @param filter
+     * @param out
+     * @param length
+     * @param reply
+     * @return String the output of the filter operation as String.
+     */
+    static String filter(
+        ContentFilter filter,
+        int length,
+        Reply reply
+    )
+    {
+    OutputStream os = new ByteArrayOutputStream();
+    filter(filter, reply.getContent(), os, length, reply);
+    return os.toString();
+    }
+    
+    /**
+     * A Wrapper around 
+     * @see org.doit.muffin.test.Utils#filter(ContentFilter,InputStream,OutputStream,int length,Reply)
+     * removing the need to supply an outputStream.
+     * 
+     * @param filter
+     * @param in
+     * @param length
+     * @param reply
+     * @return String the output of the filter operation as String.
+     */
+    static String filter(
+        ContentFilter filter,
+        InputStream in,
+        int length,
+        Reply reply
+    )
+    {
+    OutputStream os = new ByteArrayOutputStream();
+    filter(filter, in, os, length, reply);
+    return os.toString();
+    }
+    
+    /**
      * Basically a copy of 
      * @see org.doit.muffin.Handler#filter(InputStream,OutputStream,int length,boolean)
      * Stripped of the Thread stuff.
