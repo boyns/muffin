@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.9 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.10 2003/06/07 20:39:36 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -40,6 +40,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 import sdsu.compare.StringIgnoreCaseComparer;
@@ -56,10 +58,13 @@ class FilterManagerFrame
     extends MuffinFrame
     implements ActionListener, ItemListener, WindowListener, ConfigurationListener
 {
-    FilterManager manager;
-    BigList supportedFiltersList = null;
-    BigList enabledFiltersList = null;
-    Choice configurationChoice = null;
+    private FilterManager manager;
+    private BigList supportedFiltersList = null;
+    private BigList enabledFiltersList = null;
+    private Choice configurationChoice = null;
+    
+    private static final String ENABLE_CMD = "doPerform";
+    private static final String PREFS_CMD = "doPrefs";
 
     /**
      * Create the FilterManagerFrame.
@@ -75,7 +80,9 @@ class FilterManagerFrame
 	//setResizable(false);
 
 	supportedFiltersList = new BigList(10, false);
+    supportedFiltersList.addMouseListener(new MyMouseListener(ENABLE_CMD));
 	enabledFiltersList = new BigList(10, false);
+    enabledFiltersList.addMouseListener(new MyMouseListener(PREFS_CMD));
 
 	Label l;
 	Button b;
@@ -256,7 +263,7 @@ class FilterManagerFrame
  	while (e.hasMoreElements())
  	{
 	    String s = (String) e.nextElement();
-	    supportedFiltersList.addItem(s); // DEPRECATION: use add()
+	    supportedFiltersList.add(s);
 	}
     }
 
@@ -273,7 +280,7 @@ class FilterManagerFrame
  	while (e.hasMoreElements())
  	{
 	    FilterFactory ff = (FilterFactory) e.nextElement();
-	    enabledFiltersList.addItem(manager.shortName((ff.getClass()).getName())); // DEPRECATION: use add()
+	    enabledFiltersList.add(manager.shortName((ff.getClass()).getName()));
 	}
     }
 
@@ -344,7 +351,7 @@ class FilterManagerFrame
 	{
 	    manager.save();
 	}
-	else if ("doEnable".equals(arg))
+	else if (ENABLE_CMD.equals(arg))
 	{
 	    int i = supportedFiltersList.getSelectedIndex();
 	    if (i != -1)
@@ -388,7 +395,7 @@ class FilterManagerFrame
 		new HelpFrame(supportedFiltersList.getItem(i));
 	    }
 	}
-	else if ("doPrefs".equals(arg))
+	else if (PREFS_CMD.equals(arg))
 	{
 	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i != -1)
@@ -456,5 +463,26 @@ class FilterManagerFrame
 
     public void windowOpened(WindowEvent e)
     {
+    }
+    
+    class MyMouseListener extends MouseAdapter
+    {
+        
+        MyMouseListener(String cmd)
+        {
+            fCmd = cmd;
+        }
+        /**
+         * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+         */
+        public void mouseClicked(MouseEvent event)
+        {
+            if(event.getClickCount() > 1)
+            {
+                actionPerformed(new ActionEvent(this, 0, fCmd));
+            }
+        }
+        
+        private String fCmd;
     }
 }
