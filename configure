@@ -598,14 +598,7 @@ test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 
-if test -z "$with_jdk" -a -z "$with_guavac"
-then
-    with_jdk=yes
-fi
-if test -z "$with_jdk" -a -z "$with_kaffe"
-then
-    with_jdk=yes
-fi
+try_jikes=yes
 
 if test -n "$with_tya"
 then
@@ -618,16 +611,15 @@ JAVADIRS="/usr/local/java /usr/local/jdk /usr/local/jdk1.1 \
 /opt/java /opt/jdk /opt/jdk1.1"
 JAVABINDIRS=`echo "${JAVADIRS} " | sed -e 's, ,/bin:,g' | sed -e 's,:$,,'`
 
-KAFFEBINDIRS="/usr/local/kaffe/bin /usr/kaffe/bin /usr/lib/kaffe/bin /opt/kaffe/bin"
+JIKESBINDIRS="/usr/local/jikes/bin /usr/jikes/bin \
+/usr/lib/jikes/bin /opt/jikes/bin"
 
-GUAVACBINDIRS="/usr/local/guavac/bin /usr/guavac/bin /usr/lib/guavac/bin /opt/guavac/bin"
-
-if test "$with_guavac" = "yes"
+if test "$try_jikes" = "yes"
 then
-# Extract the first word of "guavac", so it can be a program name with args.
-set dummy guavac; ac_word=$2
+# Extract the first word of "jikes", so it can be a program name with args.
+set dummy jikes; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:631: checking for $ac_word" >&5
+echo "configure:623: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JAVAC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -637,7 +629,7 @@ else
   ;;
   *)
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
-  for ac_dir in $GUAVACBINDIRS:$PATH$ac_dummy; do
+  for ac_dir in $JIKESBINDIRS:$PATH$ac_dummy; do
     test -z "$ac_dir" && ac_dir=.
     if test -f $ac_dir/$ac_word; then
       ac_cv_path_JAVAC="$ac_dir/$ac_word"
@@ -656,12 +648,11 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-elif test "$with_jdk" = "yes"
-then
+else
 # Extract the first word of "javac", so it can be a program name with args.
 set dummy javac; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:665: checking for $ac_word" >&5
+echo "configure:656: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JAVAC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -692,144 +683,11 @@ fi
 
 fi
 
-if test "$with_kaffe" = "yes"
-then
-JAVACFLAGS=""
-# Extract the first word of "kaffe", so it can be a program name with args.
-set dummy kaffe; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:702: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_JAVA'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$JAVA" in
-  /*)
-  ac_cv_path_JAVA="$JAVA" # Let the user override the test with a path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
-  for ac_dir in $KAFFEBINDIRS:$PATH$ac_dummy; do
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_JAVA="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_JAVA" && ac_cv_path_JAVA="java"
-  ;;
-esac
-fi
-JAVA="$ac_cv_path_JAVA"
-if test -n "$JAVA"; then
-  echo "$ac_t""$JAVA" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
-
-# Extract the first word of "jre", so it can be a program name with args.
-set dummy jre; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:734: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_JRE'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$JRE" in
-  /*)
-  ac_cv_path_JRE="$JRE" # Let the user override the test with a path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
-  for ac_dir in $KAFFEBINDIRS:$PATH$ac_dummy; do
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_JRE="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_JRE" && ac_cv_path_JRE="jre"
-  ;;
-esac
-fi
-JRE="$ac_cv_path_JRE"
-if test -n "$JRE"; then
-  echo "$ac_t""$JRE" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
-
-# Extract the first word of "javadoc", so it can be a program name with args.
-set dummy javadoc; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:766: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_JAVADOC'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$JAVADOC" in
-  /*)
-  ac_cv_path_JAVADOC="$JAVADOC" # Let the user override the test with a path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
-  for ac_dir in $KAFFEBINDIRS:$PATH$ac_dummy; do
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_JAVADOC="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_JAVADOC" && ac_cv_path_JAVADOC="javadoc"
-  ;;
-esac
-fi
-JAVADOC="$ac_cv_path_JAVADOC"
-if test -n "$JAVADOC"; then
-  echo "$ac_t""$JAVADOC" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
-
-# Extract the first word of "jar", so it can be a program name with args.
-set dummy jar; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:798: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_JAR'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$JAR" in
-  /*)
-  ac_cv_path_JAR="$JAR" # Let the user override the test with a path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
-  for ac_dir in $KAFFEBINDIRS:$PATH$ac_dummy; do
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_JAR="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_JAR" && ac_cv_path_JAR="jar"
-  ;;
-esac
-fi
-JAR="$ac_cv_path_JAR"
-if test -n "$JAR"; then
-  echo "$ac_t""$JAR" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
-
-elif test "$with_jdk" = "yes"
-then
 JAVACFLAGS="-O"
 # Extract the first word of "java", so it can be a program name with args.
 set dummy java; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:833: checking for $ac_word" >&5
+echo "configure:691: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JAVA'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -861,7 +719,7 @@ fi
 # Extract the first word of "jre", so it can be a program name with args.
 set dummy jre; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:865: checking for $ac_word" >&5
+echo "configure:723: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JRE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -893,7 +751,7 @@ fi
 # Extract the first word of "javadoc", so it can be a program name with args.
 set dummy javadoc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:897: checking for $ac_word" >&5
+echo "configure:755: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JAVADOC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -925,7 +783,7 @@ fi
 # Extract the first word of "jar", so it can be a program name with args.
 set dummy jar; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:929: checking for $ac_word" >&5
+echo "configure:787: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JAR'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -954,7 +812,6 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-fi
 
 
 
@@ -962,7 +819,7 @@ fi
 # Extract the first word of "zip", so it can be a program name with args.
 set dummy zip; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:966: checking for $ac_word" >&5
+echo "configure:823: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_ZIP'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -994,7 +851,7 @@ fi
 # Extract the first word of "tar", so it can be a program name with args.
 set dummy tar; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:998: checking for $ac_word" >&5
+echo "configure:855: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_TAR'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else

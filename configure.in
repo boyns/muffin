@@ -1,15 +1,9 @@
-dnl $Id: configure.in,v 1.2 1998/08/13 05:41:44 boyns Exp $
+dnl $Id: configure.in,v 1.3 1998/08/23 06:15:13 boyns Exp $
+
 AC_INIT(configure.in)
 AC_PROG_INSTALL
 
-if test -z "$with_jdk" -a -z "$with_guavac"
-then
-    with_jdk=yes
-fi
-if test -z "$with_jdk" -a -z "$with_kaffe"
-then
-    with_jdk=yes
-fi
+try_jikes=yes
 
 if test -n "$with_tya"
 then
@@ -26,38 +20,23 @@ JAVADIRS="/usr/local/java /usr/local/jdk /usr/local/jdk1.1 \
 JAVABINDIRS=`echo "${JAVADIRS} " | sed -e 's, ,/bin:,g' | sed -e 's,:$,,'`
 
 dnl
-dnl Extra places to look for kaffe
+dnl Extra places to look for jikes
 dnl
-KAFFEBINDIRS="/usr/local/kaffe/bin /usr/kaffe/bin /usr/lib/kaffe/bin /opt/kaffe/bin"
+JIKESBINDIRS="/usr/local/jikes/bin /usr/jikes/bin \
+/usr/lib/jikes/bin /opt/jikes/bin"
 
-dnl
-dnl Extra places to look for guavac
-dnl
-GUAVACBINDIRS="/usr/local/guavac/bin /usr/guavac/bin /usr/lib/guavac/bin /opt/guavac/bin"
-
-if test "$with_guavac" = "yes"
+if test "$try_jikes" = "yes"
 then
-AC_PATH_PROG(JAVAC, guavac, javac, $GUAVACBINDIRS:$PATH)
-elif test "$with_jdk" = "yes"
-then
+AC_PATH_PROG(JAVAC, jikes, javac, $JIKESBINDIRS:$PATH)
+else
 AC_PATH_PROG(JAVAC, javac, javac, $JAVABINDIRS:$PATH)
 fi
 
-if test "$with_kaffe" = "yes"
-then
-JAVACFLAGS=""
-AC_PATH_PROG(JAVA, kaffe, java, $KAFFEBINDIRS:$PATH)
-AC_PATH_PROG(JRE, jre, jre, $KAFFEBINDIRS:$PATH)
-AC_PATH_PROG(JAVADOC, javadoc, javadoc, $KAFFEBINDIRS:$PATH)
-AC_PATH_PROG(JAR, jar, jar, $KAFFEBINDIRS:$PATH)
-elif test "$with_jdk" = "yes"
-then
 JAVACFLAGS="-O"
 AC_PATH_PROG(JAVA, java, java, $JAVABINDIRS:$PATH)
 AC_PATH_PROG(JRE, jre, jre, $JAVABINDIRS:$PATH)
 AC_PATH_PROG(JAVADOC, javadoc, javadoc, $JAVABINDIRS:$PATH)
 AC_PATH_PROG(JAR, jar, jar, $JAVABINDIRS:$PATH)
-fi
 
 AC_SUBST(JAVACFLAGS)
 AC_SUBST(JAVA_COMPILER)
