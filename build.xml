@@ -8,6 +8,8 @@
     <property name="classes" value="classes"/>
     <property name="build.compiler" value="classic"/>
     <property name="decryption.dir" value="org/doit/muffin/decryption"/>
+    <property name="libdir" value="lib"/>
+    <property name="junit.jar" value="${libdir}/junit.jar"/>
   </target>
 
   <target name="compile" depends="init, core.compile, decryption.compile"/>
@@ -20,7 +22,7 @@
 	   excludes="${decryption.dir}/*.java"
 	   deprecation="false"
 	   debug="true"
-           classpath="${classpath}"/>
+           classpath="${classpath};${junit.jar}"/>
     <copy todir="${classes}">
       <fileset dir="${srcdir}" includes="**/*.properties" excludes="${decryption.dir}/**"/>
     </copy>
