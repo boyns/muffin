@@ -36,25 +36,36 @@ public abstract class HttpdFactory
 
     public static synchronized void configure(Options options)
     {
-        boolean useVelocity = false;
+        String webadmin = null;
         if (options != null)
-            useVelocity = options.getBoolean("muffin.velocity");
-        if (useVelocity)
+            webadmin = options.getString("muffin.webadmin");
+        System.out.println("options="+options+" webadmin="+webadmin);
+        try
         {
-            try
+            if ("velocity".equals(webadmin))
             {
                 instance =
                     (HttpdFactory) Class
-                        .forName("org.doit.muffin.webadmin.WebAdminHttpdFactory")
+                        .forName("org.doit.muffin.webadmin.velocity.VelocityHttpdFactory")
+                        .newInstance();
+
+            }
+            else if ("webmacro".equals(webadmin))
+            {
+                instance =
+                    (HttpdFactory) Class
+                        .forName("org.doit.muffin.webadmin.webmacro.WebMacroHttpdFactory")
                         .newInstance();
             }
-            catch (Throwable t)
+            else
             {
                 instance = new Default();
             }
         }
-        else
+        catch (Throwable t)
         {
+        	t.printStackTrace();
+        	System.out.println("WEBADMIN - loading default Httpd");
             instance = new Default();
         }
     }
