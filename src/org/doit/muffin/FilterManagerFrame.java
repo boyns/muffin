@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.10 2003/06/07 20:39:36 forger77 Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.11 2003/06/07 23:24:56 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,16 +34,8 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.awt.event.*;
+import java.util.*;
 import sdsu.compare.StringIgnoreCaseComparer;
 import sdsu.util.SortedList;
 import org.doit.util.*;
@@ -65,6 +57,8 @@ class FilterManagerFrame
     
     private static final String ENABLE_CMD = "doPerform";
     private static final String PREFS_CMD = "doPrefs";
+    private static final String HELP_CMD = "doHelp";
+    private static final String DISABLE_CMD = "doDisable";
 
     /**
      * Create the FilterManagerFrame.
@@ -81,8 +75,10 @@ class FilterManagerFrame
 
 	supportedFiltersList = new BigList(10, false);
     supportedFiltersList.addMouseListener(new MyMouseListener(ENABLE_CMD));
+    supportedFiltersList.addKeyListener(new MyKeyListener());
 	enabledFiltersList = new BigList(10, false);
     enabledFiltersList.addMouseListener(new MyMouseListener(PREFS_CMD));
+    enabledFiltersList.addKeyListener(new MyKeyListener());
 
 	Label l;
 	Button b;
@@ -359,7 +355,7 @@ class FilterManagerFrame
 		enable(supportedFiltersList.getItem(i));
 	    }
 	}
-	else if ("doDisable".equals(arg))
+	else if (DISABLE_CMD.equals(arg))
 	{
 	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i != -1)
@@ -387,7 +383,7 @@ class FilterManagerFrame
 		manager.remove(supportedFiltersList.getItem(i));
 	    }
 	}
-	else if ("doHelp".equals(arg))
+	else if (HELP_CMD.equals(arg))
 	{
 	    int i = supportedFiltersList.getSelectedIndex();
 	    if (i != -1)
@@ -484,5 +480,26 @@ class FilterManagerFrame
         }
         
         private String fCmd;
+    }
+    
+    class MyKeyListener extends KeyAdapter {
+        public void keyPressed(KeyEvent e){
+            int keyCode = e.getKeyCode();
+            ActionEvent ae = (ActionEvent)gcActionMap.get(new Integer(keyCode));
+            if(ae != null) actionPerformed(ae);
+        }
+    }
+    
+    private static Map gcActionMap = new HashMap();
+    static {
+        Object dummy = new Object();
+        ActionEvent enable  = new ActionEvent(dummy, 0, ENABLE_CMD);
+        ActionEvent disable = new ActionEvent(dummy, 0, DISABLE_CMD);
+        ActionEvent help    = new ActionEvent(dummy, 0, HELP_CMD);
+        gcActionMap.put(new Integer(KeyEvent.VK_INSERT),     enable);
+        gcActionMap.put(new Integer(KeyEvent.VK_ENTER),      enable);
+        gcActionMap.put(new Integer(KeyEvent.VK_DELETE),     disable);
+        gcActionMap.put(new Integer(KeyEvent.VK_BACK_SPACE), disable);
+        gcActionMap.put(new Integer(KeyEvent.VK_F1),         help);
     }
 }
