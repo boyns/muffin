@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.22 2003/06/07 10:10:52 forger77 Exp $ */
+/* $Id: Handler.java,v 1.23 2003/06/20 21:43:43 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -29,6 +29,9 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.doit.io.ByteArray;
@@ -45,7 +48,7 @@ import org.doit.util.ReusableThread;
  *
  * @see muffin.Server
  * @author Mark Boyns
- * @author Fabien Le Floc'h (decryption server option)
+ * @author Fabien Le Floc'h (decryption server option, ContentFilter threads fix)
  */
 public class Handler implements Runnable
 {
@@ -685,6 +688,7 @@ public class Handler implements Runnable
         boolean monitored)
         throws IOException
     {
+        List inputObjectsList = new LinkedList(); // keep references for cleanup
         InputObjectStream inputObjects = new InputObjectStream();
         SourceObjectStream srcObjects;
 
@@ -698,6 +702,7 @@ public class Handler implements Runnable
             srcObjects = new SourceObjectStream(inputObjects);
         }
 
+        
         for (int i = 0; i < filterList.length; i++)
         {
             if (filterList[i] instanceof ContentFilter)
@@ -710,6 +715,8 @@ public class Handler implements Runnable
 
                     filter.setInputObjectStream(inputObjects);
                     filter.setOutputObjectStream(oo);
+
+                    inputObjectsList.add(io);
 
                     ReusableThread rt = Main.getThread();
                     rt.setPriority(Thread.MIN_PRIORITY);
@@ -732,7 +739,26 @@ public class Handler implements Runnable
         srcThread.setRunnable(srcObjects);
 
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-        copy(inputObjects, out, monitored);
+        try
+        {
+            copy(inputObjects, out, monitored);
+        }
+        catch (Exception e)
+        {
+            // if outputstream is not responding anymore, we shall close the inputStream that 
+            // would wait to be copied forever otherwise.
+            // Remark: exception could be more generally catched in out.write() of copy().
+            // I am being conservative here.
+            for (Iterator i = inputObjectsList.iterator(); i.hasNext();)
+            {
+                InputObjectStream ios = (InputObjectStream) i.next();
+                if (ios != null)
+                {
+                    ios.done();
+                }
+            }
+            throw new IOException("IO error while copying stream");
+        }
     }
 
     /**

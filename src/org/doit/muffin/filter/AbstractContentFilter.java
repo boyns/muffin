@@ -129,24 +129,31 @@ public class AbstractContentFilter implements ContentFilter
     {
         Thread.currentThread().setName(getFactory().getName());
         ObjectStreamToInputStream ostis =
-            new ObjectStreamToInputStream(fInObjectStream);
+        new ObjectStreamToInputStream(fInObjectStream);
         ObjectStreamToOutputStream ostos =
-            new ObjectStreamToOutputStream(fOutObjectStream);
+        new ObjectStreamToOutputStream(fOutObjectStream);
         try
         {
             doRun(ostis, ostos);
             ostos.flush();
             ostos.close();
-        } catch (IOException ioe)
+        }
+        catch (ObjectStreamException ise)
+        {
+            // don't mention it
+        } 
+        catch (IOException ioe)
         {
             ioe.printStackTrace();
-        } finally
+        } 
+        finally
         {
             try
             {
                 fOutObjectStream.flush();
                 fOutObjectStream.close();
-            } catch (IOException ioe)
+            } 
+            catch (IOException ioe)
             {
                 //FIXME: swallowing it on purpose?
             }
