@@ -22,6 +22,7 @@
 package org.doit.muffin.filter;
 
 import java.io.IOException;
+import java.io.StreamCorruptedException;
 
 import org.doit.io.*;
 import org.doit.muffin.ContentFilter;
@@ -38,7 +39,7 @@ public class AbstractContentFilter implements ContentFilter
     {
         fFactory = factory;
     }
-    
+
     /**
      * Determines whether this Reply needs filtering.
      * Note to implementors: This method is not made final in case you want to determine the
@@ -46,7 +47,7 @@ public class AbstractContentFilter implements ContentFilter
      * If the need for filtering is determined via the content identifier, override
      * @see org.doit.muffin.AbstractContentFilter#doGetContentFilter instead.
      * @see org.doit.muffin.ContentFilter#needsFiltration(org.doit.muffin.Request, org.doit.muffin.Reply)
-     * 
+     *
      * Ugly little side effect: We store the Request.
      */
     public final boolean needsFiltration(Request request, Reply reply)
@@ -64,11 +65,11 @@ public class AbstractContentFilter implements ContentFilter
     {
         return fRequest;
     }
-    
+
     /**
      * Hook method for subclasses o AbstractContentFilter that decides whether the given
      * Content Type needs Filtration. Default behaviour is to check whether the the given
-     * contentType starts with the String returned by 
+     * contentType starts with the String returned by
      * @see org.doit.muffin.AbstractContentFilter#doGetContentIdentifier() which itself
      * should be overriden by subclasses.
      * @param contentType To check whether filtration is needed.
@@ -141,18 +142,22 @@ public class AbstractContentFilter implements ContentFilter
         catch (ObjectStreamException ise)
         {
             // don't mention it
-        } 
+        }
+        catch (StreamCorruptedException sce)
+        {
+            System.out.println(sce + " " + fRequest.getURL());
+        }
         catch (IOException ioe)
         {
             ioe.printStackTrace();
-        } 
+        }
         finally
         {
             try
             {
                 fOutObjectStream.flush();
                 fOutObjectStream.close();
-            } 
+            }
             catch (IOException ioe)
             {
                 //FIXME: swallowing it on purpose?

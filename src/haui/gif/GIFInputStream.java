@@ -6,7 +6,7 @@ package haui.gif;
    This file is part of the haui.gif package.
 
    haui.gif is a Java package that allows manipulations of GIF images
-   that do not need a LZW decoding or encoding algorithm. 
+   that do not need a LZW decoding or encoding algorithm.
 
    You can redistribute it and/or modify it under the terms of the GNU
    General Public License as published by the Free Software
@@ -54,7 +54,7 @@ public class GIFInputStream extends FilterInputStream {
   }
 
   public final void checkByte(int x) throws IOException {
-    if (x != readByte()) throw new StreamCorruptedException();
+    if (x != readByte()) throw new StreamCorruptedException("Not a GIF!");
   }
 
   public final void checkBytes(byte[] value) throws IOException {
