@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.33 2003/06/01 19:39:25 cmallwitz Exp $ */
+/* $Id: Main.java,v 1.34 2003/06/02 10:33:19 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -85,7 +85,7 @@ public class Main
     {
         pool = new ThreadPool("Muffin Threads");
 
-        String host = options.getString("muffin.bindaddress") == null
+        String hostName = options.getString("muffin.bindaddress") == null
             ? getMuffinHost().toString()
             : options.getString("muffin.bindaddress");
 
@@ -94,7 +94,7 @@ public class Main
                 "muffin.status",
                 new Object[] {
                     getMuffinVersion(),
-                    host,
+                    hostName,
                     options.getString("muffin.port")});
 
         manager = new FilterManager(options, configs);
@@ -115,6 +115,7 @@ public class Main
             new Server(
                 new DefaultServerSocketCreator(),
                 options.getInteger("muffin.port"),
+                host,
                 monitor,
                 manager,
                 options);
@@ -680,19 +681,6 @@ public class Main
 
         options = new Options(defaultProps);
 
-        try
-        {
-            host = InetAddress.getLocalHost(); //.getHostName();
-        }
-        catch (UnknownHostException e)
-        {
-                try {
-                host = InetAddress.getByName("127.0.0.1");
-                } catch (UnknownHostException uhe)
-                {
-                        System.err.println("can not start muffin: "+uhe.getMessage());
-                }
-        }
 
         if (args.exists("port"))
         {
@@ -747,6 +735,33 @@ public class Main
             options.putString(
                 "muffin.bindaddress",
                 args.getString("bindaddress"));
+        }        
+
+        String bindaddr = options.getString("muffin.bindaddress");
+        try
+        {
+            if (bindaddr == null || bindaddr.length() <= 0)
+            {
+                // bind to all local addresses
+                host = InetAddress.getLocalHost();
+            }
+            else
+            {
+                // bind to specified address
+                host = InetAddress.getByName(bindaddr);
+            }
+        }
+        catch (UnknownHostException e)
+        {
+            try
+            {
+                // bind to 127.0.0.1
+                host = InetAddress.getByName("127.0.0.1");
+            }
+            catch (UnknownHostException uhe)
+            {
+                System.err.println("can not start muffin: "+uhe.getMessage());
+            }
         }
 
         options.sync();

@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.12 2003/05/20 21:11:27 flefloch Exp $ */
+/* $Id: Server.java,v 1.13 2003/06/02 10:33:20 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -44,6 +44,35 @@ public class Server implements Runnable
     boolean shutdown = false;
     private ServerSocketCreator creator = null;
 
+    
+    public Server(
+        ServerSocketCreator creator,
+        int port,
+        InetAddress address,
+        Monitor m,
+        FilterManager manager,
+        Options options)
+    {
+        this.manager = manager;
+        this.options = options;
+        this.monitor = m;
+        this.creator = creator;
+        
+        try
+        {
+	        server = creator.createServerSocket(port, address);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+            throw new RuntimeException(e.toString());
+        }
+
+    }
+    
+    /**
+     * @deprecated
+     */
     public Server(
         ServerSocketCreator creator,
         int port,

@@ -21,6 +21,7 @@
 package org.doit.muffin;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -30,8 +31,12 @@ import java.net.Socket;
 public interface ServerSocketCreator
 {
 
+    ServerSocket createServerSocket(int port, InetAddress address)
+        throws IOException;
+    
     ServerSocket createServerSocket(int port)
         throws IOException;
+    
     Handler createHandler(
         Monitor monitor,
         FilterManager manager,
