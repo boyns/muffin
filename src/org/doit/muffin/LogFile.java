@@ -1,4 +1,4 @@
-/* $Id: LogFile.java,v 1.2 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: LogFile.java,v 1.3 2000/01/26 03:53:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -109,19 +109,22 @@ public class LogFile
 	buf.append(length);
 	buf.append("\n");
 
-	for (Enumeration h = request.getLogHeaders();
-	     h != null && h.hasMoreElements(); )
+	if (!Main.getOptions().getBoolean("muffin.dontLogFilters"))
 	{
-	    String header = (String)h.nextElement();
-	    buf.append("[");
-	    buf.append(header);
-	    buf.append("]\n");
-	    for (Enumeration e = request.getLogEntries(header);
-		 e.hasMoreElements(); )
+	    for (Enumeration h = request.getLogHeaders();
+		 h != null && h.hasMoreElements(); )
 	    {
-		buf.append("* ");
-		buf.append(e.nextElement().toString());
-		buf.append("\n");
+		String header = (String)h.nextElement();
+		buf.append("[");
+		buf.append(header);
+		buf.append("]\n");
+		for (Enumeration e = request.getLogEntries(header);
+		     e.hasMoreElements(); )
+		{
+		    buf.append("* ");
+		    buf.append(e.nextElement().toString());
+		    buf.append("\n");
+		}
 	    }
 	}
 	

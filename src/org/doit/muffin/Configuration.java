@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.8 2000/01/25 06:47:44 boyns Exp $ */
+/* $Id: Configuration.java,v 1.9 2000/01/26 03:53:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -99,7 +99,7 @@ class Configuration extends Prefs
     
     synchronized void setCurrent(String name)
     {
-	if (!currentConfig.equals(name))
+	if (!name.equals(currentConfig))
 	{
 	    currentConfig = name;
 	    if (! exists(currentConfig))
