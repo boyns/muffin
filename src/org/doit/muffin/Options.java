@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.5 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: Options.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -87,6 +87,9 @@ public class Options extends Prefs implements ConfigurationListener
 
 	/* Default log file */
  	putString("muffin.logfile", "muffin.log");
+
+	/* Other defaults */
+ 	putBoolean("muffin.proxyKeepAlive", false);
 
 	include(configs.getUserPrefs());
 

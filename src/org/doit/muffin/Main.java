@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.7 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: Main.java,v 1.8 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -35,10 +35,7 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.Label;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import gnu.getopt.*;
@@ -390,7 +387,8 @@ public class Main extends MuffinFrame
     static String copyleft()
     {
 	StringBuffer buf = new StringBuffer();
-	buf.append("Muffin version " + version + ", Copyright (C) 1996-1998 Mark R. Boyns <boyns@doit.org>\n");
+	buf.append("Muffin version " + version +
+		   ", Copyright (C) 1996-1999 Mark R. Boyns <boyns@doit.org>\n");
 	buf.append("Muffin comes with ABSOLUTELY NO WARRANTY; for details see Help/License.\n");
 	buf.append("This is free software, and you are welcome to redistribute it\n");
 	buf.append("under certain conditions; see Help/License for details.\n");
@@ -418,7 +416,7 @@ public class Main extends MuffinFrame
 
 	int c;
 	String arg;
-	LongOpt longopts[] = new LongOpt[14];
+	LongOpt longopts[] = new LongOpt[15];
 
 	longopts[0] = new LongOpt("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
 	longopts[1] = new LongOpt("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
@@ -434,6 +432,7 @@ public class Main extends MuffinFrame
 	longopts[11] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
 	longopts[12] = new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v');
 	longopts[13] = new LongOpt("geometry", LongOpt.REQUIRED_ARGUMENT, null, 'g');
+	longopts[14] = new LongOpt("bindaddress", LongOpt.REQUIRED_ARGUMENT, null, 'b');
 
 	Prefs args = new Prefs();
 	Getopt g = new Getopt("Muffin", argv, "v", longopts, true);
@@ -455,6 +454,10 @@ public class Main extends MuffinFrame
 		    System.out.println("invalid port: " + g.getOptarg());
 		    System.exit(1);
 		}
+		break;
+
+	    case 'b': /* --bindaddress */
+		args.putString("bindaddress", g.getOptarg());
 		break;
 
 	    case 'c': /* --conf */
@@ -536,6 +539,7 @@ public class Main extends MuffinFrame
 				    + "-httpsProxyPort PORT  Use PORT as the SSL proxy port.\n"
 				    + "-nw                   Don't create any windows.\n"
 				    + "-port PORT            Listen on PORT for browser requests.\n"
+				    + "-bindaddress IPADDR   Only bind to IPADDR.\n"
 				    + "-v                    Display muffin version.\n");
 		System.exit(0);
 		break;
@@ -614,6 +618,10 @@ public class Main extends MuffinFrame
 	if (args.exists("geometry"))
 	{
 	    options.putString("muffin.geometry", args.getString("geometry"));
+	}
+	if (args.exists("bindaddress"))
+	{
+	    options.putString("muffin.bindaddress", args.getString("bindaddress"));
 	}
 
 	options.sync();

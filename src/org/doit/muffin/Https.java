@@ -1,4 +1,4 @@
-/* $Id: Https.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: Https.java,v 1.5 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -42,7 +42,8 @@ class Https extends HttpConnection
 	proxy = isProxy;
     }
 
-    public void sendRequest(Request request) throws java.io.IOException, RetryRequestException
+    public void sendRequest(Request request)
+	throws java.io.IOException, RetryRequestException
     {
 	if (proxy)
 	{
@@ -54,7 +55,8 @@ class Https extends HttpConnection
 	}
     }
     
-    public Reply recvReply(Request request) throws java.io.IOException, RetryRequestException
+    public Reply recvReply(Request request)
+	throws java.io.IOException, RetryRequestException
     {
 	Reply reply = new Reply(getInputStream());
 	if (proxy)

@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.5 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: OptionsFrame.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -42,7 +42,8 @@ import org.doit.util.ColorSample;
 /**
  * @author Mark Boyns
  */
-class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener, ConfigurationListener
+class OptionsFrame extends MuffinFrame
+    implements ActionListener, WindowListener, ConfigurationListener
 {
     Options options;
     Configuration configs;
@@ -59,6 +60,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
     TextField fg, bg;
     TextField geometry;
     ColorSample fgSample, bgSample;
+    Checkbox proxyKeepAlive;
 
     OptionsFrame(Options options, Configuration configs)
     {
@@ -105,6 +107,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(httpProxyPort, c);
 	panel.add(httpProxyPort);
 
@@ -128,6 +131,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(httpsProxyPort, c);
 	panel.add(httpsProxyPort);
 
@@ -184,10 +188,10 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	layout.setConstraints(l, c);
 	panel.add(l);
 	
-	adminUser = new TextField(50);
+	adminUser = new TextField(8);
 	adminUser.setText(options.getString("muffin.adminUser"));
 	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(adminUser, c);
 	panel.add(adminUser);
 
@@ -196,10 +200,11 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	layout.setConstraints(l, c);
 	panel.add(l);
 	
-	adminPassword = new TextField(50);
+	adminPassword = new TextField(8);
 	adminPassword.setText(options.getString("muffin.adminPassword"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(adminPassword, c);
 	panel.add(adminPassword);
 
@@ -208,11 +213,12 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	layout.setConstraints(l, c);
 	panel.add(l);
 	
-	geometry = new TextField(50);
+	geometry = new TextField(16);
 	geometry.setText(options.getString("muffin.geometry"));
                           //MuffinFrame.getFrame("Muffin").getGeometry());
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(geometry, c);
 	panel.add(geometry);
 
@@ -237,7 +243,6 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(fgSample, c);
 	colorPanel.add(fgSample);
-
 
 	l = new Label("Background:", Label.RIGHT);
 	c = new GridBagConstraints();
@@ -264,6 +269,14 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	c.anchor = GridBagConstraints.WEST;
 	layout.setConstraints(colorPanel, c);
 	panel.add(colorPanel);
+
+	proxyKeepAlive = new Checkbox("Enable Proxy Keep-Alive",
+				      options.getBoolean("muffin.proxyKeepAlive"));
+	c = new GridBagConstraints();
+	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
+	layout.setConstraints(proxyKeepAlive, c);
+	panel.add(proxyKeepAlive);
 
 	add("Center", panel);
 
@@ -319,6 +332,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	bgSample.setColor(bg.getText());
 	fg.setText(options.getString("muffin.fg"));
 	fgSample.setColor(fg.getText());
+	proxyKeepAlive.setState(options.getBoolean("muffin.proxyKeepAlive"));
 
 	MuffinFrame.repaintFrames();
     }
@@ -341,6 +355,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	fgSample.setColor(fg.getText());
 	bgSample.setColor(bg.getText());
 	MuffinFrame.getFrame("Muffin").updateGeometry(options.getString("muffin.geometry"));
+	options.putBoolean("muffin.proxyKeepAlive", proxyKeepAlive.getState());
 	options.sync();
     }
 
@@ -371,6 +386,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	    userPrefs.putString("muffin.geometry", options.getString("muffin.geometry"));
 	    userPrefs.putString("muffin.fg", options.getString("muffin.fg"));
 	    userPrefs.putString("muffin.bg", options.getString("muffin.bg"));
+	    userPrefs.putBoolean("muffin.proxyKeepAlive", options.getBoolean("muffin.proxyKeepAlive"));
 	    userPrefs.save();
 	}
 	else if ("doClose".equals(arg))

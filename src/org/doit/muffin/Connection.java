@@ -1,4 +1,4 @@
-/* $Id: Connection.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: Connection.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Create a TCP connection from a Socket or hostname/port
@@ -130,5 +131,11 @@ class Connection
     public String toString()
     {
 	return getInetAddress().getHostAddress() + ":" + getPort();
+    }
+
+    public void setTimeout(int timeout)
+	throws SocketException
+    {
+	socket.setSoTimeout(timeout);
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.4 1999/03/12 15:47:38 boyns Exp $ */
+/* $Id: Configuration.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.NoSuchElementException;
 import java.awt.Label;
 import java.awt.Choice;
 import gnu.regexp.RE;
@@ -195,8 +196,17 @@ class Configuration extends Prefs
 	    while ((s = in.readLine()) != null)
 	    {
 		StringTokenizer st = new StringTokenizer(s, " \t");
-		String pattern = st.nextToken();
-		String name = st.nextToken();
+		String pattern, name;
+		
+		try
+		{
+		    pattern = st.nextToken();
+		    name = st.nextToken();
+		}
+		catch (NoSuchElementException nsee)
+		{
+		    continue;
+		}
 
 		RE re = new RE(pattern);
 		autoConfigPatterns.addElement(re);

@@ -1,4 +1,4 @@
-Muffin 0.7 README
+Muffin 0.8 README
 Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
 
 Muffin - a filtering proxy server for the World Wide Web.
@@ -16,15 +16,15 @@ Features:
 
 * Remote admin interface using HTML forms.
 
-* Includes several filters which can remove cookies, kill GIF
-  animations, remove advertisements, add/remove/modify arbitrary
-  HTML tags (like blink), remove Java applets and Javascript,
-  user-agent spoofing, rewrite URLs, and much more.
+* Includes several filters which can remove cookies, kill GIF animations,
+  remove advertisements, add/remove/modify arbitrary HTML tags (like blink),
+  remove Java applets and Javascript, user-agent spoofing, rewrite URLs, and
+  much more.
 
 * View all HTTP headers to aid in CGI development and debugging.
 
-* Users can write their own filters in Java using the provided
-  filter interfaces.
+* Users can write their own filters in Java using the provided filter
+  interfaces.
 
 Also included in this distribution:
 
@@ -51,4 +51,4 @@ Also included in this distribution:
 
 Send suggestions and bug reports to <boyns@doit.org>
 
-$Id: README,v 1.5 1999/03/12 15:47:27 boyns Exp $
+$Id: README,v 1.6 1999/03/17 05:37:59 boyns Exp $

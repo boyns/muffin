@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
+/* $Id: Server.java,v 1.5 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -43,9 +43,22 @@ class Server
 
     Server(int port, Monitor m, FilterManager manager, Options options)
     {
+	this.manager = manager;
+	this.options = options;
+	this.monitor = m;
+	
 	try
 	{
-	    server = new ServerSocket(port, 512);
+	    String bindaddr = options.getString("muffin.bindaddress");
+	    if (bindaddr != null)
+	    {
+		server = new ServerSocket(port, 512,
+					  InetAddress.getByName(bindaddr));
+	    }
+	    else
+	    {
+		server = new ServerSocket(port, 512);
+	    }
 	}
 	catch (IOException e)
 	{
@@ -53,9 +66,6 @@ class Server
 	    System.exit(0);
 	}
 	handlers = new ThreadGroup("Muffin Handlers");
-	monitor = m;
-	this.manager = manager;
-	this.options = options;
 
 	thread = Thread.currentThread();
 

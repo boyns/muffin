@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.5 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -68,22 +68,19 @@ public class MuffinFrame extends Frame
 	Dimension size = getSize();
 	int x = 0, y = 0;
 
-// 	x = muffinLocation.x + muffinSize.width;
-// 	y = muffinLocation.y;
+	x = muffinLocation.x + muffinSize.width;
+	y = muffinLocation.y;
 
-// 	if (x + size.width > screenSize.width)
-// 	{
-// 	    x = muffinLocation.x - size.width;
-// 	    if (x < 0) x = 0;
-// 	}
-// 	if (y + size.height > screenSize.height)
-// 	{
-// 	    y -= (y + size.height) - screenSize.height;
-// 	    if (y < 0) y = 0;
-// 	}
-
-	x = muffinLocation.x + (int)(Math.random() * 20);
-	y = muffinLocation.y + (int)(Math.random() * 20);
+	if (x + size.width > screenSize.width)
+	{
+	    x = muffinLocation.x - size.width;
+	    if (x < 0) x = 0;
+	}
+	if (y + size.height > screenSize.height)
+	{
+	    y -= (y + size.height) - screenSize.height;
+	    if (y < 0) y = 0;
+	}
 
 	setLocation(x, y);
     }
@@ -111,7 +108,7 @@ public class MuffinFrame extends Frame
 
     public void show()
     {
-	moveNearMuffin();
+	//moveNearMuffin();
 	super.show();
     }
 

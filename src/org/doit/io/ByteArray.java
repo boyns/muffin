@@ -1,4 +1,4 @@
-/* $Id: ByteArray.java,v 1.4 1999/03/12 15:47:38 boyns Exp $ */
+/* $Id: ByteArray.java,v 1.5 1999/03/17 05:38:40 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -129,7 +129,7 @@ public class ByteArray
     /**
      * Return the bytes.
      */
-    public byte getBytes() []
+    public byte[] getBytes()
     {
 	return bytes;
     }

@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: Message.java,v 1.5 1999/03/17 05:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -36,7 +36,7 @@ import java.io.IOException;
  *
  * @author Mark Boyns
  */
-abstract class Message
+public abstract class Message
 {
     /**
      * Hashtable used to store message headers.

@@ -1,4 +1,4 @@
-/* $Id: SortedProperties.java,v 1.4 1999/03/12 15:47:48 boyns Exp $ */
+/* $Id: SortedProperties.java,v 1.5 1999/03/17 05:38:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -29,7 +29,7 @@ import sdsu.util.SortedList;
 
 public class SortedProperties extends Properties
 {
-    public synchronized Enumeration keys()
+    public Enumeration keys()
     {
 	Enumeration e = super.keys();
 	SortedList sorter = new SortedList(StringIgnoreCaseComparer.getInstance());

@@ -1,4 +1,4 @@
-/* $Id: Copy.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: Copy.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -53,7 +53,12 @@ class Copy implements Runnable
 	}
 	catch (IOException e)
 	{
-	    e.printStackTrace();
+	    String s = e.toString();
+	    // ignore socket closed exceptions
+	    if (s.indexOf("Socket closed") == -1)
+	    {
+		e.printStackTrace();
+	    }
 	}
     }
 }

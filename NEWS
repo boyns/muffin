@@ -28,9 +28,12 @@ Changes since 0.7:
 
 * Removed the Logger filter.
 
-* Fixed the Muffin POST bug!
+* Fixed the Muffin POST bug!  Thanks Jonathan Davis.
 
-* Bug fixes.
+* Added --bindaddress command line option from Jonathan Davis.
+
+* Only do DNS lookups when necessary and instead display IP addresses.
+  This fixes problems with Muffin hanging doing DNS lookups.
 
 Changes since 0.6:
 
@@ -174,4 +177,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.6 1999/03/12 15:58:15 boyns Exp $
+$Id: NEWS,v 1.7 1999/03/17 05:37:59 boyns Exp $

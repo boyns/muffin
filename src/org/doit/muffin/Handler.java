@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: Handler.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -22,13 +22,6 @@
  */
 package org.doit.muffin;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
@@ -91,7 +84,6 @@ class Handler extends Thread
     {
 	if (client != null)
 	{
-	    //flush();
 	    client.close();
 	    client = null;
 	}
@@ -238,7 +230,7 @@ class Handler extends Thread
 	    }
 
 	    /* Client wants Keep-Alive */
-	    if (!options.getBoolean("muffin.noKeepAlive"))
+	    if (options.getBoolean("muffin.proxyKeepAlive"))
 	    {
 		keepAlive = (request.containsHeaderField("Proxy-Connection")
 			     && request.getHeaderField("Proxy-Connection").equals("Keep-Alive"));
@@ -336,12 +328,25 @@ class Handler extends Thread
 	    if (secure)
 	    {
 		Https https = (Https) http;
+		int timeout = 30000;
+		
 		client.write(reply);
-		Copy cp = new Copy(client.getInputStream(), https.getOutputStream());
-		Thread thread = new Thread(cp);
-		thread.start();
-		flushCopy(https.getInputStream(), client.getOutputStream(), -1, true);
-		client.close();
+
+		try
+		{
+		    client.setTimeout(timeout);
+		    https.setTimeout(timeout);
+		
+		    Copy cp = new Copy(client.getInputStream(), https.getOutputStream());
+		    Thread thread = new Thread(cp);
+		    thread.start();
+		    flushCopy(https.getInputStream(), client.getOutputStream(), -1, true);
+		    client.close();
+		}
+		catch (InterruptedIOException iioe)
+		{
+		    // ignore socket timeout exceptions
+		}
 	    }
 	    else if (reply.hasContent())
 	    {
@@ -491,13 +496,7 @@ class Handler extends Thread
 	}
 	else if (contentNeedsFiltration())
 	{
-	    if (options.getBoolean("muffin.noKeepAlive"))
-	    {
-		reply.removeHeaderField("Content-length");
-		client.write(reply);
-		filter(in, client.getOutputStream(), -1, chunked ? false : true);
-	    }
-	    else
+	    if (options.getBoolean("muffin.proxyKeepAlive"))
 	    {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
 		filter(in, buffer, contentLength, chunked ? false : true);
@@ -505,6 +504,12 @@ class Handler extends Thread
 		client.write(reply);
 		copy(new ByteArrayInputStream(buffer.toByteArray()),
 		     client.getOutputStream(), buffer.size(), false);
+	    }
+	    else
+	    {
+		reply.removeHeaderField("Content-length");
+		client.write(reply);
+		filter(in, client.getOutputStream(), -1, chunked ? false : true);
 	    }
 	}
 	else
@@ -692,6 +697,8 @@ class Handler extends Thread
 	int n;
 	byte buffer[] = new byte[8192];
 	long start = System.currentTimeMillis();
+	long now = 0, then = start;
+	
 	bytesPerSecond = 0;
 
 	if (monitored)
@@ -715,8 +722,16 @@ class Handler extends Thread
 		currentLength += n;
 		monitor.update(this);
 	    }
-	    bytesPerSecond = currentLength /
-		((System.currentTimeMillis() - start) / 1000.0);
+
+	    now = System.currentTimeMillis();
+	    bytesPerSecond = currentLength / ((now - start) / 1000.0);
+
+	    // flush after 1 second
+	    if (now - then > 1000)
+	    {
+		out.flush();
+	    }
+
 	    if (length != -1)
 	    {
 		length -= n;
@@ -725,6 +740,8 @@ class Handler extends Thread
 		    break;
 		}
 	    }
+
+	    then = now;
 	}
 
 	out.flush();
@@ -811,6 +828,8 @@ class Handler extends Thread
     {
 	Object obj;
 	long start = System.currentTimeMillis();
+	long now = 0, then = start;
+
 	bytesPerSecond = 0;
 
 	if (monitored)
@@ -847,7 +866,17 @@ class Handler extends Thread
 	    {
 		monitor.update(this);
 	    }
-	    bytesPerSecond = currentLength / ((System.currentTimeMillis() - start) / 1000.0);
+
+	    now = System.currentTimeMillis();
+	    bytesPerSecond = currentLength / ((now - start) / 1000.0);
+
+	    // flush after 1 second
+	    if (now - then > 1000)
+	    {
+		out.flush();
+	    }
+
+	    then = now;
 	}
 	out.flush();
 

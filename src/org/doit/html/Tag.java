@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.4 1999/03/12 15:47:38 boyns Exp $ */
+/* $Id: Tag.java,v 1.5 1999/03/17 05:38:37 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -181,13 +181,13 @@ public class Tag
     public String toString()
     {
 	StringBuffer buf = new StringBuffer();
-	buf.append("<");
+	buf.append('<');
 	buf.append(name);
 	if (!modified)
 	{
 	    if (data != null)
 	    {
-		buf.append(" ");
+		buf.append(' ');
 		buf.append(data);
 	    }
 	}
@@ -201,23 +201,23 @@ public class Tag
 		while (e.hasMoreElements())
 		{
 		    key = (String) e.nextElement();
-		    buf.append(" ");
+		    buf.append(' ');
 		    buf.append(key);
 		    obj = get(key);
 		    if (obj instanceof String)
 		    {
 			value = (String) obj;
-			buf.append("=");
-			boolean containsQuote = value.indexOf("\"") != -1;
-			buf.append(containsQuote ? "'" : "\"");
+			buf.append('=');
+			boolean containsQuote = value.indexOf('"') != -1;
+			buf.append(containsQuote ? '\'' : '"');
 			buf.append(value);
-			buf.append(containsQuote ? "'" : "\"");
+			buf.append(containsQuote ? '\'' : '"');
 		    }
 		    /* obj can also be instanceof NoValue -> do nothing */
 		}
 	    }
 	}
-	buf.append(">");
+	buf.append('>');
 	return buf.toString();
     }
 }

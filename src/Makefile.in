@@ -16,7 +16,7 @@ OBJS = $(shell $(srcdir)/objlist $(srcdir))
 img_dir = images
 doc_dir = doc
 
-all:	classes jar
+all:	classes
 
 classes:
 	@echo compiling with $(JAVAC)
