@@ -50,10 +50,6 @@ import com.sun.net.ssl.SSLContext;
  */
 public class DecryptionServerSocketCreator implements ServerSocketCreator
 {
-    String keystoreFileName = "certs";
-    char[] keystorepw = "serverkspw".toCharArray();
-    char[] keypw = "serverpw".toCharArray();
-    boolean requireClientAuthentication;
 
     /**
      * @see org.doit.muffin.ServerSocketCreator#createServerSocket(int, String)
@@ -81,7 +77,10 @@ public class DecryptionServerSocketCreator implements ServerSocketCreator
             // A keystore is where keys and certificates are kept
             // Both the keystore and individual private keys should be password protected
             KeyStore keystore = KeyStore.getInstance("JKS");
-            keystore.load(new FileInputStream(keystoreFileName), keystorepw);
+            keystore.load(
+                DecryptionServerSocketCreator.class.getResourceAsStream(
+                    keystoreFileName),
+                keystorepw);
             // A KeyManagerFactory is used to create key managers
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             // Initialize the KeyManagerFactory to work with our keystore
@@ -103,33 +102,33 @@ public class DecryptionServerSocketCreator implements ServerSocketCreator
         }
         catch (KeyManagementException e)
         {
-        	e.printStackTrace();
-        	throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         catch (KeyStoreException e)
         {
-        	e.printStackTrace();
-        	throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         catch (NoSuchAlgorithmException e)
         {
-        	e.printStackTrace();
-        	throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         catch (CertificateException e)
         {
-        	e.printStackTrace();
-        	throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         catch (FileNotFoundException e)
         {
-        	e.printStackTrace();
-        	throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         catch (UnrecoverableKeyException e)
         {
-        	e.printStackTrace();
-        	throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
 
     }
@@ -143,7 +142,7 @@ public class DecryptionServerSocketCreator implements ServerSocketCreator
         Options options,
         Socket socket)
     {
-        return new DecryptionHandler(monitor,manager,options,socket);
+        return new DecryptionHandler(monitor, manager, options, socket);
     }
 
 }
