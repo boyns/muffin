@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.31 2003/05/24 00:27:20 flefloch Exp $ */
+/* $Id: Main.java,v 1.32 2003/05/24 21:22:16 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -115,7 +115,7 @@ public class Main
                 manager,
                 options);
         /* Initialize internal Httpd */
-        
+
         HttpErrorFactory.init(options);
         HttpdFactory.init(options, manager, monitor);
         /* Startup the Janitor */
@@ -156,8 +156,18 @@ public class Main
         Menu menu = new Menu(Strings.getString("menu.file"));
         //menu.setFont(new Font("Helvetica", Font.BOLD, 12));
         MenuItem item;
-        item = new MenuItem(Strings.getString("menu.file.disable"));
-        item.setActionCommand("doDisable");
+
+        if (!options.getBoolean("muffin.passthru"))
+        {
+            item = new MenuItem(Strings.getString("menu.file.disable"));
+            item.setActionCommand("doDisable");
+        }
+        else
+        {
+            item = new MenuItem(Strings.getString("menu.file.enable"));
+            item.setActionCommand("doEnable");
+        }
+
         item.addActionListener(this);
         menu.add(item);
         item = new MenuItem(Strings.getString("menu.file.suspend"));
@@ -466,13 +476,13 @@ public class Main
         {
             processArgs(argv);
             final Main theMuffin = new Main();
-			Thread t = new Thread(theMuffin.server);
-			t.start();
+                        Thread t = new Thread(theMuffin.server);
+                        t.start();
             return theMuffin;
         }
         catch (Throwable exc)
         {
-        	exc.printStackTrace();
+                exc.printStackTrace();
             return null;
         }
     }
@@ -672,12 +682,12 @@ public class Main
         }
         catch (UnknownHostException e)
         {
-        	try {
-            	host = InetAddress.getByName("127.0.0.1");
-        	} catch (UnknownHostException uhe)
-        	{
-        		System.err.println("can not start muffin: "+uhe.getMessage());	
-        	}
+                try {
+                host = InetAddress.getByName("127.0.0.1");
+                } catch (UnknownHostException uhe)
+                {
+                        System.err.println("can not start muffin: "+uhe.getMessage());
+                }
         }
 
         if (args.exists("port"))
