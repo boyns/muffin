@@ -1,4 +1,4 @@
-/* $Id: GlossaryFilter.java,v 1.6 2003/06/03 23:09:30 forger77 Exp $ */
+/* $Id: GlossaryFilter.java,v 1.7 2003/06/07 14:29:47 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,7 +34,7 @@ public class GlossaryFilter extends AbstractContentFilter
     public GlossaryFilter(Glossary factory)
     {
         super(factory);
-        fGlossary = (Glossary) factory;
+        fGlossary = factory;
     }
 
     /**
