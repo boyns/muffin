@@ -1,3 +1,8 @@
+2000-02-01  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/Handler.java: uncompress gzip encoded html so
+	it can be filtered.  disabled with muffin.dontUncompress.
+
 2000-01-26  Mark R. Boyns  <boyns@doit.org>
 
 	* Muffin 0.9.2 released
