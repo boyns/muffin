@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.16 2003/06/04 21:07:53 flefloch Exp $ */
+/* $Id: FilterManager.java,v 1.17 2003/09/03 16:53:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,6 +22,7 @@
  */
 package org.doit.muffin;
 
+import java.io.IOException;
 import java.util.*;
 import org.doit.util.*;
 
@@ -35,38 +36,10 @@ import org.doit.util.*;
  */
 public class FilterManager implements ConfigurationListener
 {
-    final String defaultSupportedList[] =
-        {
-            "AnimationKiller",
-            "Cache",
-            "CookieMonster",
-            "Decaf",
-            "org.doit.muffin.decryption.Decryption",
-            "DocumentInfo",
-            "EmptyFont",
-            "ForwardedFor",
-            "Glossary",
-            "History",
-            "ImageKill",
-            "Junkbuster",
-            "HostnameExpander",
-            "NoCode",
-            "Obscure",
-            "Painter",
-            "PlainHtml",
-            "Preview",
-            "ProxyCacheBypass",
-            "Rewrite",
-            "NoThanks",
-            "Referer",
-            "Secretary",
-            "SecretAgent",
-            "SecretServer",
-            "rcm.snapshot.Snapshot",
-            "Snoop",
-            "Stats",
-            "Translate",
-            };
+    private static final String FILTERMANAGER_ENABLEDFILTERS = 
+        "FilterManager.enabledFilters";
+    private static final String FILTERMANAGER_SUPPORTEDFILTERS = 
+        "FilterManager.supportedFilters";
 
     Options options = null;
     Configuration configs = null;
@@ -108,10 +81,13 @@ public class FilterManager implements ConfigurationListener
             supportedFiltersCache.put(config, supported);
             UserPrefs uprefs = configs.getUserPrefs(config);
             String list[] =
-                uprefs.getStringList("FilterManager.supportedFilters");
+                uprefs.getStringList(FILTERMANAGER_SUPPORTEDFILTERS);
             if (list.length == 0)
             {
-                list = defaultSupportedList;
+                
+                list = StringUtil.getList(
+                    getDefaultProperties().getProperty(
+                        FILTERMANAGER_SUPPORTEDFILTERS));
             }
             for (int i = 0; i < list.length; i++)
             {
@@ -121,6 +97,23 @@ public class FilterManager implements ConfigurationListener
         return (Vector) supportedFiltersCache.get(config);
     }
 
+    
+    private Properties getDefaultProperties()
+    {
+        Properties defaultProps = new Properties();
+        try
+        {
+            defaultProps.load(this.getClass().getResourceAsStream("defaults.properties"));
+        }
+        catch (IOException e)
+        {
+            //could not load default properties, never happen
+            //could throw RuntimeException properly later caught.
+            e.printStackTrace();
+        }
+        return defaultProps;
+    }
+    
     public Vector getEnabledFilters(String config)
     {
         if (!enabledFiltersCache.containsKey(config))
@@ -129,7 +122,7 @@ public class FilterManager implements ConfigurationListener
             enabledFiltersCache.put(config, enabled);
             UserPrefs uprefs = configs.getUserPrefs(config);
             String list[] =
-                uprefs.getStringList("FilterManager.enabledFilters");
+                uprefs.getStringList(FILTERMANAGER_ENABLEDFILTERS);
             for (int i = 0; i < list.length; i++)
             {
                 enable(config, list[i]);
@@ -315,7 +308,7 @@ public class FilterManager implements ConfigurationListener
             list[i] = shortName((ff.getClass()).getName());
         }
         UserPrefs uprefs = configs.getUserPrefs(config);
-        uprefs.putStringList("FilterManager.enabledFilters", list);
+        uprefs.putStringList(FILTERMANAGER_ENABLEDFILTERS, list);
         uprefs.save();
     }
 

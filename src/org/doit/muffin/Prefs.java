@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.13 2003/05/30 16:21:38 forger77 Exp $ */
+/* $Id: Prefs.java,v 1.14 2003/09/03 16:53:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,14 +22,16 @@
  */
 package org.doit.muffin;
 
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Enumeration;
-import java.io.*;
 import java.awt.Color;
 import java.awt.Font;
-import java.net.URL;
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import org.doit.util.StringUtil;
+
 import sdsu.compare.StringIgnoreCaseComparer;
 import sdsu.util.SortedList;
 
@@ -272,23 +274,12 @@ public class Prefs extends Hashtable
 
     public String[] getStringList(String key, String sep)
     {
-	String tokens = getString(key);
-	if (tokens == null)
-	{
-	    return new String[0];
-	}
-	StringTokenizer st = new StringTokenizer(tokens, sep);
-	String list[] = new String[st.countTokens()];
-	for (int i = 0; st.hasMoreTokens(); i++)
-	{
-	    list[i] = new String((String) st.nextToken());
-	}
-	return list;
+        return StringUtil.getList(getString(key));
     }
 
     public String[] getStringList(String key)
     {
-	return getStringList(key, ",");
+        return StringUtil.getList(getString(key), ",");
     }
 
     public void putStringList(String key, String list[])
