@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.14 2003/05/20 21:11:27 flefloch Exp $ */
+/* $Id: FilterManager.java,v 1.15 2003/05/25 02:51:51 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -55,6 +55,7 @@ public class FilterManager implements ConfigurationListener
             "Painter",
             "PlainHtml",
             "Preview",
+            "ProxyCacheBypass",
             "Rewrite",
             "NoThanks",
             "Referer",
@@ -344,8 +345,8 @@ public class FilterManager implements ConfigurationListener
         userPrefs.save();
     }
 
-	public Configuration getConfigs()
-	{
-		return configs;
-	}
+        public Configuration getConfigs()
+        {
+                return configs;
+        }
 }

@@ -1,0 +1,7 @@
+Insert "Pragma: no-cache" and "Cache-control: no-cache" headers into
+HTTP requests. This forces any downstream proxies to ignore cached
+content, which is useful when the proxies are poorly configured and would
+return stale content otherwise. Of course this should be corrected by
+your friendly network admin... 
+
+No configurable preferences.
