@@ -10,15 +10,36 @@
     <property name="decryption.dir" value="org/doit/muffin/decryption"/>
     <property name="libdir" value="lib"/>
 
-		<path id="classpath.path">
+		<path id="classpath.muffin">
 				<pathelement location="${classes}"/>
 				<fileset dir="${libdir}">
 						<include name="*.jar"/>
 				</fileset>
 		</path>
 
+    <available property="jsse.present" classname="javax.net.ssl.SSLServerSocket" classpathref="classpath.muffin"/>
+    <available property="regexp.jdk14.present" classname="java.util.regex.Pattern" classpathref="classpath.muffin"/>
+    <available property="regexp.apache.present" classname="org.apache.regexp.RE" classpathref="classpath.muffin"/>
+    <available property="junit.present" classname="junit.framework.Test" classpathref="classpath.muffin"/>
+    <antcall target="decryption.test"/>
+    <antcall target="regexp.jdk14.test"/>
+    <antcall target="regexp.apache.test"/>
+    <antcall target="junit.test"/>
   </target>
 
+  <target name="decryption.test" if="jsse.present">
+    <echo>JSSE detected, will compile decryption package</echo>
+  </target>
+  <target name="regexp.jdk14.test" if="regexp.jdk14.present">
+    <echo>Jdk 1.4 regular expressions detected</echo>
+  </target>
+  <target name="regexp.apache.test" if="regexp.apache.present">
+    <echo>Apache Jakarta regular expressions detected</echo>
+  </target>
+  <target name="junit.test" if="junit.present">
+    <echo>JUnit detected</echo>
+  </target>
+  
   <target name="compile" depends="init, core.compile, decryption.compile"/>
 
   <target name="core.compile" depends="init">
@@ -27,13 +48,14 @@
 			srcdir="${srcdir}"
 			destdir="${classes}"
 			includes="**/*.java"
-			excludes="${decryption.dir}/*.java"
 			deprecation="false"
-			debug="true">
-				<classpath>
-							<path refid="classpath.path"/>
-				</classpath>
-		</javac>
+			debug="true"
+			classpathref="classpath.muffin">
+	<!--exclude name="${decryption.dir}/*.java" unless="jsse.present"/-->
+        <exclude name="org/doit/muffin/regexp/jdk14/**/*.java" unless="regexp.jdk14.present"/>
+	<exclude name="org/doit/muffin/regexp/jakarta/**/*.java" unless="regexp.apache.present"/>
+	<exclude name="org/doit/muffin/test/**/*.java" unless="junit.present"/>
+    </javac>
     <copy todir="${classes}">
       <fileset 
 				dir="${srcdir}"
@@ -49,13 +71,13 @@
     <copy file="${basedir}/COPYING" tofile="${classes}/doc/COPYING.txt"/>
   </target>
 
-  <target name="decryption.compile" depends="core.compile">
+  <target name="decryption.compile" depends="core.compile" if="jsse.present">
     <javac srcdir="${srcdir}"
            destdir="${classes}"
            includes="${decryption.dir}/*.java"
            deprecation="false"
            debug="true"
-           classpath="${classpath}"/>
+           classpathref="classpath.muffin"/>
     <copy todir="${classes}">
       <fileset dir="${srcdir}" includes="${decryption.dir}/certs"/>
     </copy>
@@ -89,7 +111,7 @@
 			doctitle="&lt;h1&gt;Muffin&lt;/h1&gt;"
 			windowtitle="Muffin"
 			overview="src/overview.html"
-			classpath="${classpath}">
+			classpathref="classpath.muffin">
      </javadoc>
   </target>
 
