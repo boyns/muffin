@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: AnimationKiller.java,v 1.7 2003/06/01 01:01:09 forger77 Exp $ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
