@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.11 2003/06/07 23:24:56 forger77 Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.12 2003/07/27 21:26:42 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,22 +23,31 @@
 package org.doit.muffin;
 
 import java.awt.Button;
-import java.awt.Color;
 import java.awt.Choice;
-import java.awt.Event;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
-import java.awt.TextField;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.doit.util.Strings;
+import org.doit.util.TextDialog;
+
 import sdsu.compare.StringIgnoreCaseComparer;
 import sdsu.util.SortedList;
-import org.doit.util.*;
 
 /**
  * GUI interface to the FilterManager.
@@ -55,10 +64,16 @@ class FilterManagerFrame
     private BigList enabledFiltersList = null;
     private Choice configurationChoice = null;
     
-    private static final String ENABLE_CMD = "doPerform";
-    private static final String PREFS_CMD = "doPrefs";
-    private static final String HELP_CMD = "doHelp";
+    private static final String CLOSE_CMD = "doClose";
+    private static final String DELETE_CMD = "doDelete";
     private static final String DISABLE_CMD = "doDisable";
+    private static final String DOWN_CMD = "doDown";
+    private static final String ENABLE_CMD = "doPerform";
+    private static final String HELP_CMD = "doHelp";
+    private static final String NEW_CMD = "doNewFilter";
+    private static final String PREFS_CMD = "doPrefs";
+    private static final String SAVE_CMD = "doSave";
+    private static final String UP_CMD = "doUp";
 
     /**
      * Create the FilterManagerFrame.
@@ -115,7 +130,7 @@ class FilterManagerFrame
 	panel.add(supportedFiltersList);
 
 	b = new Button(Strings.getString("fm.enable"));
-	b.setActionCommand("doEnable");
+	b.setActionCommand(ENABLE_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -124,7 +139,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	b = new Button(Strings.getString("fm.new"));
-	b.setActionCommand("doNewFilter");
+	b.setActionCommand(NEW_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -133,7 +148,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	b = new Button(Strings.getString("fm.delete"));
-	b.setActionCommand("doDelete");
+	b.setActionCommand(DELETE_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -142,7 +157,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	b = new Button(Strings.getString("fm.help"));
-	b.setActionCommand("doHelp");
+	b.setActionCommand(HELP_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -164,7 +179,7 @@ class FilterManagerFrame
 	panel.add(enabledFiltersList);
 
 	b = new Button(Strings.getString("fm.prefs"));
-	b.setActionCommand("doPrefs");
+	b.setActionCommand(PREFS_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -173,7 +188,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	b = new Button(Strings.getString("fm.up"));
-	b.setActionCommand("doUp");
+	b.setActionCommand(UP_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -182,7 +197,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	b = new Button(Strings.getString("fm.down"));
-	b.setActionCommand("doDown");
+	b.setActionCommand(DOWN_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -191,7 +206,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	b = new Button(Strings.getString("fm.disable"));
-	b.setActionCommand("doDisable");
+	b.setActionCommand(DISABLE_CMD);
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -203,11 +218,11 @@ class FilterManagerFrame
 
 	Panel buttonPanel = new Panel();
 	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
+	b.setActionCommand(SAVE_CMD);
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
+	b.setActionCommand(CLOSE_CMD);
 	b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
@@ -339,11 +354,11 @@ class FilterManagerFrame
     {
 	String arg = event.getActionCommand();
 
-	if ("doClose".equals(arg))
+	if (CLOSE_CMD.equals(arg))
 	{
 	    setVisible(false);
 	}
-	else if ("doSave".equals(arg))
+	else if (SAVE_CMD.equals(arg))
 	{
 	    manager.save();
 	}
@@ -363,7 +378,7 @@ class FilterManagerFrame
 		disable(i);
 	    }
 	}
-	else if ("doNewFilter".equals(arg))
+	else if (NEW_CMD.equals(arg))
 	{
 	    TextDialog dialog = new TextDialog(this, Strings.getString("fm.new.prompt") + ":");
 	    dialog.show();
@@ -375,7 +390,7 @@ class FilterManagerFrame
 	    }
 	    dialog.dispose();
 	}
-	else if ("doDelete".equals(arg))
+	else if (DELETE_CMD.equals(arg))
 	{
 	    int i = supportedFiltersList.getSelectedIndex();
 	    if (i != -1)
@@ -399,7 +414,7 @@ class FilterManagerFrame
 		viewPrefs(enabledFiltersList.getItem(i));
 	    }
 	}
-	else if ("doUp".equals(arg))
+	else if (UP_CMD.equals(arg))
 	{
 	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i > 0)
@@ -412,7 +427,7 @@ class FilterManagerFrame
 		enabledFiltersList.select(i-1);
 	    }
 	}
-	else if ("doDown".equals(arg))
+	else if (DOWN_CMD.equals(arg))
 	{
 	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i != -1 && i < manager.enabledFilters.size() - 1)
