@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.10 2000/01/25 06:56:52 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.11 2000/03/30 06:34:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -109,7 +109,7 @@ public class MuffinFrame extends Frame
 
     public void show()
     {
-	//moveNearMuffin();
+	moveNearMuffin();
 	super.show();
     }
 
