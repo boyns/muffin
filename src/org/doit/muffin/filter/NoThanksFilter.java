@@ -1,4 +1,4 @@
-/* $Id: NoThanksFilter.java,v 1.6 2000/01/24 03:59:50 boyns Exp $ */
+/* $Id: NoThanksFilter.java,v 1.7 2000/01/25 06:14:52 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -66,6 +66,8 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	    factory.report(request, "rejected " + url);
 	    throw new FilterException("NoThanks URL " + url + " rejected");
 	}
+
+	factory.processHeaders(request, request);
     }
 
     public void filter(Reply reply) throws FilterException
@@ -76,6 +78,8 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	    factory.report(request, "rejected " + content);
 	    throw new FilterException("NoThanks content-type " + content + " rejected");
 	}
+
+	factory.processHeaders(request, reply);
     }
     
     public boolean needsFiltration(Request request, Reply reply)
