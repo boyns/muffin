@@ -35,6 +35,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for org.doit.muffin.test");
 		//$JUnit-BEGIN$
 		suite.addTest(new TestSuite(RegexpTest.class));
+		suite.addTest(new TestSuite(GlossaryTest.class));
 		//$JUnit-END$
 		return suite;
 	}

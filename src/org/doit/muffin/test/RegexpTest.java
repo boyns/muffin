@@ -51,7 +51,7 @@ public class RegexpTest extends TestCase {
 		Iterator it = IMPLS.keySet().iterator();
 		while(it.hasNext()){
 			String patternAdapter = (String)it.next();
-			System.out.println(patternAdapter);
+//			System.out.println(patternAdapter);
 			Factory.instance().setRegexType(patternAdapter);
 			Pattern pattern = Factory.instance().getPattern("(a|b)");
 			patternAdapter = patternAdapter.substring(0, patternAdapter.lastIndexOf("."));

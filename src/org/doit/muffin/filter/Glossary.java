@@ -1,4 +1,4 @@
-/* $Id: Glossary.java,v 1.7 2000/03/29 15:13:22 boyns Exp $ */
+/* $Id: Glossary.java,v 1.8 2003/05/30 16:21:37 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,94 +30,73 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-public class Glossary extends Hashtable implements FilterFactory
-{
-    FilterManager manager;
-    Prefs prefs;
-    GlossaryFrame frame = null;
+public class Glossary extends AbstractFilterFactory {
 
-    public Glossary()
-    {
-	super(33);
-    }
-
-    public void setManager(FilterManager manager)
-    {
-	this.manager = manager;
-    }
-    
-    public void setPrefs(Prefs prefs)
-    {
-	this.prefs = prefs;
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	String filename = "glossary";
-	prefs.putString("Glossary.glossaryfile", filename);
-	prefs.setOverride(o);
-	load();
-    }
-
-    public Prefs getPrefs()
-    {
-	return prefs;
-    }
-
-    public void viewPrefs()
-    {
-	if (frame == null)
-	{
-	    frame = new GlossaryFrame(prefs, this);
+	public Glossary() {
+		fGlossaryHash = new Hashtable(33);
 	}
-	frame.setVisible(true);
-    }
-    
-    public Filter createFilter()
-    {
-	Filter f = new GlossaryFilter(this);
-	f.setPrefs(prefs);
-	return f;
-    }
-
-    public void shutdown()
-    {
-	if (frame != null)
-	{
-	    frame.dispose();
+	
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()	 */
+	protected void doSetDefaultPrefs(){
+		putPrefsString(GLOSSARY_FILE_KEY, "glossary");
 	}
-    }
 
-    void save()
-    {
-	manager.save(this);
-    }
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()	 */
+	public Filter doMakeFilter() {
+		return new GlossaryFilter(this);
+	}
 
-    String lookup(String term)
-    {
-	return(String) get(term.toLowerCase());
-    }
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()	 */
+	public AbstractFrame doMakeFrame() {
+		return new GlossaryFrame(this);
+	}
 
-    void load()
-    {
-	try
-	{
-	    UserFile file = prefs.getUserFile(prefs.getString("Glossary.glossaryfile"));
-	    BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream()));
-	    String s;
-	    while ((s = in.readLine()) != null)
-	    {
-		StringTokenizer st = new StringTokenizer(s, " \t");
-		String term = st.nextToken();
-		String url = st.nextToken();
-		put(term.toLowerCase(), url);
-	    }
-	    in.close();
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#getName()	 */
+	public String getName() {
+		return "Glossary";
 	}
-	catch (FileNotFoundException e)
-	{
+
+	/**
+	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doLoad()	 */
+	protected void doLoad() {
+		try {
+			UserFile file =
+				getPrefs().getUserFile(getPrefsString(GLOSSARY_FILE_KEY));
+			BufferedReader in =
+				new BufferedReader(
+					new InputStreamReader(file.getInputStream()));
+			String s;
+			while ((s = in.readLine()) != null) {
+				StringTokenizer st = new StringTokenizer(s, " \t");
+				String term = st.nextToken();
+				String url = st.nextToken();
+				fGlossaryHash.put(term.toLowerCase(), url);
+			}
+			in.close();
+		} catch (FileNotFoundException e) {
+			//FIXME: is it on purpose that we don't complain ?
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
+
+	/**
+	 * Returns the Enumeration for the keys in the contained Hashtable.	 * @return Enumeration for the keys in the contained Hashtable	 */
+	public Enumeration keys() {
+		return fGlossaryHash.keys();
 	}
-    }
+
+	/**
+	 * The main functionality of this class: looks up a value for the given term.
+	 * The term is lowercased first.	 * @param term The term to look up a value for.	 * @return String The "translated" term.	 */
+	String lookup(String term) {
+		return (String) fGlossaryHash.get(term.toLowerCase());
+	}
+
+	static final String GLOSSARY_FILE_KEY = "glossaryfile";
+	private Hashtable fGlossaryHash = null;
 }

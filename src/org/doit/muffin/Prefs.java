@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.12 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: Prefs.java,v 1.13 2003/05/30 16:21:38 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -136,10 +136,16 @@ public class Prefs extends Hashtable
 	return null;
     }
 
-    public void setOverride(boolean o)
-    {
-	allowOverride = o;
-    }
+	/**
+	 * Affects the override mode for put operations. 
+	 * If set to true, existing keys will be overridden.
+	 * If false, existing keys will not be overridden.
+	 * New keys (i.e. not present in the Prefs so far) will be accepted in any case.
+	 * @see org.doit.muffin.Prefs#put(Object, Object).
+	 * 	 * @param o The override mode to set.	 */
+	public void setOverride(boolean o) {
+		allowOverride = o;
+	}
 
     public boolean getOverride()
     {
