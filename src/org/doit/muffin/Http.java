@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.7 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: Http.java,v 1.8 2003/01/08 16:53:34 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -87,6 +87,7 @@ class Http extends HttpConnection
     public synchronized Reply recvReply(Request request)
 	throws IOException, RetryRequestException
     {
+        Reply reply = null;
 	while (queue.firstElement() != request)
 	{
 	    try
@@ -106,10 +107,11 @@ class Http extends HttpConnection
 
 	try
 	{
-	    return recv();
+	    reply = recv();
+            reply.setRequest (request);
 	}
 	catch (IOException e)
-	{
+	{                
 	    if (persistent)
 	    {
 		persistent = false;
@@ -118,6 +120,8 @@ class Http extends HttpConnection
 	    }
 	    throw e;
 	}
+        
+        return reply;
     }
 
     public void reallyClose()

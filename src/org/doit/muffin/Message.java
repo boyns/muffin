@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.12 2000/03/30 06:33:58 boyns Exp $ */
+/* $Id: Message.java,v 1.13 2003/01/08 16:54:56 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -40,14 +40,20 @@ public abstract class Message
      */
     private Hashtable headers = new Hashtable(33);
 
-    /**
-     *
-     */
+    /** Http status line.
+     */    
     String statusLine = null;
 
+    /** Reads a line from the input stream.
+     *
+     * A line is terminated by "\r\n".
+     * @return The line.
+     * @param in Input stream.
+     * @throws IOException Thrown if there are any errors reading from the stream.
+     */    
     public String readLine(InputStream in) throws IOException
     {
-	char buf[] = new char[128];
+	char buf[] = new char[8096]; // was [128]
 	int offset = 0;
 	int ch;
 
@@ -87,30 +93,24 @@ public abstract class Message
 
     /**
      * Read headers and store them in the hashtable.
+     * @param in Input stream to read headers from.
+     * @throws IOException Thrown if there are any errors reading from the stream.
      */
-    void readHeaders(InputStream in) throws IOException
+    public void readHeaders(InputStream in) throws IOException
     {
 	int i;
 	Key key = null;
 	
-	for (;;)
+        String s = readLine(in);
+	while (s != null &&
+               s.length () > 0)
 	{
-	    String s = readLine(in);
-	    if (s == null)
-	    {
-		break;
-	    }
 	    i = s.indexOf(':');
 	    if (i == -1)
 	    {
-		/* end of header */
-		if (s.length() == 0)
-		{
-		    break;
-		}
 		/* multi-line headers */
-		else if (key != null
-			 && (s.startsWith(" ") || s.startsWith("\t")))
+		if (key != null &&
+		    (s.startsWith(" ") || s.startsWith("\t")))
 		{
 		    int index = getHeaderValueCount(key.toString());
 		    index--;
@@ -133,9 +133,13 @@ public abstract class Message
 		v.addElement(s.substring(i+1).trim());
 		headers.put(key, v);
 	    }
+	    s = readLine(in);
 	}
     }
 
+    /** Get the number of header items.
+     * @return Count of headers.
+     */    
     public int headerCount()
     {
 	return headers.size();
@@ -143,23 +147,40 @@ public abstract class Message
 
     /**
      * Set the Status line.
+     * @param l New http status line.
      */
     public void setStatusLine(String l)
     {
         statusLine = l;
     }
 
+    /** Get the number of values associated with a header.
+     * @param name Header name.
+     * @return Count of the values.
+     */    
     public int getHeaderValueCount(String name)
     {
 	Vector v = (Vector) headers.get(new Key(name));
 	return v.size();
     }
     
+    /** Get header field.
+     *
+     * If the header field is multivalued, returns the first value.
+     *
+     * @param name Name of the header field.
+     * @return Value of the header field.
+     */    
     public String getHeaderField(String name)
     {
 	return getHeaderField(name, 0);
     }
     
+    /** Get the specified value for this header field.
+     * @param name Header field name.
+     * @param index Which value to get.
+     * @return Specified header field value.
+     */    
     public String getHeaderField(String name, int index)
     {
 	Vector v = (Vector) headers.get(new Key(name));
@@ -170,11 +191,22 @@ public abstract class Message
 	return (String) v.elementAt(index);
     }
 
+    /** Set the header field.
+     *
+     * For a multivalued header field, sets the first value.
+     * @param name Header field name.
+     * @param value New value.
+     */    
     public void setHeaderField(String name, String value)
     {
 	setHeaderField(name, value, 0);
     }
 
+    /** Set the specified value of a multivalued header field.
+     * @param name Header field name.
+     * @param value New value.
+     * @param index Index of the value to set for this multivalued header field.
+     */    
     public void setHeaderField(String name, String value, int index)
     {
 	Vector v;
@@ -196,19 +228,30 @@ public abstract class Message
 	v.setElementAt(value, index);
     }
     
+    /** Set the header field to an int value.
+     *
+     * For a multivalued header field, sets the first value.
+     * @param name Header field name.
+     * @param value New value.
+     */    
     public void setHeaderField(String name, int value)
     {
 	setHeaderField(name, value, 0);
     }
 
+    /** Set the specified value of a multivalued header field.
+     * @param name Header field name.
+     * @param value New value.
+     * @param index Index of the value to set for this multivalued header field.
+     */    
     public void setHeaderField(String name, int value, int index)
     {
 	setHeaderField(name, new Integer(value).toString(), index);
     }
 
-    /**
-     * Set all header fields with the give name to the
-     * specified value.
+    /** Set all header fields with the give name to the specified value.
+     * @param name Header field name.
+     * @param value New value.
      */
     public void setHeaderFields(String name, String value)
     {
@@ -225,33 +268,50 @@ public abstract class Message
 	}
     }
 
+    /** Append to an existing header field value.
+     *
+     * If no value exists the field is set to the new value.
+     * @param name Header field name.
+     * @param value Value to append.
+     */    
     public void appendHeaderField(String name, String value)
     {
 	appendHeaderField(name, value, 0);
     }
     
+    /** Append to an existing header field value.
+     *
+     * If no value exists the field is set to the new value.
+     * @param name Header field name.
+     * @param value Value to append.
+     * @param index Which value of a multivalued header field to append to.
+     */    
     public void appendHeaderField(String name, String value, int index)
     {
 	setHeaderField(name, getHeaderField(name, index) + value, index);
     }
     
+    /** Remove a header field.
+     * @param name Header field name.
+     */    
     public void removeHeaderField(String name)
     {
 	headers.remove(new Key(name));
     }
 
-    /**
-     * Return whether or not a header exists.
+    /** Return whether or not a header exists.
      *
      * @param name header name
+     * @return Returns true if a header exists, otherwise false.
+     *
      */
     public boolean containsHeaderField(String name)
     {
 	return headers.containsKey(new Key(name));
     }
 
-    /**
-     * @return an Enumeration of Strings
+    /** Get the header fields.
+     * @return Header field names as an Enumeration of Strings
      */
     public Enumeration getHeaders()
     {
@@ -306,16 +366,33 @@ public abstract class Message
 	return toByteArray(sep.getBytes());
     }
     
+    /** Convert this message to a String.
+     *
+     * Only the message headers are converted.
+     * @return A String representation of this message.
+     */    
     public String toString()
     {
 	return toByteArray().toString();
     }
     
+    /** Convert this message to a String using the supplied line separator.
+     *
+     * Only the message headers are converted.
+     * @param sep Line separator
+     * @return A String representation of this message.
+     */    
     public String toString(String sep)
     {
 	return toByteArray(sep).toString();
     }
 
+    /** Write this message to a stream.
+     *
+     * Only the message headers are written.
+     * @param out Stream to write to.
+     * @throws IOException Thrown is there are errors writing to the stream.
+     */    
     public void write(OutputStream out)
 	throws IOException
     {

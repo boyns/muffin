@@ -1,5 +1,3 @@
-/* $Id: RequestFilter.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
-
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
@@ -22,10 +20,21 @@
  */
 package org.doit.muffin;
 
-/**
+/** Filters a Request.
+ *
+ * Classes which want to see or make changes to Requests should implement this interface.
+ *
+ * Muffin will call your <B>filter</B> method for each Request before it is sent to the server.
+ *
+ * Generally the request is to an HTTP server.
+ *
  * @author Mark Boyns
  */
 public interface RequestFilter extends Filter
 {
+    /** Filter, i.e. make changes to or get information from, all Requests before they are sent to the server.
+     * @param r The request. Any changes should be made to this instance.
+     * @throws FilterException Thrown if there are any errors.
+     */    
     public void filter(Request r) throws FilterException;
 }

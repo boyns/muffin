@@ -1,4 +1,4 @@
-/* $Id: HttpRelay.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: HttpRelay.java,v 1.6 2003/01/08 16:54:20 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -26,9 +26,37 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 
+/** Used by a filter to process a request directly, instead of letting that request be sent to a server.
+ *
+ * Classes which want to process requests should implement this interface and also the HttpFilter interface.
+ *
+ * Muffin will call your sendRequest and recvReply methods for selected requests instead of 
+ * sending the request to a server. Filters must also implement the HttpFilter interface to select requests.
+ *
+ * Generally the request is intended for an HTTP server.
+ *
+ * @author Mark Boyns
+ */
 public interface HttpRelay
 {
+    /** Implements sending a request.
+     *
+     * A filter may not actually send the request anywhere in this method, if it is just providing cache replies, for example.
+     *
+     * @param request Request to send.
+     * @throws IOException Returned if there is an IO error.
+     * @throws RetryRequestException Returned if the request can not be sent now, but should be retried later. (!!!!! check this)
+     */    
     void sendRequest(Request request) throws IOException, RetryRequestException;
+    /** Implements receiving a request.
+     *
+     * @throws IOException Returned if there is an IO error.
+     * @throws RetryRequestException Returned if the request can not be sent now, but should be retried later. (!!!!! check this)
+     * @param request Request
+     * @return The reply to the request.
+     */ 
     Reply recvReply(Request request) throws IOException, RetryRequestException;
+    /** Closes the server connection, if any.
+     */    
     void close();
 }

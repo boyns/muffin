@@ -1,5 +1,3 @@
-/* $Id: ReplyFilter.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
-
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
@@ -22,10 +20,25 @@
  */
 package org.doit.muffin;
 
-/**
+/** Filters a Reply.
+ *
+ * Classes which want to see or make changes to Replies before they are returned to the client should 
+ * implement this interface.
+ *
+ * Muffin will call your <B>filter</B> method for each Reply before it is returned to the client.
+ *
+ * Generally the reply is from an HTTP server.
+ *
+ * If you read the reply's data stream from getContent () in filter (), be sure to make a copy of the 
+ * stream and call setContent () with the copy.
+ *
  * @author Mark Boyns
  */
 public interface ReplyFilter extends Filter
 {
+    /** Filter, i.e. make changes to or get information from, all Replies before they are returned to the client.
+     * @param r The reply. Any changes should be made to this instance.
+     * @throws FilterException Thrown if there are any errors.
+     */    
     public void filter(Reply r) throws FilterException;
 }

@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.10 2000/04/03 05:05:43 boyns Exp $ */
+/* $Id: Prefs.java,v 1.11 2003/01/08 16:56:20 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -181,11 +181,8 @@ public class Prefs extends Hashtable
     public boolean getBoolean(String key)
     {
 	String val = getString(key);
-	if (val == null)
-	{
-	    return false;
-	}
-	return "true".equalsIgnoreCase(val) ? true : false;
+	return val != null &&
+               "true".equalsIgnoreCase(val);
     }
 
     public int getInteger(String key)

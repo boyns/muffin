@@ -1,4 +1,4 @@
-/* $Id: Rewrite.java,v 1.7 2000/03/29 15:14:34 boyns Exp $ */
+/* $Id: Rewrite.java,v 1.8 2003/01/08 17:03:31 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -168,21 +168,32 @@ public class Rewrite implements FilterFactory
 	    
 	    while ((s = in.readLine()) != null)
 	    {
-		if (blank.getMatch(s) != null)
+		if (s.length() > 0 &&
+                    blank.getMatch(s) == null)
 		{
-		    continue;
-		}
-
-		StringTokenizer st = new StringTokenizer(s, " \t");
-		try
-		{
-		    rules.addElement(new RE(st.nextToken()));
-		    rewrite.addElement(st.nextToken());
-		}
-		catch (REException e)
-		{
-		    System.out.println("REException: " + e);
-		}
+                    StringTokenizer st = new StringTokenizer(s, " \t");
+                    try
+                    {
+                        String re = st.nextToken();
+                        String rew = st.nextToken();
+                        if (re.length () > 0 &&
+                            rew.length () > 0) {
+                                
+                            rules.addElement(new RE(re));
+                            rewrite.addElement(rew);
+                            
+                        }
+                        else {
+                            
+                            report ("invalid rule: " + s);
+                            
+                        }
+                    }
+                    catch (REException e)
+                    {
+                        System.out.println("REException: " + e);
+                    }
+                }
 	    }
 	    in.close();
 	}
@@ -195,6 +206,11 @@ public class Rewrite implements FilterFactory
     void report(Request request, String message)
     {
 	request.addLogEntry("Rewrite", message);
+	report (message);
+    }
+
+    void report(String message)
+    {
 	messages.append(message + "\n");
     }
 }

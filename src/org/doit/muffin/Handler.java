@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.12 2001/07/02 05:02:08 boyns Exp $ */
+/* $Id: Handler.java,v 1.13 2003/01/08 16:53:09 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -184,7 +184,9 @@ class Handler implements Runnable
 	    monitor.unregister(this);
 	}
 
-	if (reason != null && reason.getMessage().indexOf("Broken pipe") == -1)
+	if (reason != null && 
+            reason.getMessage() != null && 
+            reason.getMessage().indexOf("Broken pipe") == -1)
 	{
 	    if (client != null && request != null)
 	    {
@@ -194,6 +196,9 @@ class Handler implements Runnable
 	    // don't print filter exceptions
 	    if (! (reason instanceof FilterException))
 	    {
+                if (request != null) {
+                    System.out.println ("Exception getting url: " + request.getURL());
+                }
 		reason.printStackTrace();
 	    }
 	}
@@ -208,7 +213,6 @@ class Handler implements Runnable
 	while (reply == null)
 	{
 	    boolean secure = false;
-	    boolean uncompress = false;
 
 	    filterList = manager.createFilters(request.getURL());
 
@@ -278,131 +282,125 @@ class Handler implements Runnable
 		    ((Http)http).setTimeout(options.getInteger("muffin.readTimeout"));
 		}
 		reply = http.recvReply(request);
-	    }
+            }
 	    catch (RetryRequestException e)
 	    {
 		http.close();
 		http = null;
-		continue; /* XXX */
 	    }
+            
+            if (http != null) {
 
-	    /* Guess content-type if there aren't any headers.
-	       Probably an upgraded HTTP/0.9 reply. */
-	    if (reply.headerCount() == 0)
-	    {
-		String url = request.getURL();
-		if (url.endsWith("/")
-		    || url.endsWith(".html") || url.endsWith(".htm"))
-		{
-		    reply.setHeaderField("Content-type", "text/html");
-		}
-	    }
+                /* Guess content-type if there aren't any headers.
+                   Probably an upgraded HTTP/0.9 reply. */
+                if (reply.headerCount() == 0)
+                {
+                    String url = request.getURL();
+                    if (url.endsWith("/")
+                        || url.endsWith(".html") || url.endsWith(".htm"))
+                    {
+                        reply.setHeaderField("Content-type", "text/html");
+                    }
+                }
 
-	    /* update reply */
-	    monitor.update(this);
+                /* update reply */
+                monitor.update(this);
 
-	    /* Filter the reply. */
-	    if (!options.getBoolean("muffin.passthru"))
-	    {
-		/* uncompress gzip encoded html so it can be filtered */
-		if (!options.getBoolean("muffin.dontUncompress")
-		    && "text/html".equals(reply.getHeaderField("Content-type")))
-		{
-		    String encoding = reply.getHeaderField("Content-Encoding");
-		    if (encoding != null && encoding.indexOf("gzip") != -1)
-		    {
-			reply.removeHeaderField("Content-Encoding");
-			reply.removeHeaderField("Content-length");
-			uncompress = true;
-		    }
-		}
+                if (!options.getBoolean("muffin.passthru"))
+                {
+                    if (!options.getBoolean("muffin.dontUncompress")) {
+                        uncompressContent(reply);
+                    }
+                    /* Filter the reply. */
+                    filter(reply);
+                }
 
-		filter(reply);
-	    }
+                reply.removeHeaderField("Proxy-Connection");
+                if (keepAlive && reply.containsHeaderField("Content-length"))
+                {
+                    reply.setHeaderField("Proxy-Connection", "Keep-Alive");
+                }
+                else
+                {
+                    keepAlive = false;
+                }
 
-	    reply.removeHeaderField("Proxy-Connection");
-	    if (keepAlive && reply.containsHeaderField("Content-length"))
-	    {
-		reply.setHeaderField("Proxy-Connection", "Keep-Alive");
-	    }
-	    else
-	    {
-		keepAlive = false;
-	    }
+                currentLength = -1;
+                contentLength = -1;
+                try
+                {
+                    contentLength = Integer.parseInt(reply.getHeaderField("Content-length"));
+                }
+                catch (NumberFormatException e)
+                {
+                }
 
-	    currentLength = -1;
-	    contentLength = -1;
-	    try
-	    {
-		contentLength = Integer.parseInt(reply.getHeaderField("Content-length"));
-	    }
-	    catch (NumberFormatException e)
-	    {
-	    }
+                /* update content-length reply */
+                monitor.update(this);
 
-	    /* update content-length reply */
-	    monitor.update(this);
+                if (secure)
+                {
+                    Https https = (Https) http;
+                    int timeout = options.getInteger("muffin.readTimeout");
 
-	    if (secure)
-	    {
-		Https https = (Https) http;
-		int timeout = options.getInteger("muffin.readTimeout");
-		
-		client.write(reply);
+                    client.write(reply);
 
-		try
-		{
-		    client.setTimeout(timeout);
-		    https.setTimeout(timeout);
-		
-		    Copy cp = new Copy(client.getInputStream(), https.getOutputStream());
-		    ReusableThread thread = Main.getThread();
-		    thread.setRunnable(cp);
-		    flushCopy(https.getInputStream(), client.getOutputStream(), -1, true);
-		    client.close();
-		}
-		catch (InterruptedIOException iioe)
-		{
-		    // ignore socket timeout exceptions
-		}
-	    }
-	    else if (reply.hasContent())
-	    {
-		try
-		{
-		    processContent(uncompress);
-		}
-		catch (IOException e)
-		{
-		    if (http instanceof Http)
-		    {
-			((Http)http).reallyClose();
-		    }
-		    else
-		    {
-			http.close();
-		    }
-		    http = null;
+                    try
+                    {
+                        client.setTimeout(timeout);
+                        https.setTimeout(timeout);
 
-		    client.close();
-		    client = null;
+                        Copy cp = new Copy(client.getInputStream(), https.getOutputStream());
+                        ReusableThread thread = Main.getThread();
+                        thread.setRunnable(cp);
+                        flushCopy(https.getInputStream(), client.getOutputStream(), -1, true);
+                        client.close();
+                    }
+                    catch (InterruptedIOException iioe)
+                    {
+                        // ignore socket timeout exceptions
+                    }
+                }
+                else if (reply.hasContent())
+                {
+                    try
+                    {
+                        processContent();
+                    }
+                    catch (IOException e)
+                    {
+                        if (http instanceof Http)
+                        {
+                            ((Http)http).reallyClose();
+                        }
+                        else
+                        {
+                            http.close();
+                        }
+                        http = null;
 
-		    throw e;
-		    //return false; /* XXX */
-		}
+                        client.close();
+                        client = null;
 
-		/* Document contains no data. */
-		if (contentLength == 0)
-		{
-		    client.close();
-		}
-	    }
-	    else
-	    {
-		client.write(reply);
-	    }
+                        throw e;
+                        //return false; /* XXX */
+                    }
 
-	    http.close();
+                    /* Document contains no data. */
+                    if (contentLength == 0)
+                    {
+                        client.close();
+                    }
+
+                    reply.getContent ().close ();
+                }
+                else
+                {
+                    client.write(reply);
+                }
+
+                http.close();
+            }
 	}
 
 	return keepAlive;
@@ -485,11 +483,11 @@ class Handler implements Runnable
 	return new ByteArrayInputStream(chunks.toByteArray());
     }
     
-    void processContent(boolean uncompress) throws IOException
+    void processContent() throws IOException
     {
 	InputStream in;
 	boolean chunked = false;
-
+	
 	if (reply.containsHeaderField("Transfer-Encoding")
 	    && reply.getTransferEncoding().equals("chunked"))
 	{
@@ -506,10 +504,6 @@ class Handler implements Runnable
 	    System.out.println("No inputstream");
 	    return;
 	}
-	else if (uncompress)
-	{
-	    in = new GZIPInputStream(in);
-	}
 
 	if (options.getBoolean("muffin.passthru"))
 	{
@@ -521,7 +515,7 @@ class Handler implements Runnable
 	    if (options.getBoolean("muffin.proxyKeepAlive"))
 	    {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
-		filter(in, buffer, contentLength, chunked ? false : true);
+		filter(in, buffer, contentLength, !chunked);
 		reply.setHeaderField("Content-length", buffer.size());
 		client.write(reply);
 		copy(new ByteArrayInputStream(buffer.toByteArray()),
@@ -678,6 +672,38 @@ class Handler implements Runnable
     {
 	return currentLength > 0 ? currentLength : 0;
     }
+    
+    /** 
+     * Uncompress gzip encoded content.
+     */
+    void uncompressContent (Reply reply)
+    throws IOException {
+        if ("text/html".equals(reply.getHeaderField("Content-type")))
+        {
+            String encoding = reply.getHeaderField("Content-Encoding");
+            if (encoding != null && encoding.indexOf("gzip") != -1)
+            {
+                // System.out.println ("gzipped: " + reply.getRequest ().getURL ()); //DEBUG
+
+                reply.removeHeaderField("Content-Encoding");
+
+                InputStream gzipIn = new GZIPInputStream(reply.getContent ());
+
+                /* fix the Content-length */
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                copy(gzipIn, buffer, -1, false);
+                // remember the old content length
+                String oldContentLength = reply.getHeaderField("Content-length");
+                if (oldContentLength != null) {
+                    reply.setHeaderField(Reply.GzipContentLengthAttribute, oldContentLength);
+                }
+                reply.setHeaderField("Content-length", buffer.size());
+                gzipIn = new ByteArrayInputStream(buffer.toByteArray());
+
+                reply.setContent(gzipIn);
+            }
+        }
+    }
 
     /**
      * Send a error message to the client.
@@ -764,6 +790,12 @@ class Handler implements Runnable
 		    break;
 		}
 	    }
+            
+            // avoids lockups, but may not work with old buggy servers
+            if (contentLength > 0 &&
+                currentLength >= contentLength) {
+                break;
+            }
 
 	    then = now;
 	}
@@ -829,6 +861,12 @@ class Handler implements Runnable
 		    break;
 		}
 	    }
+            
+            // avoids lockups, but may not work with old buggy servers
+            if (contentLength > 0 &&
+                currentLength >= contentLength) {
+                break;
+            }
 	}
 	out.flush();
 
@@ -900,6 +938,12 @@ class Handler implements Runnable
 	    {
 		out.flush();
 	    }
+            
+            // avoids lockups, but may not work with old buggy servers
+            if (contentLength > 0 &&
+                currentLength >= contentLength) {
+                break;
+            }
 
 	    then = now;
 	}

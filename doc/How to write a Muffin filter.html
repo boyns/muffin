@@ -28,7 +28,7 @@ and CacheFilter.
 The Cache class manages the data, CacheFrame is the ui, and CacheFilter has the
 controlling logic.
 
-<p>Your filter classes go in the org.doit.muffin.filter package.
+<p>It's easiest if you put your filter classes in the org.doit.muffin.filter package.
 Muffin expects you to give your data class the same name as your filter,
 and then use that name as a prefix for the names of your user interface and
 filter logic classes. Add "Frame" to create your ui class name and "Filter"
@@ -39,7 +39,8 @@ the doc/filters directory. The Cache filter help file is Cache.txt.
 
 <p>Your data class must implement the
 <a href="javadoc/org/doit/muffin/FilterFactory.html">FilterFactory</a>
-interface. Simple persistent data is stored in a shared instance of <b>Prefs</b>.
+interface. Simple persistent data is stored in a shared instance of 
+<a href="javadoc/org/doit/muffin/Prefs.html">Prefs</a>.
 Muffin passes the Prefs instance into your data class by calling
 your <b>setPrefs</b> method.
 If you need more storage, you can also keep data in files, databases, etc.
@@ -73,8 +74,8 @@ The InputObjectStream will be either an
 An HtmlObjectStream consists of HTML
 <a href="javadoc/org/doit/html/Token.html">Token</a> objects.
 Content which isn't an HTML MIME type is returned as a SourceObjectStream,
-which provides the entire content as a single
-<a href="javadoc/org/doit/io/ByteArray.html">ByteArray</a>.
+which provides the content as
+<a href="javadoc/org/doit/io/ByteArray.html">ByteArray</a> objects.
 Because each content is filtered in its own thread,
 you must also implement <b>Runable</b> and do all your filtering in the <b>run</b>
 method. Muffin will call <b>run</b> once for each content filtered.

@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.9 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: FilterManager.java,v 1.10 2003/01/08 16:52:27 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -39,6 +39,7 @@ public class FilterManager implements ConfigurationListener
     final String defaultSupportedList[] = 
     { 
 	"AnimationKiller",
+	"Cache",
 	"CookieMonster",
 	"Decaf",
 	"DocumentInfo",
@@ -47,9 +48,11 @@ public class FilterManager implements ConfigurationListener
 	"Glossary",
 	"History",
 	"ImageKill",
+	"Junkbuster",
 	"HostnameExpander",
 	"NoCode",
 	"Painter",
+	"PlainHtml",
 	"Preview",
 	"Rewrite",
 	"NoThanks",
