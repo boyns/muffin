@@ -144,7 +144,7 @@ public class ImageKill implements FilterFactory
 
     boolean isExcluded (String s)
     {
-	return (exclude != null && exclude.getMatch (s) != null);
+	return (s != null && exclude != null && exclude.getMatch (s) != null);
     }
 
 
