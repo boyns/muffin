@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.20 2000/03/27 04:26:41 boyns Exp $ */
+/* $Id: Main.java,v 1.21 2000/03/29 15:11:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -50,7 +50,7 @@ import org.doit.util.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    private static String version = "0.9.3";
+    private static String version = "0.9.3a";
     private static String url = "http://muffin.doit.org/";
     private static String host;
 
