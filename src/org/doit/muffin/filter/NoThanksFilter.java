@@ -1,4 +1,4 @@
-/* $Id: NoThanksFilter.java,v 1.9 2000/03/08 19:26:24 boyns Exp $ */
+/* $Id: NoThanksFilter.java,v 1.10 2000/10/10 05:15:03 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -148,7 +148,7 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	// so it can be filtered 
 	while ((obj = in.read()) != null)
 	{
-	    script.append(((ByteArray)obj).getBytes());
+	    script.append(((ByteArray)obj));
 	}
 
 	script = factory.processScript(request, script);
