@@ -21,6 +21,8 @@
 package org.doit.muffin.decryption;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import org.doit.muffin.Filter;
 import org.doit.muffin.FilterFactory;
@@ -79,18 +81,33 @@ public class Decryption implements FilterFactory
     public void startServer()
     {
     	SSLContext context = SSLContextFactory.createSSLContext(this.prefs);
-        this.decryptionServer =
-            new Server(
-                new DecryptionServerSocketCreator(context),
-                this.prefs.getInteger(PORT),
-                new TextMonitor("Decryption Server Monitor"),
-                this.manager,
-                Main.getOptions());
-        System.out.println(
-            "Decryption Server started on port " + this.prefs.getInteger(PORT));
-
-        Thread t = new Thread(this.decryptionServer);
-        t.start();
+        InetAddress address;
+        if (this.prefs.getString(HOST) == null)
+        {
+            this.prefs.putString(HOST, "127.0.0.1");
+        }
+        try
+        {
+            address = InetAddress.getByName(this.prefs.getString(HOST));
+        
+            this.decryptionServer =
+                new Server(
+                    new DecryptionServerSocketCreator(context),
+                    this.prefs.getInteger(PORT),
+                    address,
+                    new TextMonitor("Decryption Server Monitor"),
+                    this.manager,
+                    Main.getOptions());
+            System.out.println(
+                "Decryption Server started on port " + this.prefs.getInteger(PORT));
+            
+            Thread t = new Thread(this.decryptionServer);
+            t.start();
+        }
+        catch (UnknownHostException uhe)
+        {
+            System.err.println("can not start decryption server: "+uhe.getMessage());
+        }
     }
     /**
      * @see org.doit.muffin.FilterFactory#setManager(FilterManager)
@@ -110,7 +127,7 @@ public class Decryption implements FilterFactory
         p.setOverride(false);
         /* Internal HTTPS decryption server defaults */
         p.putInteger(PORT, 4443);
-        p.putString(HOST, "localhost");
+        p.putString(HOST, "127.0.0.1");
         p.putString(CERTIFICATE, "certs");
         p.putString(KEY_PASSWORD, "serverpw");
         p.putString(KEYSTORE_PASSWORD, "serverkspw");
