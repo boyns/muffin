@@ -124,14 +124,27 @@
     <mkdir dir="${builddir}/WEB-INF/classes"/>
 
     <copy todir="${builddir}/WEB-INF/classes">
-      <fileset dir="${classes}"/>
-    </copy>
-
-    <copy todir="${builddir}/WEB-INF/lib">
-      <fileset dir="lib">
-        <include name="*.jar"/>
+      <fileset dir="${classes}">
+        <exclude name="doc/**"/>
+        <exclude name="images/**"/>
       </fileset>
     </copy>
+
+    <unjar dest="${builddir}/WEB-INF/classes">
+      <fileset dir=".">
+        <include name="${libdir}/*.jar"/>
+      </fileset>
+    </unjar>
+
+    <copy todir="${builddir}/images">
+      <fileset dir="images" includes="*.jpg"/>
+    </copy>
+
+    <copy todir="${builddir}/doc">
+      <fileset dir="doc/filter" includes="*.txt"/>
+    </copy>
+
+    <copy file="${basedir}/COPYING" tofile="${builddir}/doc/COPYING.txt"/>
 
     <move file="${builddir}/WEB-INF/classes/Muffin.class"
           tofile="${builddir}/Muffin.class"/>
@@ -139,7 +152,6 @@
     <jar jarfile="muffin.jar" basedir="${builddir}"
          manifest="src/MANIFEST.MF"
          compress="true"/>
-
   </target>
 
   <target name="javadoc" description="Create Javadoc documentation">
