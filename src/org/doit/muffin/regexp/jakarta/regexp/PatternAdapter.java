@@ -22,6 +22,8 @@
  */
 package org.doit.muffin.regexp.jakarta.regexp;
 
+import java.util.*;
+
 import org.apache.regexp.RESyntaxException;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
@@ -38,10 +40,16 @@ public class PatternAdapter extends AbstractPatternAdapter {
 	
 	public PatternAdapter(String pattern){
 		super(pattern);
+		fStringPattern = pattern;
 	}
 	
 	public PatternAdapter(String pattern, boolean ignoreCase){
 		super(pattern, ignoreCase);
+		fStringPattern = pattern;
+	}
+	
+	public String toString(){
+		return fStringPattern;
 	}
 
 	/**
@@ -72,7 +80,33 @@ public class PatternAdapter extends AbstractPatternAdapter {
 	 * @see org.doit.muffin.regexp.Pattern#substituteAll(java.lang.Object, java.lang.String)
 	 */
 	public String substituteAll(String input, String replace) {
-		return fPattern.subst(input, replace);
+//		unfortunately jakarta.regexp does not support the PERL $x Syntax, 
+//		thus we can't do this:
+//		return fPattern.subst(input, replace); 
+
+		String[] split = fPattern.split(input);
+
+		int position = 0;
+		Matcher matcher;
+		List replacedMatches = new ArrayList();
+		while((matcher = getMatch(input, position)) != null){
+			int start = matcher.getStartIndex();
+			int end = matcher.getEndIndex();
+			if (start < 0) break;
+			position = end;
+			String sub = input.substring(start, end);
+			replacedMatches.add(matcher.substituteInto(replace));
+		}
+
+		Iterator it = replacedMatches.iterator();
+		StringBuffer result = new StringBuffer();
+		for(int i=0;i<split.length;i++){
+			result.append(split[i]);
+			if(it.hasNext()){
+				result.append(it.next());
+			}
+		}
+		return result.toString();
 	}
 	
 	protected void doMakePattern(String pattern){
@@ -92,6 +126,7 @@ public class PatternAdapter extends AbstractPatternAdapter {
 	}
 
 	private RE fPattern;
+	private String fStringPattern;
 	
 	// Announce this implementation to the Factory.
 	// It would work in C++ where static code gets executed at any rate.

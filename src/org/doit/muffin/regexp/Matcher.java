@@ -84,7 +84,7 @@ public interface Matcher {
      * the full substring matched; <code>$<i>n</i></code> matches
      * subexpression number <i>n</i>.
      *
-     * @param input A string consisting of literals and <code>$<i>n</i></code> tokens.
+     * @param replacement A string consisting of literals and <code>$<i>n</i></code> tokens.
      */
-	String substituteInto(String input);
+	String substituteInto(String replacement);
 }

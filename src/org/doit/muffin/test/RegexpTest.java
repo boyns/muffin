@@ -103,6 +103,20 @@ public class RegexpTest extends TestCase {
 		}
 	}
 	
+	public void testSubstituteAllAt0(){
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testSubstituteAll((String)it.next());
+		}
+	}
+	
+	public void testSubstituteAllAtX(){
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testSubstituteAllX((String)it.next());
+		}
+	}
+	
 	public void testStartEndIndex(){
 		Iterator it = IMPLS.keySet().iterator();
 		while(it.hasNext()){
@@ -132,18 +146,26 @@ public class RegexpTest extends TestCase {
 		Pattern pattern = Factory.instance().getPattern("(a|b)");
 		assertTrue(pattern.matches("but"));
 		assertTrue(!pattern.matches("shure"));
+		pattern = Factory.instance().getPattern("(.)\\1");
+		assertTrue(!pattern.matches("but"));
+		assertTrue(pattern.matches("google"));
+		assertTrue(pattern.matches("butter"));
 	}
 
 	private void testRegexpMatchN(String regexpType){
 		Factory.instance().setRegexType(regexpType);
-		Pattern pattern = Factory.instance().getPattern("(a|b)");
-		Matcher matcher = pattern.getMatch("bubbles",1);
+		Pattern pattern = Factory.instance().getPattern("(.)\\1");
+//		 	groogle is the door to iinformation.";
+//		 	01234567890123456789012345678901234
+//          0         1         2         3
+		final String INPUT =  "groogle is the door to iinformation.";
+		Matcher matcher = pattern.getMatch(INPUT,0);
 		assertEquals("regextype:<"+regexpType+">",2, matcher.getStartIndex());
-		matcher = pattern.getMatch("bubbles",2);
+		matcher = pattern.getMatch(INPUT,2);
 		assertEquals("regextype:<"+regexpType+">",2, matcher.getStartIndex());
-		matcher = pattern.getMatch("bubbles",3);
-		assertEquals("regextype:<"+regexpType+">",3, matcher.getStartIndex());
-		matcher = pattern.getMatch("bubbles",4);
+		matcher = pattern.getMatch(INPUT,3);
+		assertEquals("regextype:<"+regexpType+">",16, matcher.getStartIndex());
+		matcher = pattern.getMatch(INPUT,24);
 		assertNull("regextype:<"+regexpType+">", matcher);
 	}
 	
@@ -165,20 +187,33 @@ public class RegexpTest extends TestCase {
 
 	private void testSubstituteAll(String regexpType){
 		Factory.instance().setRegexType(regexpType);
-		final String INPUT = "google is the door to iinformation.";
+		final String PATTERN = "(.)\\1";
+		final String INPUT = "ggroogle is the door to iinformation.";
 		final String REPLACEMENT_STR = "_$1_";
-		final String EXPECTED = "g_o_gle is the d_o_r to _i_nformation.";
-		Pattern pattern = Factory.instance().getPattern("(.)\\1");
+		final String EXPECTED = "_g_r_o_gle is the d_o_r to _i_nformation.";
+		Pattern pattern = Factory.instance().getPattern(PATTERN);
+		String got = pattern.substituteAll(INPUT, REPLACEMENT_STR);
+		assertEquals(EXPECTED, got);
+	}
+
+	private void testSubstituteAllX(String regexpType){
+		Factory.instance().setRegexType(regexpType);
+		final String PATTERN = "(.)\\1";
+		final String INPUT = "groogle is the door to iinformation.";
+		final String REPLACEMENT_STR = "_$1_";
+		final String EXPECTED = "gr_o_gle is the d_o_r to _i_nformation.";
+		Pattern pattern = Factory.instance().getPattern(PATTERN);
 		String got = pattern.substituteAll(INPUT, REPLACEMENT_STR);
 		assertEquals(EXPECTED, got);
 	}
 
 	private void testSubstituteInto(String regexpType){
 		Factory.instance().setRegexType(regexpType);
+		final String PATTERN = "(.)\\1";
 		final String INPUT = "google is the door to iinformation.";
 		final String REPLACEMENT_STR = "_$1_";
 		final String EXPECTED = "_o_";
-		Pattern pattern = Factory.instance().getPattern("(.)\\1");
+		Pattern pattern = Factory.instance().getPattern(PATTERN);
 		Matcher matcher = pattern.getMatch(INPUT);
 		String got = matcher.substituteInto(REPLACEMENT_STR);
 		assertEquals(EXPECTED, got);
