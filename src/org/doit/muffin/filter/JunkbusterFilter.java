@@ -25,7 +25,8 @@ import org.doit.io.*;
 import org.doit.html.*;
 import java.util.*;
 import java.io.*;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Factory;
 
 /* Implements url filtering using a Junkbuster blocklist.
  */
@@ -121,7 +122,7 @@ public class JunkbusterFilter implements RequestFilter, HttpFilter
         final String UnblockPrefix = "~";
         boolean blocked = false;
         
-        RE re;
+        Pattern re;
         // factory.report ("Checking "+ url);
         
         if (url.startsWith (factory.getBypassUrlPrefix ())) {
@@ -315,33 +316,22 @@ public class JunkbusterFilter implements RequestFilter, HttpFilter
                patternPort.equals (urlPort);
     }
 
-    private boolean pathMatches (String urlPath, String patternPath) {
-        boolean matches = false;
-        
-        if (patternPath == null) {
-            matches= true;
-        }
-        else {
-            try {
-                RE re = new RE (patternPath, RE.REG_ICASE); //, RESyntax.RE_SYNTAX_POSIX_BASIC);
-                // a partial match is enough
-                matches = (re.getMatch (urlPath) != null);
-            }
-            catch (Exception e)
-            {
-                // these are almost allways due to bad patterns, so ignore them
-                /*
-                 factory.report ("Comparing " + urlPath + " to " + patternPath);
-                 e.printStackTrace();
-                 // System.exit (1); //DEBUG
-                 */
-            }
-        }
-        if (verboseMatch) {
-            factory.report ("path matches: " + matches);
-        }
-        return matches;
-    }
+	private boolean pathMatches(String urlPath, String patternPath) {
+		boolean matches = false;
+
+		if (patternPath == null) {
+			matches = true;
+		} else {
+			Pattern re = Factory.instance().getPattern(patternPath, true);
+			//, RESyntax.RE_SYNTAX_POSIX_BASIC);
+			// a partial match is enough
+			matches = (re.matches(urlPath));
+		}
+		if (verboseMatch) {
+			factory.report("path matches: " + matches);
+		}
+		return matches;
+	}
     
     /* Break a domain up into components.
      */

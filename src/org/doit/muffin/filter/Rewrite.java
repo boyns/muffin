@@ -1,4 +1,4 @@
-/* $Id: Rewrite.java,v 1.8 2003/01/08 17:03:31 dougporter Exp $ */
+/* $Id: Rewrite.java,v 1.9 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,17 +29,19 @@ import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Enumeration;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Factory;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Matcher;
 
 public class Rewrite implements FilterFactory
 {
-    FilterManager manager;
-    Prefs prefs;
-    RewriteFrame frame = null;
+    private FilterManager manager;
+    private Prefs prefs;
+    private RewriteFrame frame = null;
     MessageArea messages = null;
 
-    Vector rules = null;
-    Vector rewrite = null;
+    private Vector rules = null;
+    private Vector rewrite = null;
 
     public Rewrite()
     {
@@ -100,14 +102,14 @@ public class Rewrite implements FilterFactory
 
     String rewrite(Request request, String url)
     {
-	RE re = null;
-	REMatch match = null;
+	Pattern re = null;
+	Matcher match = null;
 	Enumeration e = rules.elements();
 
 	int index = 0;
 	while (match == null && e.hasMoreElements())
 	{
-	    re = (RE) e.nextElement();
+	    re = (Pattern) e.nextElement();
 	    match = re.getMatch(url);
 	    index++;
 	}
@@ -155,53 +157,37 @@ public class Rewrite implements FilterFactory
 	}
     }
 
-    void load(Reader reader)
-    {
-	rules = new Vector();
-	rewrite = new Vector();
-		
-	try
-	{
-	    BufferedReader in = new BufferedReader(reader);
-	    String s;
-	    RE blank = new RE("^[# \t\n]");
-	    
-	    while ((s = in.readLine()) != null)
-	    {
-		if (s.length() > 0 &&
-                    blank.getMatch(s) == null)
-		{
-                    StringTokenizer st = new StringTokenizer(s, " \t");
-                    try
-                    {
-                        String re = st.nextToken();
-                        String rew = st.nextToken();
-                        if (re.length () > 0 &&
-                            rew.length () > 0) {
-                                
-                            rules.addElement(new RE(re));
-                            rewrite.addElement(rew);
-                            
-                        }
-                        else {
-                            
-                            report ("invalid rule: " + s);
-                            
-                        }
-                    }
-                    catch (REException e)
-                    {
-                        System.out.println("REException: " + e);
-                    }
-                }
-	    }
-	    in.close();
+	void load(Reader reader) {
+		rules = new Vector();
+		rewrite = new Vector();
+
+		try {
+			BufferedReader in = new BufferedReader(reader);
+			String s;
+			Pattern blank = Factory.instance().getPattern("^[# \t\n]");
+
+			while ((s = in.readLine()) != null) {
+				if (s.length() > 0 && blank.matches(s)) {
+					StringTokenizer st = new StringTokenizer(s, " \t");
+					String re = st.nextToken();
+					String rew = st.nextToken();
+					if (re.length() > 0 && rew.length() > 0) {
+
+						rules.addElement(Factory.instance().getPattern(re));
+						rewrite.addElement(rew);
+
+					} else {
+
+						report("invalid rule: " + s);
+
+					}
+				}
+			}
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
-    }
 
     void report(Request request, String message)
     {

@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.8 2003/05/11 23:04:40 cmallwitz Exp $ */
+/* $Id: RegexFrame.java,v 1.9 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -39,19 +39,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Factory;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Matcher;
 
 /**
  * @author Mark Boyns
  */
 class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 {
-    TextArea text;
-    TextField pattern;
-    REMatch match = null;
+    private TextArea text;
+    private TextField pattern;
+    private Matcher match = null;
 
-    RegexFrame()
-    {
+    RegexFrame() {
         super(Strings.getString("regex.title"));
 
         Button b;
@@ -79,7 +80,11 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
         text = new TextArea();
         text.setEditable(true);
         //text.setFont(new Font("Fixed", Font.PLAIN, 12));
-        text.setText(Strings.getString("regex.text"));
+        text.setText(Strings.getString("regex.text")
+        	+"\n\n"
+        	+"BTW: using regexp engine:\n"
+        	+ Factory.instance().getPattern("").getClass().getName()
+        );
         add("Center", text);
 
         Panel buttonPanel = new Panel();
@@ -101,76 +106,53 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
         show();
     }
 
-    public void actionPerformed(ActionEvent event)
-    {
-        String arg = event.getActionCommand();
+	public void actionPerformed(ActionEvent event) {
+		String arg = event.getActionCommand();
 
-        if ("doClose".equals(arg))
-        {
-            setVisible(false);
-        }
-        else if ("doClear".equals(arg))
-        {
-            text.setText("");
-        }
-        else if ("doMatch".equals(arg))
-        {
-            try
-            {
-                RE re = new RE(pattern.getText());
+		if ("doClose".equals(arg)) {
+			setVisible(false);
+		} else if ("doClear".equals(arg)) {
+			text.setText("");
+		} else if ("doMatch".equals(arg)) {
+			Pattern re = Factory.instance().getPattern(pattern.getText());
 
-                if (match != null)
-                {
-                    match = re.getMatch(text.getText(), match.getEndIndex(), text.getText().length());
+			if (match != null) {
+				match =
+					re.getMatch(
+						text.getText(),
+						match.getEndIndex());
 
-                }
-                else
-                {
-                    match = re.getMatch(text.getText());
-                }
+			} else {
+				match = re.getMatch(text.getText());
+			}
 
-                if (match != null)
-                {
-                    text.select(match.getStartIndex(), match.getEndIndex());
-                }
-                else
-                {
-                    text.select(0, 0); // un-select
-                }
-            }
-            catch (REException e)
-            {
-                System.out.println(e);
-            }
-        }
-    }
+			if (match != null) {
+				text.select(match.getStartIndex(), match.getEndIndex());
+			} else {
+				text.select(0, 0); // un-select
+			}
+		}
+	}
 
-    public void windowActivated(WindowEvent e)
-    {
-    }
+	public void windowActivated(WindowEvent e) {
+	}
 
-    public void windowDeactivated(WindowEvent e)
-    {
-    }
+	public void windowDeactivated(WindowEvent e) {
+	}
 
-    public void windowClosing(WindowEvent e)
-    {
-        setVisible(false);
-    }
+	public void windowClosing(WindowEvent e) {
+		setVisible(false);
+	}
 
-    public void windowClosed(WindowEvent e)
-    {
-    }
+	public void windowClosed(WindowEvent e) {
+	}
 
-    public void windowIconified(WindowEvent e)
-    {
-    }
+	public void windowIconified(WindowEvent e) {
+	}
 
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
+	public void windowDeiconified(WindowEvent e) {
+	}
 
-    public void windowOpened(WindowEvent e)
-    {
-    }
+	public void windowOpened(WindowEvent e) {
+	}
 }

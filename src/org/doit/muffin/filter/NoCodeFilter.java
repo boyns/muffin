@@ -1,4 +1,4 @@
-/* $Id: NoCodeFilter.java,v 1.4 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: NoCodeFilter.java,v 1.5 2003/05/19 23:06:54 forger77 Exp $ */
 
 /* Based upon DecafFilter by Mark R. Boyns so here is his copyright notice: */
 
@@ -35,7 +35,8 @@ import org.doit.io.*;
 import org.doit.html.*;
 import java.util.Enumeration;
 import java.io.IOException;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Factory;
 
 public class NoCodeFilter implements ContentFilter, ReplyFilter
 {
@@ -285,56 +286,42 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 			token.importTag(tag);
 			out.write(token);
 		    }
-		}
-		else if (!eatingJavaScript && !eatingJava)
-		{
-		    if (inScript && noEvalInScript)
-		    {
+		} else if (!eatingJavaScript && !eatingJava) {
+			if (inScript && noEvalInScript) {
 				// Change any code that allows dynamically generating code into something
 				// that does not generate code thus denying the use of self modifying 
 				// code to obscure the intent of code.
 				// Since displaying the string avoids executing it and also helps 
 				// us work out what the code is doing, this is an OK substitution.
-			try
-			{
-			    String substFunction = inVBScript ? "MsgBox" : "alert";
-			    String outScript = token.toString();
+				String substFunction = inVBScript ? "MsgBox" : "alert";
+				String outScript = token.toString();
 				// eval is available both in javascript and VBScript 5.0
-			    RE expression = new RE("eval",RE.REG_ICASE);
-			    outScript = expression.substituteAll(outScript, substFunction);
+				Pattern expression = Factory.instance().getPattern("eval", true);
+				outScript =
+					expression.substituteAll(outScript, substFunction);
 				// executeglobal is available in VBScript 5.0
-			    expression = new RE("executeglobal",RE.REG_ICASE);
-			    outScript = expression.substituteAll(outScript, substFunction);
+				expression = Factory.instance().getPattern("executeglobal", true);
+				outScript =
+					expression.substituteAll(outScript, substFunction);
 				// execute is available in VBScript 5.0
-			    expression = new RE("execute",RE.REG_ICASE);
-			    outScript = expression.substituteAll(outScript, substFunction);
-			    token.erase();
-			    token.append(outScript);
+				expression = Factory.instance().getPattern("execute", true);
+				outScript =
+					expression.substituteAll(outScript, substFunction);
+				token.erase();
+				token.append(outScript);
 			}
-			catch (REException ree)
-			{
-			    ree.printStackTrace();
-			}
-		    }
-		    out.write(token);
-		} 
+			out.write(token);
 		}
 	}
-	catch (IOException ioe)
-	{
-	    ioe.printStackTrace();
+	} catch (IOException ioe) {
+			ioe.printStackTrace();
+		} finally {
+			try {
+				out.flush();
+				out.close();
+			} catch (IOException ioe) {
+			}
+		}
 	}
-	finally
-	{
-	    try
-	    {
-		out.flush();
-		out.close();
-	    }
-	    catch (IOException ioe)
-	    {
-	    }
-	}
-    }
 }
 

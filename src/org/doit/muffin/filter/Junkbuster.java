@@ -24,7 +24,6 @@ import org.doit.muffin.*;
 import java.awt.Frame;
 import java.util.*;
 import java.io.*;
-import gnu.regexp.*;
 
 public class Junkbuster implements FilterFactory
 {

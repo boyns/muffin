@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.12 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: Request.java,v 1.13 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -29,7 +29,9 @@ import java.util.StringTokenizer;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Factory;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Matcher;
 import org.doit.io.*;
 
 /** Http/https request.
@@ -37,7 +39,7 @@ import org.doit.io.*;
  */
 public class Request extends Message
 {
-    private static RE httpRegex;
+    private static Pattern httpRegex;
 
     private static final String HttpPrefix = "http://";
     private static final String HttpsPrefix = "https://";
@@ -54,14 +56,7 @@ public class Request extends Message
     private Vector logHeaders;
 
     static {
-        try
-        {
-            httpRegex = new RE("^(http|https):", RE.REG_ICASE);
-        }
-        catch (REException e)
-        {
-            e.printStackTrace();
-        }
+		httpRegex = Factory.instance().getPattern("^(http|https):", true);
     }
 
     {
@@ -97,7 +92,7 @@ public class Request extends Message
 
         if (!url.startsWith("http"))
         {
-            REMatch match = httpRegex.getMatch(url);
+            Matcher match = httpRegex.getMatch(url);
             if (match != null)
             {
                 url =

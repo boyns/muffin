@@ -36,7 +36,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.lang.Integer;
 import java.awt.Dimension;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Factory;
 
 public class ImageKill implements FilterFactory
 {
@@ -44,7 +45,7 @@ public class ImageKill implements FilterFactory
     Prefs prefs;
     ImageKillFrame frame = null;
     MessageArea messages = null;
-    private RE exclude = null;
+    private Pattern exclude = null;
     private Hashtable removeSizes = null;
 
     public void setManager (FilterManager manager)
@@ -118,20 +119,12 @@ public class ImageKill implements FilterFactory
      * we should <b>not</b> try to remove.
      */
 
-    public void setExclude ()
-    {
+    public void setExclude () {
         exclude = null;
         String ex = prefs.getString ("ImageKill.exclude");
-	if (ex != null && !ex.equals (""))
-	{
-            try {
-	        exclude = new RE (ex);
-	    }
-	    catch (REException e) {
-	        System.out.println ("ImageKill REException: "
-				    + e.getMessage ());
-	    }
-	}
+		if (ex != null && !ex.equals ("")) {
+			exclude = Factory.instance().getPattern(ex);
+		}
     }
 
 
@@ -144,7 +137,7 @@ public class ImageKill implements FilterFactory
 
     boolean isExcluded (String s)
     {
-	return (s != null && exclude != null && exclude.getMatch (s) != null);
+	return (s != null && exclude != null && exclude.matches(s));
     }
 
 

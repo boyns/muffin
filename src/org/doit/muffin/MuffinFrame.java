@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.13 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.14 2003/05/19 23:06:54 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,7 +34,9 @@ import java.awt.Toolkit;
 import java.awt.image.*;
 import java.net.URL;
 import java.util.Vector;
-import gnu.regexp.*;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.muffin.regexp.Matcher;
+import org.doit.muffin.regexp.Factory;
 import org.doit.util.*;
 
 public class MuffinFrame extends Frame
@@ -135,74 +137,66 @@ public class MuffinFrame extends Frame
 	return buf.toString();
     }
 
-    public void updateGeometry(String geometry)
-    {
-	if (geometry == null && geometry.length() <= 0)
-	{
-	    return;
-	}
-
-	Dimension loc = null;
-	Point pos = null;
-
-	try
-	{
-	    RE re = new RE("([0-9]+x[0-9]+)?([\\+\\-][0-9]+[\\+\\-][0-9]+)?");
-	    REMatch match = re.getMatch(geometry);
-
-	    if (match != null)
-	    {
-		int i, j;
-
-		i = match.getSubStartIndex(1);
-		j = match.getSubEndIndex(1);
-		if (i != -1 && j != -1 && i != j)
-		{
-		    String s = geometry.substring(i, j);
-		    int n = s.indexOf('x');
-		    if (n != -1)
-		    {
-			loc = new Dimension(Integer.parseInt(s.substring(0, n)),
-					    Integer.parseInt(s.substring(n+1)));
-		    }
+    public void updateGeometry(String geometry) {
+		if (geometry == null && geometry.length() <= 0) {
+		    return;
 		}
 
-		i = match.getSubStartIndex(2);
-		j = match.getSubEndIndex(2);
-		if (i != -1 && j != -1 && i != j)
-		{
-		    Dimension screenSize = getToolkit().getScreenSize();
-		    String s = geometry.substring(i, j);
-		    int n = s.lastIndexOf('+');
-		    if (n == -1 || n == 0)
-			n = s.lastIndexOf('-');
+		Dimension loc = null;
+		Point pos = null;
 
-		    int x = Integer.parseInt(s.substring(s.charAt(0) == '+' ? 1 : 0, n));
-		    int y = Integer.parseInt(s.substring(s.charAt(n) == '+' ? n+1 : n));
+		Pattern re = Factory.instance().getPattern("([0-9]+x[0-9]+)?([\\+\\-][0-9]+[\\+\\-][0-9]+)?");
+		Matcher match = re.getMatch(geometry);
 
-		    if (x < 0)
-			x = screenSize.width + x;
-		    if (y < 0)
-			y = screenSize.height + y;
+		if (match != null) {
+			int i, j;
 
-		    pos = new Point(x, y);
+			i = match.getStartIndex(1);
+			j = match.getEndIndex(1);
+			if (i != -1 && j != -1 && i != j) {
+				String s = geometry.substring(i, j);
+				int n = s.indexOf('x');
+				if (n != -1) {
+					loc =
+						new Dimension(
+							Integer.parseInt(s.substring(0, n)),
+							Integer.parseInt(s.substring(n + 1)));
+				}
+			}
+
+			i = match.getStartIndex(2);
+			j = match.getEndIndex(2);
+			if (i != -1 && j != -1 && i != j) {
+				Dimension screenSize = getToolkit().getScreenSize();
+				String s = geometry.substring(i, j);
+				int n = s.lastIndexOf('+');
+				if (n == -1 || n == 0)
+					n = s.lastIndexOf('-');
+
+				int x =
+					Integer.parseInt(
+						s.substring(s.charAt(0) == '+' ? 1 : 0, n));
+				int y =
+					Integer.parseInt(
+						s.substring(s.charAt(n) == '+' ? n + 1 : n));
+
+				if (x < 0)
+					x = screenSize.width + x;
+				if (y < 0)
+					y = screenSize.height + y;
+
+				pos = new Point(x, y);
+			}
 		}
-	    }
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
 
-	hide();
-	setSize(loc != null ? loc : getPreferredSize());
-	pack();
-	if (pos != null)
-	{
-	    setLocation(pos);
+		hide();
+		setSize(loc != null ? loc : getPreferredSize());
+		pack();
+		if (pos != null) {
+			setLocation(pos);
+		}
+		show();
 	}
-	show();
-    }
 
     static void configColors(Frame frame)
     {
