@@ -1,7 +1,8 @@
-/* $Id: CookieMonster.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: CookieMonster.java,v 1.6 2003/05/24 21:04:41 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Christian Mallwitz <christian@mallwitz.com>
  *
  * This file is part of Muffin.
  *
@@ -33,59 +34,61 @@ public class CookieMonster implements FilterFactory
 
     public void setManager(FilterManager manager)
     {
-	this.manager = manager;
+        this.manager = manager;
     }
-    
+
     public void setPrefs(Prefs prefs)
     {
-	this.prefs = prefs;
+        this.prefs = prefs;
 
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	prefs.putBoolean("CookieMonster.eatRequestCookies", true);
-	prefs.putBoolean("CookieMonster.eatReplyCookies", true);
-	prefs.setOverride(o);
+        boolean o = prefs.getOverride();
+        prefs.setOverride(false);
+        prefs.putBoolean("CookieMonster.allowSessionCookies", true);
+        prefs.putInteger("CookieMonster.expirePersistentCookiesInMinutes", 0);
+        prefs.putBoolean("CookieMonster.filterReplyCookies", true);
+        prefs.putBoolean("CookieMonster.filterRequestCookies", false);
+        prefs.setOverride(o);
 
-	messages = new MessageArea();
+        messages = new MessageArea();
     }
 
     public Prefs getPrefs()
     {
-	return prefs;
+        return prefs;
     }
 
     public void viewPrefs()
     {
-	if (frame == null)
-	{
-	    frame = new CookieMonsterFrame(prefs, this);
-	}
-	frame.setVisible(true);
+        if (frame == null)
+        {
+            frame = new CookieMonsterFrame(prefs, this);
+        }
+        frame.setVisible(true);
     }
-    
+
     public Filter createFilter()
     {
-	Filter f = new CookieMonsterFilter(this);
-	f.setPrefs(prefs);
-	return f;
+        Filter f = new CookieMonsterFilter(this);
+        f.setPrefs(prefs);
+        return f;
     }
 
     public void shutdown()
     {
-	if (frame != null)
-	{
-	    frame.dispose();
-	}
+        if (frame != null)
+        {
+            frame.dispose();
+        }
     }
 
     void save()
     {
-	manager.save(this);
+        manager.save(this);
     }
 
     void report(Request request, String message)
     {
-	request.addLogEntry("CookieMonster", message);
-	messages.append(message + "\n");
+        request.addLogEntry("CookieMonster", message);
+        messages.append(message + "\n");
     }
 }
