@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.7 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Server.java,v 1.8 2000/04/03 05:06:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -49,7 +49,7 @@ class Server
 	try
 	{
 	    String bindaddr = options.getString("muffin.bindaddress");
-	    if (bindaddr != null)
+	    if (bindaddr != null && bindaddr.length() > 0)
 	    {
 		server = new ServerSocket(port, 512,
 					  InetAddress.getByName(bindaddr));
