@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.6 2000/03/08 15:15:59 boyns Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.7 2000/03/27 04:25:56 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,17 +22,7 @@
  */
 package org.doit.muffin;
 
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Event;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextArea;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -41,8 +31,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Enumeration;
 import java.io.*;
-import org.doit.util.TextDialog;
-import org.doit.util.YesNoDialog;
+import org.doit.util.*;
 
 /**
  * @author Mark Boyns
@@ -308,6 +297,12 @@ class ConfigurationFrame extends MuffinFrame
 			new OutputStreamWriter(f.getOutputStream());
 		    writer.write(text.getText());
 		    writer.close();
+		}
+		else
+		{
+		    Dialog d = new ErrorDialog(this, "Can't save to " + file.getName());
+		    d.show();
+		    d.dispose();
 		}
 	    }
 	    catch (IOException e)
