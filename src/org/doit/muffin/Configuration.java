@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.14 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: Configuration.java,v 1.15 2003/05/20 21:02:37 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -35,7 +35,7 @@ import org.doit.util.*;
 class Configuration extends Prefs
 {
 	// FIXME: these instance vars ought to be private
-	// FIXME: why are we using Vectors and not ArrayLists ?
+	// FIXME: why are we using Vectors and not ArrayLists (or LinkedList)?
 	// FIXME: autoConfigPatterns and autoConfigNames:
 	//        create a new kind of HashMap that matches regexes instead of keys
 	//        because this functionality is used in several places.
@@ -299,4 +299,23 @@ class Configuration extends Prefs
 	}
 	frame.show();
     }
+    
+    /**
+     * Returns the autoConfigNames.
+     * @return Vector
+     */
+    public Vector getAutoConfigNames()
+    {
+        return autoConfigNames;
+    }
+
+    /**
+     * Returns the autoConfigPatterns.
+     * @return Vector
+     */
+    public Vector getAutoConfigPatterns()
+    {
+        return autoConfigPatterns;
+    }
+
 }
