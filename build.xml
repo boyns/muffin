@@ -5,19 +5,20 @@
   <target name="init">
     <tstamp/>
     <property name="srcdir" value="src"/>
+    <property name="builddir" value="build"/>
     <property name="classes" value="classes"/>
-    <property name="build.compiler" value="classic"/>
+    <property name="build.compiler" value="modern"/>
     <property name="decryption.dir" value="org/doit/muffin/decryption"/>
     <property name="webadmin.dir" value="org/doit/muffin/webadmin"/>
     <property name="libdir" value="lib"/>
 
-		<path id="classpath.muffin">
-				<pathelement location="${classes}"/>
-				<fileset dir="${libdir}">
-						<include name="*.jar"/>
-				</fileset>
-		</path>
-   </target>
+    <path id="classpath.muffin">
+      <pathelement location="${classes}"/>
+      <fileset dir="${libdir}">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+  </target>
 
    <target name="dependencies" depends="init">
     <available property="jsse.present" classname="javax.net.ssl.SSLServerSocket" classpathref="classpath.muffin"/>
@@ -42,12 +43,12 @@
   <target name="junit.test" if="junit.present">
     <echo>JUnit detected</echo>
   </target>
-  
+
   <target name="compile" depends="dependencies, core.compile, decryption.compile"/>
 
   <target name="core.compile" depends="dependencies">
     <mkdir dir="${classes}" />
-    <javac 
+    <javac
 			srcdir="${srcdir}"
 			destdir="${classes}"
 			includes="**/*.java"
@@ -61,7 +62,7 @@
 	<exclude name="org/doit/muffin/test/**/*.java" unless="junit.present"/>
     </javac>
     <copy todir="${classes}">
-      <fileset 
+      <fileset
 		dir="${srcdir}"
 		includes="**/*.properties"
 		excludes="${decryption.dir}/**,${webadmin.dir}/**"/>
@@ -85,7 +86,7 @@
     <copy todir="${classes}">
       <fileset dir="${srcdir}" includes="${decryption.dir}/certs,${decryption.dir}/*.properties"/>
     </copy>
-    <copy 
+    <copy
 	file="${srcdir}/${decryption.dir}/package.html"
 	tofile="doc/https_sniffing_guide.html"/>
   </target>
@@ -113,20 +114,40 @@
 
   <target name="clean" depends="init">
     <delete dir="${classes}"/>
+    <delete dir="${builddir}"/>
   </target>
 
   <target name="muffin" depends="muffin.jar"/>
 
   <target name="muffin.jar" depends="compile">
-    <delete file="muffin.jar"/>
-    <jar jarfile="muffin.jar" basedir="${classes}"
+    <delete dir="${builddir}"/>
+    <mkdir dir="${builddir}"/>
+    <mkdir dir="${builddir}/WEB-INF"/>
+    <mkdir dir="${builddir}/WEB-INF/lib"/>
+    <mkdir dir="${builddir}/WEB-INF/classes"/>
+
+    <copy todir="${builddir}/WEB-INF/classes">
+      <fileset dir="${classes}"/>
+    </copy>
+
+    <copy todir="${builddir}/WEB-INF/lib">
+      <fileset dir="lib">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+
+    <move file="${builddir}/WEB-INF/classes/Muffin.class"
+          tofile="${builddir}/Muffin.class"/>
+
+    <jar jarfile="muffin.jar" basedir="${builddir}"
          manifest="src/MANIFEST.MF"
          compress="true"/>
+
   </target>
-    
+
   <target name="javadoc" description="Create Javadoc documentation">
     <mkdir dir="doc/api"/>
-    <javadoc 
+    <javadoc
 			sourcepath="src"
 			destdir="doc/api"
 			packagenames="org.doit.muffin.*"
