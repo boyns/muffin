@@ -1,4 +1,4 @@
-Muffin 0.8.2 README
+Muffin 0.9 README
 Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
 
 Muffin - a filtering proxy server for the World Wide Web.
@@ -49,6 +49,10 @@ Also included in this distribution:
   by Aaron M. Renn <arenn@urbanophile.com>
   http://www.urbanophile.com/arenn/hacking/download.html
 
+* dnsjava - implementation of DNS in Java
+  by Brian Wellington (bwelling@xbill.org)
+  http://www.xbill.org/dnsjava
+
 Send suggestions and bug reports to <boyns@doit.org>
 
-$Id: README,v 1.8 1999/03/20 22:45:23 boyns Exp $
+$Id: README,v 1.9 1999/05/27 06:09:05 boyns Exp $

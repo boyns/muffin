@@ -1,4 +1,4 @@
-/* $Id: MessageArea.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: MessageArea.java,v 1.5 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -57,6 +57,11 @@ public class MessageArea extends java.awt.TextArea
 	    replaceRange("", 0, offset);
 	}
 	super.append(message);
+    }
+
+    public void appendln(String message)
+    {
+	append(message + "\n");
     }
 
     public void clear()

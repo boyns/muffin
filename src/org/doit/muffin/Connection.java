@@ -1,4 +1,4 @@
-/* $Id: Connection.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
+/* $Id: Connection.java,v 1.6 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -62,7 +62,7 @@ class Connection
      */
     Connection(String host, int port) throws IOException
     {
-	this(new Socket(host, port));
+	this(new Socket(MuffinResolver.getByName(host), port));
     }
 
     Connection()

@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -52,7 +52,9 @@ import org.doit.util.TextDialog;
  * @see muffin.FilterManager
  * @author Mark Boyns
  */
-class FilterManagerFrame extends MuffinFrame implements ActionListener, ItemListener, WindowListener, ConfigurationListener
+class FilterManagerFrame
+    extends MuffinFrame
+    implements ActionListener, ItemListener, WindowListener, ConfigurationListener
 {
     FilterManager manager;
     BigList knownFiltersList = null;

@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: Prefs.java,v 1.5 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -229,20 +229,25 @@ public class Prefs extends Hashtable
 	}
     }
 
-    public String[] getStringList(String key)
+    public String[] getStringList(String key, String sep)
     {
 	String tokens = getString(key);
 	if (tokens == null)
 	{
 	    return new String[0];
 	}
-	StringTokenizer st = new StringTokenizer(tokens, ",");
+	StringTokenizer st = new StringTokenizer(tokens, sep);
 	String list[] = new String[st.countTokens()];
 	for (int i = 0; st.hasMoreTokens(); i++)
 	{
 	    list[i] = new String((String) st.nextToken());
 	}
 	return list;
+    }
+
+    public String[] getStringList(String key)
+    {
+	return getStringList(key, ",");
     }
 
     public void putStringList(String key, String list[])

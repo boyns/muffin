@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: FilterManager.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -100,7 +100,7 @@ public class FilterManager implements ConfigurationListener
 	    Vector known = new Vector(32);
 	    knownFiltersCache.put(config, known);
 	    UserPrefs uprefs = configs.getUserPrefs(config);
-	    String list[] = uprefs.getStringList("muffin.knownFilters");
+	    String list[] = uprefs.getStringList("FilterManager.knownFilters");
 	    if (list.length == 0)
 	    {
 		list = defaultKnownList;
@@ -110,7 +110,7 @@ public class FilterManager implements ConfigurationListener
 		known.addElement(list[i]);
 	    }
 	}
-	return(Vector) knownFiltersCache.get(config);
+	return (Vector) knownFiltersCache.get(config);
     }
 
     Vector getEnabledFilters(String config)
@@ -120,24 +120,24 @@ public class FilterManager implements ConfigurationListener
 	    Vector enabled = new Vector(32);
 	    enabledFiltersCache.put(config, enabled);
 	    UserPrefs uprefs = configs.getUserPrefs(config);
-	    String list[] = uprefs.getStringList("muffin.enabledFilters");
+	    String list[] = uprefs.getStringList("FilterManager.enabledFilters");
 	    for (int i = 0; i < list.length; i++)
 	    {
 		enable(config, list[i]);
 	    }
 	}
-	return(Vector) enabledFiltersCache.get(config);
+	return (Vector) enabledFiltersCache.get(config);
     }
 
-    void checkAutoConfig(String pattern)
-    {
-	String name = configs.autoConfig(pattern);
-	if (!name.equals(configs.getCurrent()))
-	{
-	    System.out.println("Automatic change to " + name);
-	    configs.setCurrent(name);
-	}
-    }
+//     void checkAutoConfig(String pattern)
+//     {
+// 	String name = configs.autoConfig(pattern);
+// 	if (!name.equals(configs.getCurrent()))
+// 	{
+// 	    System.out.println("Automatic change to " + name);
+// 	    configs.setCurrent(name);
+// 	}
+//     }
 
     /**
      * Return a list of filters created by each filter's
@@ -145,10 +145,17 @@ public class FilterManager implements ConfigurationListener
      *
      * @see muffin.Handler
      */
-    Filter[] createFilters()
+    synchronized Filter[] createFilters(String pattern)
     {
+	String name = configs.autoConfig(pattern);
+	if (!name.equals(configs.getCurrent()))
+	{
+	    System.out.println("Automatic change to " + name);
+	    configs.setCurrent(name);
+	}
+
 	FilterFactory ff;
-	Filter list[] = new Filter[enabledFilters.size()];
+	Filter[] list = new Filter[enabledFilters.size()];
 	for (int i = 0; i < list.length; i++)
 	{
 	    ff = (FilterFactory) enabledFilters.elementAt(i);
@@ -288,7 +295,7 @@ public class FilterManager implements ConfigurationListener
 	    list[i] = shortName((ff.getClass()).getName());
 	}
 	UserPrefs uprefs = configs.getUserPrefs(config);
-	uprefs.putStringList("muffin.enabledFilters", list);
+	uprefs.putStringList("FilterManager.enabledFilters", list);
 	uprefs.save();
     }
     

@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
+/* $Id: Configuration.java,v 1.6 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -144,7 +144,7 @@ class Configuration extends Prefs
 	    RE re = (RE) autoConfigPatterns.elementAt(i);
 	    if (re.getMatch(pattern) != null)
 	    {
-		return(String) autoConfigNames.elementAt(i);
+		return (String) autoConfigNames.elementAt(i);
 	    }
 	}
 	return defaultConfig;

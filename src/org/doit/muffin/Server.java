@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.5 1999/03/17 05:38:49 boyns Exp $ */
+/* $Id: Server.java,v 1.6 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -27,19 +27,18 @@ import java.net.Socket;
 import java.net.ServerSocket;
 import java.io.IOException;
 import java.io.DataOutputStream;
+import org.doit.util.*;
 
 /**
  * @author Mark Boyns
  */
 class Server
 {
-    static ThreadGroup handlers = null;
     ServerSocket server = null;
     Monitor monitor = null;
     FilterManager manager = null;
     Options options = null;
     boolean running = false;
-    Thread thread = null;
 
     Server(int port, Monitor m, FilterManager manager, Options options)
     {
@@ -65,9 +64,6 @@ class Server
 	    System.out.println(e);
 	    System.exit(0);
 	}
-	handlers = new ThreadGroup("Muffin Handlers");
-
-	thread = Thread.currentThread();
 
 	/* Initialize internal Httpd */
 	Httpd.init(options, manager, monitor, this);
@@ -76,93 +72,20 @@ class Server
     synchronized void suspend()
     {
 	running = false;
-
-	Thread list[] = getThreads();
-	if (list == null)
-	{
-	    return;
-	}
-	for (int i = 0; i < list.length; i++)
-	{
-	    list[i].suspend(); // DEPRECATION: can't suspend anymore - deadlock
-	}
     }
 
     synchronized void resume()
     {
 	running = true;
-
-	Thread list[] = getThreads();
-	if (list == null)
-	{
-	    return;
-	}
-	for (int i = 0; i < list.length; i++)
-	{
-	    list[i].resume(); // DEPRECATION: can't resume anymore - deadlock
-	}
     }
 
-    synchronized void stop()
-    {
-	Thread list[] = getThreads();
-	if (list == null)
-	{
-	    return;
-	}
-	for (int i = 0; i < list.length; i++)
-	{
-	    if (list[i] instanceof Handler)
-	    {
-		Handler h = (Handler) list[i];
-		h.flush();
-		h.close();
-		h.kill();
-	    }
-	    else
-	    {
-		list[i].stop(); // DEPRECATION: can't stop anymore - deadlock
-	    }
-	}
-    }
-
-    static void clean()
-    {
-	Thread list[] = getThreads();
-	if (list == null)
-	{
-	    return;
-	}
-	long now = System.currentTimeMillis();
-	for (int i = 0; i < list.length; i++)
-	{
-	    if (list[i] instanceof Handler)
-	    {
-		Handler h = (Handler) list[i];
-		if (h.idle > 0 && now - h.idle > (1000 * 60 * 5)) /* 5 minutes */
-		{
-		    h.close();
-		    h.kill();
-		}
-	    }
-	}
-    }
-
-    static synchronized Thread[] getThreads()
-    {
-	int n = handlers.activeCount();
-	if (n < 0)
-	{
-	    return null;
-	}
-	Thread list[] = new Thread[n];
-	handlers.enumerate(list);
-	return list;
-    }
+//     synchronized void stop()
+//     {
+//     }
 
     void run()
     {
-	thread.setName("Muffin Server");
+	Thread.currentThread().setName("Muffin Server");
 	running = true;
 	for (;;)
 	{
@@ -186,9 +109,9 @@ class Server
 	    }
 	    else if (running)
 	    {
-		Handler h = new Handler(handlers, thread, monitor,
-					manager, options);
-		h.doit(socket);
+		Handler h = new Handler(monitor, manager, options, socket);
+		ReusableThread rt = Main.getThread();
+		rt.setRunnable(h);
 	    }
 	    else
 	    {

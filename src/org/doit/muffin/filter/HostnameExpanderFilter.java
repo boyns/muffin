@@ -1,4 +1,4 @@
-/* $Id: HostnameExpanderFilter.java,v 1.4 1999/03/12 15:47:44 boyns Exp $ */
+/* $Id: HostnameExpanderFilter.java,v 1.5 1999/05/27 06:10:11 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -92,7 +92,8 @@ public class HostnameExpanderFilter implements RedirectFilter
 	// this could be a local address attempt to resolve
 	try
 	{
-	    address = InetAddress.getByName(host);
+	    //address = InetAddress.getByName(host);
+	    address = MuffinResolver.getByName(host);
 	}
 	catch (UnknownHostException uhe)
 	{
@@ -111,7 +112,8 @@ public class HostnameExpanderFilter implements RedirectFilter
 		    resolve = prefix[i] + host + suffix[j];
 		    try
 		    {
-			address = InetAddress.getByName(resolve);
+			//address = InetAddress.getByName(resolve);
+			address = MuffinResolver.getByName(resolve);
 		    }
 		    catch (UnknownHostException uhe)
 		    {

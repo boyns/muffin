@@ -1,4 +1,4 @@
-/* $Id: HttpError.java,v 1.4 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: HttpError.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -56,7 +56,7 @@ class HttpError
 	reply = new Reply();
 	reply.statusLine = "HTTP/1.0 " + code + " " + error;
 	reply.setHeaderField("Content-type", "text/html");
-	reply.setHeaderField("Server", "Muffin/" + options.getString("muffin.version"));
+	reply.setHeaderField("Server", "Muffin/" + Main.getMuffinVersion());
 
 	content = new StringBuffer();
 	content.append(Httpd.head(error));

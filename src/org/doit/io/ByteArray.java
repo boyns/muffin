@@ -1,4 +1,4 @@
-/* $Id: ByteArray.java,v 1.5 1999/03/17 05:38:40 boyns Exp $ */
+/* $Id: ByteArray.java,v 1.6 1999/05/27 06:09:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -21,6 +21,9 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 package org.doit.io;
+
+import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * Class used to represent an array of bytes as an Object.
@@ -132,6 +135,12 @@ public class ByteArray
     public byte[] getBytes()
     {
 	return bytes;
+    }
+
+    public void writeTo(OutputStream out)
+	throws IOException
+    {
+	out.write(bytes, 0, offset);
     }
 
     public byte get(int i)

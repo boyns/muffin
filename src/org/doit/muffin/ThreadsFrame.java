@@ -1,4 +1,4 @@
-/* $Id: ThreadsFrame.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
+/* $Id: ThreadsFrame.java,v 1.5 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -39,7 +39,8 @@ import java.util.Enumeration;
 /**
  * @author Mark Boyns
  */
-class ThreadsFrame extends MuffinFrame implements ActionListener, WindowListener
+class ThreadsFrame
+    extends MuffinFrame implements ActionListener, WindowListener
 {
     Thread startThread;
     TextArea text;
@@ -105,6 +106,8 @@ class ThreadsFrame extends MuffinFrame implements ActionListener, WindowListener
     
     synchronized void update()
     {
+	StringBuffer buf = new StringBuffer();
+	
 	text.setText("");
 
 	Thread list[] = new Thread[1024];
@@ -112,10 +115,12 @@ class ThreadsFrame extends MuffinFrame implements ActionListener, WindowListener
 
 	for (int i = 0; i < count; i++)
 	{
-	    appendString(list[i].getName());
-	    appendString(" -> ");
-	    appendString(list[i].getThreadGroup().getName());
-	    appendString("\n");
+	    buf.setLength(0);
+	    buf.append(list[i].getName());
+	    buf.append(" prio=");
+	    buf.append(list[i].getPriority());
+	    buf.append("\n");
+	    appendString(buf.toString());
 	}
 	if (count == 0)
 	{

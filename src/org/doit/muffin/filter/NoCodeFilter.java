@@ -1,4 +1,4 @@
-/* $Id: NoCodeFilter.java,v 1.1 1999/03/12 15:47:44 boyns Exp $ */
+/* $Id: NoCodeFilter.java,v 1.2 1999/05/27 06:10:11 boyns Exp $ */
 
 /* Based upon DecafFilter by Mark R. Boyns so here is his copyright notice: */
 
@@ -87,7 +87,9 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 
     private static boolean startsWithIgnoreCase(String target, String matchString)
     {
-	String startBit = target.substring(0, matchString.length());
+	//String startBit = target.substring(0, matchString.length());
+	// fix from Joerg Schneider
+	String startBit = target.substring(0,Math.min(target.length(),matchString.length()));
 	return startBit.equalsIgnoreCase(matchString);
     }
     

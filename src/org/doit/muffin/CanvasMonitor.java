@@ -1,4 +1,4 @@
-/* $Id: CanvasMonitor.java,v 1.5 1999/03/12 15:47:38 boyns Exp $ */
+/* $Id: CanvasMonitor.java,v 1.6 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -42,10 +42,10 @@ import java.awt.event.MouseEvent;
  *
  * @author Mark Boyns
  */
-class CanvasMonitor extends Canvas implements Monitor, MouseListener
+class CanvasMonitor extends Canvas implements Monitor, MouseListener, Runnable
 {
-    static final Dimension normalSize = new Dimension(200, 150);
-    static final Dimension smallSize = new Dimension(100, 75);
+    static final Dimension normalSize = new Dimension(300, 150);
+    static final Dimension smallSize = new Dimension(64, 64);
 
     Main parent;
     Vector handlers;
@@ -54,6 +54,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
     boolean suspended = false;
     Hashtable colorTable;
     boolean minimized = false;
+    boolean painting = false;
 
     /**
      * Create the CanvasMonitor.
@@ -87,6 +88,43 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
 	colorTable.put("default", Color.white);
 
 	addMouseListener(this);
+
+	Main.getThread().setRunnable(this);
+    }
+
+    public void run()
+    {
+	Thread.currentThread().setName("Muffin Monitor");
+
+	for (;;)
+	{
+	    painting = false;
+
+	    synchronized (this)
+	    {
+		try
+		{
+		    wait();
+		}
+		catch (InterruptedException ie)
+		{
+		    continue;
+		}
+		painting = true;
+	    }
+		
+	    while (handlers.size() > 0)
+	    {
+		try
+		{
+		    Thread.sleep(500);
+		    repaint();
+		}
+		catch (Exception e)
+		{
+		}
+	    }
+	}
     }
 
     /**
@@ -97,7 +135,6 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
     public void register(Handler h)
     {
 	handlers.addElement(h);
-	repaint();
     }
 
     /**
@@ -108,7 +145,6 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
     public void unregister(Handler h)
     {
 	handlers.removeElement(h);
-	repaint();
     }
 
     /**
@@ -118,7 +154,13 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
      */
     public void update(Handler h)
     {
-	repaint();
+	if (!painting)
+	{
+	    synchronized (this)
+	    {
+		notify();
+	    }
+	}
     }
 
     /**
@@ -189,18 +231,20 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
     {
 	Insets insets = new Insets(5, 5, 5, 5);
 	Dimension d = getSize();
+	Color c;
+
+	c = Main.getOptions().getColor("muffin.bg");
 
 	if (suspended)
 	{
-	    Color c = Main.getOptions().getColor("muffin.bg");
 	    c = c.darker();
 	    g.setColor(c);
 	    g.fill3DRect(2, 2, d.width-4, d.height-4, false);
 	}
 	else
 	{
-	    g.setColor(Main.getOptions().getColor("muffin.bg"));
-	    g.fill3DRect(2, 2, d.width-4, d.height-4, true);
+	    g.setColor(c);
+	    g.draw3DRect(2, 2, d.width-4, d.height-4, false);
 	}
 	
 	int y = insets.top;
@@ -375,7 +419,7 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
 		g.drawString(buf.toString(), insets.left + 5, y+h-fontMetrics.getMaxDescent());
 	    }
 	    
-	    y += h + (minimized ? 2 : 5);
+	    y += h + (minimized ? 2 : 3);
 	}
     }
 

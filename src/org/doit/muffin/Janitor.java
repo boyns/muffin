@@ -1,4 +1,4 @@
-/* $Id: Janitor.java,v 1.4 1999/03/12 15:47:40 boyns Exp $ */
+/* $Id: Janitor.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -24,9 +24,17 @@ package org.doit.muffin;
 
 import java.util.Enumeration;
 import java.util.Vector;
+import org.doit.util.*;
 
 class Janitor implements Runnable
 {
+    private Vector cleanable = new Vector();
+    
+    public void add(Cleanable c)
+    {
+	cleanable.addElement(c);
+    }
+    
     public void run()
     {
 	Thread.currentThread().setName("Janitor");
@@ -42,11 +50,13 @@ class Janitor implements Runnable
 		e.printStackTrace();
 	    }
 
-	    /* Clean HTTP persistent server connections. */
-	    Http.clean();
+	    for (Enumeration e = cleanable.elements();
+		 e.hasMoreElements(); )
+	    {
+		((Cleanable)e.nextElement()).clean();
+	    }
 
-	    /* Clean keep-alive client connections. */
-	    Server.clean();
+	    Http.clean();
 
 	    /* AutoSave any AutoSaveable filters */
 	    FilterManager manager = Main.getFilterManager();

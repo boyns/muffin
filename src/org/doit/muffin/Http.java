@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.5 1999/03/12 15:47:39 boyns Exp $ */
+/* $Id: Http.java,v 1.6 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import org.doit.util.*;
 
 /**
  * @author Mark Boyns
@@ -38,6 +39,8 @@ class Http extends HttpConnection
     static final int MAX_PENDING_REQUESTS = 1;
     
     static Hashtable cache = new Hashtable(33);
+    private static Object httpLock = new Object();
+    
 
     String host;
     int port;
@@ -290,31 +293,34 @@ class Http extends HttpConnection
 	    }
 	}
     }
-    
-    static synchronized Http open(String host, int port, boolean isProxy)
+
+    static Http open(String host, int port, boolean isProxy)
 	throws IOException
     {
 	Http http = null;
 
-	Vector v = cacheLookup(host, port);
-	if (v != null)
+	synchronized (httpLock)
 	{
-	    for (int i = 0; i < v.size(); i++)
+	    Vector v = cacheLookup(host, port);
+	    if (v != null)
 	    {
-		Http pick = (Http) v.elementAt(i);
-
-		/* find an http connection that isn't busy */
-		if (pick.isPersistent() && !pick.isBusy())
+		for (int i = 0; i < v.size(); i++)
 		{
-		    http = pick;
-		    break;
-		}
-	    }
+		    Http pick = (Http) v.elementAt(i);
 
-	    if (http != null)
-	    {
-		http.idle = 0;
-		if (DEBUG) System.out.println("REUSE " + http);
+		    /* find an http connection that isn't busy */
+		    if (pick.isPersistent() && !pick.isBusy())
+		    {
+			http = pick;
+			break;
+		    }
+		}
+
+		if (http != null)
+		{
+		    http.idle = 0;
+		    if (DEBUG) System.out.println("REUSE " + http);
+		}
 	    }
 	}
 	
@@ -349,7 +355,7 @@ class Http extends HttpConnection
 	return list.elements();
     }
 
-    public static synchronized void clean()
+    static synchronized void clean()
     {
 	cacheClean();
     }

@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.10 1999/03/20 22:45:38 boyns Exp $ */
+/* $Id: Main.java,v 1.11 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -39,6 +39,7 @@ import java.awt.event.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import gnu.getopt.*;
+import org.doit.util.*;
 
 /**
  * Startup interface to Muffin.  Parses command line options, loads user
@@ -49,11 +50,15 @@ import gnu.getopt.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    final static String version = "0.8.2";
+    private static String version = "0.9-test";
+    private static String url = "http://muffin.doit.org/";
+    private static String host;
+
     static Options options;
     static Configuration configs;
     static FilterManager manager;
     static LogFile logfile;
+    static ThreadPool pool;
 
     String localhost;
     Server server;
@@ -71,8 +76,8 @@ public class Main extends MuffinFrame
     {
 	super("Muffin");
 
-	infoString = new String("Muffin " + options.getString("muffin.version") +
-				 " running on " + options.getString("muffin.host") +
+	infoString = new String("Muffin " + Main.getMuffinVersion() +
+				 " running on " + Main.getMuffinHost() +
 				 " port " + options.getString("muffin.port"));
 	
 	manager = new FilterManager(options, configs);
@@ -88,15 +93,37 @@ public class Main extends MuffinFrame
 	    gui();
 	}
 
-	/* Startup the Janitor */
-	new Thread(new Janitor()).start();
-
 	server = new Server(options.getInteger("muffin.port"),
-			     monitor, manager, options);
+			    monitor, manager, options);
+
+	/* Startup the Janitor */
+	Janitor j = new Janitor();
+	j.add(pool);
+	getThread().setRunnable(j);
 
 	System.out.println(infoString);
 
 	server.run();
+    }
+
+    public static String getMuffinUrl()
+    {
+	return url;
+    }
+
+    public static String getMuffinVersion()
+    {
+	return version;
+    }
+
+    public static String getMuffinHost()
+    {
+	return host;
+    }
+
+    public static ReusableThread getThread()
+    {
+	return pool.get();
     }
 
     /**
@@ -109,6 +136,10 @@ public class Main extends MuffinFrame
 	Menu menu = new Menu("File");
 	//menu.setFont(new Font("Helvetica", Font.BOLD, 12));
 	MenuItem item;
+	item = new MenuItem("Disable Filtering");
+	item.setActionCommand("doDisable");
+	item.addActionListener(this);
+	menu.add(item);
 	item = new MenuItem("Quit");
 	item.setActionCommand("doQuit");
 	item.addActionListener(this);
@@ -162,45 +193,48 @@ public class Main extends MuffinFrame
 	    add("Center", canvas);
 	}
 
-	GridBagLayout layout = new GridBagLayout();
-	controlPanel = new Panel();
-	controlPanel.setLayout(layout);
+// 	GridBagLayout layout = new GridBagLayout();
+// 	controlPanel = new Panel();
+// 	controlPanel.setLayout(layout);
 
-	GridBagConstraints c = new GridBagConstraints();
-	c.anchor = GridBagConstraints.NORTHWEST;
-	c.insets = new Insets(2, 5, 2, 5);
-	c.weightx = 1.0;
+// 	GridBagConstraints c = new GridBagConstraints();
+// 	c.anchor = GridBagConstraints.NORTHWEST;
+// 	c.insets = new Insets(2, 5, 2, 5);
+// 	c.weightx = 1.0;
 
-	Button b;
-	b = new Button("Filters...");
-	b.setFont(new Font("Helvetica", Font.BOLD, 12));
-	b.setActionCommand("doFilters");
-	b.addActionListener(this);
-	layout.setConstraints(b, c);
-	controlPanel.add(b);
-	b = new Button("Options...");
-	b.setActionCommand("doOptions");
-	b.addActionListener(this);
-	layout.setConstraints(b, c);
-	controlPanel.add(b);
-	suspendButton = new Button("Suspend");
-	suspendButton.setActionCommand("doSuspend");
-	suspendButton.addActionListener(this);
-	layout.setConstraints(suspendButton, c);
-	controlPanel.add(suspendButton);
-	b = new Button("Stop");
-	b.setActionCommand("doStop");
-	b.addActionListener(this);
-	layout.setConstraints(b, c);
-	controlPanel.add(b);
+// 	Button b;
+// 	b = new Button("Filters...");
+// 	b.setFont(new Font("Helvetica", Font.BOLD, 12));
+// 	b.setActionCommand("doFilters");
+// 	b.addActionListener(this);
+// 	layout.setConstraints(b, c);
+// 	controlPanel.add(b);
+
+// 	b = new Button("Options...");
+// 	b.setActionCommand("doOptions");
+// 	b.addActionListener(this);
+// 	layout.setConstraints(b, c);
+// 	controlPanel.add(b);
+
+// 	suspendButton = new Button("Suspend");
+// 	suspendButton.setActionCommand("doSuspend");
+// 	suspendButton.addActionListener(this);
+// 	layout.setConstraints(suspendButton, c);
+// 	controlPanel.add(suspendButton);
+
+// 	b = new Button("Stop");
+// 	b.setActionCommand("doStop");
+// 	b.addActionListener(this);
+// 	layout.setConstraints(b, c);
+//	controlPanel.add(b);
 	
-	Icon icon = new Icon(options);
-	c.anchor = GridBagConstraints.EAST;
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(icon, c);
-	controlPanel.add(icon);
+// 	Icon icon = new Icon(options);
+// 	c.anchor = GridBagConstraints.EAST;
+// 	c.gridwidth = GridBagConstraints.REMAINDER;
+// 	layout.setConstraints(icon, c);
+// 	controlPanel.add(icon);
 	
-	add("North", controlPanel);
+// 	add("North", controlPanel);
 
 	infoLabel = new Label(infoString);
 	infoLabel.setFont(options.getFont("muffin.smallfont"));
@@ -232,6 +266,20 @@ public class Main extends MuffinFrame
 	{
 	    closeApplication();
 	}
+	else if ("doDisable".equals(arg))
+	{
+	    MenuItem item = (MenuItem) event.getSource();
+	    item.setActionCommand("doEnable");
+	    item.setLabel("Enable Filtering");
+	    options.putBoolean("muffin.passthru", true);
+	}
+	else if ("doEnable".equals(arg))
+	{
+	    MenuItem item = (MenuItem) event.getSource();
+	    item.setActionCommand("doDisable");
+	    item.setLabel("Disable Filtering");
+	    options.putBoolean("muffin.passthru", false);
+	}
 	else if ("doConnections".equals(arg))
 	{
 	    new ConnectionsFrame(monitor);
@@ -252,10 +300,10 @@ public class Main extends MuffinFrame
 	{
 	    new HelpFrame("COPYING");
 	}
-	else if ("doStop".equals(arg))
-	{
-	    server.stop();
-	}
+// 	else if ("doStop".equals(arg))
+// 	{
+// 	    server.stop();
+// 	}
 	else if ("doSuspend".equals(arg))
 	{
   	    suspendButton.setLabel("Resume");
@@ -294,14 +342,14 @@ public class Main extends MuffinFrame
 	if (enable)
 	{
  	    infoLabel.setVisible(false);
- 	    controlPanel.setVisible(false);
+ 	    //controlPanel.setVisible(false);
 	    remove(menuBar);
  	    monitor.minimize(true);
 	}
 	else
 	{
  	    infoLabel.setVisible(true);
- 	    controlPanel.setVisible(true);
+ 	    //controlPanel.setVisible(true);
  	    setMenuBar(menuBar);
 	    monitor.minimize(false);
 	}
@@ -416,7 +464,7 @@ public class Main extends MuffinFrame
 
 	int c;
 	String arg;
-	LongOpt longopts[] = new LongOpt[15];
+	LongOpt longopts[] = new LongOpt[16];
 
 	longopts[0] = new LongOpt("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
 	longopts[1] = new LongOpt("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
@@ -433,6 +481,7 @@ public class Main extends MuffinFrame
 	longopts[12] = new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v');
 	longopts[13] = new LongOpt("geometry", LongOpt.REQUIRED_ARGUMENT, null, 'g');
 	longopts[14] = new LongOpt("bindaddress", LongOpt.REQUIRED_ARGUMENT, null, 'b');
+	longopts[15] = new LongOpt("props", LongOpt.REQUIRED_ARGUMENT, null, 10);
 
 	Prefs args = new Prefs();
 	Getopt g = new Getopt("Muffin", argv, "v", longopts, true);
@@ -521,26 +570,31 @@ public class Main extends MuffinFrame
 		args.putString("bigfont", g.getOptarg());
 		break;
 
+	    case 10: /* --props */
+		args.putString("props", g.getOptarg());
+		break;
+
 	    case 'g': /* --geometry */
 		args.putString("geometry", g.getOptarg());
 		break;
 
 	    case 'h': /* --help */
 		System.out.println("usage: java Muffin [options]\n\n"
-				    + "-conf NAME            Default configuration.\n"
-				    + "-dir DIR              Preferences directory.\n"
-				    + "-font FONT            Default font.\n"
-				    + "-smallfont FONT       Font used for small text.\n"
-				    + "-bigfont FONT         Font used for large text.\n"
-				    + "-help                 This useful message.\n"
-				    + "-httpProxyHost HOST   Use HOST as the HTTP proxy.\n"
-				    + "-httpProxyPort PORT   Use PORT as the HTTP proxy port.\n"
-				    + "-httpsProxyHost HOST  Use HOST as the SSL proxy.\n"
-				    + "-httpsProxyPort PORT  Use PORT as the SSL proxy port.\n"
-				    + "-nw                   Don't create any windows.\n"
-				    + "-port PORT            Listen on PORT for browser requests.\n"
-				    + "-bindaddress IPADDR   Only bind to IPADDR.\n"
-				    + "-v                    Display muffin version.\n");
+				    + "-conf NAME            Default configuration (default.conf)\n"
+				    + "-dir DIR              Preferences directory (~/Muffin)\n"
+				    + "-font FONT            Default font\n"
+				    + "-smallfont FONT       Font used for small text\n"
+				    + "-bigfont FONT         Font used for large text\n"
+				    + "-help                 This useful message\n"
+				    + "-httpProxyHost HOST   Use HOST as the HTTP proxy\n"
+				    + "-httpProxyPort PORT   Use PORT as the HTTP proxy port\n"
+				    + "-httpsProxyHost HOST  Use HOST as the SSL proxy\n"
+				    + "-httpsProxyPort PORT  Use PORT as the SSL proxy port\n"
+				    + "-nw                   Don't create any windows\n"
+				    + "-port PORT            Listen on PORT for browser requests (51966)\n"
+				    + "-props NAME           Default muffin properties file (muffin.props)\n"
+				    + "-bindaddress IPADDR   Only bind to IPADDR\n"
+				    + "-v                    Display muffin version\n");
 		System.exit(0);
 		break;
 
@@ -568,17 +622,22 @@ public class Main extends MuffinFrame
 	configs.setCurrent(defaultConfig);
 
 	/* Create muffin run-time options */
-	options = new Options(configs);
-	options.putString("muffin.version", version);
-	options.putString("muffin.url", "http://muffin.doit.org/");
+	String defaultProps = "muffin.props";
+	if (args.exists("props"))
+	{
+	    defaultProps = args.getString("props");
+	}
+	options = new Options(defaultProps);
+
 	try
 	{
-	    options.putString("muffin.host", (InetAddress.getLocalHost()).getHostName());
+	    host = InetAddress.getLocalHost().getHostName();
 	}
 	catch (UnknownHostException e)
 	{
-	    options.putString("muffin.host", "127.0.0.1");
+	    host = "127.0.0.1";
 	}
+	
 	if (args.exists("port"))
 	{
 	    options.putInteger("muffin.port", args.getInteger("port"));
@@ -627,6 +686,7 @@ public class Main extends MuffinFrame
 	options.sync();
 
 	logfile = new LogFile(options.getUserFile(options.getString("muffin.logfile")));
+	pool = new ThreadPool("Muffin Threads");
 
 	new Main();
     }

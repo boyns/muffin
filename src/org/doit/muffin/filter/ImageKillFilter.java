@@ -133,13 +133,22 @@ public class ImageKillFilter implements ContentFilter
 		}
 		out.write (token);
 	    }
-	    
-	    out.flush ();
-	    out.close ();
 	}
 	catch (Exception e)
 	{
 	    e.printStackTrace ();
+	}
+	finally
+	{
+	    try
+	    {
+	        out.flush();
+	        out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	        ioe.printStackTrace();
+	    }
 	}
     }
 

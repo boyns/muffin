@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
+/* $Id: Options.java,v 1.7 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -33,20 +33,23 @@ import java.awt.Color;
 /**
  * @author Mark Boyns
  */
-public class Options extends Prefs implements ConfigurationListener
+public class Options extends UserPrefs
 {
     OptionsFrame frame;
     Vector hostsAllow;
     Vector hostsDeny;
     Vector adminAllow;
     Vector adminDeny;
-    boolean noWindow = false;
-    Configuration configs = null;
-    
-    Options(Configuration configs)
-    {
-	this.configs = configs;
 
+//     Configuration configs = null;
+    
+//     Options(Configuration configs)
+//     {
+// 	this.configs = configs;
+    Options(String filename)
+    {
+	super(filename);
+	
 	/* Load the properties with some reasonable defaults. */
 	putInteger("muffin.port", 51966);
 	putString("muffin.httpProxyHost", "");
@@ -90,29 +93,24 @@ public class Options extends Prefs implements ConfigurationListener
 
 	/* Other defaults */
  	putBoolean("muffin.proxyKeepAlive", false);
+ 	putString("muffin.nameservers", "");
 
-	include(configs.getUserPrefs());
+// 	include(configs.getUserPrefs());
+// 	configs.addConfigurationListener(this);
 
-	configs.addConfigurationListener(this);
+	load();
     }
 
-    public void configurationChanged(String name)
-    {
-	include(configs.getUserPrefs());
-    }
-
-    void include(UserPrefs prefs)
-    {
-	Prefs p = prefs.extract("muffin");
-	merge(p);
-	sync();
-    }
+//     public void configurationChanged(String name)
+//     {
+// 	include(configs.getUserPrefs());
+//     }
 
     void createFrame()
     {
 	if (frame == null)
 	{
-	    frame = new OptionsFrame(this, configs);
+	    frame = new OptionsFrame(this);//, configs);
 	}
 	frame.hideshow();	
     }
@@ -163,6 +161,8 @@ public class Options extends Prefs implements ConfigurationListener
 	updateHostsDeny();
 	updateAdminAllow();
 	updateAdminDeny();
+
+	MuffinResolver.init(getStringList("muffin.nameservers"));
     }
     
     boolean hostAccess(InetAddress addr)

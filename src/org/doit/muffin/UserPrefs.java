@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.7 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -51,6 +51,11 @@ class UserPrefs extends Prefs
     void setPrefsFile(String filename)
     {
 	rcfile = filename;
+    }
+
+    String getPrefsFile()
+    {
+	return rcfile;
     }
 
     void unload()

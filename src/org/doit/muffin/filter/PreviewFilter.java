@@ -1,4 +1,4 @@
-/* $Id: PreviewFilter.java,v 1.4 1999/03/12 15:47:45 boyns Exp $ */
+/* $Id: PreviewFilter.java,v 1.5 1999/05/27 06:10:11 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -24,6 +24,7 @@ package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
 import org.doit.io.*;
+import org.doit.util.*;
 import org.doit.html.Token;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -137,9 +138,9 @@ public class PreviewFilter implements ContentFilter
 		}
 		src.setSourceInputStream(new ByteArrayInputStream(content));
 
-		Thread thread = new Thread(src);
+		ReusableThread thread = Main.getThread();
 		thread.setName("Preview ObjectStream Source");
-		thread.start();
+		thread.setRunnable(src);
 
 		while ((obj = in.read()) != null)
 		{

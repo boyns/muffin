@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.7 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -44,7 +44,7 @@ public class MuffinFrame extends Frame
     {
 	super(title);
 
-	if (! Main.getOptions().getBoolean("muffin.noWindow"))
+	if (!Main.getOptions().getBoolean("muffin.noWindow"))
 	{
 	    setFont(Main.getOptions().getFont("muffin.font"));
 	    setIcon();

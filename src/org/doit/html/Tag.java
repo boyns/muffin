@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.5 1999/03/17 05:38:37 boyns Exp $ */
+/* $Id: Tag.java,v 1.6 1999/05/27 06:09:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -113,10 +113,15 @@ public class Tag
 	{
 	    return(String) obj;
 	}
-	else
+	else if (obj != null)
 	{
 	    /* NoValue */
 	    return obj.toString();
+	}
+	else
+	{
+	    /* really no value */
+	    return null;
 	}
     }
 

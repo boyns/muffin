@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.6 1999/03/17 05:38:49 boyns Exp $ */
+/* $Id: OptionsFrame.java,v 1.7 1999/05/27 06:10:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -43,10 +43,10 @@ import org.doit.util.ColorSample;
  * @author Mark Boyns
  */
 class OptionsFrame extends MuffinFrame
-    implements ActionListener, WindowListener, ConfigurationListener
+    implements ActionListener, WindowListener//, ConfigurationListener
 {
     Options options;
-    Configuration configs;
+//     Configuration configs;
     TextField httpProxyHost;
     TextField httpProxyPort;
     TextField httpsProxyHost;
@@ -61,13 +61,15 @@ class OptionsFrame extends MuffinFrame
     TextField geometry;
     ColorSample fgSample, bgSample;
     Checkbox proxyKeepAlive;
+    TextField nameservers;
 
-    OptionsFrame(Options options, Configuration configs)
+    OptionsFrame(Options options)//, Configuration configs)
     {
 	super("Muffin: Options");
 
 	this.options = options;
-	this.configs = configs;
+
+// 	this.configs = configs;
 
 	setResizable(false);
 	
@@ -80,12 +82,12 @@ class OptionsFrame extends MuffinFrame
 	Button b;
 	GridBagConstraints c;
 
-	Label currentLabel = new Label();
-	//currentLabel.setFont(new Font("Fixed", Font.PLAIN, 12));
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(currentLabel, c);
-	panel.add(currentLabel);
+// 	Label currentLabel = new Label();
+// 	//currentLabel.setFont(new Font("Fixed", Font.PLAIN, 12));
+// 	c = new GridBagConstraints();
+// 	c.gridwidth = GridBagConstraints.REMAINDER;
+// 	layout.setConstraints(currentLabel, c);
+// 	panel.add(currentLabel);
 
 	l = new Label("HTTP Proxy:", Label.RIGHT);
 	c = new GridBagConstraints();
@@ -270,6 +272,18 @@ class OptionsFrame extends MuffinFrame
 	layout.setConstraints(colorPanel, c);
 	panel.add(colorPanel);
 
+	l = new Label("Nameservers:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
+	
+	nameservers = new TextField(50);
+	nameservers.setText(options.getString("muffin.nameservers"));
+	c = new GridBagConstraints();
+	c.gridwidth = GridBagConstraints.REMAINDER;
+	layout.setConstraints(nameservers, c);
+	panel.add(nameservers);
+
 	proxyKeepAlive = new Checkbox("Enable Proxy Keep-Alive",
 				      options.getBoolean("muffin.proxyKeepAlive"));
 	c = new GridBagConstraints();
@@ -297,8 +311,8 @@ class OptionsFrame extends MuffinFrame
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	configs.addConfigurationListener(currentLabel);
-	configs.addConfigurationListener(this);
+// 	configs.addConfigurationListener(currentLabel);
+// 	configs.addConfigurationListener(this);
 
 	pack();
 	setSize(getPreferredSize());
@@ -316,26 +330,27 @@ class OptionsFrame extends MuffinFrame
 	}
     }
 
-    public void configurationChanged(String name)
-    {
-	httpProxyHost.setText(options.getString("muffin.httpProxyHost"));
-	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
-	httpsProxyHost.setText(options.getString("muffin.httpsProxyHost"));
-	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
-	hostsAllowList.setText(options.getString("muffin.hostsAllow"));
-	hostsDenyList.setText(options.getString("muffin.hostsDeny"));
-	adminAllowList.setText(options.getString("muffin.adminAllow"));
-	adminDenyList.setText(options.getString("muffin.adminDeny"));
-	adminUser.setText(options.getString("muffin.adminUser"));
-	adminPassword.setText(options.getString("muffin.adminPassword"));
-	bg.setText(options.getString("muffin.bg"));
-	bgSample.setColor(bg.getText());
-	fg.setText(options.getString("muffin.fg"));
-	fgSample.setColor(fg.getText());
-	proxyKeepAlive.setState(options.getBoolean("muffin.proxyKeepAlive"));
+//     public void configurationChanged(String name)
+//     {
+// 	httpProxyHost.setText(options.getString("muffin.httpProxyHost"));
+// 	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
+// 	httpsProxyHost.setText(options.getString("muffin.httpsProxyHost"));
+// 	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
+// 	hostsAllowList.setText(options.getString("muffin.hostsAllow"));
+// 	hostsDenyList.setText(options.getString("muffin.hostsDeny"));
+// 	adminAllowList.setText(options.getString("muffin.adminAllow"));
+// 	adminDenyList.setText(options.getString("muffin.adminDeny"));
+// 	adminUser.setText(options.getString("muffin.adminUser"));
+// 	adminPassword.setText(options.getString("muffin.adminPassword"));
+// 	bg.setText(options.getString("muffin.bg"));
+// 	bgSample.setColor(bg.getText());
+// 	fg.setText(options.getString("muffin.fg"));
+// 	fgSample.setColor(fg.getText());
+// 	proxyKeepAlive.setState(options.getBoolean("muffin.proxyKeepAlive"));
+// 	nameservers.setText(options.getString("muffin.nameservers"));
 
-	MuffinFrame.repaintFrames();
-    }
+// 	MuffinFrame.repaintFrames();
+//     }
 
     void sync()
     {
@@ -356,6 +371,7 @@ class OptionsFrame extends MuffinFrame
 	bgSample.setColor(bg.getText());
 	MuffinFrame.getFrame("Muffin").updateGeometry(options.getString("muffin.geometry"));
 	options.putBoolean("muffin.proxyKeepAlive", proxyKeepAlive.getState());
+	options.putString("muffin.nameservers", nameservers.getText());
 	options.sync();
     }
 
@@ -366,28 +382,30 @@ class OptionsFrame extends MuffinFrame
 	if ("doApply".equals(arg))
 	{
 	    sync();
-
 	    MuffinFrame.repaintFrames();
 	}
 	else if ("doSave".equals(arg))
 	{
 	    sync();
-	    UserPrefs userPrefs = configs.getUserPrefs();
-	    userPrefs.putString("muffin.httpProxyHost", options.getString("muffin.httpProxyHost"));
-	    userPrefs.putString("muffin.httpProxyPort", options.getString("muffin.httpProxyPort"));
-	    userPrefs.putString("muffin.httpsProxyHost", options.getString("muffin.httpsProxyHost"));
-	    userPrefs.putString("muffin.httpsProxyPort", options.getString("muffin.httpsProxyPort"));
-	    userPrefs.putString("muffin.hostsAllow", options.getString("muffin.hostsAllow"));
-	    userPrefs.putString("muffin.hostsDeny", options.getString("muffin.hostsDeny"));
-	    userPrefs.putString("muffin.adminAllow", options.getString("muffin.adminAllow"));
-	    userPrefs.putString("muffin.adminDeny", options.getString("muffin.adminDeny"));
-	    userPrefs.putString("muffin.adminUser", options.getString("muffin.adminUser"));
-	    userPrefs.putString("muffin.adminPassword", options.getString("muffin.adminPassword"));
-	    userPrefs.putString("muffin.geometry", options.getString("muffin.geometry"));
-	    userPrefs.putString("muffin.fg", options.getString("muffin.fg"));
-	    userPrefs.putString("muffin.bg", options.getString("muffin.bg"));
-	    userPrefs.putBoolean("muffin.proxyKeepAlive", options.getBoolean("muffin.proxyKeepAlive"));
-	    userPrefs.save();
+	    options.save();
+
+// 	    UserPrefs userPrefs = configs.getUserPrefs();
+// 	    userPrefs.putString("muffin.httpProxyHost", options.getString("muffin.httpProxyHost"));
+// 	    userPrefs.putString("muffin.httpProxyPort", options.getString("muffin.httpProxyPort"));
+// 	    userPrefs.putString("muffin.httpsProxyHost", options.getString("muffin.httpsProxyHost"));
+// 	    userPrefs.putString("muffin.httpsProxyPort", options.getString("muffin.httpsProxyPort"));
+// 	    userPrefs.putString("muffin.hostsAllow", options.getString("muffin.hostsAllow"));
+// 	    userPrefs.putString("muffin.hostsDeny", options.getString("muffin.hostsDeny"));
+// 	    userPrefs.putString("muffin.adminAllow", options.getString("muffin.adminAllow"));
+// 	    userPrefs.putString("muffin.adminDeny", options.getString("muffin.adminDeny"));
+// 	    userPrefs.putString("muffin.adminUser", options.getString("muffin.adminUser"));
+// 	    userPrefs.putString("muffin.adminPassword", options.getString("muffin.adminPassword"));
+// 	    userPrefs.putString("muffin.geometry", options.getString("muffin.geometry"));
+// 	    userPrefs.putString("muffin.fg", options.getString("muffin.fg"));
+// 	    userPrefs.putString("muffin.bg", options.getString("muffin.bg"));
+// 	    userPrefs.putBoolean("muffin.proxyKeepAlive", options.getBoolean("muffin.proxyKeepAlive"));
+// 	    userPrefs.putString("muffin.nameservers", options.getString("muffin.nameservers"));
+// 	    userPrefs.save();
 	}
 	else if ("doClose".equals(arg))
 	{

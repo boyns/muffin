@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.6 1999/03/17 06:00:59 boyns Exp $ */
+/* $Id: Handler.java,v 1.7 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -26,6 +26,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import org.doit.io.*;
+import org.doit.util.*;
 
 /**
  * HTTP transaction handler.  A handler is created by muffin.Server for
@@ -35,11 +36,10 @@ import org.doit.io.*;
  * @see muffin.Server
  * @author Mark Boyns
  */
-class Handler extends Thread
+class Handler implements Runnable
 {
     static final boolean DEBUG = false;
     
-    ThreadGroup filterGroup = null;
     Monitor monitor = null;
     FilterManager manager = null;
     Options options = null;
@@ -57,24 +57,12 @@ class Handler extends Thread
     /**
      * Create a Handler.
      */
-    Handler(ThreadGroup t, Runnable r, Monitor m,
-	    FilterManager manager, Options options)
+    Handler(Monitor m, FilterManager manager, Options options, Socket socket)
     {
-	super(t, r);
 	this.monitor = m;
 	this.manager = manager;
 	this.options = options;
-    }
-
-    /**
-     * Start the handler.
-     *
-     * @param s a socket
-     */
-    void doit(Socket s)
-    {
-	socket = s;
-	start();
+	this.socket = socket;
     }
 
     /**
@@ -112,12 +100,6 @@ class Handler extends Thread
 	}
     }
 
-    void kill()
-    {
-	monitor.unregister(this);
-	stop(); // DEPRECATION: can't stop anymore
-    }
-
     public void run()
     {
 	boolean keepAlive = false;
@@ -126,13 +108,11 @@ class Handler extends Thread
 	Thread.currentThread().setName("Handler("
 					 + socket.getInetAddress().getHostAddress()
 					 + ")");
-	filterGroup = new ThreadGroup("Filters(" +
-				       socket.getInetAddress().getHostAddress()
-				       + ")");
 
 	try
 	{
 	    client = new Client(socket);
+	    client.setTimeout(30000);
 	}
 	catch (IOException e)
 	{
@@ -140,58 +120,65 @@ class Handler extends Thread
 	    return;
 	}
 
-	monitor.register(this);
-	do
+	try
 	{
-	    request = null;
-	    reply = null;
-	    filterList = null;
-	    idle = System.currentTimeMillis();
-	    monitor.update(this);
+	    monitor.register(this);
 
-	    try
+	    do
 	    {
-		request = client.read();
-	    }
-	    catch (IOException e)
-	    {
-		e.printStackTrace();
-		break;
-	    }
+		request = null;
+		reply = null;
+		filterList = null;
+		idle = System.currentTimeMillis();
+		monitor.update(this);
 
-	    idle = 0;
-	    monitor.update(this);
-
-	    try
-	    {
-		keepAlive = processRequest();
-	    }
-	    catch (IOException ioe)
-	    {
-		ioe.printStackTrace();
-		reason = ioe;
-		keepAlive = false;
-	    }
-	    catch (FilterException fe)
-	    {
-		reason = fe;
-		keepAlive = false;
-	    }
-
-	    if (request != null && reply != null)
-	    {
-		// XXX insert the number of bytes read into the
-		// reply content-length for logging.
-		if (reply != null && currentLength > 0)
+		try
 		{
-		    reply.setHeaderField("Content-length", currentLength);
+		    request = client.read();
 		}
-		Main.getLogFile().log(request, reply);
-	    }
-	}
-	while (keepAlive);
+		catch (IOException e)
+		{
+		    e.printStackTrace();
+		    break;
+		}
 
-	if (reason != null)
+		idle = 0;
+		monitor.update(this);
+
+		try
+		{
+		    keepAlive = processRequest();
+		}
+		catch (IOException ioe)
+		{
+		    reason = ioe;
+		    keepAlive = false;
+		}
+		catch (FilterException fe)
+		{
+		    reason = fe;
+		    keepAlive = false;
+		}
+
+		if (request != null && reply != null)
+		{
+		    // XXX insert the number of bytes read into the
+		    // reply content-length for logging.
+		    if (reply != null && currentLength > 0)
+		    {
+			reply.setHeaderField("Content-length", currentLength);
+		    }
+		    Main.getLogFile().log(request, reply);
+		}
+	    }
+	    while (keepAlive);
+	}
+	finally
+	{
+	    monitor.unregister(this);
+	}
+
+	if (reason != null && reason.getMessage().indexOf("Broken pipe") == -1)
 	{
 	    if (client != null && request != null)
 	    {
@@ -200,7 +187,6 @@ class Handler extends Thread
 	    reason.printStackTrace();
 	}
 	
-	monitor.unregister(this);
 	close();
     }
 
@@ -212,7 +198,7 @@ class Handler extends Thread
 	{
 	    boolean secure = false;
 
-	    manager.checkAutoConfig(request.getURL());
+	    filterList = manager.createFilters(request.getURL());
 
 	    if (request.getCommand().equals("CONNECT"))
 	    {
@@ -220,7 +206,7 @@ class Handler extends Thread
 	    }
 	    else if (request.getURL().startsWith("/"))
 	    {
-		request.setURL("http://" + options.getString("muffin.host")
+		request.setURL("http://" + Main.getMuffinHost()
 				+ ":" + options.getString("muffin.port")
 				+ request.getURL());
 	    }
@@ -242,9 +228,6 @@ class Handler extends Thread
 			     && request.getHeaderField("Proxy-Connection").equals("Keep-Alive"));
 	    }
 
-	    /* Obtain a list of filters to use. */
-	    filterList = manager.createFilters();
-	    
 	    /* Filter the request. */
 	    if (!options.getBoolean("muffin.passthru"))
 	    {
@@ -278,6 +261,10 @@ class Handler extends Thread
 	    try
 	    {
 		http.sendRequest(request);
+		if (http instanceof Http)
+		{
+		    ((Http)http).setTimeout(30000);
+		}
 		reply = http.recvReply(request);
 	    }
 	    catch (RetryRequestException e)
@@ -344,8 +331,8 @@ class Handler extends Thread
 		    https.setTimeout(timeout);
 		
 		    Copy cp = new Copy(client.getInputStream(), https.getOutputStream());
-		    Thread thread = new Thread(cp);
-		    thread.start();
+		    ReusableThread thread = Main.getThread();
+		    thread.setRunnable(cp);
 		    flushCopy(https.getInputStream(), client.getOutputStream(), -1, true);
 		    client.close();
 		}
@@ -362,8 +349,6 @@ class Handler extends Thread
 		}
 		catch (IOException e)
 		{
-		    e.printStackTrace();
-		    
 		    if (http instanceof Http)
 		    {
 			((Http)http).reallyClose();
@@ -376,7 +361,9 @@ class Handler extends Thread
 
 		    client.close();
 		    client = null;
-		    return false; /* XXX */
+
+		    throw e;
+		    //return false; /* XXX */
 		}
 
 		/* Document contains no data. */
@@ -623,10 +610,10 @@ class Handler extends Thread
 
 		    filter.setInputObjectStream(inputObjects);
 		    filter.setOutputObjectStream(oo);
-		
-		    Thread t = new Thread(filterGroup, filter);
-		    t.setPriority(Thread.MIN_PRIORITY);
-		    t.start();
+
+		    ReusableThread rt = Main.getThread();
+		    rt.setPriority(Thread.MIN_PRIORITY);
+		    rt.setRunnable(filter);
 
 		    inputObjects = io;
 		}
@@ -636,12 +623,14 @@ class Handler extends Thread
 	srcObjects.setSourceInputStream(in);
 	srcObjects.setSourceLength(length);
 
-	Thread srcThread = new Thread(srcObjects);
+	ReusableThread srcThread = Main.getThread();
 	srcThread.setName("ObjectStream Source("
 			   + socket.getInetAddress().getHostAddress()
 			   + ")");
-	srcThread.start();
+	srcThread.setPriority(Thread.MIN_PRIORITY);
+	srcThread.setRunnable(srcObjects);
 	    
+	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 	copy(inputObjects, out, monitored);
     }
 
@@ -854,7 +843,7 @@ class Handler extends Thread
 	    if (obj instanceof ByteArray)
 	    {
 		ByteArray bytes = (ByteArray) obj;
-		out.write(bytes.getBytes(), 0, bytes.length());
+		bytes.writeTo(out);
 		currentLength += bytes.length();
 	    }
 	    else if (obj instanceof Byte)
@@ -871,6 +860,7 @@ class Handler extends Thread
 	    if (monitored)
 	    {
 		monitor.update(this);
+		Thread.currentThread().yield();
 	    }
 
 	    now = System.currentTimeMillis();

@@ -1,4 +1,4 @@
-/* $Id: About.java,v 1.4 1999/03/12 15:47:38 boyns Exp $ */
+/* $Id: About.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -96,7 +96,7 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 	layout.setConstraints(l, c);
 	panel.add(l);
 	
-	l = new Label(options.getString("muffin.url"));
+	l = new Label(Main.getMuffinUrl());
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(l, c);
