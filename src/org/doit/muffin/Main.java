@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.26 2003/05/03 09:40:05 flefloch Exp $ */
+/* $Id: Main.java,v 1.27 2003/05/03 14:27:13 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -486,7 +486,7 @@ public class Main
     {
         int c;
         String arg;
-        LongOpt longopts[] = new LongOpt[16];
+        LongOpt longopts[] = new LongOpt[17];
 
         longopts[0] = new LongOpt("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
         longopts[1] = new LongOpt("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
@@ -513,6 +513,8 @@ public class Main
             new LongOpt("bindaddress", LongOpt.REQUIRED_ARGUMENT, null, 'b');
         longopts[15] =
             new LongOpt("props", LongOpt.REQUIRED_ARGUMENT, null, 10);
+        longopts[16] =
+            new LongOpt("decrypt", LongOpt.NO_ARGUMENT, null, 'D');
 
         Prefs args = new Prefs();
         Getopt g = new Getopt("Muffin", argv, "v", longopts, true);
@@ -612,6 +614,9 @@ public class Main
                     args.putString("props", g.getOptarg());
                     break;
 
+				case 'D' : /* --decrypt */
+					args.putBoolean("decrypt", true);
+					break;
                 case 'g' : /* --geometry */
                     args.putString("geometry", g.getOptarg());
                     break;
@@ -632,6 +637,7 @@ public class Main
                             + "-nw                   Don't create any windows\n"
                             + "-port PORT            Listen on PORT for browser requests (51966)\n"
                             + "-props NAME           Default muffin properties file (muffin.props)\n"
+							+ "-decrypt              Decrypt HTTPS traffic"
                             + "-bindaddress IPADDR   Only bind to IPADDR\n"
                             + "-v                    Display muffin version\n");
                     throw new ThreadDeath();
@@ -670,6 +676,13 @@ public class Main
         }
 
         options = new Options(defaultProps);
+        if (args.exists("decrypt"))
+        {
+			if (!options.useDecryptionServer() && args.getBoolean("decrypt"))
+			{
+				options.putInteger("muffin.decryptionServer.port",4443);	
+			}        	
+        }
 
         try
         {
