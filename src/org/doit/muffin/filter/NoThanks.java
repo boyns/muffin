@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.8 2000/01/24 03:59:35 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.9 2000/01/25 06:11:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -60,6 +60,9 @@ public class NoThanks implements FilterFactory
     private Vector scriptPatterns = null;
     private Vector scriptReplace = null;
     private Vector scriptStrip = null;
+    private Hashtable headerStrip = null;
+    private Hashtable headerReplace = null;
+    private Hashtable headerReplaceValue = null;
 
     private RE hyperTags = null;
     private RE hyperAttrs = null;
@@ -364,6 +367,56 @@ public class NoThanks implements FilterFactory
 	return token;
     }
 
+    void processHeaders(Request request, Message m)
+    {
+	String name, value;
+	RE re;
+	REMatch match;
+	
+	for (Enumeration e = m.getHeaders(); e.hasMoreElements(); )
+	{
+	    name = ((String) e.nextElement()).toLowerCase();
+
+	    if (headerStrip.containsKey(name))
+	    {
+		re = (RE) headerStrip.get(name);
+		for (int i = 0, n = m.getHeaderValueCount(name); i < n; i++)
+		{
+		    value = m.getHeaderField(name, i);
+		    if (compare(value, re))
+		    {
+			report(request, "header "+name+"="+value+" stripped");
+			m.removeHeaderField(name);
+			break;
+		    }
+		}
+	    }
+	    if (headerReplace.containsKey(name))
+	    {
+		Vector v = (Vector) headerReplace.get(name);
+		Vector vv = (Vector) headerReplaceValue.get(name);
+		for (int index = 0; index < v.size(); index++)
+		{
+		    re = (RE) v.elementAt(index);
+
+		    for (int i = 0, n = m.getHeaderValueCount(name); i < n; i++)
+		    {
+			value = m.getHeaderField(name, i);
+			match = re.getMatch(value);
+			if (match != null)
+			{
+			    String replace = (String) vv.elementAt(index);
+			    replace = match.substituteInto(replace);
+			    report(request, "header " + name + " replaced \""
+				   + value + "\" with \"" + replace + "\"");
+			    m.setHeaderField(name, replace, i);
+			}
+		    }
+		}
+	    }
+	}
+    }
+
     void save()
     {
 	manager.save(this);
@@ -417,6 +470,9 @@ public class NoThanks implements FilterFactory
 	scriptPatterns = new Vector();
 	scriptReplace = new Vector();
 	scriptStrip = new Vector();
+	headerStrip = new Hashtable();
+	headerReplace = new Hashtable();
+	headerReplaceValue = new Hashtable();
 
 	include(reader);
 	
@@ -441,6 +497,14 @@ public class NoThanks implements FilterFactory
 	    {
 		String key = (String) e.nextElement();
 		tagattrRemove.put(key, createRE((Vector) tagattrRemove.get(key)));
+	    }
+
+	    /* Build regular expressions for header */
+	    e = headerStrip.keys();
+	    while (e.hasMoreElements())
+	    {
+		String key = (String) e.nextElement();
+		headerStrip.put(key, createRE((Vector) headerStrip.get(key)));
 	    }
 	}
 	catch (REException e)
@@ -780,6 +844,86 @@ public class NoThanks implements FilterFactory
 		    else
 		    {
 			System.out.println("script " + st.sval + " unknown command");
+		    }
+		}
+		else if (st.sval.equals("header"))
+		{
+		    // header
+		    token = st.nextToken();
+		    if (token != StreamTokenizer.TT_WORD && token != '"')
+		    {
+			break;
+		    }
+		    String key = st.sval.toLowerCase();
+
+		    // command
+		    token = st.nextToken();
+		    if (token != StreamTokenizer.TT_WORD && token != '"')
+		    {
+			break;
+		    }
+		    String command = new String(st.sval);
+
+		    // value pattern
+		    String pattern;
+		    token = st.nextToken();
+		    if (token != StreamTokenizer.TT_WORD && token != '"')
+		    {
+			pattern = ".*";
+		    }
+		    else
+		    {
+			pattern = new String(st.sval);
+		    }
+
+		    RE re = new RE(pattern, cflags);
+
+		    if (command.equals("strip"))
+		    {
+			/* Build a vector of Strings */
+			Vector v;
+			if (headerStrip.containsKey(key))
+			{
+			    v = (Vector) headerStrip.get(key);
+			}
+			else
+			{
+			    v = new Vector();
+			    headerStrip.put(key, v);
+			}
+			v.addElement(pattern);
+		    }
+		    else if (command.equals("replace"))
+		    {
+			token = st.nextToken();
+			if (token != StreamTokenizer.TT_WORD && token != '"')
+			{
+			    System.out.println("header replace missing value");
+			    break;
+			}
+			String value = new String(st.sval);
+
+			/* Build a vector of REs and replacement Strings */
+			Vector v;
+			Vector vv;
+			if (headerReplace.containsKey(key))
+			{
+			    v = (Vector) headerReplace.get(key);
+			    vv = (Vector) headerReplaceValue.get(key);
+			}
+			else
+			{
+			    v = new Vector();
+			    vv = new Vector();
+			    headerReplace.put(key, v);
+			    headerReplaceValue.put(key, vv);
+			}
+			v.addElement(re);
+			vv.addElement(value);
+		    }
+		    else
+		    {
+			System.out.println("header " + command + " unknown command");
 		    }
 		}
 		else
