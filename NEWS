@@ -2,6 +2,11 @@ Muffin NEWS - user-visible changes
 
 Changes since 0.9.3:
 
+* New Obscure filter allowing to surf more
+  anonymously by obscuring ips and urls.
+
+* New HTTPS decryption option (-decrypt).
+
 * New GIF filtering and AnimationKiller thanks to Bernhard Haumacher.
 
 * New Snapshot filter from Rob Miller.  Snapshot is a filter that
@@ -270,4 +275,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.18 2000/10/10 04:52:19 boyns Exp $
+$Id: NEWS,v 1.19 2003/05/08 16:58:24 flefloch Exp $
