@@ -4,7 +4,7 @@
  * @author  Heinrich Opgenoorth <opgenoorth@gmd.de>
  * @version 0.1
  *
- * Last update: 98/07/08 H.O.
+ * Last update: 98/07/23 H.O.
  */
 
 /* 
@@ -94,15 +94,23 @@ public class ImageKillFilter implements ContentFilter
 			!(keepmaps && tag.has ("usemap")) &&
 			!factory.isExcluded (tag.get ("src")))
 		    {
-		        int h = Integer.parseInt (tag.get ("height"));
-			if (h > minheight)
+			try
 			{
-			    int w = Integer.parseInt (tag.get ("width"));
-			    if  ((w > minwidth) && (w/h > ratio))
+			    int h = Integer.parseInt (tag.get ("height"));
+			    if (h > minheight)
 			    {
-			        factory.process ("tag removed: " + tag + "\n");
-				continue;
+				int w = Integer.parseInt (tag.get ("width"));
+				if  ((w > minwidth) && (w/h > ratio))
+				{
+				    factory.process
+					("tag removed: " + tag + "\n");
+				    continue;
+				}
 			    }
+			}
+			catch (NumberFormatException e) {
+			    factory.process ("malformed image size: "
+					     + tag + "\n");
 			}
 		    }
 		}
