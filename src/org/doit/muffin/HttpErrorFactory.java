@@ -30,24 +30,32 @@ public abstract class HttpErrorFactory
 
     public static synchronized void init(Options options)
     {
-    	boolean useVelocity = false;
+        String webadmin = null;
         if (options != null)
-        	useVelocity = options.getBoolean("muffin.velocity");
-        if (useVelocity)
+            webadmin = options.getString("muffin.webadmin");
+        try
         {
-            try
+            if ("velocity".equals(webadmin))
             {
                 instance =
                     (HttpErrorFactory) Class
-                        .forName("org.doit.muffin.webadmin.VelocityHttpErrorFactory")
+                        .forName("org.doit.muffin.webadmin.velocity.VelocityHttpErrorFactory")
+                        .newInstance();
+
+            }
+            else if ("webmacro".equals(webadmin))
+            {
+                instance =
+                    (HttpErrorFactory) Class
+                        .forName("org.doit.muffin.webadmin.webmacro.WebMacroHttpErrorFactory")
                         .newInstance();
             }
-            catch (Throwable t)
+            else
             {
                 instance = new Default();
             }
         }
-        else
+        catch (Throwable t)
         {
             instance = new Default();
         }
@@ -65,12 +73,12 @@ public abstract class HttpErrorFactory
     {
         public HttpError createError(int code, String message)
         {
-            return new DefaultHttpError(null, code, message);
+            return new DefaultHttpError(code, message);
         }
 
         public HttpError createError(int code, Exception e)
         {
-            return new DefaultHttpError(null, code, e.toString());
+            return new DefaultHttpError(code, e.toString());
         }
     }
 }

@@ -490,7 +490,7 @@ public class DefaultHttpd extends HttpConnection
         else if (!HttpdFactory.getOptions().adminInetAccess(getInetAddress()))
         {
             DefaultHttpError error =
-                new DefaultHttpError(HttpdFactory.getOptions(), 403, Strings.getString("admin.denied"));
+                new DefaultHttpError(403, Strings.getString("admin.denied"));
             reply = error.getReply();
             reply.setContent(
                 (InputStream) new ByteArrayInputStream(error
@@ -503,7 +503,7 @@ public class DefaultHttpd extends HttpConnection
                 && !authenticated(request))
         {
             DefaultHttpError error =
-                new DefaultHttpError(HttpdFactory.getOptions(), 401, Strings.getString("admin.denied"));
+                new DefaultHttpError(401, Strings.getString("admin.denied"));
             reply = error.getReply();
             reply.setHeaderField(
                 "WWW-Authenticate",
@@ -679,7 +679,7 @@ public class DefaultHttpd extends HttpConnection
         else
         {
             DefaultHttpError error =
-                new DefaultHttpError(HttpdFactory.getOptions(), 404, request.getPath() + " not found");
+                new DefaultHttpError(404, request.getPath() + " not found");
             reply = error.getReply();
             reply.setContent(
                 (InputStream) new ByteArrayInputStream(error

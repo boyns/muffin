@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.30 2003/05/20 21:11:29 flefloch Exp $ */
+/* $Id: Main.java,v 1.31 2003/05/24 00:27:20 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -116,8 +116,8 @@ public class Main
                 options);
         /* Initialize internal Httpd */
         
-        HttpdFactory.init(options, manager, monitor);
         HttpErrorFactory.init(options);
+        HttpdFactory.init(options, manager, monitor);
         /* Startup the Janitor */
         Janitor j = new Janitor();
         j.add(pool);
