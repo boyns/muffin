@@ -1,4 +1,4 @@
-/* $Id: InputObjectStream.java,v 1.5 2000/01/24 04:02:09 boyns Exp $ */
+/* $Id: InputObjectStream.java,v 1.6 2003/06/20 21:43:43 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -33,6 +33,7 @@ import java.util.Vector;
  */
 public class InputObjectStream
 {
+	public static final long DEFAULT_TIMEOUT = 5 * 60000; //5 minutes time out
     protected final int maxObjects = 64;
     protected Vector objects = new Vector();
 
@@ -44,7 +45,7 @@ public class InputObjectStream
 
     public InputObjectStream(OutputObjectStream out) throws IOException
     {
-	connect(out);
+        connect(out);
     }
 
     public InputObjectStream()
@@ -53,87 +54,92 @@ public class InputObjectStream
 
     public void connect(OutputObjectStream out) throws IOException
     {
-	if (connected)
-	{
-	    throw new IOException("Input side already connected");
-	}
-	out.connect(this);
-	connected = true;
+        if (connected)
+        {
+            throw new IOException("Input side already connected");
+        }
+        out.connect(this);
+        connected = true;
     }
     
     public synchronized Object read() throws IOException
     {
-	inputThread = Thread.currentThread();
+        inputThread = Thread.currentThread();
 
-	while (objects.isEmpty())
-	{
-	    if (closed)
-	    {
-		return null; /* EOF */
-	    }
-	    if (outputThread != null && !outputThread.isAlive())
-	    {
-		throw new IOException("Output side not connected");
-	    }
-	    notify();
-	    try
-	    {
-		wait();
-	    }
-	    catch (InterruptedException e)
-	    {
-		throw new InterruptedIOException();
-	    }
-	}
+        while (objects.isEmpty())
+        {
+            if (closed)
+            {
+                return null; /* EOF */
+            }
+            if (outputThread != null && !outputThread.isAlive())
+            {
+                throw new IOException("Output side not connected");
+            }
+            notify();
+            try
+            {
+                wait();
+            }
+            catch (InterruptedException e)
+            {
+                throw new InterruptedIOException();
+            }
+        }
 
-	Object o = objects.firstElement();
-	try
-	{
-	    objects.removeElementAt(0);
-	}
-	catch (Exception e)
-	{
-	}
-	return o;
+        Object o = objects.firstElement();
+        try
+        {
+            objects.removeElementAt(0);
+        }
+        catch (Exception e)
+        {
+        }
+        return o;
     }
 
     public synchronized void unread(Object obj) throws IOException
     {
-	objects.insertElementAt(obj, 0);
+        objects.insertElementAt(obj, 0);
     }
     
     public void close() throws IOException
     {
-	objects.removeAllElements();
+        closed = true;
+	    objects.removeAllElements();
     }
 
     protected synchronized void append(Object newObject) throws IOException
     {
-	outputThread = Thread.currentThread();
+        outputThread = Thread.currentThread();
 
-	while (objects.size() == maxObjects)
-	{
-	    if (inputThread != null && !inputThread.isAlive())
-	    {
-		throw new IOException("Input side not connected");
-	    }
-	    notify();
-	    try
-	    {
-		wait();
-	    }
-	    catch (InterruptedException e)
-	    {
-		throw new InterruptedIOException();
-	    }
-	}
+        while (objects.size() == maxObjects)
+        {
+            if (closed)
+            {
+                throw new ObjectStreamException("Can not append on a closed stream");	
+            }
+            if (inputThread != null && !inputThread.isAlive())
+            {
+                throw new IOException("Input side not connected");
+            }
+            notify();
+            try
+            {
+                wait();
+            }
+            catch (InterruptedException e)
+            {
+                throw new InterruptedIOException();
+            }
+        }
 
-	objects.addElement(newObject);
+        objects.addElement(newObject);
     }
 
-    protected synchronized void done()
+    public synchronized void done()
     {
-	closed = true;
-	notify();
+        closed = true;
+        notify();
     }
 }
