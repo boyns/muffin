@@ -81,7 +81,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
 
     protected abstract Panel doMakeContent();
 
-    //    protected FilterFactory getParent(){
+    //    protected FilterFactory getFactory(){
     protected final AbstractFilterFactory getFactory()
     {
         return fFactory;
@@ -319,6 +319,21 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
     }
 
     /**
+     * Override this method to override existing Actions with your own list of Actions.
+     * These will be used in 
+     * @see org.doit.muffin.filter.AbstractFrame#actionPerformed(ActionEvent)
+     * to determine what Action to invoke.
+     * Some actions are already present. See description for 
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+     * 
+     * @return String[] The list of Actions
+     */
+    protected Action[] doOverrideActions()
+    {
+        return new Action[0];
+    }
+
+    /**
      * Utility method to append an array of Actions to the List of Actions.
      * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
      * 
@@ -326,11 +341,44 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
      */
     private void appendActions()
     {
+        Action[] actions = doOverrideActions();
+        for (int i = 0; i < actions.length; i++)
+        {
+            overrideAction(actions[i]);
+        }
+        actions = doMakeActions();
+        for (int i = 0; i < actions.length; i++)
+        {
+            appendAction(actions[i]);
+        }
+    }
+
+    /**
+     * Utility method to append an array of Actions to the List of Actions.
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
+     * 
+     * @param action The Action array to append ot the List of Actions.
+     */
+    private void overrideActions()
+    {
         Action[] actions = doMakeActions();
         for (int i = 0; i < actions.length; i++)
         {
             appendAction(actions[i]);
         }
+    }
+
+    /**
+     * Utility method to override an Action in the List of Actions.
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
+     * If the action is not yet present we throw a RuntimeException.
+     * 
+     * @param action The Action to override in the List of Actions.
+     */
+    private void overrideAction(Action action)
+    {
+        removeAction(action.getName());
+        appendAction(action);
     }
 
     /**
@@ -349,6 +397,24 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
                     + action.getName());
         }
         fActions.put(action.getName(), action);
+    }
+
+    /**
+     * Utility method to delete an Action from the List of Actions.
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
+     * 
+     * @param action The Action to remove from the List of Actions.
+     */
+    private void removeAction(String name)
+    {
+        if(fActions.remove(name) == null)
+        {
+            throw new RuntimeException(
+                "AbstractFrame.removeAction: "
+                    + "trying to remove action that is not there:"
+                    + name);
+        }
+        
     }
 
     protected static final String HELP_CMD = "help";
