@@ -1,3 +1,38 @@
+2000-03-30  Mark R. Boyns  <boyns@doit.org>
+
+	* /cvsroot/muffin/muffin/README: * use 0.9 instead of 0.9.x
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/SecretServerFilter.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/SecretAgentFilter.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/RefererFilter.java:
+	* support replacing multiple headers with same name
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/MuffinFrame.java:
+	* enabled move near muffin mode (again)
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Message.java:
+	* added setHeaderFields method to set multiple headers with the same name
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/ForwardedForFilter.java:
+	* support replacing multiple headers with same name
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/SnoopFilter.java:
+	* display form data (again)
+
+2000-03-29  Mark R. Boyns  <boyns@doit.org>
+
+	* /cvsroot/muffin/muffin/ChangeLog: *** empty log message ***
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Message.java:
+	* made readLine public (Lucas Gonze)
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/NoThanksFrame.java, /cvsroot/muffin/muffin/src/org/doit/muffin/UserPrefs.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/TranslateFrame.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Translate.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Secretary.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/RewriteFrame.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Rewrite.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/NoThanks.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/History.java, /cvsroot/muffin/muffin/src/org/doit/muffin/filter/Glossary.java, /cvsroot/muffin/muffin/src/org/doit/muffin/Configuration.java:
+	* don't complain about missing files
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/Main.java:
+	* updated to 0.9.3a
+
+	* /cvsroot/muffin/muffin/src/org/doit/muffin/filter/NoThanks.java:
+	* create some hashtables to handle missing killfile better
+
 2000-03-29  Mark R. Boyns  <boyns@doit.org>
 
 	* /cvsroot/muffin/muffin/src/org/doit/muffin/Message.java:
