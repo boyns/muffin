@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.7 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: FilterManager.java,v 1.8 2000/03/08 15:16:38 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,7 +28,7 @@ import java.util.Enumeration;
 
 /**
  * Class to manage all filters.  This class maintains the list of
- * known filters, enabled filters, and all filter preferences.
+ * supported filters, enabled filters, and all filter preferences.
  *
  * @see muffin.Filter
  * @see muffin.FilterFactory
@@ -36,7 +36,7 @@ import java.util.Enumeration;
  */
 public class FilterManager implements ConfigurationListener
 {
-    final String defaultKnownList[] = 
+    final String defaultSupportedList[] = 
     { 
 	"AnimationKiller",
 	"CookieMonster",
@@ -67,10 +67,10 @@ public class FilterManager implements ConfigurationListener
     FilterManagerFrame frame = null;
 
     UserPrefs userPrefs = null;
-    Vector knownFilters = null;
+    Vector supportedFilters = null;
     Vector enabledFilters = null;
 
-    Hashtable knownFiltersCache = null;
+    Hashtable supportedFiltersCache = null;
     Hashtable enabledFiltersCache = null;
 
     /**
@@ -81,7 +81,7 @@ public class FilterManager implements ConfigurationListener
 	this.options = options;
 	this.configs = configs;
 
-	knownFiltersCache = new Hashtable();
+	supportedFiltersCache = new Hashtable();
 	enabledFiltersCache = new Hashtable();
 
 	configs.addConfigurationListener(this);
@@ -90,28 +90,28 @@ public class FilterManager implements ConfigurationListener
     public void configurationChanged(String name)
     {
 	userPrefs = configs.getUserPrefs();
-	knownFilters = getKnownFilters(name);
+	supportedFilters = getSupportedFilters(name);
 	enabledFilters = getEnabledFilters(name);
     }
 
-    Vector getKnownFilters(String config)
+    Vector getSupportedFilters(String config)
     {
-	if (! knownFiltersCache.containsKey(config))
+	if (! supportedFiltersCache.containsKey(config))
 	{
-	    Vector known = new Vector(32);
-	    knownFiltersCache.put(config, known);
+	    Vector supported = new Vector(32);
+	    supportedFiltersCache.put(config, supported);
 	    UserPrefs uprefs = configs.getUserPrefs(config);
-	    String list[] = uprefs.getStringList("FilterManager.knownFilters");
+	    String list[] = uprefs.getStringList("FilterManager.supportedFilters");
 	    if (list.length == 0)
 	    {
-		list = defaultKnownList;
+		list = defaultSupportedList;
 	    }
 	    for (int i = 0; i < list.length; i++)
 	    {
-		known.addElement(list[i]);
+		supported.addElement(list[i]);
 	    }
 	}
-	return (Vector) knownFiltersCache.get(config);
+	return (Vector) supportedFiltersCache.get(config);
     }
 
     Vector getEnabledFilters(String config)
@@ -186,26 +186,26 @@ public class FilterManager implements ConfigurationListener
 
     void append(String clazz)
     {
-	knownFilters.addElement(clazz);
+	supportedFilters.addElement(clazz);
 	if (frame != null)
 	{
-	    frame.updateKnownFiltersList();
+	    frame.updateSupportedFiltersList();
 	}
     }
 
     void remove(String clazz)
     {
-	for (int i = 0; i < knownFilters.size(); i++)
+	for (int i = 0; i < supportedFilters.size(); i++)
 	{
-	    String name = (String) knownFilters.elementAt(i);
+	    String name = (String) supportedFilters.elementAt(i);
 	    if (name.equals(clazz))
 	    {
-		knownFilters.removeElementAt(i);
+		supportedFilters.removeElementAt(i);
 	    }
 	}
 	if (frame != null)
 	{
-	    frame.updateKnownFiltersList();
+	    frame.updateSupportedFiltersList();
 	}
     }
 

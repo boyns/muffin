@@ -1,4 +1,4 @@
-/* $Id: Httpd.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Httpd.java,v 1.7 2000/03/08 15:18:36 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -207,17 +207,17 @@ class Httpd extends HttpConnection
 	StringBuffer html = new StringBuffer();
 	html.append(head("Muffin: Filters " + config));
 
-	Vector known = manager.getKnownFilters(config);
+	Vector supported = manager.getSupportedFilters(config);
 	Vector enabled = manager.getEnabledFilters(config);
 
 	html.append("<table><tr><td>\n");
-	html.append("<h2>Known Filters</h2>\n");
+	html.append("<h2>Supported Filters</h2>\n");
 	html.append("<form method=POST action=/admin/enable>\n");
 	html.append("<input type=hidden name=config value=\"" + config + "\">\n");
 	html.append("<select size=10 name=filter>\n");
-	for (int i = 0; i < known.size(); i++)
+	for (int i = 0; i < supported.size(); i++)
 	{
-	    html.append("<option>" + (String) known.elementAt(i) + "\n");
+	    html.append("<option>" + (String) supported.elementAt(i) + "\n");
 	}
 	html.append("</select>\n");
 	html.append("<br><input type=submit value=Enable>\n");

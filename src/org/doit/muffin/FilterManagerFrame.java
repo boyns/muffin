@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.6 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.7 2000/03/08 15:17:36 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -57,7 +57,7 @@ class FilterManagerFrame
     implements ActionListener, ItemListener, WindowListener, ConfigurationListener
 {
     FilterManager manager;
-    BigList knownFiltersList = null;
+    BigList supportedFiltersList = null;
     BigList enabledFiltersList = null;
     Choice configurationChoice = null;
 
@@ -74,7 +74,7 @@ class FilterManagerFrame
 
 	setResizable(false);
 	
-	knownFiltersList = new BigList(10, false);
+	supportedFiltersList = new BigList(10, false);
 	enabledFiltersList = new BigList(10, false);
 
 	Label l;
@@ -98,7 +98,7 @@ class FilterManagerFrame
 	GridBagLayout layout = new GridBagLayout();
 	panel.setLayout(layout);
 
-	l = new Label("Known Filters");
+	l = new Label("Supported Filters");
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -108,8 +108,8 @@ class FilterManagerFrame
 	c = new GridBagConstraints();
 	c.gridheight = 4;
 	c.insets = new Insets(0, 10, 5, 10);
-	layout.setConstraints(knownFiltersList, c);
-	panel.add(knownFiltersList);
+	layout.setConstraints(supportedFiltersList, c);
+	panel.add(supportedFiltersList);
 
 	b = new Button("Enable");
 	b.setActionCommand("doEnable");
@@ -211,7 +211,7 @@ class FilterManagerFrame
 
 	addWindowListener(this);
 	
-	updateKnownFiltersList();
+	updateSupportedFiltersList();
 	updateEnabledFiltersList();
 
  	pack();
@@ -220,7 +220,7 @@ class FilterManagerFrame
 
     public void configurationChanged(String name)
     {
-	updateKnownFiltersList();
+	updateSupportedFiltersList();
 	updateEnabledFiltersList();
 	updateConfigurationChoice();
     }
@@ -238,15 +238,15 @@ class FilterManagerFrame
     }
 
     /**
-     * Update the list of known filters on the screen.
+     * Update the list of supported filters on the screen.
      */
-    void updateKnownFiltersList()
+    void updateSupportedFiltersList()
     {
-	if (knownFiltersList.getItemCount() > 0)
+	if (supportedFiltersList.getItemCount() > 0)
 	{
-	    knownFiltersList.removeAll();
+	    supportedFiltersList.removeAll();
 	}
-	Enumeration e = manager.knownFilters.elements();
+	Enumeration e = manager.supportedFilters.elements();
 	SortedList sorter = new SortedList(StringIgnoreCaseComparer.getInstance());
 	while (e.hasMoreElements())
 	{
@@ -256,7 +256,7 @@ class FilterManagerFrame
  	while (e.hasMoreElements())
  	{
 	    String s = (String) e.nextElement();
-	    knownFiltersList.addItem(s); // DEPRECATION: use add()
+	    supportedFiltersList.addItem(s); // DEPRECATION: use add()
 	}
     }	
 
@@ -327,11 +327,6 @@ class FilterManagerFrame
 	}
     }
 
-    public void itemStateChanged(ItemEvent event)
-    {
-	manager.configs.setCurrent(event.getItem().toString());
-    }
-
     /**
      * Handle button events.
      *
@@ -351,10 +346,10 @@ class FilterManagerFrame
 	}
 	else if ("doEnable".equals(arg))
 	{
-	    int i = knownFiltersList.getSelectedIndex();
+	    int i = supportedFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		enable(knownFiltersList.getItem(i));
+		enable(supportedFiltersList.getItem(i));
 	    }
 	}
 	else if ("doDisable".equals(arg))
@@ -379,18 +374,18 @@ class FilterManagerFrame
 	}
 	else if ("doDelete".equals(arg))
 	{
-	    int i = knownFiltersList.getSelectedIndex();
+	    int i = supportedFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		manager.remove(knownFiltersList.getItem(i));
+		manager.remove(supportedFiltersList.getItem(i));
 	    }
 	}
 	else if ("doHelp".equals(arg))
 	{
-	    int i = knownFiltersList.getSelectedIndex();
+	    int i = supportedFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		new HelpFrame(knownFiltersList.getItem(i));
+		new HelpFrame(supportedFiltersList.getItem(i));
 	    }
 	}
 	else if ("doPrefs".equals(arg))
@@ -429,6 +424,11 @@ class FilterManagerFrame
 	}
     }
 
+    public void itemStateChanged(ItemEvent e)
+    {
+	manager.configs.setCurrent(e.getItem().toString());
+    }
+
     public void windowActivated(WindowEvent e)
     {
     }
@@ -457,5 +457,4 @@ class FilterManagerFrame
     public void windowOpened(WindowEvent e)
     {
     }
-
 }    
