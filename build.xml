@@ -154,7 +154,7 @@
          compress="true"/>
   </target>
 
-  <target name="javadoc" description="Create Javadoc documentation">
+  <target name="javadoc" description="Create Javadoc documentation" depends="init">
     <mkdir dir="doc/api"/>
     <javadoc
 			sourcepath="src"
