@@ -1,3 +1,7 @@
+1999-03-16  Mark R. Boyns  <boyns@doit.org>
+
+	* Muffin 0.8 released.
+
 1998-10-05  Mark R. Boyns  <boyns@doit.org>
 
 	* src/org/doit/muffin/UserPrefs.java: don't use SortedProperties
