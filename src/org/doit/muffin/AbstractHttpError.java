@@ -30,16 +30,28 @@ public abstract class AbstractHttpError implements HttpError
 {
         protected String content = null;
         protected Reply reply = null;
-
-        public AbstractHttpError(int code, Exception e)
+		protected Throwable cause = null;
+		
+        public AbstractHttpError(int code, Throwable e)
         {
-            this(code, e.toString());
+            cause =e;
+            init(code, e.getMessage());
+        }
+        
+        public Throwable getCause()
+        {
+        	return cause;	
         }
         
         protected abstract void createContent(int code, String error, String message);
         
         
         public AbstractHttpError(int code, String message)
+        {
+        	init(code, message);	
+        }
+        
+        public void init(int code, String message)
         {
             String error;
             switch (code)

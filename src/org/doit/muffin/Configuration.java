@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.16 2003/06/01 17:57:05 cmallwitz Exp $ */
+/* $Id: Configuration.java,v 1.17 2003/06/04 21:07:53 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -32,7 +32,7 @@ import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Factory;
 import org.doit.util.*;
 
-class Configuration extends Prefs
+public class Configuration extends Prefs
 {
     // FIXME: these instance vars ought to be private
     // FIXME: why are we using Vectors and not ArrayLists (or LinkedList)?
