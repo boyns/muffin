@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
+/* $Id: FilterManager.java,v 1.6 1999/09/16 04:07:40 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -59,6 +59,7 @@ public class FilterManager implements ConfigurationListener
 	"SecretServer",
 	"Snoop",
 	"Stats",
+	"Translate",
     };
 
     Options options = null;
