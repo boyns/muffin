@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.11 1999/05/27 06:10:00 boyns Exp $ */
+/* $Id: Main.java,v 1.12 1999/09/16 04:11:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -50,7 +50,7 @@ import org.doit.util.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    private static String version = "0.9-test";
+    private static String version = "0.9";
     private static String url = "http://muffin.doit.org/";
     private static String host;
 
@@ -147,13 +147,9 @@ public class Main extends MuffinFrame
 	menu.add(item);
 	menuBar.add(menu);
 
-	menu = new Menu("View");
+	menu = new Menu("Edit");
 	item = new MenuItem("Configurations...");
 	item.setActionCommand("doConfigs");
-	item.addActionListener(this);
-	menu.add(item);
-	item = new MenuItem("Connections...");
-	item.setActionCommand("doConnections");
 	item.addActionListener(this);
 	menu.add(item);
 	item = new MenuItem("Filters...");
@@ -162,6 +158,13 @@ public class Main extends MuffinFrame
 	menu.add(item);
 	item = new MenuItem("Options...");
 	item.setActionCommand("doOptions");
+	item.addActionListener(this);
+	menu.add(item);
+	menuBar.add(menu);
+
+	menu = new Menu("View");
+	item = new MenuItem("Connections...");
+	item.setActionCommand("doConnections");
 	item.addActionListener(this);
 	menu.add(item);
 	item = new MenuItem("Regex Tester...");
@@ -628,6 +631,10 @@ public class Main extends MuffinFrame
 	    defaultProps = args.getString("props");
 	}
 	options = new Options(defaultProps);
+	if (args.exists("dir"))
+	{
+	    options.setUserDirectory(args.getString("dir"));
+	}
 
 	try
 	{
