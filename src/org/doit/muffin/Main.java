@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.18 2000/02/11 02:32:31 boyns Exp $ */
+/* $Id: Main.java,v 1.19 2000/03/08 15:32:46 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -633,9 +633,8 @@ public class Main extends MuffinFrame
 
 	/* Create Muffin dir if it doesn't exist */
 	configs.checkUserDirectory();
-	
-	configs.load();
 	configs.scan();
+
 	String defaultConfig = "default.conf";
 	if (args.exists("conf"))
 	{
@@ -709,7 +708,19 @@ public class Main extends MuffinFrame
 
 	options.sync();
 
-	logfile = new LogFile(options.getUserFile(options.getString("muffin.logfile")));
+	UserFile f = options.getUserFile(options.getString("muffin.logfile"));
+	if (f instanceof LocalFile)
+	{
+	    logfile = new LogFile(f.getName());
+	}
+	else
+	{
+	    logfile = null;
+	}
+
+	configs.setAutoConfigFile(options.getString("muffin.autoconfig"));
+	configs.load();
+
 	pool = new ThreadPool("Muffin Threads");
 
 	new Main();
