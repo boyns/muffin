@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.2 1998/08/13 06:01:40 boyns Exp $ */
+/* $Id: Request.java,v 1.3 1998/09/27 18:46:44 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -26,17 +26,35 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import gnu.regexp.*;
 
 /**
  * @author Mark Boyns
  */
 public class Request extends Message
 {
+    private static String pattern = "^(http|https):";
+    private static RE httpRegex;
+    private static RE httpRegexIcase;
+    
     private String command = null;
     private String url = null;
     private String protocol = null;
     private byte[] data = null;
     private Client client = null;
+
+    static
+    {
+	try
+	{
+	    httpRegex = new RE(pattern);
+	    httpRegexIcase = new RE(pattern, RE.REG_ICASE);
+	}
+	catch (REException e)
+	{
+	    e.printStackTrace();
+	}
+    }
 
     Request (Client c)
     {
@@ -55,6 +73,17 @@ public class Request extends Message
 	command = (String) st.nextToken ();
 	url = (String) st.nextToken ();
 	protocol = (String) st.nextToken ();
+
+	if (httpRegex.getMatch(url) == null)
+	{
+	    REMatch match = httpRegexIcase.getMatch(url);
+	    if (match != null)
+	    {
+		url = url.substring(match.getStartIndex(),
+				    match.getEndIndex()).toLowerCase()
+		    + url.substring(match.getEndIndex());
+	    }
+	}
 
 	readHeaders (in);
 
