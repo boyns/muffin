@@ -38,7 +38,7 @@ import java.util.NoSuchElementException;
  * when calling <code>getMatch()</code> multiple times.
  * 
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.4
+ * @version 1.0.7
  */
 public class REMatchEnumeration implements Enumeration {
   private static final int YES = 1;

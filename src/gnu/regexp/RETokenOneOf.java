@@ -58,8 +58,16 @@ class RETokenOneOf extends REToken {
 
     int[] newIndex;
     int[] possibles = new int[0];
+    REToken tk;
     for (int i=0; i < options.size(); i++) {
-      newIndex = ((REToken) options.elementAt(i)).match(input,index,eflags,mymatch);
+	tk = (REToken) options.elementAt(i);
+      newIndex = tk.match(input,index,eflags,mymatch);
+
+      // Voodoo.
+      if ((newIndex == null) && (tk instanceof RE) && (tk.m_subIndex > 0)) {
+	  mymatch.reset(tk.m_subIndex + 1);
+      }
+
       if (newIndex != null) { // match was successful
 	if (negative) return null;
 	// Add newIndex to list of possibilities.
@@ -83,7 +91,13 @@ class RETokenOneOf extends REToken {
 	for (int j = 0; j < newIndex.length; j++) 
 	  temp[doables.length + j] = newIndex[j];
 	doables = temp;
+      } else {
+	  // Voodoo.
+	  if (m_subIndex > 0) {
+	      mymatch.reset(m_subIndex + 1);
+	  }
       }
+
     }
 
     if (doables.length > 0)

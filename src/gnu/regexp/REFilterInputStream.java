@@ -24,6 +24,8 @@ import java.io.InputStream;
 /**
  * Replaces instances of a given RE with replacement text. 
  *
+ * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
+ * @version 1.0.7
  * @since gnu.regexp 1.0.5
  */
 
@@ -33,6 +35,7 @@ public class REFilterInputStream extends FilterInputStream {
   private String m_replace;
   private String m_buffer;
   private int m_bufpos;
+  private int m_offset;
   private CharIndexedInputStream m_stream;
 
   /**
@@ -66,22 +69,23 @@ public class REFilterInputStream extends FilterInputStream {
     // check if input is at a valid position
     if (!m_stream.isValid()) return -1;
 
-    char ch;
-    REMatch mymatch = new REMatch(m_expr.getNumSubs(),0);
+    REMatch mymatch = new REMatch(m_expr.getNumSubs(),m_offset);
     int[] result = m_expr.match(m_stream,0,0,mymatch);
     if (result != null) {
       mymatch.end[0] = result[0];
       mymatch.finish(m_stream);
       m_stream.move(mymatch.toString().length());
+      m_offset += mymatch.toString().length();
       m_buffer = mymatch.substituteInto(m_replace);
       m_bufpos = 1;
 
       // This is prone to infinite loops if replace string turns out empty.
       return m_buffer.charAt(0);
     } else {
-      ch = m_stream.charAt(0);
+      char ch = m_stream.charAt(0);
       if (ch == CharIndexed.OUT_OF_BOUNDS) return -1;
       m_stream.move(1);
+      m_offset++;
       return ch;
     }
   }
@@ -100,7 +104,7 @@ public class REFilterInputStream extends FilterInputStream {
     int ok = 0;
     while (len-- > 0) {
       i = read();
-      if (i == -1) return ok;
+      if (i == -1) return (ok == 0) ? -1 : ok;
       b[off++] = (byte) i;
       ok++;
     }

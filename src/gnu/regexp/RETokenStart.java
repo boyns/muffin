@@ -29,8 +29,11 @@ class RETokenStart extends REToken {
   
   int[] match(CharIndexed input, int index, int eflags, REMatch mymatch) {
     // charAt(index-1) may be unknown on an InputStream. FIXME
+    // Match after a newline if in multiline mode
     if (newline && (mymatch.offset > 0) && (input.charAt(index - 1) == '\n')) 
       return next(input,index,eflags,mymatch);
+
+    // Don't match at all if REG_NOTBOL is set.
     if ((eflags & RE.REG_NOTBOL) > 0) return null;
     
     if ((eflags & RE.REG_ANCHORINDEX) > 0)

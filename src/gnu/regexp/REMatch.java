@@ -26,7 +26,7 @@ package gnu.regexp;
  * or submatch.
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version	1.0.4
+ * @version 1.0.7
  */
 public class REMatch {
   private String m_match;
@@ -54,6 +54,13 @@ public class REMatch {
       if (start[i] == -1) end[i] = -1;
     }
   }
+
+    void reset(int f_subIndex) {
+	for (int i = f_subIndex; i < start.length; i++) {
+	    start[i] = end[i] = -1;
+	    count[i] = 0;
+	}
+    }
 
   void clear(int f_index) {
     offset = f_index;
@@ -107,7 +114,7 @@ public class REMatch {
    * @param sub Index of the subexpression.
    */
   public String toString(int sub) {
-    if (start[sub] == -1) return "";
+    if ((sub >= start.length) || (start[sub] == -1)) return "";
     return (m_match.substring(start[sub],end[sub]));
   }
 

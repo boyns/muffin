@@ -29,7 +29,7 @@ import java.util.BitSet;
  * matching methods on class RE.
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version     1.0.3
+ * @version 1.0.7
  */
 
 public class RESyntax {

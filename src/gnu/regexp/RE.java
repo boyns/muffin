@@ -79,12 +79,12 @@ class CharUnit {
  * combination of execution flags (constants listed below).
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.6, 18 November 1998
+ * @version 1.0.7, 2 March 1999
  */
 
 public class RE extends REToken {
   // This String will be returned by getVersion()
-  private static final String s_version = "1.0.6";
+  private static final String s_version = "1.0.7";
 
   // These are, respectively, the first and last tokens in our linked list
   // If there is only one token, firstToken == lastToken
@@ -478,7 +478,7 @@ public class RE extends REToken {
       //  *
 
       else if ((unit.ch == '*') && !unit.bk) {
-	if (currentToken.getMinimumLength() == 0)
+	if ((currentToken == null) || (currentToken.getMinimumLength() == 0))
 	  throw new REException("repeated argument may be empty",REException.REG_BADRPT,index);
 	currentToken = setRepeated(currentToken,0,Integer.MAX_VALUE,index);
       }
@@ -488,7 +488,7 @@ public class RE extends REToken {
       //  not available if RE_LIMITED_OPS is set
 
       else if ((unit.ch == '+') && !syntax.get(RESyntax.RE_LIMITED_OPS) && (!syntax.get(RESyntax.RE_BK_PLUS_QM) ^ unit.bk)) {
-	if (currentToken.getMinimumLength() == 0)
+	if ((currentToken == null) || (currentToken.getMinimumLength() == 0))
 	  throw new REException("repeated argument may be empty",REException.REG_BADRPT,index);
 	currentToken = setRepeated(currentToken,1,Integer.MAX_VALUE,index);
       }
@@ -771,12 +771,16 @@ public class RE extends REToken {
   /* Implements abstract method REToken.match() */
   int[] match(CharIndexed input, int index, int eflags, REMatch mymatch) { 
     if (firstToken == null) return new int[] { index }; // Trivial case
+    /*
     if ((mymatch.start[m_subIndex] == -1) 
-	|| (mymatch.start[m_subIndex] > index))
-      mymatch.start[m_subIndex] = index;
+       	|| (mymatch.start[m_subIndex] > index))
+    */
+    int oldstart = mymatch.start[m_subIndex];
+    mymatch.start[m_subIndex] = index;
     int[] newIndex = firstToken.match(input,index,eflags,mymatch);
-    if (newIndex == null) { } // mymatch.start[m_subIndex] = -1;
-    else {
+    if (newIndex == null) { 
+	mymatch.start[m_subIndex] = oldstart;
+    } else {
       // If this match succeeded, then whole rest of string is good,
       // and newIndex[0] is the end of the match AT THIS LEVEL
 

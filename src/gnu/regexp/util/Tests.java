@@ -77,7 +77,15 @@ public class Tests {
 
     e = new RE("(\\d+)\\D*(\\d+)\\D*(\\d)+");
     check(e.getMatch("size--10 by 20 by 30 feet"),"10 by 20 by 30",17);
+
+    e = new RE("(ab)(.*?)(d)");
+    REMatch m = e.getMatch("abcd");
+    check(m,"abcd",18);
+    System.out.println(((m.toString(2).equals("c")) ? "Pass" : "Fail") 
+		       + "ed test #19");
   }
 }      
     
+
+
 

@@ -21,11 +21,8 @@ package gnu.regexp;
 import java.io.ByteArrayOutputStream;
 
 abstract class REToken {
-  static final String newline; // used by RETokenStart and RETokenEnd
-
-  static {
-    newline = System.getProperty("line.separator");
-  }
+  // used by RETokenStart and RETokenEnd  
+  static final String newline = System.getProperty("line.separator"); 
 
   protected REToken m_next = null;
   protected REToken m_uncle = null;
@@ -57,7 +54,9 @@ abstract class REToken {
 	  return new int[] { index };
 	}
       }
-    } else return m_next.match(input,index,eflags,mymatch);
+    } else {
+	return m_next.match(input,index,eflags,mymatch);
+    }
   }
   
   boolean chain(REToken next) {
