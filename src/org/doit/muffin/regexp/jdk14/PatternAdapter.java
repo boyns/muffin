@@ -4,6 +4,7 @@ package org.doit.muffin.regexp.jdk14;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractPatternAdapter;
+import org.doit.muffin.regexp.Factory;
 
 /**
  * @author bw@xmlizer.biz
@@ -73,5 +74,12 @@ public class PatternAdapter extends AbstractPatternAdapter {
 	}
 
 	private java.util.regex.Pattern fPattern;
-
+	
+	// Announce this implementation to the Factory.
+	// It would work in C++ where static code gets executed at any rate.
+	// Not so in Java.
+//	
+//	static {
+//		Factory.instance().addImplementation(PatternAdapter.class);
+//	}
 }

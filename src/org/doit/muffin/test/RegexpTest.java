@@ -1,5 +1,6 @@
 package org.doit.muffin.test;
 
+import java.util.*;
 import junit.framework.TestCase;
 import org.doit.muffin.regexp.Factory;
 import org.doit.muffin.regexp.Pattern;
@@ -17,93 +18,109 @@ public class RegexpTest extends TestCase {
 	 */
 	public RegexpTest(String arg0) {
 		super(arg0);
+//		System.out.println("-----");
+//		System.out.println(IMPLS);
+//		System.out.println("-----");
 	}
 	
 	public void testFactory(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			Factory.instance().setRegexType(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			String patternAdapter = (String)it.next();
+			System.out.println(patternAdapter);
+			Factory.instance().setRegexType(patternAdapter);
 			Pattern pattern = Factory.instance().getPattern("(a|b)");
-			assertEquals(REGEXP_NAMES[i], pattern.getClass().getName());			
+			assertEquals(patternAdapter, pattern.getClass().getName());			
 		}
 	}
 
 	public void testRegexpNull(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testRegexpNull(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testRegexpNull((String)it.next());
 		}
 	}
 	
 	public void testRegexpNotNull(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testRegexpNotNull(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testRegexpNotNull((String)it.next());
 		}
 	}
 	
 	public void testRegexpMatch(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testRegexpMatch(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testRegexpMatch((String)it.next());
 		}
 	}
 	
 	public void testRegexpMatchN(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testRegexpMatchN(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testRegexpMatchN((String)it.next());
 		}
 	}
 	
 	public void testRegexpMatchCase(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testRegexpMatchCase(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testRegexpMatchCase((String)it.next());
 		}
 	}
 	
 	public void testSubstituteInto(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testSubstituteInto(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testSubstituteInto((String)it.next());
 		}
 	}
 	
 	public void testStartEndIndex(){
-		for(int i=0;i<REGEXP_ENGINES.length;i++){
-			testStartEndIndex(REGEXP_ENGINES[i]);
+		Iterator it = IMPLS.keySet().iterator();
+		while(it.hasNext()){
+			testStartEndIndex((String)it.next());
 		}
 	}
 	
-	private void testRegexpNotNull(int regexpType){
+	public void testAA(){
+	}
+	
+	private void testRegexpNotNull(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		Pattern pattern = Factory.instance().getPattern("(a|b)");
 		Matcher matcher = pattern.getMatch("but");
 		assertNotNull(matcher);
 	}
 	
-	private void testRegexpNull(int regexpType){
+	private void testRegexpNull(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		Pattern pattern = Factory.instance().getPattern("(a|b)");
 		Matcher matcher = pattern.getMatch("shure");
 		assertNull(matcher);
 	}
 	
-	private void testRegexpMatch(int regexpType){
+	private void testRegexpMatch(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		Pattern pattern = Factory.instance().getPattern("(a|b)");
 		assertTrue(pattern.matches("but"));
 		assertTrue(!pattern.matches("shure"));
 	}
 
-	private void testRegexpMatchN(int regexpType){
+	private void testRegexpMatchN(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		Pattern pattern = Factory.instance().getPattern("(a|b)");
 		Matcher matcher = pattern.getMatch("bubbles",1);
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",2, matcher.getStartIndex());
+		assertEquals("regextype:<"+regexpType+">",2, matcher.getStartIndex());
 		matcher = pattern.getMatch("bubbles",2);
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",2, matcher.getStartIndex());
+		assertEquals("regextype:<"+regexpType+">",2, matcher.getStartIndex());
 		matcher = pattern.getMatch("bubbles",3);
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",3, matcher.getStartIndex());
+		assertEquals("regextype:<"+regexpType+">",3, matcher.getStartIndex());
 		matcher = pattern.getMatch("bubbles",4);
-		assertNull("regextype:<"+REGEXP_NAMES[regexpType]+">", matcher);
+		assertNull("regextype:<"+regexpType+">", matcher);
 	}
 	
-	private void testRegexpMatchCase(int regexpType){
+	private void testRegexpMatchCase(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		Pattern pattern = Factory.instance().getPattern("(A|B)");
 		assertTrue(!pattern.matches("but"));
@@ -119,7 +136,7 @@ public class RegexpTest extends TestCase {
 		assertTrue(!pattern.matches("SHURE"));
 	}
 
-	private void testSubstituteAll(int regexpType){
+	private void testSubstituteAll(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		final String INPUT = "google is the door to iinformation.";
 		final String REPLACEMENT_STR = "_$1_";
@@ -129,7 +146,7 @@ public class RegexpTest extends TestCase {
 		assertEquals(EXPECTED, got);
 	}
 
-	private void testSubstituteInto(int regexpType){
+	private void testSubstituteInto(String regexpType){
 		Factory.instance().setRegexType(regexpType);
 		final String INPUT = "google is the door to iinformation.";
 		final String REPLACEMENT_STR = "_$1_";
@@ -139,6 +156,14 @@ public class RegexpTest extends TestCase {
 		String got = matcher.substituteInto(REPLACEMENT_STR);
 		assertEquals(EXPECTED, got);
 	}
+	
+	public void testb4b(){
+		boolean value = true;
+		assertTrue(Boolean.valueOf(value ? "true" : "false").booleanValue());
+		value = false;
+		assertTrue(!Boolean.valueOf(value ? "true" : "false").booleanValue());
+	}
+
 
 	/**
 	 * 
@@ -146,7 +171,7 @@ public class RegexpTest extends TestCase {
 	 * This method uses the implicit knowledge that gnu regexp engine has number 0 and
 	 * jdk14 regexp engin has number 1 in Factory.
 	 * 	 * @param regexpType	 */
-	private void testStartEndIndex(int regexpType){
+	private void testStartEndIndex(String regexpType){
 		Factory.instance().setRegexType(regexpType);
         final String INPUT = "google is the door to iinformation.";
 //                             01234567890123456789012345678901234
@@ -156,22 +181,13 @@ public class RegexpTest extends TestCase {
 		Matcher matcher = pattern.getMatch(INPUT);
 		assertEquals(1, matcher.getStartIndex());
 		assertEquals(4, matcher.getEndIndex());
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",1, matcher.getStartIndex(1));
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",2, matcher.getEndIndex(1));
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",3, matcher.getStartIndex(2));
-		assertEquals("regextype:<"+REGEXP_NAMES[regexpType]+">",4, matcher.getEndIndex(2));
+		assertEquals("regextype:<"+regexpType+">",1, matcher.getStartIndex(1));
+		assertEquals("regextype:<"+regexpType+">",2, matcher.getEndIndex(1));
+		assertEquals("regextype:<"+regexpType+">",3, matcher.getStartIndex(2));
+		assertEquals("regextype:<"+regexpType+">",4, matcher.getEndIndex(2));
 	}
 
-	private static final int[] REGEXP_ENGINES = {
-		Factory.REGEX_GNU
-		,Factory.REGEX_JDK14
-		,Factory.REGEX_JAKARTA_REGEX
-	};
-
-	private static final String[] REGEXP_NAMES = {
-		"org.doit.muffin.regexp.gnu.PatternAdapter"
-		,"org.doit.muffin.regexp.jdk14.PatternAdapter"
-		,"org.doit.muffin.regexp.jakarta.regexp.PatternAdapter"
-	};
+	private static Map IMPLS = Factory.instance().getImplementors();
+	private static int NOF_IMPLS = IMPLS.size();
 
 }
