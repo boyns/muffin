@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.10 2000/02/01 15:28:45 boyns Exp $ */
+/* $Id: Handler.java,v 1.11 2000/03/08 15:18:00 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -169,7 +169,12 @@ class Handler implements Runnable
 		    {
 			reply.setHeaderField("Content-length", currentLength);
 		    }
-		    Main.getLogFile().log(request, reply);
+
+		    LogFile logFile = Main.getLogFile();
+		    if (logFile != null)
+		    {
+			logFile.log(request, reply);
+		    }
 		}
 	    }
 	    while (keepAlive);
