@@ -6,8 +6,8 @@ import java.util.*;
 
 //
 // $Log: FileLineEnumerator.java,v $
-// Revision 1.1  1998/07/14 22:53:24  mrb
-// Initial revision
+// Revision 1.1.1.1  1998/07/14 22:53:24  mrb
+// start
 //
 // Revision 2.1  1997/06/13 11:34:26  joel
 // Added more documentation
@@ -21,7 +21,7 @@ import java.util.*;
  * Class FileLineEnumerator implements an Enumeration for reading each line
  * from a text file in sequence.
  * @author Joel Crisp
- * @version $Id: FileLineEnumerator.java,v 1.1 1998/07/14 22:53:24 mrb Exp $
+ * @version $Id: FileLineEnumerator.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $
  * @see java.util.Enumeration
  */
 
@@ -30,7 +30,7 @@ public class FileLineEnumerator extends LineNumberReader implements Enumeration
   /**
    * Version tag. Internally accessable, RCS ID format. 
    */
-  public static String RCSID="$Id: FileLineEnumerator.java,v 1.1 1998/07/14 22:53:24 mrb Exp $";
+  public static String RCSID="$Id: FileLineEnumerator.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $";
 
   /**
    * Constructor for a FileLineEnumerator which needs a Reader format source.

@@ -6,8 +6,8 @@ import java.util.*;
 
 //
 // $Log: MultiSearch.java,v $
-// Revision 1.1  1998/07/14 22:53:24  mrb
-// Initial revision
+// Revision 1.1.1.1  1998/07/14 22:53:24  mrb
+// start
 //
 // Revision 2.4  1997/06/18 07:04:17  joel
 // Now parseable with javacc Java1.1.1 grammar.
@@ -33,7 +33,7 @@ import java.util.*;
  * hashtable search.
  *
  * @author: Joel Crisp
- * @version: $Id: MultiSearch.java,v 1.1 1998/07/14 22:53:24 mrb Exp $
+ * @version: $Id: MultiSearch.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $
  * @see MultiSearchResult 
  */  
 
@@ -42,7 +42,7 @@ public class MultiSearch extends Object
   /**
    * Version tag. Internally accessable, RCS ID format. 
    */
-  public static String RCSID="$Id: MultiSearch.java,v 1.1 1998/07/14 22:53:24 mrb Exp $";
+  public static String RCSID="$Id: MultiSearch.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $";
 
   /** 
    * term holds zero or more characters in this node which form part of

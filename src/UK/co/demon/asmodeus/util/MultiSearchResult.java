@@ -6,8 +6,8 @@ import java.util.*;
 
 //
 // $Log: MultiSearchResult.java,v $
-// Revision 1.1  1998/07/14 22:53:24  mrb
-// Initial revision
+// Revision 1.1.1.1  1998/07/14 22:53:24  mrb
+// start
 //
 // Revision 2.2  1997/06/13 11:34:41  joel
 // Added more documentation.
@@ -25,12 +25,12 @@ import java.util.*;
  * It consists of the term matched and the position in the string at which
  * the match occured 
  * @author Joel Crisp   
- * @version $Id: MultiSearchResult.java,v 1.1 1998/07/14 22:53:24 mrb Exp $
+ * @version $Id: MultiSearchResult.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $
  * @see MultiSearch
  */
 public class MultiSearchResult 
   {
-  public static String RCSID="$Id: MultiSearchResult.java,v 1.1 1998/07/14 22:53:24 mrb Exp $";
+  public static String RCSID="$Id: MultiSearchResult.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $";
 
   /**
    * the offset into the search data where this match starts

@@ -6,8 +6,8 @@ import java.util.*;
 
 //
 // $Log: MultiSearchReader.java,v $
-// Revision 1.1  1998/07/14 22:53:24  mrb
-// Initial revision
+// Revision 1.1.1.1  1998/07/14 22:53:24  mrb
+// start
 //
 // Revision 2.3  1997/06/18 07:04:52  joel
 // Now parsable with javacc Java1.1.1 grammar.
@@ -32,14 +32,14 @@ import java.util.*;
  * @see MultiSearchReader
  * @see MultiSearch
  * @author Joel Crisp
- * @version $Id: MultiSearchReader.java,v 1.1 1998/07/14 22:53:24 mrb Exp $
+ * @version $Id: MultiSearchReader.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $
  */
 class CharStack extends Object 
   {
   /**
    * Version tag. Internally accessable, RCS ID format. 
    */
-  public static String RCSID="$Id: MultiSearchReader.java,v 1.1 1998/07/14 22:53:24 mrb Exp $";
+  public static String RCSID="$Id: MultiSearchReader.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $";
 
   /**
    * Stack of buffered characters.
@@ -131,14 +131,14 @@ class CharStack extends Object
  * It optionally copies any non-matched data to an output stream.
  * @see MultiSearch
  * @author Joel Crisp
- * @version $Id: MultiSearchReader.java,v 1.1 1998/07/14 22:53:24 mrb Exp $ 
+ * @version $Id: MultiSearchReader.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $ 
  */
 public class MultiSearchReader extends MultiSearch 
   {
   /**
    * Version tag. Internally accessable, RCS ID format. 
    */
-  public static String RCSID="$Id: MultiSearchReader.java,v 1.1 1998/07/14 22:53:24 mrb Exp $";
+  public static String RCSID="$Id: MultiSearchReader.java,v 1.1.1.1 1998/07/14 22:53:24 mrb Exp $";
 
   /**
    * fifo buffer used to store characters while a possible match is pending
