@@ -1,4 +1,4 @@
-/* $Id: TextMonitor.java,v 1.2 1998/08/13 06:01:45 boyns Exp $ */
+/* $Id: TextMonitor.java,v 1.3 1998/10/01 06:38:49 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -71,6 +71,10 @@ class TextMonitor implements Monitor
     public Enumeration enumerate ()
     {
 	return handlers.elements ();
+    }
+
+    public void minimize (boolean enable)
+    {
     }
 
 //     void draw ()

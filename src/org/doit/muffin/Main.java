@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.4 1998/10/01 04:28:59 boyns Exp $ */
+/* $Id: Main.java,v 1.5 1998/10/01 06:38:44 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,6 @@ package org.doit.muffin;
 import java.awt.Button;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -35,7 +34,6 @@ import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.Panel;
-import java.awt.Point;
 import java.awt.Label;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -43,7 +41,6 @@ import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
 import gnu.getopt.*;
-import gnu.regexp.*;
 
 /**
  * Startup interface to Muffin.  Parses command line options, loads user
@@ -212,60 +209,8 @@ public class Main extends MuffinFrame
 	addWindowListener (this);
 	configs.addConfigurationListener (this);
 
-	/* Parse geometry option */
-	Dimension loc = null;
-	Point pos = null;
-	if (options.exists("muffin.geometry"))	
-	{
-	    try
-	    {
-		String geometry = options.getString("muffin.geometry");
-		RE re = new RE("([0-9]+x[0-9]+)?(\\+[0-9]+\\+[0-9]+)?");
-		REMatch match = re.getMatch(geometry);
+	updateGeometry (options.getString ("muffin.geometry"));
 
-		if (match != null)
-		{
-		    int i, j;
-
-		    i = match.getSubStartIndex(1);
-		    if (i != -1)
-		    {
-			j = match.getSubEndIndex(1);
-			String s = geometry.substring(i ,j);
-			int n = s.indexOf('x');
-			if (n != -1)
-			{
-			    loc = new Dimension(Integer.parseInt(s.substring(0, n)),
-						Integer.parseInt(s.substring(n+1)));
-			}
-		    }
-
-		    i = match.getSubStartIndex(2);
-		    if (i != -1)
-		    {
-			j = match.getSubEndIndex(2);
-			String s = geometry.substring(i, j);
-			int n = s.lastIndexOf('+');
-			if (n != -1)
-			{
-			    pos = new Point(Integer.parseInt(s.substring(1, n)),
-					    Integer.parseInt(s.substring(n+1)));
-			}
-		    }
-		}
-	    }
-	    catch (Exception e)
-	    {
-		e.printStackTrace();
-	    }
-	}
-
-	pack ();
-	setSize (loc != null ? loc : getPreferredSize ());
-	if (pos != null)
-	{
-	    setLocation(pos);
-	}
 	show ();
     }
 

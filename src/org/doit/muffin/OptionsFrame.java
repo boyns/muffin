@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.2 1998/08/13 06:01:34 boyns Exp $ */
+/* $Id: OptionsFrame.java,v 1.3 1998/10/01 06:38:48 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -57,6 +57,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
     TextField adminUser;
     TextField adminPassword;
     TextField fg, bg;
+    TextField geometry;
     ColorSample fgSample, bgSample;
 
     OptionsFrame (Options options, Configuration configs)
@@ -202,6 +203,18 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	layout.setConstraints (adminPassword, c);
 	panel.add (adminPassword);
 
+	l = new Label ("Geometry:", Label.RIGHT);
+	c = new GridBagConstraints ();
+	layout.setConstraints (l, c);
+	panel.add (l);
+	
+	geometry = new TextField (50);
+	geometry.setText (options.getString ("muffin.geometry"));
+	c = new GridBagConstraints ();
+	c.gridwidth = GridBagConstraints.REMAINDER;
+	layout.setConstraints (geometry, c);
+	panel.add (geometry);
+
 	Panel colorPanel = new Panel ();
 	
 	l = new Label ("Foreground:", Label.RIGHT);
@@ -321,10 +334,12 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	options.putString ("muffin.adminDeny", adminDenyList.getText ());
 	options.putString ("muffin.adminUser", adminUser.getText ());
 	options.putString ("muffin.adminPassword", adminPassword.getText ());
+	options.putString ("muffin.geometry", geometry.getText ());
 	options.putString ("muffin.fg", fg.getText ());
 	options.putString ("muffin.bg", bg.getText ());
 	fgSample.setColor (fg.getText ());
 	bgSample.setColor (bg.getText ());
+	MuffinFrame.getFrame("Muffin").updateGeometry(options.getString("muffin.geometry"));
 	options.sync ();
     }
 
@@ -352,6 +367,7 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
 	    userPrefs.putString ("muffin.adminDeny", options.getString ("muffin.adminDeny"));
 	    userPrefs.putString ("muffin.adminUser", options.getString ("muffin.adminUser"));
 	    userPrefs.putString ("muffin.adminPassword", options.getString ("muffin.adminPassword"));
+	    userPrefs.putString ("muffin.geometry", options.getString ("muffin.geometry"));
 	    userPrefs.putString ("muffin.fg", options.getString ("muffin.fg"));
 	    userPrefs.putString ("muffin.bg", options.getString ("muffin.bg"));
 	    userPrefs.save ();

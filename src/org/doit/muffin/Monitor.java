@@ -1,4 +1,4 @@
-/* $Id: Monitor.java,v 1.2 1998/08/13 06:01:31 boyns Exp $ */
+/* $Id: Monitor.java,v 1.3 1998/10/01 06:38:45 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -62,4 +62,9 @@ interface Monitor
      * Return a list of handlers being monitored.
      */
     Enumeration enumerate ();
+
+    /**
+     * Minimize the monitor.
+     */
+    void minimize(boolean enable);
 }

@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.2 1998/08/13 06:01:32 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.3 1998/10/01 06:38:46 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -23,15 +23,18 @@
 package org.doit.muffin;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.*;
 import java.net.URL;
 import java.util.Vector;
+import gnu.regexp.*;
 
 public class MuffinFrame extends Frame
 {
@@ -78,6 +81,65 @@ public class MuffinFrame extends Frame
 	super.dispose ();
     }
 
+    public void updateGeometry (String geometry)
+    {
+	if (geometry == null && geometry.length() <= 0)
+	{
+	    return;
+	}
+	
+	Dimension loc = null;
+	Point pos = null;
+	
+	try
+	{
+	    RE re = new RE("([0-9]+x[0-9]+)?(\\+[0-9]+\\+[0-9]+)?");
+	    REMatch match = re.getMatch(geometry);
+
+	    if (match != null)
+	    {
+		int i, j;
+
+		i = match.getSubStartIndex(1);
+		if (i != -1)
+		{
+		    j = match.getSubEndIndex(1);
+		    String s = geometry.substring(i ,j);
+		    int n = s.indexOf('x');
+		    if (n != -1)
+		    {
+			loc = new Dimension(Integer.parseInt(s.substring(0, n)),
+					    Integer.parseInt(s.substring(n+1)));
+		    }
+		}
+
+		i = match.getSubStartIndex(2);
+		if (i != -1)
+		{
+		    j = match.getSubEndIndex(2);
+		    String s = geometry.substring(i, j);
+		    int n = s.lastIndexOf('+');
+		    if (n != -1)
+		    {
+			pos = new Point(Integer.parseInt(s.substring(1, n)),
+					Integer.parseInt(s.substring(n+1)));
+		    }
+		}
+	    }
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
+	}
+
+	pack ();
+	setSize (loc != null ? loc : getPreferredSize ());
+	if (pos != null)
+	{
+	    setLocation(pos);
+	}
+    }
+
     static void configColors (Frame frame)
     {
 	frame.setBackground (Main.getOptions ().getColor ("muffin.bg"));
@@ -92,5 +154,18 @@ public class MuffinFrame extends Frame
 	    configColors (frame);
 	    frame.repaint ();
 	}
+    }
+
+    static MuffinFrame getFrame (String title)
+    {
+	for (int i = 0; i < frames.size (); i++)
+	{
+	    MuffinFrame frame = (MuffinFrame) frames.elementAt (i);
+	    if (frame.getTitle().equals(title))
+	    {
+		return frame;
+	    }
+	}
+	return null;
     }
 }

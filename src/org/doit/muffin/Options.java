@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.2 1998/08/13 06:01:33 boyns Exp $ */
+/* $Id: Options.java,v 1.3 1998/10/01 06:38:47 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -53,6 +53,7 @@ class Options extends Prefs implements ConfigurationListener
 	putString ("muffin.httpProxyPort", "");
 	putString ("muffin.httpsProxyHost", "");
 	putString ("muffin.httpsProxyPort", "");
+	putString ("muffin.geometry", "");
 	putBoolean ("muffin.noWindow", false);
         
 	/* By default only allow the localhost access */
