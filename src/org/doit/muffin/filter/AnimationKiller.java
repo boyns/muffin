@@ -1,4 +1,4 @@
-/* $Id: AnimationKiller.java,v 1.6 2003/05/30 16:21:37 forger77 Exp $ */
+/* $Id: AnimationKiller.java,v 1.7 2003/06/01 01:01:09 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,12 +25,15 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 
 public class AnimationKiller extends AbstractFilterFactory {
+	
+	final static String MAXLOOPS = "maxLoops";
+	final static String BREAK    = "break";
 
 	/**
 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()	 */
 	protected void doSetDefaultPrefs() {
-		putPrefsInteger("maxLoops", 1);
-		putPrefsBoolean("break", false);
+		putPrefsInteger(MAXLOOPS, 1);
+		putPrefsBoolean(BREAK, false);
 	}
 
 	/**

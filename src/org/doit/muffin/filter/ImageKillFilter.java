@@ -35,122 +35,84 @@ import org.doit.html.*;
 import java.util.Enumeration;
 import java.io.IOException;
 
-public class ImageKillFilter implements ContentFilter
-{
-    ImageKill factory;
-    Prefs prefs;
-    InputObjectStream in = null;
-    OutputObjectStream out = null;
-    Request request = null;
+public class ImageKillFilter extends AbstractContentFilter {
 
-    ImageKillFilter (ImageKill factory)
-    {
-	this.factory = factory;
-    }
-    
-    public void setPrefs (Prefs prefs)
-    {
-	this.prefs = prefs;
-    }
+	/**	 * @param factory	 */
+	ImageKillFilter(ImageKill factory) {
+		super(factory);
+		this.fFactory = factory;
+	}
 
-    public boolean needsFiltration (Request request, Reply reply)
-    {
-	this.request = request;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
-    }
-    
-    public void setInputObjectStream (InputObjectStream in)
-    {
-	this.in = in;
-    }
+	/**
+	 * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()
+	 */
+	protected String doGetContentIdentifier(){
+		return "text/html";	
+	}
 
-    public void setOutputObjectStream (OutputObjectStream out)
-    {
-	this.out = out;
-    }
-    
-    public void run ()
-    {
-	Thread.currentThread ().setName ("ImageKill");
+	/**	 * @see org.doit.muffin.filter.AbstractContentFilter#doRun(ObjectStreamToInputStream, ObjectStreamToOutputStream)	 */
+	protected void doRun(ObjectStreamToInputStream ostis, ObjectStreamToOutputStream ostos)
+		throws IOException {
 
-	try
-	{
-	    int minheight = prefs.getInteger ("ImageKill.minheight");
-	    int minwidth = prefs.getInteger ("ImageKill.minwidth");
-	    int ratio = prefs.getInteger ("ImageKill.ratio");
-	    boolean keepmaps = prefs.getBoolean ("ImageKill.keepmaps");
-	    boolean replace = prefs.getBoolean ("ImageKill.replace");
-	    String replaceURL = prefs.getString ("ImageKill.replaceURL");
+		final int MINHEIGHT =
+			getFactory().getPrefsInteger(ImageKill.MINHEIGHT_PREF);
+		final int MINWIDTH =
+			getFactory().getPrefsInteger(ImageKill.MINWIDTH_PREF);
+		final int RATIO =
+			getFactory().getPrefsInteger(ImageKill.RATIO_PREF);
+		final boolean KEEPMAPS =
+			getFactory().getPrefsBoolean(ImageKill.KEEPMAPS_PREF);
+		final boolean REPLACE =
+			getFactory().getPrefsBoolean(ImageKill.REPLACE_PREF);
+		final String REPLACEURL =
+			getFactory().getPrefsString(ImageKill.REPLACEURL_PREF);
 
-	    int w = 0;
-	    int h = 0;
+		int w = 0;
+		int h = 0;
 
-	    Tag tag;
-	    Object obj;
+		Tag tag;
+		Object obj;
 
-	    while ((obj = in.read()) != null)
-            {
-		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
-		{
-		    tag = token.createTag ();
-		    if (tag.is ("img") && 
-			tag.has ("width") && 
-			tag.has ("height") &&
-			!(keepmaps && tag.has ("usemap")) &&
-			!factory.isExcluded (tag.get ("src")))
-		    {
-			try
-			{
-			    w = Integer.parseInt (tag.get ("width"));
-			    h = Integer.parseInt (tag.get ("height"));
+		while ((obj = getInputObjectStream().read()) != null) {
+			Token token = (Token) obj;
+			if (token.getType() == Token.TT_TAG) {
+				tag = token.createTag();
+				if (tag.is("img")
+					&& tag.has("width")
+					&& tag.has("height")
+					&& !(KEEPMAPS && tag.has("usemap"))
+					&& !fFactory.isExcluded(tag.get("src"))) {
+					try {
+						w = Integer.parseInt(tag.get("width"));
+						h = Integer.parseInt(tag.get("height"));
+					} catch (NumberFormatException e) {
+						getFactory().report(
+							getRequest(),
+							"malformed image size: " + tag);
+						getOutputObjectStream().write(token);
+						continue;
+					}
+					if (fFactory.inRemoveSizes(w, h)
+						|| ((h > MINHEIGHT)
+							&& (w > MINWIDTH)
+							&& (w / h > RATIO))) {
+						if (REPLACE) {
+							getFactory().report(
+								getRequest(),
+								"tag replaced: " + tag);
+							tag.put("src", REPLACEURL);
+							token.importTag(tag);
+						} else {
+							getFactory().report(
+								getRequest(),
+								"tag removed: " + tag);
+							continue;
+						}
+					}
+				}
 			}
-			catch (NumberFormatException e) {
-			    factory.report(request,
-					   "malformed image size: "
-					   + tag);
-			    out.write (token);
-			    continue;
-			}
-			if ( factory.inRemoveSizes (w, h) ||
-			     ((h>minheight) && (w>minwidth) && (w/h>ratio)))
-			{
-			    if (replace)
-			    {
-				factory.report(request,
-				    "tag replaced: " + tag);
-				tag.put ("src", replaceURL);
-				token.importTag (tag);
-			    }
-			    else
-			    {
-				factory.report(request,
-				    "tag removed: " + tag);
-				continue;
-			    }
-			}
-		    }
+			getOutputObjectStream().write(token);
 		}
-		out.write (token);
-	    }
 	}
-	catch (IOException ioe)
-	{
-	    ioe.printStackTrace();
-	}
-	finally
-	{
-	    try
-	    {
-	        out.flush();
-	        out.close();
-	    }
-	    catch (IOException ioe)
-	    {
-	        ioe.printStackTrace();
-	    }
-	}
-    }
+	private ImageKill fFactory;
 }
-

@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFrame.java,v 1.7 2003/05/30 21:54:05 forger77 Exp $ */
+/* $Id: EmptyFontFrame.java,v 1.8 2003/06/01 01:01:08 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -46,8 +46,8 @@ public class EmptyFontFrame extends AbstractFrame {
 
 		panel.add("North", makeDebugPanel());
 
-		getParent().getMessages().setEditable(false);
-		panel.add("Center", getParent().getMessages());
+		getFactory().getMessages().setEditable(false);
+		panel.add("Center", getFactory().getMessages());
 
 		panel.add("South", makeButtonPanel());
 		
@@ -65,8 +65,8 @@ public class EmptyFontFrame extends AbstractFrame {
 		panel.setLayout(layout);
 		GridBagConstraints c;
 
-		fDebug = new Checkbox(getParent().getString(EmptyFont.DEBUG));
-		fDebug.setState(getParent().getPrefsBoolean(EmptyFont.DEBUG));
+		fDebug = new Checkbox(getFactory().getString(EmptyFont.DEBUG));
+		fDebug.setState(getFactory().getPrefsBoolean(EmptyFont.DEBUG));
 
 		c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -90,7 +90,7 @@ public class EmptyFontFrame extends AbstractFrame {
 	/**
 	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
 	protected void doApply(){
-		getParent().putPrefsBoolean(EmptyFont.DEBUG, fDebug.getState());
+		getFactory().putPrefsBoolean(EmptyFont.DEBUG, fDebug.getState());
 	}
 	
 	private Checkbox fDebug;

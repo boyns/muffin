@@ -1,4 +1,4 @@
-/* $Id: DecafFilter.java,v 1.7 2000/01/26 03:53:34 boyns Exp $ */
+/* $Id: DecafFilter.java,v 1.8 2003/06/01 01:01:09 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,7 +30,7 @@ import java.io.IOException;
 
 public class DecafFilter implements ContentFilter, ReplyFilter
 {
-    Decaf factory;
+    Decaf fFactory;
     Prefs prefs;
     InputObjectStream in = null;
     OutputObjectStream out = null;
@@ -38,7 +38,7 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 
     DecafFilter(Decaf factory)
     {
-	this.factory = factory;
+	this.fFactory = factory;
     }
     
     public void setPrefs(Prefs prefs)
@@ -53,7 +53,7 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 	    String content = reply.getContentType();
 	    if (content != null && content.equalsIgnoreCase("application/x-javascript"))
 	    {
-		factory.report(request, "rejecting " + content);
+		fFactory.report(request, "rejecting " + content);
 		throw new FilterException("Decaf " + content + " rejected");
 	    }
 	}
@@ -112,9 +112,9 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 			if (tag.is("script"))
 			{
 			    eatingJavaScript = true;
-			    factory.report(request, "removed <script>");
+			    fFactory.report(request, "removed <script>");
 			}
-			else if (factory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
+			else if (fFactory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
 			{
 			    StringBuffer str = new StringBuffer();
 			    String value;
@@ -123,7 +123,7 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 			    while (e.hasMoreElements())
 			    {
 				String attr = (String) e.nextElement();
-				if (factory.isJavaScriptAttr(attr))
+				if (fFactory.isJavaScriptAttr(attr))
 				{
 				    value = tag.remove(attr);
 				    if (value != null)
@@ -166,7 +166,7 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 
 			    if (str.length() > 0)
 			    {
-				factory.report(request, "removed " + str.toString());
+				fFactory.report(request, "removed " + str.toString());
 			    }
 			}
 		    }
@@ -175,7 +175,7 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 			if (tag.is("applet"))
 			{
 			    eatingJava = true;
-			    factory.report(request, "removed <applet>");
+			    fFactory.report(request, "removed <applet>");
 			}
 		    }
 		    if (!eatingJavaScript && !eatingJava)

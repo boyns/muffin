@@ -21,8 +21,8 @@ public class AnimationKillerFrame extends AbstractFrame {
 	protected Panel doMakeContent(){
 		Panel p = new Panel(new BorderLayout());
 		p.add("North", makeTopPanel());
-		getParent().getMessages().setEditable(false);
-		p.add("Center", getParent().getMessages());
+		getFactory().getMessages().setEditable(false);
+		p.add("Center", getFactory().getMessages());
 		p.add("South", makeButtonPanel());
 		return p;
 	}
@@ -47,8 +47,8 @@ public class AnimationKillerFrame extends AbstractFrame {
 		panel.setLayout(layout);
 		GridBagConstraints c;
 
-		fBreakem = new Checkbox(getParent().getString("break"));
-		fBreakem.setState(getParent().getPrefsBoolean("break"));
+		fBreakem = new Checkbox(getFactory().getString("break"));
+		fBreakem.setState(getFactory().getPrefsBoolean("break"));
 		c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
 		layout.setConstraints(fBreakem, c);
@@ -56,7 +56,7 @@ public class AnimationKillerFrame extends AbstractFrame {
 
 		Label label =
 			new Label(
-				getParent().getString("maxLoops") + ":",
+				getFactory().getString("maxLoops") + ":",
 				Label.RIGHT);
 		c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
@@ -64,7 +64,7 @@ public class AnimationKillerFrame extends AbstractFrame {
 		panel.add(label);
 
 		fMaxLoops = new TextField(2);
-		fMaxLoops.setText(getParent().getPrefsString("maxLoops"));
+		fMaxLoops.setText(getFactory().getPrefsString("maxLoops"));
 		c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.anchor = GridBagConstraints.WEST;
@@ -76,8 +76,8 @@ public class AnimationKillerFrame extends AbstractFrame {
 	/**
 	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
 	protected void doApply(){
-		getParent().putPrefsString("maxLoops", fMaxLoops.getText());
-		getParent().putPrefsBoolean("break", fBreakem.getState());
+		getFactory().putPrefsString("maxLoops", fMaxLoops.getText());
+		getFactory().putPrefsBoolean("break", fBreakem.getState());
 	}
 
 	private Checkbox fBreakem;

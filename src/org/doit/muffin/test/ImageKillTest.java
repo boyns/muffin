@@ -30,50 +30,67 @@ import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.regexp.*;
 
-import org.doit.muffin.filter.EmptyFont;
+import org.doit.muffin.filter.ImageKill;
 
 /**
  * @author Bernhard Wagner <bw@xmlizer.biz>
  * 
- * TestCase testing the EmptyFont.
+ * TestCase testing the ImageKill.
  *
  */
-public class EmptyFontTest extends TestCase {
+public class ImageKillTest extends TestCase {
 
 	/**
-	 * Constructor for EmptyFontTest.
+	 * Constructor for ImageKillTest.
 	 * @param arg0
 	 */
-	public EmptyFontTest(String arg0) {
+	public ImageKillTest(String arg0) {
 		super(arg0);
-//		System.out.println("-----");
-//		System.out.println(IMPLS);
-//		System.out.println("-----");
 	}
 	
 	
 	public void setUp() {
-		fEmptyFont = new EmptyFont();
-		fEmptyFontFilter = (ContentFilter)fEmptyFont.createFilter();
+		fImageKill = new ImageKill();
+		fImageKillFilter = (ContentFilter)fImageKill.createFilter();
+		fPrefs = new Prefs();
+		// parameters:
+		fPrefs.putInteger ("ImageKill.minheight", 49);
+		fPrefs.putInteger ("ImageKill.minwidth",  300);
+		fPrefs.putInteger ("ImageKill.ratio",      5);
+		fPrefs.putBoolean ("ImageKill.keepmaps", true);
+		fPrefs.putString  ("ImageKill.exclude", "(button|map)");
+		fPrefs.putString  ("ImageKill.rmSizes", "468x60,450x40");
+		fPrefs.putString  ("ImageKill.replaceURL", "file:/usr/local/images/empty.gif");
+		fPrefs.putBoolean ("ImageKill.replace", false);
+		fImageKill.setPrefs(fPrefs);
 	}
 	
-	public void testEmptyFontFilterPresence() throws IOException {
-		assertNotNull(fEmptyFontFilter);
+	public void testException(){
+		try {
+			fImageKillFilter.setPrefs(fPrefs);
+		} catch (RuntimeException e){
+			return;
+		}
+		fail("Should have thrown RuntimeException.");
+	}
+	
+	public void testImageKillFilterPresence() throws IOException {
+		assertNotNull(fImageKillFilter);
 		
 		Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
 		assertNotNull(reply);
 		
-		assertTrue(fEmptyFontFilter.needsFiltration(null, reply));
+		assertTrue(fImageKillFilter.needsFiltration(null, reply));
 	}
 	
 	public void testReplacing(){
 		Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
 		OutputStream os = new ByteArrayOutputStream();
-		Utils.filter(fEmptyFontFilter, reply.getContent(), os, SAMPLE_RESPONSE.length(), reply);
+		Utils.filter(fImageKillFilter, reply.getContent(), os, SAMPLE_RESPONSE.length(), reply);
 		String result = os.toString();
 		
-		Pattern pat = org.doit.muffin.regexp.Factory.instance().getPattern("<font>([ \t]*)</font>", true);
-		String expected = pat.substituteAll(SAMPLE_PAGE, "$1");
+		Pattern pat = org.doit.muffin.regexp.Factory.instance().getPattern("<img.*>", true);
+		String expected = pat.substituteAll(SAMPLE_PAGE, "");
 		
 		assertEquals(expected, result);
 	}
@@ -83,20 +100,22 @@ public class EmptyFontTest extends TestCase {
 		+ "<head><title>Test Page</title></head>\n"
 		+ "<body><h1><font>\t</font>Test Page</h1>\n"
 		+ "muffin<font></font> is<font> </font> a <font>funky</font> java project.\n"
+		+ "<img width=\"301\" height=\"50\" src=\"blabla.gif\" >\n"
 		+ "</body>\n"
 		+ "";
 
 	private static final String SAMPLE_RESPONSE = "HTTP/1.0 302 Found\n"
 		+ "Content-Type: text/html\n"
 		+ "Location: http://xmlizer.biz:8080/index.html\n"
-		+ "Content-Length: 176\n"
+		+ "Content-Length: 300\n"
 		+ "Servlet-Engine: Tomcat Web Server/3.2 beta 3 (JSP 1.1; Servlet 2.2; Java 1.2.2; Linux 2.2.24-7.0.3smp i386; java.vendor=Blackdown Java-Linux Team)\n"
 		+ "\n"
 		+ SAMPLE_PAGE
 		+ "";
-
-	private EmptyFont fEmptyFont;
-	private ContentFilter fEmptyFontFilter;
+			
+	private ImageKill fImageKill;
+	private ContentFilter fImageKillFilter;
 	private Reply fReply;
+	private Prefs fPrefs;
 
 }
