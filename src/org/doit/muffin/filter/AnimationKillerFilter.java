@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.2 1998/08/13 06:02:00 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.3 1998/09/23 06:55:44 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -90,10 +90,10 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 	{
 	    int b, i;
 	    int pattern[] = { 0x21, 0xff, 0x0b,
-			   // 'N', 'E', 'T', 'S', 'C', 'A', 'P', 'E', '2', '.', '0',
-			   // 0x03, 0x01 };
-			      '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
-			      '#', '#' };
+			       'N', 'E', 'T', 'S', 'C', 'A', 'P', 'E', '2', '.', '0',
+			      0x03, 0x01 };
+// 			      '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+// 			      '#', '#' };
 	    int undo[] = new int[pattern.length];
 	    
 	    int index = 0;
@@ -157,18 +157,24 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 			    gifOutput.write (0x03);
 			    gifOutput.write (0x01);
 			
-			    b = gifInput.read ();
-			    b = gifInput.read ();
+			    b = gifInput.read (); // high
+			    b = gifInput.read (); // low
+			    b = gifInput.read (); // terminator
+			    
 			    if (prefs.getInteger ("AnimationKiller.maxLoops") == -1)
 			    {
-				gifOutput.write (0x00);
-				gifOutput.write (0x00);
+				gifOutput.write (0x00); // low
+				gifOutput.write (0x00); // high
 			    }
 			    else
 			    {
-				gifOutput.write (prefs.getInteger ("AnimationKiller.maxLoops"));
-				gifOutput.write (0x00);
+				int loops = prefs.getInteger ("AnimationKiller.maxLoops");
+				int high = loops / 256;
+				int low = loops % 256;
+				gifOutput.write (low);
+				gifOutput.write (high);
 			    }
+			    gifOutput.write (0x00); // terminator
 			}
 		    }
 		}
