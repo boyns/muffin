@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.13 2003/01/08 16:53:09 dougporter Exp $ */
+/* $Id: Handler.java,v 1.14 2003/01/11 16:12:12 dougporter Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -678,10 +678,13 @@ class Handler implements Runnable
      */
     void uncompressContent (Reply reply)
     throws IOException {
-        if ("text/html".equals(reply.getHeaderField("Content-type")))
+        String type = reply.getHeaderField("Content-type");
+        if (type != null && 
+            type.toLowerCase().startsWith("text/html"))
         {
             String encoding = reply.getHeaderField("Content-Encoding");
-            if (encoding != null && encoding.indexOf("gzip") != -1)
+            if (encoding != null && 
+                encoding.toLowerCase().indexOf("gzip") != -1)
             {
                 // System.out.println ("gzipped: " + reply.getRequest ().getURL ()); //DEBUG
 
