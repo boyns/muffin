@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.13 2000/03/29 15:14:00 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.14 2001/07/02 05:02:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -242,8 +242,12 @@ public class NoThanks implements FilterFactory
     {
 	if (pattern == null)
 	{
+	    //XXXXXXXXX
 	    pattern = "";
+	    //return true;
 	}
+
+	//System.out.println("re="+re+", pattern="+pattern+", match="+re.getMatch(pattern));
 
 	return re.getMatch(pattern) != null;
     }

@@ -1,6 +1,7 @@
 /*
  *  gnu/regexp/util/Grep.java
  *  Copyright (C) 1998 Wes Biggs
+ *  Copyright (C) 2001 Lee Sau Dan for the use of Reader for handling file I/O
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published
@@ -26,12 +27,14 @@ import gnu.regexp.REException;
 import gnu.regexp.REMatch;
 import gnu.regexp.RESyntax;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Grep is a pure-Java clone of the GNU grep utility.  As such, it is much
@@ -39,7 +42,8 @@ import java.io.PrintStream;
  * available on any system with a Java virtual machine.
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.01
+ *         <A HREF="http://www.csis.hku.hk/~sdlee/">Lee Sau Dan</A>
+ * @version 1.02
  * @use gnu.getopt
  */
 public class Grep {
@@ -55,7 +59,7 @@ public class Grep {
   private static final int FILES_WITHOUT_MATCH = 9;
 
   private static final String PROGNAME = "gnu.regexp.util.Grep";
-  private static final String PROGVERSION = "1.01";
+  private static final String PROGVERSION = "1.02";
 
   private Grep() { }
   /**
@@ -79,6 +83,8 @@ public class Grep {
     int cflags = 0;
     
     boolean[] options = new boolean [10];
+
+    String encoding = null;
     
     LongOpt[] longOptions = { 
         new LongOpt("byte-offset",         LongOpt.NO_ARGUMENT, null, 'b'),
@@ -97,10 +103,11 @@ public class Grep {
 	new LongOpt("fixed-strings",       LongOpt.NO_ARGUMENT, null, 'F'), // TODO
 	new LongOpt("basic-regexp",        LongOpt.NO_ARGUMENT, null, 'G'),
 	new LongOpt("files-without-match", LongOpt.NO_ARGUMENT, null, 'L'),
-	new LongOpt("version",             LongOpt.NO_ARGUMENT, null, 'V')
+	new LongOpt("version",             LongOpt.NO_ARGUMENT, null, 'V'),
+	new LongOpt("encoding",      LongOpt.REQUIRED_ARGUMENT, null, 'N')
 	  };
 
-    Getopt g = new Getopt(PROGNAME, argv, "bchilnqsvxyEFGLV", longOptions);
+    Getopt g = new Getopt(PROGNAME, argv, "bchilnqsvxyEFGLVN:", longOptions);
     int c;
     String arg;
     while ((c = g.getopt()) != -1) {
@@ -150,21 +157,31 @@ public class Grep {
       case 'V':
 	System.err.println(PROGNAME+' '+PROGVERSION);
 	return 0;
+      case 'N':
+	encoding = g.getOptarg();
+	try { // try out this encoding now.  If not found, fall back to default
+	  "".getBytes(encoding);
+	} catch (UnsupportedEncodingException uee) {
+	  System.err.println(PROGNAME+": (Warning)"
+			     + " Unsupported Encoding: " + encoding 
+			     + "; reverting to default");
+	  encoding = null;
+	}
+	break;
       case '!': // help
-	BufferedReader br = new BufferedReader(new InputStreamReader((Grep.class).getResourceAsStream("GrepUsage.txt")));
-	String line;
-	try {
-	  while ((line = br.readLine()) != null)
-	    out.println(line);
-	} catch (IOException ie) { }
+	  try {
+	      BufferedReader br = new BufferedReader(new InputStreamReader((Grep.class).getResourceAsStream("GrepUsage.txt"),"UTF8"));
+	      String line;
+	      while ((line = br.readLine()) != null)
+		  out.println(line);
+	  } catch (IOException ie) { }
 	return 0;
       }
     }	      
     
     InputStream is = null;
     RE pattern = null;
-    int optind = g.getOptind();
-    if (optind >= argv.length) {
+    if (g.getOptind() >= argv.length) {
       System.err.println("Usage: java " + PROGNAME + " [OPTION]... PATTERN [FILE]...");
       System.err.println("Try `java " + PROGNAME + " --help' for more information.");
       return 2;
@@ -175,34 +192,66 @@ public class Grep {
       System.err.println("Error in expression: "+e);
       return 2;
     }
-    int retval = 1;
+
+    boolean notFound = true;
     if (argv.length >= g.getOptind()+2) {
       for (int i = g.getOptind() + 1; i < argv.length; i++) {
+	  boolean no_filename = (argv.length == g.getOptind()+2)
+	      || options[NO_FILENAME];
 	if (argv[i].equals("-")) {
-	  if (processStream(pattern,System.in,options,(argv.length == g.getOptind()+2) || options[NO_FILENAME] ? null : "(standard input)",out)) {
-	    retval = 0;
-	  }
+	    final String filename = no_filename ? null : "(standard input)";
+	    if (processStream(pattern,System.in,encoding,options,filename,out))
+		notFound = false;
 	} else {
-	  try {
-	    is = new FileInputStream(argv[i]);
-	    if (processStream(pattern,is,options,(argv.length == g.getOptind()+2) || options[NO_FILENAME] ? null : argv[i],out))
-	      retval = 0;
-	  } catch (FileNotFoundException e) {
-	    if (!options[SILENT])
-	      System.err.println(PROGNAME+": "+e);
-	  }
+	    final String filename = no_filename ? null : argv[i];
+	    try {
+		File file = new File(argv[i]);
+		if(file.isDirectory()) {
+		    System.err.println(PROGNAME + ": " + argv[i] + ": Is a directory");
+		} else if(!file.canRead()) {
+		    System.err.println(PROGNAME + ": " + argv[i] + ": Permission denied");
+		} else {
+		    if (processStream(pattern,
+				      new FileInputStream(argv[i]),
+				      encoding, options, filename, out))
+			notFound = false;
+		}
+	    } catch (FileNotFoundException e) {
+		if (!options[SILENT])
+		    System.err.println(PROGNAME+": "+e);
+	    }
 	}
       }
     } else {
-      if (processStream(pattern,System.in,options,null,out))
-	retval = 1;
+	if (processStream(pattern,System.in,encoding,options,null,out))
+	    notFound = false;
     }
-    return retval;
+    return notFound ? 1 : 0;
   }
 
-  private static boolean processStream(RE pattern, InputStream is, boolean[] options, String filename, PrintStream out) {
+  private static boolean processStream(RE pattern, InputStream is, 
+				       String encoding, boolean[] options, 
+				       String filename, PrintStream out) {
+    try {
+      final InputStreamReader isr = encoding == null?
+	new InputStreamReader(is) : new InputStreamReader(is,encoding);
+      final BufferedReader r = new BufferedReader(isr);
+      return processReader(pattern, r, options, filename, out);
+    } catch (UnsupportedEncodingException uee) {
+      /* since grep() should have checked that the 'encoding' parameter
+	 is valid, it should be impossible that this exception would
+	 happen.  Of, sso, it is a logic error.
+      */
+      throw new Error(PROGNAME + ": programming logic error");
+    }
+  }
+
+  private static boolean processReader(RE pattern,
+				       BufferedReader br,
+				       boolean[] options, String filename,
+				       PrintStream out) {
+
     int newlineLen = System.getProperty("line.separator").length();
-    BufferedReader br = new BufferedReader(new InputStreamReader(is));
     int count = 0;
     long atByte = 0;
     int atLine = 1;

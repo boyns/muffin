@@ -1,0 +1,35 @@
+Snapshot is a filter that caches pages to disk.  Snapshot is different
+from your browser's cache in several ways.  Snapshot caches all pages,
+including form submissions (only GET, not POST) and pages marked with
+dont-cache or expires headers.  Snapshot never checks to see if a page
+has changed, and never deletes a page from its cache.
+
+Snapshot is good for offline browsing.  After you browse around to
+prime the cache, you can disconnect and feel confident that the pages
+you saw online will still be available offline, cached permanently by
+Snapshot.  Using a web crawler (such as Websphinx,
+http://www.cs.cmu.edu/~rcm/websphinx/) is another way to prime the
+cache.
+
+Snapshot has two modes.  In CAPTURING mode, all requests are sent out
+to the network, and replies are stored in the cache.  In REPLAYING
+mode, Snapshot first checks whether the request URL is found in the
+cache, and returns the cached copy if so.  Otherwise, the request is
+sent out to the network, and the reply is cached.  Snapshot starts in
+CAPTURING mode by default.
+
+Since Snapshot never deletes pages from its cache, it may grow without
+bound if you leave Snapshot turned on for all your web browsing.  You
+can clear the cache with the Clear Snapshot button.
+
+Suggestions for use:
+
+- store online documentation for offline browsing.  Use a separate
+snapshot directory for each web site you want to cache, and create an
+automatic configuration triggered by the site's URL that brings up
+Snapshot on that directory in replay mode.
+
+- store presentations and demos for offline viewing.  If you give
+talks and demos on a laptop, and can't be certain you'll have a
+network connection where you'll be talking, you can use Snapshot to
+permanently cache the web pages used in your talk.

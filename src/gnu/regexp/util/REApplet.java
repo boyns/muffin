@@ -45,15 +45,22 @@ public class REApplet extends Applet {
     };
 
     private static RESyntax[] values = new RESyntax[] { 
-	RESyntax.RE_SYNTAX_AWK, RESyntax.RE_SYNTAX_ED, 
-	RESyntax.RE_SYNTAX_EGREP, RESyntax.RE_SYNTAX_EMACS, 
-	RESyntax.RE_SYNTAX_GREP, RESyntax.RE_SYNTAX_POSIX_AWK, 
-	RESyntax.RE_SYNTAX_POSIX_BASIC,	RESyntax.RE_SYNTAX_POSIX_EGREP, 
-	RESyntax.RE_SYNTAX_POSIX_EXTENDED, 
-	RESyntax.RE_SYNTAX_POSIX_MINIMAL_BASIC, 
-	RESyntax.RE_SYNTAX_POSIX_MINIMAL_EXTENDED, RESyntax.RE_SYNTAX_SED, 
-	RESyntax.RE_SYNTAX_PERL4, RESyntax.RE_SYNTAX_PERL4_S, 
-	RESyntax.RE_SYNTAX_PERL5, RESyntax.RE_SYNTAX_PERL5_S 
+	new RESyntax(RESyntax.RE_SYNTAX_AWK).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_ED).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_EGREP).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_EMACS).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_GREP).setLineSeparator("\n"),
+	new RESyntax(RESyntax.RE_SYNTAX_POSIX_AWK).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_POSIX_BASIC).setLineSeparator("\n"),
+	new RESyntax(RESyntax.RE_SYNTAX_POSIX_EGREP).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_POSIX_EXTENDED).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_POSIX_MINIMAL_BASIC).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_POSIX_MINIMAL_EXTENDED).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_SED).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_PERL4).setLineSeparator("\n"),
+	new RESyntax(RESyntax.RE_SYNTAX_PERL4_S).setLineSeparator("\n"), 
+	new RESyntax(RESyntax.RE_SYNTAX_PERL5).setLineSeparator("\n"),
+	new RESyntax(RESyntax.RE_SYNTAX_PERL5_S).setLineSeparator("\n")
     };
 
     /** Creates an REApplet. */
@@ -196,7 +203,7 @@ public class REApplet extends Applet {
 		String expr = tf.getText();
 		RE reg = null;
 		RESyntax res = values[syntax.getSelectedIndex()];
-		reg = new RE(expr,insens.getState() ? RE.REG_ICASE : 0, res);
+		reg = new RE(expr,insens.getState() ? RE.REG_ICASE | RE.REG_MULTILINE : RE.REG_MULTILINE, res);
 		REMatchEnumeration en = reg.getMatchEnumeration(input.getText());
 		StringBuffer sb = new StringBuffer();
 		int matchNum = 0;
@@ -208,7 +215,7 @@ public class REApplet extends Applet {
 		}
 		output.setText(sb.toString());
 	    } catch (REException err) { 
-		output.setText(err.getMessage());
+		output.setText("Expression compilation error: " + err.getMessage());
 	    }
 	return true;
 	} else return false;

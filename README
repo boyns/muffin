@@ -5,7 +5,7 @@ Muffin - a filtering proxy server for the World Wide Web.
 
 Features:
 
-* Written entirely in Java.  Requires JDK 1.1
+* Written entirely in Java.  Requires JDK 1.1 or greater.
   Runs on Unix, Windows 95/NT, and MacOS.
 
 * Freely available under the GNU General Public License.
@@ -55,4 +55,4 @@ Also included in this distribution:
 
 Send suggestions and bug reports to <boyns@doit.org>
 
-$Id: README,v 1.14 2000/03/30 06:37:08 boyns Exp $
+$Id: README,v 1.15 2001/07/02 05:02:07 boyns Exp $

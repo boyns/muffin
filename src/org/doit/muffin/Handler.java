@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.11 2000/03/08 15:18:00 boyns Exp $ */
+/* $Id: Handler.java,v 1.12 2001/07/02 05:02:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -489,7 +489,7 @@ class Handler implements Runnable
     {
 	InputStream in;
 	boolean chunked = false;
-	
+
 	if (reply.containsHeaderField("Transfer-Encoding")
 	    && reply.getTransferEncoding().equals("chunked"))
 	{

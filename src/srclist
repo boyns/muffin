@@ -1,5 +1,0 @@
-#!/bin/sh
-
-srcdir=$1
-echo $srcdir/gnu/regexp/RESyntax.java
-find $srcdir -name '*.java' -print | grep -v gnu/regexp/RESyntax.java

@@ -1,4 +1,4 @@
-/* $Id: Reply.java,v 1.7 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: Reply.java,v 1.8 2001/07/02 05:02:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -209,19 +209,19 @@ public class Reply extends Message
     public String getContentType()
     {
 	Hashtable table = headerParser("Content-type");
-	return(String) table.get("Content-type");
+	return (String) table.get("Content-type");
     }
 
     public String getBoundary()
     {
 	Hashtable table = headerParser("Content-type");
-	return(String) table.get("boundary");
+	return (String) table.get("boundary");
     }
 
     public String getTransferEncoding()
     {
 	Hashtable table = headerParser("Transfer-Encoding");
-	return(String) table.get("Transfer-Encoding");
+	return (String) table.get("Transfer-Encoding");
     }
 
     public int getChunkSize(InputStream in) throws IOException

@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.22 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: Main.java,v 1.23 2001/07/02 05:02:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -47,7 +47,7 @@ import org.doit.util.*;
  *
  * @author Mark Boyns
  */
-public class Main extends MuffinFrame
+public class Main
     implements ActionListener, WindowListener, ConfigurationListener
 {
     private static String version = "0.9.4";
@@ -89,6 +89,7 @@ public class Main extends MuffinFrame
 	}
 	else
 	{
+	    MuffinFrame frame = new MuffinFrame("Muffin");
 	    monitor = new CanvasMonitor(this);
 	    gui();
 	}
@@ -199,49 +200,6 @@ public class Main extends MuffinFrame
 	    Canvas canvas = (Canvas) monitor;
 	    add("Center", canvas);
 	}
-
-// 	GridBagLayout layout = new GridBagLayout();
-// 	controlPanel = new Panel();
-// 	controlPanel.setLayout(layout);
-
-// 	GridBagConstraints c = new GridBagConstraints();
-// 	c.anchor = GridBagConstraints.NORTHWEST;
-// 	c.insets = new Insets(2, 5, 2, 5);
-// 	c.weightx = 1.0;
-
-// 	Button b;
-// 	b = new Button("Filters...");
-// 	b.setFont(new Font("Helvetica", Font.BOLD, 12));
-// 	b.setActionCommand("doFilters");
-// 	b.addActionListener(this);
-// 	layout.setConstraints(b, c);
-// 	controlPanel.add(b);
-
-// 	b = new Button("Options...");
-// 	b.setActionCommand("doOptions");
-// 	b.addActionListener(this);
-// 	layout.setConstraints(b, c);
-// 	controlPanel.add(b);
-
-// 	suspendButton = new Button("Suspend");
-// 	suspendButton.setActionCommand("doSuspend");
-// 	suspendButton.addActionListener(this);
-// 	layout.setConstraints(suspendButton, c);
-// 	controlPanel.add(suspendButton);
-
-// 	b = new Button("Stop");
-// 	b.setActionCommand("doStop");
-// 	b.addActionListener(this);
-// 	layout.setConstraints(b, c);
-//	controlPanel.add(b);
-	
-// 	Icon icon = new Icon(options);
-// 	c.anchor = GridBagConstraints.EAST;
-// 	c.gridwidth = GridBagConstraints.REMAINDER;
-// 	layout.setConstraints(icon, c);
-// 	controlPanel.add(icon);
-	
-// 	add("North", controlPanel);
 
 	infoLabel = new Label(infoString);
 	infoLabel.setFont(options.getFont("muffin.smallfont"));
@@ -488,9 +446,9 @@ public class Main extends MuffinFrame
 		    { 
 			theMuffin.server.run(); 
 		    }
-		    catch (Throwable t)
+		    catch (Throwable e)
 		    { 
-			System.out.println("Unexpected exception " + t); 
+			System.out.println("Unexpected exception " + e); 
 		    } 
 		} 
 	    }; 

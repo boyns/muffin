@@ -1,67 +1,62 @@
 /*
  *  gnu/regexp/REToken.java
- *  Copyright (C) 1998 Wes Biggs
+ *  Copyright (C) 1998-2001 Wes Biggs
  *
  *  This library is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation; either version 2.1 of the License, or
  *  (at your option) any later version.
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Library General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 package gnu.regexp;
-import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
-abstract class REToken {
-  // used by RETokenStart and RETokenEnd  
-  static final String newline = System.getProperty("line.separator"); 
+abstract class REToken implements Serializable {
 
-  protected REToken m_next = null;
-  protected REToken m_uncle = null;
-  protected int m_subIndex;
+  protected REToken next = null;
+  protected REToken uncle = null;
+  protected int subIndex;
 
-  protected REToken(int f_subIndex) {
-    m_subIndex = f_subIndex;
+  protected REToken(int aSubIndex) {
+      subIndex = aSubIndex;
   }
 
   int getMinimumLength() {
     return 0;
   }
 
-  void setUncle(REToken f_uncle) {
-    m_uncle = f_uncle;
+  void setUncle(REToken anUncle) {
+    uncle = anUncle;
   }
 
-  abstract int[] match(CharIndexed input, int index, int eflags, REMatch mymatch);
+    /** Returns true if the match succeeded, false if it failed. */
+    abstract boolean match(CharIndexed input, REMatch mymatch);
   
-  protected int[] next(CharIndexed input, int index, int eflags, REMatch mymatch) {
-    mymatch.end[m_subIndex] = index;
-    if (m_next == null) {
-      if (m_uncle == null) {
-	return new int[] { index };
-      } else {
-	if (m_uncle.match(input,index,eflags,mymatch) == null) {
-	  return null;
+    /** Returns true if the rest of the tokens match, false if they fail. */
+    protected boolean next(CharIndexed input, REMatch mymatch) {
+	if (next == null) {
+	    if (uncle == null) {
+		return true;
+	    } else {
+		return uncle.match(input, mymatch);
+	    }
 	} else {
-	  return new int[] { index };
+	    return next.match(input, mymatch);
 	}
-      }
-    } else {
-	return m_next.match(input,index,eflags,mymatch);
     }
-  }
   
-  boolean chain(REToken next) {
-    m_next = next;
-    return true; // Token was accepted
+  boolean chain(REToken token) {
+      next = token;
+      return true; // Token was accepted
   }
 
   void dump(StringBuffer os) { 
@@ -69,6 +64,6 @@ abstract class REToken {
 
   void dumpAll(StringBuffer os) {
     dump(os);
-    if (m_next != null) m_next.dumpAll(os);
+    if (next != null) next.dumpAll(os);
   }
 }

@@ -1,29 +1,28 @@
 /*
  *  gnu/regexp/RETokenPOSIX.java
- *  Copyright (C) 1998 Wes Biggs
+ *  Copyright (C) 1998-2001 Wes Biggs
  *
  *  This library is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation; either version 2.1 of the License, or
  *  (at your option) any later version.
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Library General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 package gnu.regexp;
-import java.util.Hashtable;
 
-class RETokenPOSIX extends REToken {
-  int m_type;
-  boolean m_insens;
-  boolean m_negated;
+final class RETokenPOSIX extends REToken {
+  int type;
+  boolean insens;
+  boolean negated;
 
   static final int  ALNUM = 0;
   static final int  ALPHA = 1;
@@ -52,69 +51,75 @@ class RETokenPOSIX extends REToken {
     return -1;
   }
 
-  RETokenPOSIX(int f_subIndex, int f_type,boolean f_insens, boolean f_negated) {
-    super(f_subIndex);
-    m_type = f_type;
-    m_insens = f_insens;
-    m_negated = f_negated;
+  RETokenPOSIX(int subIndex, int type, boolean insens, boolean negated) {
+    super(subIndex);
+    this.type = type;
+    this.insens = insens;
+    this.negated = negated;
   }
 
-  int getMinimumLength() {
-    return 1;
-  }
-
-  int[] match(CharIndexed input, int index, int eflags,REMatch mymatch) {
-    char ch = input.charAt(index);
-    if (ch == CharIndexed.OUT_OF_BOUNDS)
-      return null;
-    
-    boolean retval = false;
-    switch (m_type) {
-    case ALNUM:
-      retval = Character.isLetterOrDigit(ch);
-      break;
-    case ALPHA:
-      retval = Character.isLetter(ch);
-      break;
-    case BLANK:
-      retval = ((ch == ' ') || (ch == '\t'));
-      break;
-    case CNTRL:
-      retval = Character.isISOControl(ch);
-      break;
-    case DIGIT:
-      retval = Character.isDigit(ch);
-      break;
-    case GRAPH:
-      retval = (!(Character.isWhitespace(ch) || Character.isISOControl(ch)));
-      break;
-    case LOWER:
-      retval = ((m_insens && Character.isLetter(ch)) || Character.isLowerCase(ch));
-      break;
-    case PRINT:
-      retval = Character.isLetterOrDigit(ch);
-      break;
-    case PUNCT:
-      retval = ("`~!@#$%^&*()-_=+[]{}\\|;:'\"/?,.<>".indexOf(ch)!=-1);
-      break;
-    case SPACE:
-      retval = Character.isWhitespace(ch);
-      break;
-    case UPPER:
-      retval = ((m_insens && Character.isLetter(ch)) || Character.isUpperCase(ch));
-      break;
-    case XDIGIT:
-      retval = (Character.isDigit(ch) || ("abcdefABCDEF".indexOf(ch)!=-1));
-      break;
+    int getMinimumLength() {
+	return 1;
     }
 
-    if (m_negated) retval = !retval;
-    if (retval) return next(input,index+1,eflags,mymatch);
-    else return null;
+    boolean match(CharIndexed input, REMatch mymatch) {
+    char ch = input.charAt(mymatch.index);
+    if (ch == CharIndexed.OUT_OF_BOUNDS)
+      return false;
+    
+    boolean retval = false;
+    switch (type) {
+    case ALNUM:
+	// Note that there is some debate over whether '_' should be included
+	retval = Character.isLetterOrDigit(ch) || (ch == '_');
+	break;
+    case ALPHA:
+	retval = Character.isLetter(ch);
+	break;
+    case BLANK:
+	retval = ((ch == ' ') || (ch == '\t'));
+	break;
+    case CNTRL:
+	retval = Character.isISOControl(ch);
+	break;
+    case DIGIT:
+	retval = Character.isDigit(ch);
+	break;
+    case GRAPH:
+	retval = (!(Character.isWhitespace(ch) || Character.isISOControl(ch)));
+	break;
+    case LOWER:
+	retval = ((insens && Character.isLetter(ch)) || Character.isLowerCase(ch));
+	break;
+    case PRINT:
+	retval = (!(Character.isWhitespace(ch) || Character.isISOControl(ch)))
+	    || (ch == ' ');
+	break;
+    case PUNCT:
+	// This feels sloppy, especially for non-U.S. locales.
+	retval = ("`~!@#$%^&*()-_=+[]{}\\|;:'\"/?,.<>".indexOf(ch)!=-1);
+	break;
+    case SPACE:
+	retval = Character.isWhitespace(ch);
+	break;
+    case UPPER:
+	retval = ((insens && Character.isLetter(ch)) || Character.isUpperCase(ch));
+	break;
+    case XDIGIT:
+	retval = (Character.isDigit(ch) || ("abcdefABCDEF".indexOf(ch)!=-1));
+	break;
+    }
+
+    if (negated) retval = !retval;
+    if (retval) {
+	++mymatch.index;
+	return next(input, mymatch);
+    }
+    else return false;
   }
 
   void dump(StringBuffer os) {
-    if (m_negated) os.append('^');
-    os.append("[:" + s_nameTable[m_type] + ":]");
+    if (negated) os.append('^');
+    os.append("[:" + s_nameTable[type] + ":]");
   }
 }

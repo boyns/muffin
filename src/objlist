@@ -1,4 +1,0 @@
-#!/bin/sh
-
-objdir=$1
-find $objdir -name '*.class' -print | sed -e 's/\$/\\\$/g'

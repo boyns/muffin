@@ -1,10 +1,10 @@
 /*
  *  gnu/regexp/util/RETest.java
- *  Copyright (C) 1998 Wes Biggs
+ *  Copyright (C) 1998-2001 Wes Biggs
  *
  *  This file is in the public domain.  However, the gnu.regexp library
- *  proper is licensed under the terms of the GNU Library General Public
- *  License (see the file LICENSE for details).
+ *  proper is licensed under the terms of the GNU Lesser General Public
+ *  License (see the file COPYING.LIB for details).
  */
 package gnu.regexp.util;
 import gnu.regexp.*;
@@ -74,9 +74,9 @@ public class RETest {
     System.out.println("        Input Text: "+argv[1]);
     System.out.println("Regular Expression: "+argv[0]);
     System.out.println("     Compiled Form: "+expression);
+    System.out.println("    Minimum Length: "+expression.getMinimumLength());
 
     // Is the input in its entirety a match?
-    
     System.out.println(" isMatch() returns: "+expression.isMatch(argv[1]));
     
     REMatch[] matches = expression.getAllMatches(argv[1]);
@@ -118,10 +118,10 @@ public class RETest {
       // Report subexpression positions
       
       for (int i=1; i <= expression.getNumSubs(); i++) {
-	if (match.getSubStartIndex(i) > -1) {
+	if (match.getStartIndex(i) > -1) {
 	  System.out.println("Subexpression #" + i + ": from position "
-			     + match.getSubStartIndex(i) + " to position "
-			     + match.getSubEndIndex(i));
+			     + match.getStartIndex(i) + " to position "
+			     + match.getEndIndex(i));
 		
 	  // Note how the $n is constructed for substituteInto
 		

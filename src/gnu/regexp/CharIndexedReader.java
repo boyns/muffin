@@ -1,6 +1,7 @@
 /*
  *  gnu/regexp/CharIndexedReader.java
- *  Copyright (C) 1998-2001 Wes Biggs
+ *  Copyright (C) 2001 Lee Sau Dan
+ *  Based on gnu.regexp.CharIndexedInputStream by Wes Biggs
  *
  *  This library is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published
@@ -18,18 +19,17 @@
  */
 
 package gnu.regexp;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
+import java.io.Reader;
+import java.io.BufferedReader;
 import java.io.IOException;
 
 // TODO: move(x) shouldn't rely on calling next() x times
 
-class CharIndexedInputStream implements CharIndexed {
+class CharIndexedReader implements CharIndexed {
     private static final int BUFFER_INCREMENT = 1024;
     private static final int UNKNOWN = Integer.MAX_VALUE; // value for end
     
-    private BufferedInputStream br;
-
+    private final BufferedReader br;
     // so that we don't try to reset() right away
     private int index = -1;
 
@@ -43,18 +43,27 @@ class CharIndexedInputStream implements CharIndexed {
     // lookBehind[0] = most recent
     // lookBehind[1] = second most recent
     private char[] lookBehind = new char[] { OUT_OF_BOUNDS, OUT_OF_BOUNDS }; 
-    
-    CharIndexedInputStream(InputStream str, int index) {
-	if (str instanceof BufferedInputStream) br = (BufferedInputStream) str;
-	else br = new BufferedInputStream(str,BUFFER_INCREMENT);
+  
+    CharIndexedReader(Reader reader, int index) {
+	if (reader instanceof BufferedReader) {
+	    br = (BufferedReader) reader; 
+	} else {
+	    br = new BufferedReader(reader,BUFFER_INCREMENT);
+	}
 	next();
 	if (index > 0) move(index);
     }
     
     private boolean next() {
-	if (end == 1) return false;
-	end--; // closer to end
+	lookBehind[1] = lookBehind[0];
+	lookBehind[0] = cached;
 
+	if (end == 1) {
+	    cached = OUT_OF_BOUNDS;
+	    return false;
+	}
+	end--; // closer to end
+	
 	try {
 	    if (index != -1) {
 		br.reset();
@@ -66,6 +75,8 @@ class CharIndexedInputStream implements CharIndexed {
 		cached = OUT_OF_BOUNDS;
 		return false;
 	    }
+
+	    // convert the byte read into a char
 	    cached = (char) i;
 	    index = 1;
 	} catch (IOException e) { 
@@ -81,12 +92,6 @@ class CharIndexedInputStream implements CharIndexed {
 	    return cached;
 	} else if (index >= end) {
 	    return OUT_OF_BOUNDS;
-	} else if (index == -1) {
-	    return lookBehind[0];
-	} else if (index == -2) {
-	    return lookBehind[1];
-	} else if (index < -2) {
-	    return OUT_OF_BOUNDS;
 	} else if (index >= bufsize) {
 	    // Allocate more space in the buffer.
 	    try {
@@ -100,7 +105,14 @@ class CharIndexedInputStream implements CharIndexed {
 		br.reset();
 		br.skip(index-1);
 	    } catch (IOException e) { }
+	} else if (index == -1) {
+	    return lookBehind[0];
+	} else if (index == -2) {
+	    return lookBehind[1];
+	} else if (index < -2) {
+	    return OUT_OF_BOUNDS;
 	}
+
 	char ch = OUT_OF_BOUNDS;
 	
 	try {
@@ -128,4 +140,3 @@ class CharIndexedInputStream implements CharIndexed {
 	return (cached != OUT_OF_BOUNDS);
     }
 }
-

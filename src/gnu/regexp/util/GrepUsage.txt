@@ -16,6 +16,7 @@ Miscellaneous:
   -s, --no-messages         suppress error messages
   -v, --revert-match        select non-matching lines
   -V, --version             print version information and exit
+  -N, --encoding	    use the specified file encoding
       --help                display this help and exit
 
 Output control:

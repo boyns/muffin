@@ -1,30 +1,30 @@
 /*
  *  gnu/regexp/RETokenChar.java
- *  Copyright (C) 1998 Wes Biggs
+ *  Copyright (C) 1998-2001 Wes Biggs
  *
  *  This library is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation; either version 2.1 of the License, or
  *  (at your option) any later version.
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Library General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 package gnu.regexp;
 
-class RETokenChar extends REToken {
+final class RETokenChar extends REToken {
   private char[] ch;
   private boolean insens;
 
-  RETokenChar(int f_subIndex, char c, boolean ins) {
-    super(f_subIndex);
+  RETokenChar(int subIndex, char c, boolean ins) {
+    super(subIndex);
     ch = new char [1];
     ch[0] = (insens = ins) ? Character.toLowerCase(c) : c;
   }
@@ -33,15 +33,19 @@ class RETokenChar extends REToken {
     return ch.length;
   }
   
-  int[] match(CharIndexed input, int index, int eflags, REMatch mymatch) {
-    int z = ch.length;
-    char c;
-    for (int i=0; i<z; i++) {
-      c = input.charAt(index+i);
-      if (( (insens) ? Character.toLowerCase(c) : c ) != ch[i]) return null;
+    boolean match(CharIndexed input, REMatch mymatch) {
+	int z = ch.length;
+	char c;
+	for (int i=0; i<z; i++) {
+	    c = input.charAt(mymatch.index+i);
+	    if (( (insens) ? Character.toLowerCase(c) : c ) != ch[i]) {
+		return false;
+	    }
+	}
+	mymatch.index += z;
+
+	return next(input, mymatch);
     }
-    return next(input,index+z,eflags,mymatch);
-  }
 
   // Overrides REToken.chain() to optimize for strings
   boolean chain(REToken next) {

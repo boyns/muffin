@@ -1,6 +1,7 @@
 /*
- *  gnu/regexp/REFilterInputStream.java
- *  Copyright (C) 1998-2001 Wes Biggs
+ *  gnu/regexp/REFilterReader.java
+ *  Copyright (C) 2001 Lee Sau Dan
+ *  Based on gnu.regexp.REFilterInputStream by Wes Biggs
  *
  *  This library is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published
@@ -18,50 +19,46 @@
  */
 
 package gnu.regexp;
-import java.io.FilterInputStream;
-import java.io.InputStream;
+import java.io.FilterReader;
+import java.io.Reader;
 
 /**
- * Replaces instances of a given RE found within an InputStream
- * with replacement text.   The replacements are interpolated into the
- * stream when a match is found.
+ * Replaces instances of a given RE with replacement text. 
  *
- * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @deprecated This class cannot properly handle all character
- *             encodings.  For proper handling, use the REFilterReader
- *             class instead.
+ * @author <A HREF="http://www.csis.hku.hk/~sdlee/">Lee Sau Dan</A>
+ * @since gnu.regexp 1.1.0
  */
 
-public class REFilterInputStream extends FilterInputStream {
+public class REFilterReader extends FilterReader {
 
-    private RE expr;
-    private String replace;
-    private String buffer;
-    private int bufpos;
-    private int offset;
-    private CharIndexedInputStream stream;
+  private RE expr;
+  private String replace;
+  private String buffer;
+  private int bufpos;
+  private int offset;
+  private CharIndexedReader stream;
 
   /**
-   * Creates an REFilterInputStream.  When reading from this stream,
+   * Creates an REFilterReader.  When reading from this stream,
    * occurrences of patterns matching the supplied regular expression
    * will be replaced with the supplied replacement text (the
    * metacharacters $0 through $9 may be used to refer to the full
-   * match or subexpression matches).
+   * match or subexpression matches.
    *
-   * @param stream The InputStream to be filtered.
+   * @param stream The Reader to be filtered.
    * @param expr The regular expression to search for.
    * @param replace The text pattern to replace matches with.  
    */
-  public REFilterInputStream(InputStream stream, RE expr, String replace) {
+  public REFilterReader(Reader stream, RE expr, String replace) {
     super(stream);
-    this.stream = new CharIndexedInputStream(stream,0);
+    this.stream = new CharIndexedReader(stream,0);
     this.expr = expr;
     this.replace = replace;
   }
 
   /**
-   * Reads the next byte from the stream per the general contract of
-   * InputStream.read().  Returns -1 on error or end of stream.
+   * Reads the next character from the stream per the general contract of
+   * Reader.read().  Returns -1 on error or end of stream.
    */
   public int read() {
     // If we have buffered replace data, use it.
@@ -73,7 +70,7 @@ public class REFilterInputStream extends FilterInputStream {
     if (!stream.isValid()) return -1;
 
     REMatch mymatch = new REMatch(expr.getNumSubs(),offset,0);
-    if (expr.match(stream, mymatch)) {
+    if (expr.match(stream,mymatch)) {
       mymatch.end[0] = mymatch.index;
       mymatch.finish(stream);
       stream.move(mymatch.toString().length());
@@ -81,7 +78,6 @@ public class REFilterInputStream extends FilterInputStream {
       buffer = mymatch.substituteInto(replace);
       bufpos = 1;
 
-      // This is prone to infinite loops if replace string turns out empty.
       if (buffer.length() > 0) {
 	  return buffer.charAt(0);
       }
@@ -94,7 +90,7 @@ public class REFilterInputStream extends FilterInputStream {
   }
 
   /** 
-   * Returns false.  REFilterInputStream does not support mark() and
+   * Returns false.  REFilterReader does not support mark() and
    * reset() methods. 
    */
   public boolean markSupported() {
@@ -102,20 +98,20 @@ public class REFilterInputStream extends FilterInputStream {
   }
 
   /** Reads from the stream into the provided array. */
-  public int read(byte[] b, int off, int len) {
+  public int read(char[] b, int off, int len) {
     int i;
     int ok = 0;
     while (len-- > 0) {
       i = read();
       if (i == -1) return (ok == 0) ? -1 : ok;
-      b[off++] = (byte) i;
+      b[off++] = (char) i;
       ok++;
     }
     return ok;
   }
 
   /** Reads from the stream into the provided array. */
-  public int read(byte[] b) {
+  public int read(char[] b) {
     return read(b,0,b.length);
   }
 }

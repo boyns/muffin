@@ -1,6 +1,6 @@
 /*
- *  gnu/regexp/CharIndexedString.java
- *  Copyright (C) 1998-2001 Wes Biggs
+ *  gnu/regexp/RETokenEndSub.java
+ *  Copyright (C) 2001 Wes Biggs
  *
  *  This library is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published
@@ -16,30 +16,20 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
 package gnu.regexp;
-import java.io.Serializable;
 
-class CharIndexedString implements CharIndexed, Serializable {
-    private String s;
-    private int anchor;
-    private int len;
-    
-    CharIndexedString(String str, int index) {
-	s = str;
-	len = s.length();
-	anchor = index;
-    }
-
-    public char charAt(int index) {
-	int pos = anchor + index;
-	return ((pos < len) && (pos >= 0)) ? s.charAt(pos) : OUT_OF_BOUNDS;
+final class RETokenEndSub extends REToken {
+    RETokenEndSub(int subIndex) {
+	super(subIndex);
     }
     
-    public boolean isValid() {
-	return (anchor < len);
+    boolean match(CharIndexed input, REMatch mymatch) {
+	mymatch.end[subIndex] = mymatch.index;
+	return next(input, mymatch);
     }
     
-    public boolean move(int index) {
-	return ((anchor += index) < len);
+    void dump(StringBuffer os) {
+	// handled by RE
     }
 }
