@@ -1,4 +1,4 @@
-/* $Id: SnapshotFrame.java,v 1.1 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: SnapshotFrame.java,v 1.2 2003/05/10 01:05:05 flefloch Exp $ */
 package rcm.snapshot;
 
 import java.awt.*;
@@ -83,7 +83,7 @@ public class SnapshotFrame extends MuffinFrame implements ActionListener, Window
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	add("South", buttonPanel);
+	//add(buttonPanel);
 
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
