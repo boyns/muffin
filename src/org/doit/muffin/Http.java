@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.2 1998/08/13 06:01:16 boyns Exp $ */
+/* $Id: Http.java,v 1.3 1998/09/24 03:01:33 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -289,7 +289,7 @@ class Http extends HttpConnection
 	}
     }
     
-    static Http open (String host, int port, boolean isProxy) throws IOException
+    static synchronized Http open (String host, int port, boolean isProxy) throws IOException
     {
 	Http http = null;
 
