@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.4 1998/09/19 19:24:29 boyns Exp $
+dnl $Id: configure.in,v 1.5 2000/01/26 05:33:39 boyns Exp $
 
 AC_INIT(configure.in)
 AC_PROG_INSTALL
@@ -22,8 +22,7 @@ JAVABINDIRS=`echo "${JAVADIRS} " | sed -e 's, ,/bin:,g' | sed -e 's,:$,,'`
 dnl
 dnl Extra places to look for jikes
 dnl
-JIKESBINDIRS="/usr/local/jikes/bin /usr/jikes/bin \
-/usr/lib/jikes/bin /opt/jikes/bin"
+JIKESBINDIRS="/usr/local/jikes/bin /usr/jikes/bin /usr/lib/jikes/bin /opt/jikes/bin"
 
 if test "$try_jikes" = "yes"
 then
