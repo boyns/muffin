@@ -55,29 +55,24 @@ public class EmptyFontTest extends TestCase
     {
         fEmptyFont = new EmptyFont();
         fEmptyFontFilter = (ContentFilter) fEmptyFont.createFilter();
+        fReply = Utils.makeReply(SAMPLE_RESPONSE);
     }
 
     public void testEmptyFontFilterPresence() throws IOException
     {
         assertNotNull(fEmptyFontFilter);
 
-        Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        assertNotNull(reply);
+        assertNotNull(fReply);
 
-        assertTrue(fEmptyFontFilter.needsFiltration(null, reply));
+        assertTrue(fEmptyFontFilter.needsFiltration(null, fReply));
     }
 
     public void testReplacing()
     {
-        Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fEmptyFontFilter,
-            reply.getContent(),
-            os,
             SAMPLE_RESPONSE.length(),
-            reply);
-        String result = os.toString();
+            fReply);
 
         Pattern pat =
             org.doit.muffin.regexp.Factory.instance().getPattern(

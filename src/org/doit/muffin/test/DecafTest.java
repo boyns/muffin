@@ -83,14 +83,10 @@ public class DecafTest extends TestCase
     public void testReplacing()
     {
         Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fDecafFilter,
-            reply.getContent(),
-            os,
             SAMPLE_PAGE.length(),
             reply);
-        String result = os.toString();
         
         assertEquals(EXPECTED, result);
     }
@@ -98,14 +94,10 @@ public class DecafTest extends TestCase
     public void testReplacingJs()
     {
         Reply reply = Utils.makeReply(SAMPLE_RESPONSEJS);
-        OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fDecafFilter,
-            reply.getContent(),
-            os,
             SAMPLE_PAGEJS.length(),
             reply);
-        String result = os.toString();
         
         assertEquals(EXPECTED, result);
     }

@@ -83,14 +83,11 @@ public class NoCodeTest extends TestCase
     public void testReplacing()
     {
         Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fNoCodeFilter,
             reply.getContent(),
-            os,
             SAMPLE_PAGE.length(),
             reply);
-        String result = os.toString();
         
         assertEquals(EXPECTED, result);
     }
@@ -99,13 +96,10 @@ public class NoCodeTest extends TestCase
     {
         Reply reply = Utils.makeReply(SAMPLE_RESPONSEJS);
         OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fNoCodeFilter,
-            reply.getContent(),
-            os,
             SAMPLE_PAGEJS.length(),
             reply);
-        String result = os.toString();
         
         assertEquals(EXPECTED, result);
     }
