@@ -1,4 +1,4 @@
-/* $Id: History.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: History.java,v 1.6 2000/03/08 15:26:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,10 +22,7 @@
  */
 package org.doit.muffin.filter;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import org.doit.muffin.*;
@@ -137,33 +134,64 @@ public class History implements FilterFactory, AutoSaveable
 
     void loadData()
     {
+	InputStream in = null;
+	
 	try
 	{
-	    FileInputStream in = new FileInputStream(prefs.getUserFile(prefs.getString("History.histfile")));
+	    UserFile file = prefs.getUserFile(prefs.getString("History.histfile"));
+	    in = file.getInputStream();
 	    ObjectInputStream obj = new ObjectInputStream(in);
 	    data = (Hashtable) obj.readObject();
-	    in.close();
+	    obj.close();
 	}
 	catch (Exception e)
 	{
 	    System.out.println(e);
 	    data = new Hashtable();
 	}
+	finally
+	{
+	    try
+	    {
+		if (in != null)
+		{
+		    in.close();
+		}
+	    }
+	    catch (IOException e)
+	    {
+	    }
+	}
     }
 
     void saveData()
     {
+	OutputStream out = null;
+	
 	try
 	{
-	    FileOutputStream out = new FileOutputStream(prefs.getUserFile(prefs.getString("History.histfile")));
+	    out = prefs.getUserFile(prefs.getString("History.histfile")).getOutputStream();
 	    ObjectOutputStream obj = new ObjectOutputStream(out);
 	    obj.writeObject(data);
 	    obj.flush();
-	    out.close();
+	    obj.close();
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
 	    System.out.println(e);
+	}
+	finally
+	{
+	    try
+	    {
+		if (out != null)
+		{
+		    out.close();
+		}
+	    }
+	    catch (IOException e)
+	    {
+	    }
 	}
     }
 }

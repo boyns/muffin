@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.8 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.9 2000/03/08 15:26:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,11 +22,7 @@
  */
 package org.doit.muffin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Properties;
 import org.doit.util.SortedProperties;
@@ -70,15 +66,11 @@ class UserPrefs extends Prefs
 	{
 	    return;
 	}
-	File file = new File(getUserFile(rcfile));
-	if (!file.exists())
-	{
-	    return;
-	}
+	UserFile file = getUserFile(rcfile);
 	//System.out.println("Loading " + file.getAbsolutePath());
 	try
 	{
-	    FileInputStream in = new FileInputStream(file);
+	    InputStream in = file.getInputStream();
 	    Properties props = new Properties();
 	    props.load(in);
 	    Enumeration e = props.keys();
@@ -88,10 +80,6 @@ class UserPrefs extends Prefs
 		put(key, props.get(key));
 	    }
 	    in.close();
-	}
-	catch (FileNotFoundException e)
-	{
-	    System.out.println(e);
 	}
 	catch (IOException e)
 	{
@@ -110,17 +98,12 @@ class UserPrefs extends Prefs
 	    props.put(key, get(key));
 	}
 	checkUserDirectory();
-	File file = new File(getUserFile(rcfile));
-	System.out.println("Saving " + file.getAbsolutePath());
 	try
 	{
-	    FileOutputStream out = new FileOutputStream(file);
+	    UserFile file = getUserFile(rcfile);
+	    OutputStream out = file.getOutputStream();
 	    props.save(out, null);
 	    out.close();
-	}
-	catch (FileNotFoundException ex)
-	{
-	    System.out.println(e);
 	}
 	catch (IOException ex)
 	{

@@ -1,4 +1,4 @@
-/* $Id: Secretary.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: Secretary.java,v 1.6 2000/03/08 15:26:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,8 +25,7 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -52,7 +51,7 @@ public class Secretary extends Hashtable implements FilterFactory
 	this.prefs = prefs;
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
-	String filename = prefs.getUserFile("formfile");
+	String filename = "formfile";
 	prefs.putString("Secretary.formfile", filename);
 	prefs.setOverride(o);
 	load();
@@ -94,17 +93,13 @@ public class Secretary extends Hashtable implements FilterFactory
 
     void load()
     {
-	String filename = prefs.getUserFile(prefs.getString("Secretary.formfile"));
-	//System.out.println("Secretary loading " + filename);
-	File file = new File(filename);
-	if (!file.exists())
-	{
-	    System.out.println("Secretary can't open " + filename);
-	    return;
-	}
+	InputStream in = null;
+
 	try
 	{
-	    FileInputStream in = new FileInputStream(file);
+	    UserFile file = prefs.getUserFile(prefs.getString("Secretary.formfile"));
+	    in = file.getInputStream();
+
 	    Properties props = new Properties();
 	    props.load(in);
 	    Enumeration e = props.keys();
@@ -113,11 +108,23 @@ public class Secretary extends Hashtable implements FilterFactory
 		String key = (String) e.nextElement();
 		put(key, props.get(key));
 	    }
-	    in.close();
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
-	    e.printStackTrace();
+	    System.out.println(e);
+	}
+	finally
+	{
+	    if (in != null)
+	    {
+		try
+		{
+		    in.close();
+		}
+		catch (IOException e)
+		{
+		}
+	    }
 	}
     }
 }

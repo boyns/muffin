@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.10 2000/01/25 06:14:25 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.11 2000/03/08 15:26:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,12 +27,7 @@ import org.doit.html.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StreamTokenizer;
+import java.io.*;
 import gnu.regexp.*;
 
 public class NoThanks implements FilterFactory
@@ -98,7 +93,7 @@ public class NoThanks implements FilterFactory
 	this.prefs = prefs;
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
-	String filename = prefs.getUserFile("killfile");
+	String filename = "killfile";
 	prefs.putString("NoThanks.killfile", filename);
 	prefs.setOverride(o);
 	messages = new MessageArea();
@@ -447,14 +442,30 @@ public class NoThanks implements FilterFactory
 
     void load()
     {
-	String filename = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
+	InputStream in = null;
+
 	try
 	{
-	    //System.out.println("NoThanks loading " + filename);
-	    load(new FileReader(new File(filename)));
+	    UserFile file = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
+	    in = file.getInputStream();
+	    load(new InputStreamReader(in));
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
+	    System.out.println(e);
+	}
+	finally
+	{
+	    if (in != null)
+	    {
+		try
+		{
+		    in.close();
+		}
+		catch (IOException e)
+		{
+		}
+	    }
 	}
     }
 
@@ -555,8 +566,31 @@ public class NoThanks implements FilterFactory
 			{
 			    break;
 			}
-			String filename = prefs.getUserFile(st.sval);
-			include(new FileReader(new File(filename)));
+
+			InputStream inc = null;
+			try
+			{
+			    UserFile file = prefs.getUserFile(st.sval);
+			    inc = file.getInputStream();
+			    include(new InputStreamReader(inc));
+			}
+			catch (IOException e)
+			{
+			    System.out.println(e);
+			}
+			finally
+			{
+			    if (inc != null)
+			    {
+				try
+				{
+				    inc.close();
+				}
+				catch (IOException e)
+				{
+				}
+			    }
+			}
 		    }
 		    continue;
 		}

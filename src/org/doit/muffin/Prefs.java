@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.7 2000/02/11 02:32:31 boyns Exp $ */
+/* $Id: Prefs.java,v 1.8 2000/03/08 15:21:55 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,9 +25,11 @@ package org.doit.muffin;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Enumeration;
-import java.io.File;
+import java.io.*;
 import java.awt.Color;
 import java.awt.Font;
+import java.net.URL;
+import java.net.MalformedURLException;
 import sdsu.compare.StringIgnoreCaseComparer;
 import sdsu.util.SortedList;
 
@@ -95,13 +97,29 @@ public class Prefs extends Hashtable
 	checkDirectory(getUserDirectory());
     }
 
-    public String getUserFile(String file)
+    public UserFile getUserFile(String file)
     {
-	if (file.indexOf(System.getProperty("file.separator")) != -1)
+	UserFile userFile = null;
+	
+	try
 	{
-	    return file;
+	    userFile = new URLFile(new URL(file));
 	}
-	return getUserDirectory() + System.getProperty("file.separator") + file;
+	catch (MalformedURLException e)
+	{
+	    if (file.indexOf(System.getProperty("file.separator")) != -1)
+	    {
+		userFile = new LocalFile(file);
+	    }
+	    else
+	    {
+		userFile = new LocalFile(getUserDirectory() +
+					 System.getProperty("file.separator") +
+					 file);
+	    }
+	}
+
+	return userFile;
     }
 
     public boolean exists(Object key)

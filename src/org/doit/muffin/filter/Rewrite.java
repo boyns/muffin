@@ -1,4 +1,4 @@
-/* $Id: Rewrite.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: Rewrite.java,v 1.6 2000/03/08 15:26:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,10 +25,7 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.io.BufferedReader;
+import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -58,7 +55,7 @@ public class Rewrite implements FilterFactory
 	this.prefs = prefs;
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
-	String filename = prefs.getUserFile("rewrite");
+	String filename = "rewrite";
 	prefs.putString("Rewrite.rules", filename);
 	prefs.setOverride(o);
 
@@ -128,13 +125,30 @@ public class Rewrite implements FilterFactory
 
     void load()
     {
-	String filename = prefs.getUserFile(prefs.getString("Rewrite.rules"));
+	InputStream in = null;
+
 	try
 	{
-	    load(new FileReader(new File(filename)));
+	    UserFile file = prefs.getUserFile(prefs.getString("Rewrite.rules"));
+	    in = file.getInputStream();
+	    load(new InputStreamReader(in));
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
+	    System.out.println(e);
+	}
+	finally
+	{
+	    if (in != null)
+	    {
+		try
+		{
+		    in.close();
+		}
+		catch (IOException e)
+		{
+		}
+	    }
 	}
     }
 

@@ -1,4 +1,4 @@
-/* $Id: RewriteFrame.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: RewriteFrame.java,v 1.6 2000/03/08 15:26:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,13 +24,9 @@ package org.doit.muffin.filter;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.StringReader;
-import java.io.Reader;
+import java.io.*;
 import org.doit.muffin.*;
+import org.doit.util.*;
 
 public class RewriteFrame extends MuffinFrame implements ActionListener, WindowListener
 {
@@ -161,42 +157,66 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
     void loadFile()
     {
 	text.setText("");
-	
-	File file = new File(prefs.getString("Rewrite.rules"));
-	if (!file.exists())
-	{
-	    return;
-	}
+
+	UserFile file = prefs.getUserFile(prefs.getString("Rewrite.rules"));
+	InputStream in = null;
 	
 	try
 	{
-	    BufferedReader in = new BufferedReader(new FileReader(file));
+	    in = file.getInputStream();
+
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    String s;
-	    while ((s = in.readLine()) != null)
+	    while ((s = br.readLine()) != null)
 	    {
 		text.append(s + "\n");
 	    }
+	    br.close();
 	    in.close();
+	    in = null;
 	    text.setCaretPosition(0);
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
 	    System.out.println(e);
 	}
+	finally
+	{
+	    try
+	    {
+		if (in != null)
+		{
+		    in.close();
+		}
+	    }
+	    catch (IOException e)
+	    {
+	    }
+	}
+	
     }
 
     void saveFile()
     {
 	try
 	{
-	    File file = new File(prefs.getString("Rewrite.rules"));
-	    if (file.exists())
+	    UserFile file = prefs.getUserFile(prefs.getString("Rewrite.rules"));
+	    if (file instanceof LocalFile)
 	    {
-		file.delete();
+		LocalFile f = (LocalFile) file;
+		f.delete();
+		OutputStream out = file.getOutputStream();
+		Writer writer = new OutputStreamWriter(out);
+		writer.write(text.getText());
+		writer.close();
+		out.close();
 	    }
-	    FileWriter writer = new FileWriter(file);
-	    writer.write(text.getText());
-	    writer.close();
+	    else
+	    {
+		Dialog d = new ErrorDialog(this, "Can't save to " + file.getName());
+		d.show();
+		d.dispose();
+	    }
 	}
 	catch (Exception e)
 	{

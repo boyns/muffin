@@ -28,10 +28,7 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.io.BufferedReader;
+import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -64,7 +61,7 @@ public class Translate implements FilterFactory
 	this.prefs = prefs;
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
-	String filename = prefs.getUserFile("translate");
+	String filename = "translate";
 	prefs.putString("Translate.rules", filename);
 	prefs.setOverride(o);
 
@@ -172,25 +169,39 @@ public class Translate implements FilterFactory
 
     void load()
     {
-	String filename = prefs.getUserFile(prefs.getString("Translate.rules"));
+	InputStream in = null;
 
 	try
 	{
-	    load(new FileReader(new File(filename)));
+	    UserFile file = prefs.getUserFile(prefs.getString("Translate.rules"));
+	    in = file.getInputStream();
+	    load(new InputStreamReader(in));
 	}
-	catch (Exception e)
+	catch (IOException e)
 	{
+	    System.out.println(e);
+	}
+	finally
+	{
+	    if (in != null)
+	    {
+		try
+		{
+		    in.close();
+		}
+		catch (IOException e)
+		{
+		}
+	    }
 	}
     }
 
     void load(Reader reader)
     {
-
-
-    passRulesIn = new Vector();
-    passRulesOut = new Vector();
-    reverseRulesIn = new Vector();
-    reverseRulesOut = new Vector();
+	passRulesIn = new Vector();
+	passRulesOut = new Vector();
+	reverseRulesIn = new Vector();
+	reverseRulesOut = new Vector();
 		
 	try
 	{

@@ -1,4 +1,4 @@
-/* $Id: Glossary.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
+/* $Id: Glossary.java,v 1.6 2000/03/08 15:26:28 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,9 +25,7 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -53,7 +51,7 @@ public class Glossary extends Hashtable implements FilterFactory
 	this.prefs = prefs;
 	boolean o = prefs.getOverride();
 	prefs.setOverride(false);
-	String filename = prefs.getUserFile("glossary");
+	String filename = "glossary";
 	prefs.putString("Glossary.glossaryfile", filename);
 	prefs.setOverride(o);
 	load();
@@ -100,17 +98,10 @@ public class Glossary extends Hashtable implements FilterFactory
 
     void load()
     {
-	String filename = prefs.getUserFile(prefs.getString("Glossary.glossaryfile"));
-	//System.out.println("Glossary loading " + filename);
-	File file = new File(filename);
-	if (!file.exists())
-	{
-	    System.out.println("Glossary can't open " + filename);
-	    return;
-	}
 	try
 	{
-	    BufferedReader in = new BufferedReader(new FileReader(file));
+	    UserFile file = prefs.getUserFile(prefs.getString("Glossary.glossaryfile"));
+	    BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream()));
 	    String s;
 	    while ((s = in.readLine()) != null)
 	    {
