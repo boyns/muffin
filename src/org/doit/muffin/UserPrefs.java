@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.2 1998/08/13 06:01:47 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.3 1998/10/06 06:01:57 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -91,7 +91,10 @@ class UserPrefs extends Prefs
 
     void save ()
     {
-	Properties props = new SortedProperties ();
+	// XXX commented due to reportred stack overflow
+	// bug.  For now just use plain old properties.
+	//Properties props = new SortedProperties ();
+	Properties props = new Properties();
 	Enumeration e = keys ();
 	while (e.hasMoreElements ())
 	{
