@@ -1,4 +1,4 @@
-/* $Id: PreviewDialog.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: PreviewDialog.java,v 1.6 2000/02/10 20:08:27 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
+import java.io.*;
 
 class PreviewDialog extends Dialog implements ActionListener, WindowListener
 {
@@ -32,12 +33,14 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
     boolean accepted = true;
     TextArea text = null;
     Image image = null;
+    Frame frame = null;
     
     PreviewDialog(Frame frame, Request request, Reply reply, byte content[])
     {
 	super(frame, "Muffin: Preview " + request.getURL(), true);
 
 	this.content = content;
+	this.frame = frame;
 	    
 	if (reply.getContentType().startsWith("text"))
 	{
@@ -54,7 +57,7 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
 	}
 
 	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 2));
+	buttonPanel.setLayout(new GridLayout(1, 3));
 	Button b;
 	b = new Button("Accept");
 	b.setActionCommand("doAccept");
@@ -63,6 +66,11 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
 	b = new Button("Reject");
 	b.setActionCommand("doReject");
 	b.addActionListener(this);
+	buttonPanel.add(b);
+        // Also propose to save the content as a file:
+        b = new Button("Save as");
+        b.setActionCommand("doSaveAs");
+        b.addActionListener(this);
 	buttonPanel.add(b);
 	add("South", buttonPanel);
 
@@ -98,6 +106,24 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
 	{
 	    accepted = false;
 	    setVisible(false);
+	}
+        else if ("doSaveAs".equals(arg))
+        {
+	    try
+	    {
+		FileDialog dialog = new FileDialog(frame, "Save Content");
+		dialog.show();
+		if ( dialog.getFile() != null )
+		{
+		    File f = new File(dialog.getDirectory(), dialog.getFile());
+		    FileOutputStream fos = new FileOutputStream(f);
+		    fos.write(content);
+		    fos.close();
+		}
+	    } catch (IOException exc)
+	    {
+		// too bad!
+	    }
 	}
     }
 
