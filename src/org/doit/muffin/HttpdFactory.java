@@ -39,7 +39,6 @@ public abstract class HttpdFactory
         String webadmin = null;
         if (options != null)
             webadmin = options.getString("muffin.webadmin");
-        System.out.println("options="+options+" webadmin="+webadmin);
         try
         {
             if ("velocity".equals(webadmin))
@@ -65,7 +64,6 @@ public abstract class HttpdFactory
         catch (Throwable t)
         {
         	t.printStackTrace();
-        	System.out.println("WEBADMIN - loading default Httpd");
             instance = new Default();
         }
     }
