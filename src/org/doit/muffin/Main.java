@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.12 1999/09/16 04:11:17 boyns Exp $ */
+/* $Id: Main.java,v 1.13 1999/11/07 15:11:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -138,6 +138,10 @@ public class Main extends MuffinFrame
 	MenuItem item;
 	item = new MenuItem("Disable Filtering");
 	item.setActionCommand("doDisable");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("Suspend");
+	item.setActionCommand("doSuspend");
 	item.addActionListener(this);
 	menu.add(item);
 	item = new MenuItem("Quit");
@@ -283,6 +287,22 @@ public class Main extends MuffinFrame
 	    item.setLabel("Disable Filtering");
 	    options.putBoolean("muffin.passthru", false);
 	}
+	else if ("doSuspend".equals(arg))
+	{
+	    MenuItem item = (MenuItem) event.getSource();
+	    item.setActionCommand("doResume");
+	    item.setLabel("Resume");
+	    server.suspend();
+	    monitor.suspend();
+	}
+	else if ("doResume".equals(arg))
+	{
+	    MenuItem item = (MenuItem) event.getSource();
+	    item.setActionCommand("doSuspend");
+	    item.setLabel("Suspend");
+	    server.resume();
+	    monitor.resume();
+	}
 	else if ("doConnections".equals(arg))
 	{
 	    new ConnectionsFrame(monitor);
@@ -307,21 +327,6 @@ public class Main extends MuffinFrame
 // 	{
 // 	    server.stop();
 // 	}
-	else if ("doSuspend".equals(arg))
-	{
-  	    suspendButton.setLabel("Resume");
- 	    suspendButton.setActionCommand("doResume");
- 	    server.suspend();
- 	    monitor.suspend();
-
-	}
-	else if ("doResume".equals(arg))
-	{
-  	    suspendButton.setLabel("Suspend");
- 	    suspendButton.setActionCommand("doSuspend");
- 	    server.resume();
- 	    monitor.resume();
-	}
 	else if ("doFilters".equals(arg))
 	{
 	    manager.createFrame();
