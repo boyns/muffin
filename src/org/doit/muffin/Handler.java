@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.9 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: Handler.java,v 1.10 2000/02/01 15:28:45 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,6 +23,7 @@
 package org.doit.muffin;
 
 import java.io.*;
+import java.util.zip.*;
 import java.net.Socket;
 import java.net.URL;
 import org.doit.io.*;
@@ -202,6 +203,7 @@ class Handler implements Runnable
 	while (reply == null)
 	{
 	    boolean secure = false;
+	    boolean uncompress = false;
 
 	    filterList = manager.createFilters(request.getURL());
 
@@ -297,6 +299,19 @@ class Handler implements Runnable
 	    /* Filter the reply. */
 	    if (!options.getBoolean("muffin.passthru"))
 	    {
+		/* uncompress gzip encoded html so it can be filtered */
+		if (!options.getBoolean("muffin.dontUncompress")
+		    && "text/html".equals(reply.getHeaderField("Content-type")))
+		{
+		    String encoding = reply.getHeaderField("Content-Encoding");
+		    if (encoding != null && encoding.indexOf("gzip") != -1)
+		    {
+			reply.removeHeaderField("Content-Encoding");
+			reply.removeHeaderField("Content-length");
+			uncompress = true;
+		    }
+		}
+
 		filter(reply);
 	    }
 
@@ -350,7 +365,7 @@ class Handler implements Runnable
 	    {
 		try
 		{
-		    processContent();
+		    processContent(uncompress);
 		}
 		catch (IOException e)
 		{
@@ -465,7 +480,7 @@ class Handler implements Runnable
 	return new ByteArrayInputStream(chunks.toByteArray());
     }
     
-    void processContent() throws IOException
+    void processContent(boolean uncompress) throws IOException
     {
 	InputStream in;
 	boolean chunked = false;
@@ -485,6 +500,10 @@ class Handler implements Runnable
 	{
 	    System.out.println("No inputstream");
 	    return;
+	}
+	else if (uncompress)
+	{
+	    in = new GZIPInputStream(in);
 	}
 
 	if (options.getBoolean("muffin.passthru"))
