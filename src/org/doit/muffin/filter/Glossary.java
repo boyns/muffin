@@ -1,4 +1,4 @@
-/* $Id: Glossary.java,v 1.8 2003/05/30 16:21:37 forger77 Exp $ */
+/* $Id: Glossary.java,v 1.9 2003/05/30 17:06:30 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -69,6 +69,18 @@ public class Glossary extends AbstractFilterFactory {
 			BufferedReader in =
 				new BufferedReader(
 					new InputStreamReader(file.getInputStream()));
+			loadFromStream(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Performs a load of a glossary via a BufferedReader.
+	 * This is manly factored out to allow for testing without dependency on
+	 * external files.	 * @param in The BufferedReader to read from.	 */
+	public void loadFromStream(BufferedReader in) {
+		try {
 			String s;
 			while ((s = in.readLine()) != null) {
 				StringTokenizer st = new StringTokenizer(s, " \t");
@@ -79,7 +91,7 @@ public class Glossary extends AbstractFilterFactory {
 			in.close();
 		} catch (FileNotFoundException e) {
 			//FIXME: is it on purpose that we don't complain ?
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -54,13 +54,7 @@ public class GlossaryTest extends TestCase {
 	
 	public void setUp() {
 		fGlossary = new Glossary();
-		Prefs prefs = new Prefs();
-		// FIXME: provide other means to create Glossary than forcing the use of file.
-		String filename = "file:e:/projects/muffin_refactor/glossary.txt";
-		prefs.putString("Glossary.glossaryfile", filename); // load takes it from here
-//		System.out.println("gt1:"+prefs.getString("Glossary.glossaryfile"));
-//		System.out.println("gt2:"+prefs.getUserFile(filename).getName());
-		fGlossary.setPrefs(prefs);
+		fGlossary.loadFromStream(makeReader());
 		fGlossaryFilter = (ContentFilter)fGlossary.createFilter();
 	}
 	
@@ -108,22 +102,35 @@ public class GlossaryTest extends TestCase {
 		byte[] bytes = str.getBytes();
 		return new ByteArrayInputStream(bytes);
 	}
+	
+	private BufferedReader makeReader(){
+		return new BufferedReader(
+			new InputStreamReader(
+				makeInputStream(SAMPLE_GLOSSARY)
+			)
+		);
+	}
 
 	private static final String SAMPLE_PAGE = ""
-			+ "<head><title>Test Page</title></head>\n"
-			+ "<body><h1>Test Page</h1>\n"
-			+ "muffin is a funky java project.\n"
-			+ "</body>\n"
-			+ "";
+		+ "<head><title>Test Page</title></head>\n"
+		+ "<body><h1>Test Page</h1>\n"
+		+ "muffin is a funky java project.\n"
+		+ "</body>\n"
+		+ "";
 
 	private static final String SAMPLE_RESPONSE = "HTTP/1.0 302 Found\n"
-			+ "Content-Type: text/html\n"
-			+ "Location: http://chewie.somewhere.com:8080/index.html\n"
-			+ "Content-Length: 176\n"
-			+ "Servlet-Engine: Tomcat Web Server/3.2 beta 3 (JSP 1.1; Servlet 2.2; Java 1.2.2; Linux 2.2.24-7.0.3smp i386; java.vendor=Blackdown Java-Linux Team)\n"
-			+ "\n"
-			+ SAMPLE_PAGE
-			+ "";
+		+ "Content-Type: text/html\n"
+		+ "Location: http://chewie.somewhere.com:8080/index.html\n"
+		+ "Content-Length: 176\n"
+		+ "Servlet-Engine: Tomcat Web Server/3.2 beta 3 (JSP 1.1; Servlet 2.2; Java 1.2.2; Linux 2.2.24-7.0.3smp i386; java.vendor=Blackdown Java-Linux Team)\n"
+		+ "\n"
+		+ SAMPLE_PAGE
+		+ "";
+			
+	private static final String SAMPLE_GLOSSARY = ""
+		+ "muffin http://muffin.doit.org/\n"
+		+ "java http://java.sun.com/\n"
+		+ "";
 	
 	private Glossary fGlossary;
 	private ContentFilter fGlossaryFilter;
