@@ -1,5 +1,18 @@
 Muffin NEWS - user-visible changes
 
+Changes since 0.9.3:
+
+* New GIF filtering and AnimationKiller thanks to Bernhard Haumacher.
+
+* New Snapshot filter from Rob Miller.  Snapshot is a filter that
+  can permanetly cache web pages for offline browsing.  This filter
+  is ideal for offline web presentations.  See Snapshot.txt for more
+  info.
+
+* Support for running Muffin as a component from Christian Queinnec.
+
+* Upgraded dnsjava 1.1.6.
+
 Changes since 0.9.2:
 
 * Automatically uncompress gzip encoded content so it can be filtered.
@@ -257,4 +270,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.17 2000/03/27 04:40:38 boyns Exp $
+$Id: NEWS,v 1.18 2000/10/10 04:52:19 boyns Exp $
