@@ -20,39 +20,12 @@
  * Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
-package org.doit.muffin.regexp.gnu;
-
-import org.doit.muffin.regexp.Matcher;
+package org.doit.muffin.regexp;
 
 /**
- * @author bernhard.wagner
+ * @author Bernhard Wagner <bw@xmlizer.biz>
  *
  */
-public class MatcherAdapter implements Matcher {
-	
-	public MatcherAdapter(gnu.regexp.REMatch rematch){
-		this.fMatcher = rematch;
-	}
-
-	public int getStartIndex() {
-		return fMatcher.getStartIndex();
-	}
-
-	public int getEndIndex() {
-		return fMatcher.getEndIndex();
-	}
-
-	public int getStartIndex(int sub) {
-		return fMatcher.getStartIndex(sub);
-	}
-
-	public int getEndIndex(int sub) {
-		return fMatcher.getEndIndex(sub);
-	}
-
-	public String substituteInto(String input) {
-		return fMatcher.substituteInto(input);
-	}
-	
-	private gnu.regexp.REMatch fMatcher;
+public interface PatternFactory {
+	public Pattern getPattern(String pattern, boolean ignoreCase);
 }
