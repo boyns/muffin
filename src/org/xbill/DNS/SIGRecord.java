@@ -88,7 +88,10 @@ throws IOException
 	super(_name, Type.SIG, _dclass, _ttl);
 	covered = Type.value(st.nextToken());
 	alg = Byte.parseByte(st.nextToken());
-	labels = name.labels();
+	if (Options.check("2065sig"))
+		labels = name.labels();
+	else
+		labels = Byte.parseByte(st.nextToken());
 	origttl = TTL.parseTTL(st.nextToken());
 	expire = parseDate(st.nextToken());
 	timeSigned = parseDate(st.nextToken());
@@ -107,6 +110,10 @@ toString() {
 		sb.append (" ");
 		sb.append (alg);
 		sb.append (" ");
+		if (!Options.check("2065sig")) {
+			sb.append (labels);
+			sb.append (" ");
+		}
 		sb.append (origttl);
 		sb.append (" (\n\t");
 		sb.append (formatDate(expire));
@@ -214,7 +221,7 @@ rrToWireCanonical(DataByteOutputStream out) throws IOException {
 	out.write(signature);
 }
 
-private String
+static String
 formatDate(Date d) {
 	Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 	StringBuffer sb = new StringBuffer();
@@ -234,12 +241,12 @@ formatDate(Date d) {
 	return sb.toString();
 }
 
-private Date
+static Date
 parseDate(String s) {
 	Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 
 	int year = Integer.parseInt(s.substring(0, 4));
-	int month = Integer.parseInt(s.substring(4, 6));
+	int month = Integer.parseInt(s.substring(4, 6)) - 1;
 	int date = Integer.parseInt(s.substring(6, 8));
 	int hour = Integer.parseInt(s.substring(8, 10));
 	int minute = Integer.parseInt(s.substring(10, 12));

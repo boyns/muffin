@@ -9,9 +9,9 @@ import java.util.*;
 /**
  * A helper class that tries to locate name servers and the search path to
  * be appended to unqualified names.  Currently, this works if either the
- * appropriate properties are set, or the OS has a unix-like /etc/resolv.conf.
- * There is no reason for these routines to be called directly except
- * curiosity.
+ * appropriate properties are set, the OS has a unix-like /etc/resolv.conf,
+ * or the system is Windows based with ipconfig or winipcfg.  There is no
+ * reason for these routines to be called directly except * curiosity.
  *
  * @author Brian Wellington
  */
@@ -27,40 +27,46 @@ FindServer() {}
 
 /**
  * Looks in the system properties to find servers and a search path.
- * Properties of the form dns.server1, dns.server2, etc. define servers.
- * Properties of the form dns.search1, dns.seearch, etc. define the search path.
+ * Servers are defined by dns.server=server1,server2...
+ * The search path is defined by dns.search=domain1,domain2...
  */
 private static void
 findProperty() {
-	String s;
+	String s, prop;
 	Vector v = null;
-	for (int i = 1; i <= 5; i++) {
-		s = System.getProperty("dns.server" + i);
-		if (s == null)
-			break;
-		if (v == null)
-			v = new Vector();
-		v.addElement(s);
-	}
-	if (v != null) {
-		server = new String[v.size()];
-		for (int i = 0; i < v.size(); i++)
-			server[i] = (String) v.elementAt(i);
+	StringTokenizer st;
+
+	prop = System.getProperty("dns.server");
+	if (prop != null) {
+		st = new StringTokenizer(prop, ",");
+		while (st.hasMoreTokens()) {
+			s = st.nextToken();
+			if (v == null)
+				v = new Vector();
+			v.addElement(s);
+		}
+		if (v != null) {
+			server = new String[v.size()];
+			for (int i = 0; i < v.size(); i++)
+				server[i] = (String) v.elementAt(i);
+		}
 	}
 
 	v = null;
-	for (int i = 1; i <= 5; i++) {
-		s = System.getProperty("dns.search" + i);
-		if (s == null)
-			break;
-		if (v == null)
-			v = new Vector();
-		v.addElement(s);
-	}
-	if (v != null) {
-		search = new Name[v.size()];
-		for (int i = 0; i < v.size(); i++)
-			search[i] = new Name((String)v.elementAt(i));
+	prop = System.getProperty("dns.search");
+	if (prop != null) {
+		st = new StringTokenizer(prop, ",");
+		while (st.hasMoreTokens()) {
+			s = st.nextToken();
+			if (v == null)
+				v = new Vector();
+			v.addElement(s);
+		}
+		if (v != null) {
+			search = new Name[v.size()];
+			for (int i = 0; i < v.size(); i++)
+				search[i] = new Name((String)v.elementAt(i));
+		}
 	}
 }
 
@@ -130,15 +136,116 @@ findUnix() {
 	}
 }
 
+/**
+ * Parses the output of winipcfg or ipconfig.
+ */
+private static void
+findWin(InputStream in) {
+	BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	try {
+		Vector vserver = null;
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			if (line.indexOf("Host Name") != -1) {
+				String s = null;
+				StringTokenizer st = new StringTokenizer(line);
+				while (st.hasMoreTokens())
+					s = st.nextToken();
+				Name name = new Name(s);
+				if (name.labels() == 1)
+					continue;
+				name = new Name(name, 1);
+				search = new Name[1];
+				search[0] = name;
+			}
+			else if (line.indexOf("DNS Servers") != -1)
+				break;
+		}
+		
+		if (line == null)
+			return;
+
+		do {
+			String s = null;
+			StringTokenizer st = new StringTokenizer(line);
+			while (st.hasMoreTokens())
+				s = st.nextToken();
+			if (vserver == null)
+				vserver = new Vector();
+			vserver.addElement(s);
+			line = br.readLine();
+		} while (line != null && line.indexOf(":") == -1);
+
+		if (server == null && vserver != null) {
+			server = new String[vserver.size()];
+			for (int i = 0; i < vserver.size(); i++)
+				server[i] = (String) vserver.elementAt(i);
+		}
+	}
+	catch (IOException e) {
+	}
+	finally {
+		try {
+			br.close();
+		}
+		catch (IOException e) {
+		}
+	}
+	return;
+}
+
+/**
+ * Calls winipcfg and parses the result to find servers and a search path.
+ */
+private static void
+find95() {
+	String s = "winipcfg.out";
+	try {
+		Process p;
+		p = Runtime.getRuntime().exec("winipcfg /all /batch " + s);
+		p.waitFor();
+		File f = new File(s);
+		findWin(new FileInputStream(f));
+		new File(s).delete();
+	}
+	catch(Exception e) {
+		return;
+	}
+}
+
+/**
+ * Calls ipconfig and parses the result to find servers and a search path.
+ */
+private static void
+findNT() {
+	try {
+		Process p;
+		p = Runtime.getRuntime().exec("ipconfig /all");
+		findWin(p.getInputStream());
+		p.destroy();
+	}
+	catch(Exception e) {
+		return;
+	}
+}
+
 synchronized private static void
 probe() {
 	if (probed)
 		return;
 	probed = true;
 	findProperty();
-	if (server == null || search == null)
-		findUnix();
-
+	if (server == null || search == null) {
+		String OS = System.getProperty("os.name");
+		if (OS.indexOf("Windows") != -1) {
+			if ((OS.indexOf("NT") != -1) || (OS.indexOf("2000") != -1))
+				findNT();
+			else
+				find95();
+		}
+		else
+			findUnix();
+	}
 	if (search == null)
 		search = new Name[1];
 	else {

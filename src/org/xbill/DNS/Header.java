@@ -18,7 +18,8 @@ public class Header {
 
 private int id; 
 private boolean [] flags;
-private byte rcode, opcode;
+private short rcode;
+private byte opcode;
 private int [] counts;
 
 /**
@@ -129,7 +130,7 @@ randomID() {
  * @see Rcode
  */
 public void
-setRcode(byte value) {
+setRcode(short value) {
 	rcode = value;
 }
 
@@ -137,7 +138,7 @@ setRcode(byte value) {
  * Retrieves the mesasge's rcode
  * @see Rcode
  */
-public byte
+public short
 getRcode() {
 	return rcode;
 }
@@ -223,14 +224,13 @@ printFlags() {
 	return sb.toString();
 }
 
-/** Converts the header into a String */
-public String
-toString() {
+String
+toStringWithRcode(short newrcode) {
 	StringBuffer sb = new StringBuffer();
 
 	sb.append(";; ->>HEADER<<- "); 
 	sb.append("opcode: " + Opcode.string(getOpcode()));
-	sb.append(", status: " + Rcode.string(getRcode()));
+	sb.append(", status: " + Rcode.string(newrcode));
 	sb.append(", id: " + getID());
 	sb.append("\n");
 
@@ -239,6 +239,12 @@ toString() {
 	for (int i = 0; i < 4; i++)
 		sb.append(Section.string(i) + ": " + getCount(i) + " ");
 	return sb.toString();
+}
+
+/** Converts the header into a String */
+public String
+toString() {
+	return toStringWithRcode(getRcode());
 }
 
 /* Creates a new Header identical to the current one */

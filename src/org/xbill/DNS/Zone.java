@@ -15,6 +15,71 @@ import java.util.*;
 
 public class Zone extends NameSet {
 
+class AXFREnumeration implements Enumeration {
+	private Enumeration znames;
+	private Name currentName;
+	private Object [] current;
+	int count;
+	boolean sentFirstSOA, sentNS, sentOrigin, sentLastSOA;
+
+	AXFREnumeration() {
+		znames = names();
+	}
+
+	public boolean
+	hasMoreElements() {
+		return (!sentLastSOA);
+	}
+
+	public Object
+	nextElement() {
+		if (sentLastSOA)
+			return null;
+		if (!sentFirstSOA) {
+			sentFirstSOA = true;
+			return (RRset) findExactSet(origin, Type.SOA, dclass);
+		}
+		if (!sentNS) {
+			sentNS = true;
+			return getNS();
+		}
+		if (!sentOrigin) {
+			if (currentName == null) {
+				currentName = getOrigin();
+				TypeClassMap tcm = findName(currentName);
+				current = (Object []) tcm.getMultiple(Type.ANY,
+								      dclass);
+				count = 0;
+			}
+			while (count < current.length) {
+				RRset rrset = (RRset) current[count];
+				if (rrset.getType() != Type.SOA &&
+				    rrset.getType() != Type.NS)
+					return current[count++];
+				count++;
+			}
+			current = null;
+			sentOrigin = true;
+		}
+		if (current != null && count < current.length)
+			return current[count++];
+		while (znames.hasMoreElements()) {
+			Name currentName = (Name) znames.nextElement();
+			if (currentName.equals(getOrigin()))
+				continue;
+			TypeClassMap tcm = findName(currentName);
+			current = (Object []) tcm.getMultiple(Type.ANY, dclass);
+			count = 0;
+			if (count < current.length)
+				return current[count++];
+		}
+		sentLastSOA = true;
+		RRset rrset = new RRset();
+		rrset.addRR(getSOA());
+		return rrset;
+	}
+}
+
 /** A primary zone */
 public static final int PRIMARY = 1;
 
@@ -24,6 +89,14 @@ public static final int SECONDARY = 2;
 private int type;
 private Name origin;
 private short dclass = DClass.IN;
+
+private void
+validate() throws IOException {
+	if (getSOA() == null)
+		throw new IOException(origin + ": no SOA specified");
+	if (getNS() == null)
+		throw new IOException(origin + ": no NS set specified");
+}
 
 /**
  * Creates a Zone from the records in the specified master file.  All
@@ -45,9 +118,45 @@ Zone(String file, Cache cache) throws IOException {
 			if (origin == null && record.getType() == Type.SOA)
 				origin = record.getName();
 		}
-		else
+		else if (cache != null)
 			cache.addRecord(record, Credibility.ZONE_GLUE, m);
 	}
+	validate();
+}
+
+/**
+ * Creates a Zone from the records in the specified master file.  All
+ * records that do not belong in the Zone are added to the specified Cache.
+ * @see Cache
+ * @see Master
+ */
+public
+Zone(Name zone, short _dclass, String remote, Cache cache)
+throws IOException
+{
+	origin = zone;
+	dclass = _dclass;
+	type = SECONDARY;
+	Resolver res = new SimpleResolver(remote);
+	Record rec = Record.newRecord(zone, Type.AXFR, dclass);
+	Message query = Message.newQuery(rec);
+	Message response = res.send(query);
+	Record [] recs = response.getSectionArray(Section.ANSWER);
+	for (int i = 0; i < recs.length; i++) {
+		if (!recs[i].getName().subdomain(origin)) {
+			if (Options.check("verbose"))
+				System.err.println(recs[i].getName() +
+						   "is not in zone " + origin);
+			continue;
+		}
+		addRecord(recs[i]);
+	}
+	if (cache != null) {
+		recs = response.getSectionArray(Section.ADDITIONAL);
+		for (int i = 0; i < recs.length; i++)
+			cache.addRecord(recs[i], Credibility.ZONE_GLUE, recs);
+	}
+	validate();
 }
 
 /** Returns the Zone's origin */
@@ -79,7 +188,7 @@ getDClass() {
 }
 
 /**     
- * Looks up Records in the Zone.  This follows CNAMEs.
+ * Looks up Records in the Zone.  This follows CNAMEs and wildcards.
  * @param name The name to look up
  * @param type The type to look up
  * @return A SetResponse object
@@ -89,8 +198,24 @@ public SetResponse
 findRecords(Name name, short type) {
 	SetResponse zr = null;
 
-	if (findName(name) == null)
-		return new SetResponse(SetResponse.NXDOMAIN);
+	if (findName(name) == null) {
+		if (name.isWild())
+			return new SetResponse(SetResponse.NXDOMAIN);
+		else {
+			int labels = name.labels() - origin.labels();
+			if (labels == 0)
+				return new SetResponse(SetResponse.NXDOMAIN);
+			SetResponse sr;
+			Name tname = name;
+			do {
+				sr = findRecords(tname.wild(1), type);
+				if (sr.isSuccessful())
+					return sr;
+				tname = new Name(tname, 1);
+			} while (labels-- >= 1);
+			return sr;
+		}
+	}
 	Object [] objects = findSets(name, type, dclass);
 	if (objects == null)
 		return new SetResponse(SetResponse.NODATA);
@@ -141,11 +266,16 @@ findExactMatch(Name name, short type) {
 public void
 addRecord(Record r) {
 	Name name = r.getName();
-	short type = r.getType();
+	short type = r.getRRsetType();
 	RRset rrset = (RRset) findExactSet (name, type, dclass);
 	if (rrset == null)
 		addSet(name, type, dclass, rrset = new RRset());
 	rrset.addRR(r);
+}
+
+public Enumeration
+AXFR() {
+	return new AXFREnumeration();
 }
 
 }

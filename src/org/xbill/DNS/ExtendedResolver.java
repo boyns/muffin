@@ -60,20 +60,29 @@ class Receiver implements ResolverListener {
 
 	public void
 	receiveMessage(Object id, Message m) {
+		if (Options.check("verbose"))
+			System.err.println("ExtendedResolver: " +
+					   "received message " + id);
 		enqueueInfo(id, m);
 	}
 
 	public void
 	handleException(Object id, Exception e) {
-		System.out.println("got an exception: " + e);
+		if (Options.check("verbose"))
+			System.err.println("ExtendedResolver: " +
+					   "exception on message " + id);
 		enqueueInfo(id, e);
 	}
 }
 
-private static final int quantum = 30;
+private static final int quantum = 20;
 private static final byte retries = 3;
 private static int uniqueID = 0;
+private static final Random random = new Random();
+
 private Vector resolvers;
+private boolean loadBalance = false;
+private int lbStart = 0;
 
 private void
 init() {
@@ -137,6 +146,9 @@ sendTo(Message query, Receiver receiver, Hashtable idMap, int r) {
 	Resolver res = (Resolver) resolvers.elementAt(r);
 	synchronized (idMap) {
 		Object id = res.sendAsync(query, receiver);
+		if (Options.check("verbose"))
+			System.err.println("ExtendedResolver: sending id " +
+					   id + " to resolver " + r);
 		idMap.put(id, new Integer(r));
 	}
 }
@@ -171,6 +183,13 @@ setEDNS(int level) {
 
 /** Specifies the TSIG key that messages will be signed with */
 public void
+setTSIGKey(Name name, byte [] key) {
+	for (int i = 0; i < resolvers.size(); i++)
+		((Resolver)resolvers.elementAt(i)).setTSIGKey(name, key);
+}
+
+/** Specifies the TSIG key that messages will be signed with */
+public void
 setTSIGKey(String name, String key) {
 	for (int i = 0; i < resolvers.size(); i++)
 		((Resolver)resolvers.elementAt(i)).setTSIGKey(name, key);
@@ -201,7 +220,7 @@ setTimeout(int secs) {
  */
 public Message
 send(Message query) throws IOException {
-	int q, r;
+	int i, start, r;
 	Message best = null;
 	IOException bestException = null;
 	boolean [] invalid = new boolean[resolvers.size()];
@@ -216,7 +235,21 @@ send(Message query) throws IOException {
 		boolean waiting = false;
 		QElement qe;
 		synchronized (queue) {
-			for (r = 0; r < resolvers.size(); r++) {
+			int nresolvers = resolvers.size();
+			if (loadBalance) {
+				/*
+				 * Note: this is not synchronized, since the
+				 * worst thing that can happen is a random
+				 * ordering, which is ok.
+				 */
+				start = lbStart % nresolvers;
+				if (lbStart > nresolvers)
+					lbStart %= nresolvers;
+			}
+			else
+				start = 0;
+			for (i = start; i < nresolvers + start; i++) {
+				r = i % nresolvers;
 				if (sent[r] == recvd[r] && sent[r] < retries) {
 					sendTo(query, receiver, idMap, r);
 					sent[r]++;
@@ -253,15 +286,15 @@ send(Message query) throws IOException {
 				bestException = e;
 		}
 		else {
-			byte rcode = m.getHeader().getRcode();
+			short rcode = m.getRcode();
 			if (rcode == Rcode.NOERROR)
 				return m;
 			else {
 				if (best == null)
 					best = m;
 				else {
-					byte bestrcode;
-					bestrcode = best.getHeader().getRcode();
+					short bestrcode;
+					bestrcode = best.getRcode();
 					if (rcode == Rcode.NXDOMAIN &&
 					    bestrcode != Rcode.NXDOMAIN)
 						best = m;
@@ -286,20 +319,10 @@ sendAsync(final Message query, final ResolverListener listener) {
 	synchronized (this) {
 		id = new Integer(uniqueID++);
 	}
-	String name = this.getClass() + ": " + query.getQuestion().getName();
+	String name = getClass() + ": " + query.getQuestion().getName();
 	WorkerThread.assignThread(new ResolveThread(this, query, id, listener),
 				  name);
 	return id;
-}
-
-/**
- * Sends a zone transfer message to the first known server, and waits for a
- * response.  This should be further tuned later.
- * @return The response
- */
-public
-Message sendAXFR(Message query) throws IOException {
-	return ((Resolver)resolvers.elementAt(0)).sendAXFR(query);
 }
 
 /** Returns the i'th resolver used by this ExtendedResolver */
@@ -329,6 +352,15 @@ addResolver(Resolver r) {
 public void
 deleteResolver(Resolver r) {
 	resolvers.removeElement(r);
+}
+
+/** Sets whether the servers should be load balanced.
+ * @param flag If true, servers will be tried in round-robin order.  If false,
+ * servers will always be queried in the same order.
+ */
+public void
+setLoadBalance(boolean flag) {
+	loadBalance = flag;
 }
 
 }

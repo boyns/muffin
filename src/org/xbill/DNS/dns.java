@@ -26,6 +26,7 @@ private static Resolver res;
 private static Cache cache;
 private static Name [] searchPath;
 private static boolean searchPathSet;
+private static boolean initialized;
 
 /* Otherwise the class could be instantiated */
 private
@@ -33,12 +34,15 @@ dns() {}
 
 synchronized private static void
 initialize() {
+	if (initialized)
+		return;
+	initialized = true;
 	if (res == null) {
 		try {
 			setResolver(new ExtendedResolver());
 		}
 		catch (UnknownHostException uhe) {
-			System.out.println("Failed to initialize resolver");
+			System.err.println("Failed to initialize resolver");
 			System.exit(-1);
 		}
 	}
@@ -94,6 +98,8 @@ inaddrString(String s) {
 public static synchronized void
 setResolver(Resolver _res) {
 	res = _res;
+	if (cache != null)
+		cache.clearCache();
 }
 
 /**
@@ -102,6 +108,7 @@ setResolver(Resolver _res) {
  */
 public static synchronized Resolver
 getResolver() {
+	initialize();
 	return res;
 }
 
@@ -128,18 +135,21 @@ setSearchPath(String [] domains) {
  */
 public static synchronized Cache
 getCache() {
+	initialize();
 	return cache;
 }
 
 private static Record []
-lookup(Name name, short type, short dclass, byte cred) {
+lookup(Name name, short type, short dclass, byte cred, boolean querysent) {
 	Record [] answers;
 	int answerCount = 0, n = 0;
 	Enumeration e;
 
-/*System.out.println("lookup of " + name + " " + Type.string(type));*/
+	if (Options.check("verbose"))
+		System.err.println("lookup " + name + " " + Type.string(type));
 	SetResponse cached = cache.lookupRecords(name, type, dclass, cred);
-/*System.out.println(cached);*/
+	if (Options.check("verbose"))
+		System.err.println(cached);
 	if (cached.isSuccessful()) {
 		RRset [] rrsets = cached.answers();
 		answerCount = 0;
@@ -157,6 +167,9 @@ lookup(Name name, short type, short dclass, byte cred) {
 		}
 	}
 	else if (cached.isNegative()) {
+		return null;
+	}
+	else if (querysent) {
 		return null;
 	}
 	else {
@@ -178,23 +191,7 @@ lookup(Name name, short type, short dclass, byte cred) {
 		if (rcode != Rcode.NOERROR)
 			return null;
 
-		e = response.getSection(Section.ANSWER);
-		while (e.hasMoreElements()) {
-			Record r = (Record)e.nextElement();
-			if (matchType(r.getType(), type))
-				answerCount++;
-		}
-		if (answerCount == 0)
-			return null;
-
-		answers = new Record[answerCount];
-
-		e = response.getSection(Section.ANSWER);
-		while (e.hasMoreElements()) {
-			Record r = (Record)e.nextElement();
-			if (matchType(r.getType(), type))
-				answers[n++] = r;
-		}
+		return lookup(name, type, dclass, cred, true);
 	}
 
 	return answers;
@@ -220,11 +217,11 @@ getRecords(String namestr, short type, short dclass, byte cred) {
 
 	initialize();
 	if (searchPath == null || name.isQualified())
-		answers = lookup(name, type, dclass, cred);
+		answers = lookup(name, type, dclass, cred, false);
 	else {
 		for (int i = 0; i < searchPath.length; i++) {
 			answers = lookup(new Name(namestr, searchPath[i]),
-					 type, dclass, cred);
+					 type, dclass, cred, false);
 			if (answers != null)
 				break;
 		}

@@ -20,13 +20,8 @@ private static final byte IPAD = 0x36;
 private static final byte OPAD = 0x5c;
 private static final byte PADLEN = 64;
 
-private static void
-printByteString(String s, byte [] b, int offset, int length) {
-	System.out.print(length + " bytes (" + s + "): ");
-	for (int i=offset; i<offset+length; i++)
-		System.out.print(Integer.toHexString((int)b[i] & 0xFF) + " ");
-	System.out.println();
-}
+/** If true, all digested bytes will be printed */
+public static boolean verbose = false;
 
 /**
  * Creates a new HMAC instance
@@ -53,7 +48,8 @@ hmacSigner(byte [] key) {
 	}
 	catch (IOException e) {
 	}
-/*	printByteString("key", key, 0, key.length);*/
+	if (verbose)
+		System.err.println(hexdump.dump("key", key));
 }
 
 /**
@@ -64,9 +60,14 @@ hmacSigner(byte [] key) {
  */
 public void
 addData(byte [] b, int offset, int length) {
-	if (length <= 0 || offset + length >= b.length)
+	if (length < 0 || offset + length > b.length) {
+		if (verbose)
+			System.err.println("Invalid parameters");
 		return;
-/*	printByteString("partial add", b, offset, length);*/
+	}
+	if (verbose)
+		System.err.println(hexdump.dump("partial add", b,
+						offset, length));
 	bytes.write(b, offset, length);
 }
 
@@ -76,7 +77,8 @@ addData(byte [] b, int offset, int length) {
  */
 public void
 addData(byte [] b) {
-/*	printByteString("add", b, 0, b.length);*/
+	if (verbose)
+		System.err.println(hexdump.dump("add", b));
 	try {
 		bytes.write(b);
 	}
@@ -99,7 +101,8 @@ sign() {
 	catch (IOException e) {
 	}
 	byte [] b = md5.compute(bytes.toByteArray());
-/*	printByteString("sig", b, 0, b.length);*/
+	if (verbose)
+		System.err.println(hexdump.dump("sig", b));
 	return b;
 }
 
@@ -110,7 +113,8 @@ sign() {
  */
 public boolean
 verify(byte [] signature) {
-/*	printByteString("ver", signature, 0, signature.length);*/
+	if (verbose)
+		System.err.println(hexdump.dump("ver", signature));
 	return (byteArrayCompare(signature, sign()));
 }
 

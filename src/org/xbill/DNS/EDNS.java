@@ -17,10 +17,10 @@ public class EDNS {
 /**
  * Creates a new OPT record
  * @param payloadSize The maximum UDP packet size that can be reassembled.
- */
 public static OPTRecord
 newOPT(int payloadSize) {
 	return new OPTRecord(Name.root, (short)payloadSize, 0);
 }
+ */
 
 }

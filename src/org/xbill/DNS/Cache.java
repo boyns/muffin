@@ -23,36 +23,47 @@ public class Cache extends NameSet {
 
 private class Element {
 	RRset rrset;
+	short type, dclass;
 	byte credibility;
 	long timeIn;
 	int ttl;
 	int srcid;
+	Thread tid;
 
 	public
-	Element(int _ttl, byte cred, int src) {
+	Element(int _ttl, byte cred, int src, short _type, short _dclass) {
 		rrset = null;
+		type = _type;
+		dclass = _dclass;
 		credibility = cred;
 		ttl = _ttl;
 		srcid = src;
 		timeIn = System.currentTimeMillis();
+		tid = Thread.currentThread();
 	}
 	public
 	Element(Record r, byte cred, int src) {
 		rrset = new RRset();
+		type = rrset.getType();
+		dclass = rrset.getDClass();
 		credibility = cred;
+		timeIn = System.currentTimeMillis();
 		ttl = -1;
 		srcid = src;
 		update(r);
+		tid = Thread.currentThread();
 	}
 
 	public
 	Element(RRset r, byte cred, int src) {
 		rrset = r;
+		type = r.getType();
+		dclass = r.getDClass();
 		credibility = cred;
-		ttl = -1;
 		timeIn = System.currentTimeMillis();
 		ttl = r.getTTL();
 		srcid = src;
+		tid = Thread.currentThread();
 	}
 
 	public void
@@ -70,7 +81,19 @@ private class Element {
 
 	public boolean
 	expiredTTL() {
-		return (System.currentTimeMillis() > timeIn + (1000 * ttl));
+		long now = System.currentTimeMillis();
+		long expire = timeIn + (1000 * (long)ttl);
+		return (now > expire);
+	}
+
+	public boolean
+	TTL0Ours() {
+		return (ttl == 0 && tid == Thread.currentThread());
+	}
+
+	public boolean
+	TTL0NotOurs() {
+		return (ttl == 0 && tid != Thread.currentThread());
 	}
 
 	public String
@@ -83,10 +106,68 @@ private class Element {
 	}
 }
 
+private class CacheCleaner extends Thread {
+	public
+	CacheCleaner() {
+		setDaemon(true);
+		setName("CacheCleaner");
+	}
+
+	public void
+	run() {
+		while (true) {
+			boolean interrupted = false;
+			try {
+				Thread.sleep(cleanInterval * 60 * 1000);
+			}
+			catch (InterruptedException e) {
+				interrupted = true;
+			}
+			if (interrupted)
+				continue;
+
+			Enumeration e = names();
+			while (e.hasMoreElements()) {
+				Name name = (Name) e.nextElement();
+				TypeClassMap tcm = findName(name);
+				if (tcm == null)
+					continue;
+				Object [] elements;
+				elements = tcm.getMultiple(Type.ANY,
+							   DClass.ANY);
+				if (elements == null)
+					continue;
+				for (int i = 0; i < elements.length; i++) {
+					Element element = (Element) elements[i];
+					if (element.ttl == 0)
+						continue;
+					if (element.expiredTTL())
+						removeSet(name, element.type,
+							  element.dclass,
+							  element);
+				}
+			}
+		}
+	}
+}
+
+private Verifier verifier;
+private boolean secure;
+private int maxncache = -1;
+private long cleanInterval = 30;
+private Thread cleaner;
+
 /** Creates an empty Cache */
 public
 Cache() {
 	super();
+	cleaner = new CacheCleaner();
+}
+
+/** Empties the Cache */
+public void
+clearCache() {
+	clear();
 }
 
 /**
@@ -94,6 +175,7 @@ Cache() {
  */
 public
 Cache(String file) throws IOException {
+	cleaner = new CacheCleaner();
 	Master m = new Master(file);
 	Record record;
 	while ((record = m.nextRecord()) != null) {
@@ -116,15 +198,15 @@ addRecord(Record r, byte cred, Object o) {
 	if (!Type.isRR(type))
 		return;
 	int src = (o != null) ? o.hashCode() : 0;
-	if (r.getTTL() == 0)
-		return;
 	Element element = (Element) findExactSet(name, type, dclass);
 	if (element == null || cred > element.credibility)
 		addSet(name, type, dclass,
 		       element = new Element(r, cred, src));
 	else if (cred == element.credibility) {
-		if (element.srcid != src)
+		if (element.srcid != src) {
 			element.rrset.clear();
+			element.srcid = src;
+		}
 		element.update(r);
 	}
 }
@@ -142,7 +224,9 @@ addRRset(RRset rrset, byte cred, Object o) {
 	short type = rrset.getType();
 	short dclass = rrset.getDClass();
 	int src = (o != null) ? o.hashCode() : 0;
-	if (rrset.getTTL() == 0)
+	if (verifier != null)
+		rrset.setSecurity(verifier.verify(rrset, this));
+	if (secure && rrset.getSecurity() < DNSSEC.Secure)
 		return;
 	Element element = (Element) findExactSet(name, type, dclass);
 	if (element == null || cred > element.credibility)
@@ -163,7 +247,8 @@ addNegative(Name name, short type, short dclass, int ttl, byte cred, Object o) {
 	int src = (o != null) ? o.hashCode() : 0;
 	Element element = (Element) findExactSet(name, type, dclass);
 	if (element == null || cred > element.credibility)
-		addSet(name, type, dclass, new Element(ttl, cred, src));
+		addSet(name, type, dclass,
+		       new Element(ttl, cred, src, type, dclass));
 }
 
 /**
@@ -188,7 +273,14 @@ lookupRecords(Name name, short type, short dclass, byte minCred) {
 	int nelements = 0;
 	for (int i = 0; i < objects.length; i++) {
 		Element element = (Element) objects[i];
-		if (element.expiredTTL()) {
+		if (element.TTL0Ours()) {
+			removeSet(name, type, dclass, element);
+			nelements++;
+		}
+		else if (element.TTL0NotOurs()) {
+			objects[i] = null;
+		}
+		else if (element.expiredTTL()) {
 			removeSet(name, type, dclass, element);
 			objects[i] = null;
 		}
@@ -218,6 +310,16 @@ lookupRecords(Name name, short type, short dclass, byte minCred) {
 			 */
 			if (type == Type.ANY)
 				continue;
+			/*
+			 * If not, and we're not looking for a wildcard,
+			 * try that instead.
+			 */
+			if (!name.isWild()) {
+				cr = lookupRecords(name.wild(1), type, dclass,
+						   minCred);
+				if (cr.isSuccessful())
+					return cr;
+			}
 			return new SetResponse(SetResponse.NEGATIVE);
 		}
 
@@ -306,6 +408,12 @@ addMessage(Message in) {
 	byte cred;
 	short rcode = in.getHeader().getRcode();
 	int ancount = in.getHeader().getCount(Section.ANSWER);
+	Cache c;
+
+	if (secure)
+		c = new Cache();
+	else
+		c = this;
 
 	if (rcode != Rcode.NOERROR && rcode != Rcode.NXDOMAIN)
 		return;
@@ -319,7 +427,7 @@ addMessage(Message in) {
 			cred = Credibility.AUTH_NONAUTH_ANSWER;
 		else
 			cred = Credibility.NONAUTH_ANSWER;
-		addRecord(r, cred, in);
+		c.addRecord(r, cred, in);
 	}
 
 	if (ancount == 0 || rcode == Rcode.NXDOMAIN) {
@@ -339,17 +447,19 @@ addMessage(Message in) {
 			cred = Credibility.NONAUTH_AUTHORITY;
 		if (soa != null) {
 			int ttl = Math.min(soa.getTTL(), soa.getMinimum());
+			if (maxncache >= 0)
+				ttl = Math.min(ttl, maxncache);
 			if (ancount == 0)
-				addNegative(queryName, queryType, queryClass,
-					    ttl, cred, in);
+				c.addNegative(queryName, queryType, queryClass,
+					      ttl, cred, in);
 			else {
 				Record [] cnames;
 				cnames = in.getSectionArray(Section.ANSWER);
 				int last = cnames.length - 1;
 				Name cname;
 				cname = ((CNAMERecord)cnames[last]).getTarget();
-				addNegative(cname, queryType, queryClass,
-					    ttl, cred, in);
+				c.addNegative(cname, queryType, queryClass,
+					      ttl, cred, in);
 			}
 		}
 	}
@@ -361,7 +471,7 @@ addMessage(Message in) {
 			cred = Credibility.AUTH_AUTHORITY;
 		else
 			cred = Credibility.NONAUTH_AUTHORITY;
-		addRecord(r, cred, in);
+		c.addRecord(r, cred, in);
 	}
 
 	e = in.getSection(Section.ADDITIONAL);
@@ -371,7 +481,35 @@ addMessage(Message in) {
 			cred = Credibility.AUTH_ADDITIONAL;
 		else
 			cred = Credibility.NONAUTH_ADDITIONAL;
-		addRecord(r, cred, in);
+		c.addRecord(r, cred, in);
+	}
+	if (secure) {
+		e = c.names();
+		while (e.hasMoreElements()) {
+			Name name = (Name) e.nextElement();
+			TypeClassMap tcm = c.findName(name);
+			if (tcm == null)
+				continue;
+			Object [] elements;
+			elements = tcm.getMultiple(Type.ANY, DClass.ANY);
+			if (elements == null)
+				continue;
+			for (int i = 0; i < elements.length; i++) {
+				Element element = (Element) elements[i];
+				RRset rrset = element.rrset;
+
+				/* for now, ignore negative cache entries */
+				if (rrset == null)
+					continue;
+				if (verifier != null)
+					rrset.setSecurity(
+						verifier.verify(rrset, this));
+				if (rrset.getSecurity() < DNSSEC.Secure)
+					continue;
+				addSet(name, rrset.getType(),
+				       rrset.getDClass(), element);
+			}
+		}
 	}
 }
 
@@ -398,6 +536,49 @@ flushSet(Name name, short type, short dclass) {
 void
 flushName(Name name) {
 	removeName(name);
+}
+
+/**
+ * Defines a module to be used for data verification (DNSSEC).  An
+ * implementation is found in org.xbill.DNSSEC.security.DNSSECVerifier,
+ * which requires Java 2 or above and the Java Cryptography Extensions.
+ */
+public void
+setVerifier(Verifier v) {
+        verifier = v;
+}
+
+/**
+ * Mandates that all data stored in this Cache must be verified and proven
+ * to be secure, using a verifier (as defined in setVerifier).
+ */
+public void
+setSecurePolicy() {
+        secure = true;
+}
+
+/**
+ * Sets the maximum length of time that a negative response will be stored
+ * in this Cache.  A negative value disables this feature (that is, sets
+ * no limit).
+ */
+public void
+setMaxNCache(int seconds) {
+        maxncache = seconds;
+}
+
+/**
+ * Sets the interval (in minutes) that all expired records will be expunged
+ * the cache.  The default is 30 minutes.  0 or a negative value disables this
+ * feature.
+ */
+public void
+setCleanInterval(int minutes) {
+        cleanInterval = minutes;
+	if (cleanInterval <= 0)
+		cleaner = null;
+	else if (cleaner == null)
+		cleaner = new CacheCleaner();
 }
 
 }

@@ -14,7 +14,7 @@ import org.xbill.DNS.utils.*;
  * @author Brian Wellington
  */
 
-abstract public class Record {
+abstract public class Record implements Cloneable {
 
 protected Name name;
 protected short type, dclass;
@@ -75,12 +75,15 @@ newRecord(Name name, short type, short dclass, int ttl, int length,
 		return rec;
 	}
 	catch (InvocationTargetException e) {
-		System.out.println("new record: " + e);
-		System.out.println(e.getTargetException());
+		if (Options.check("verbose")) {
+			System.err.println("new record: " + e);
+			System.err.println(e.getTargetException());
+		}
 		return null;
 	}
 	catch (Exception e) {
-		System.out.println("new record: " + e);
+		if (Options.check("verbose"))
+			System.err.println("new record: " + e);
 		return null;
 	}
 }
@@ -223,12 +226,17 @@ toStringNoData() {
 	StringBuffer sb = new StringBuffer();
 	sb.append(name);
 	sb.append("\t");
-	sb.append(ttl);
-	sb.append("\t");
-	sb.append(DClass.string(dclass));
-	sb.append("\t");
+	if (Options.check("BINDTTL"))
+		sb.append(TTL.format(ttl));
+	else
+		sb.append(ttl);
+	sb.append(" ");
+	if (dclass != DClass.IN || !Options.check("noPrintIN")) {
+		sb.append(DClass.string(dclass));
+		sb.append(" ");
+	}
 	sb.append(Type.string(type));
-	sb.append("\t");
+	sb.append("\t\t");
 	return sb;
 }
 
@@ -277,12 +285,15 @@ throws IOException
 		return rec;
 	}
 	catch (InvocationTargetException e) {
-		System.out.println("from text: " + e);
-		System.out.println(e.getTargetException());
+		if (Options.check("verbose")) {
+			System.err.println("from text: " + e);
+			System.err.println(e.getTargetException());
+		}
 		return null;
 	}
 	catch (Exception e) {
-		System.out.println("from text: " + e);
+		if (Options.check("verbose"))
+			System.err.println("from text: " + e);
 		return null;
 	}
 }
@@ -401,6 +412,22 @@ hashCode() {
 	catch (IOException e) {
 		return 0;
 	}
+}
+
+/**
+ * Creates a new record identical to the current record, but with a different
+ * name.  This is most useful for replacing the name of a wildcard record.
+ */
+public Record
+withName(Name name) {
+	Record rec = null;
+	try {
+		rec = (Record) clone();
+	}
+	catch (CloneNotSupportedException e) {
+	}
+	rec.name = name;
+	return rec;
 }
 
 }

@@ -12,10 +12,10 @@ import org.xbill.Task.*;
 /**
  * An implementation of Resolver that sends one query to one server.
  * SimpleResolver handles TCP retries, transaction security (TSIG), and
- * a limited subset of EDNS0.
+ * EDNS0.
  * @see Resolver
  * @see TSIG
- * @see EDNS
+ * @see OPTRecord
  *
  * @author Brian Wellington
  */
@@ -29,7 +29,7 @@ public static final int PORT = 53;
 private InetAddress addr;
 private int port = PORT;
 private boolean useTCP, ignoreTruncation;
-private int EDNSlevel = -1;
+private byte EDNSlevel = -1;
 private TSIG tsig;
 private int timeoutValue = 60 * 1000;
 
@@ -47,7 +47,10 @@ SimpleResolver(String hostname) throws UnknownHostException {
 		if (hostname == null)
 			hostname = defaultResolver;
 	}
-	addr = InetAddress.getByName(hostname);
+	if (hostname.equals("0"))
+		addr = InetAddress.getLocalHost();
+	else
+		addr = InetAddress.getByName(hostname);
 }
 
 /**
@@ -88,18 +91,28 @@ setIgnoreTruncation(boolean flag) {
 /** Sets the EDNS version used on outgoing messages (only 0 is meaningful) */
 public void
 setEDNS(int level) {
-	this.EDNSlevel = level;
+	this.EDNSlevel = (byte) level;
+}
+
+/** Specifies the TSIG key that messages will be signed with */
+public void
+setTSIGKey(Name name, byte [] key) {
+	tsig = new TSIG(name, key);
 }
 
 /** Specifies the TSIG key that messages will be signed with */
 public void
 setTSIGKey(String name, String key) {
-	byte [] keyArray = base64.fromString(key);
+	byte [] keyArray;
+	if (key.length() > 1 && key.charAt(0) == ':')
+		keyArray = base16.fromString(key.substring(1));
+	else
+		keyArray = base64.fromString(key);
 	if (keyArray == null) {
-		System.out.println("Invalid TSIG key string");
+		System.err.println("Invalid TSIG key string");
 		return;
 	}
-	tsig = new TSIG(name, keyArray);
+	tsig = new TSIG(new Name(name), keyArray);
 }
 
 /**
@@ -113,7 +126,7 @@ setTSIGKey(String key) {
 		name = InetAddress.getLocalHost().getHostName();
 	}
 	catch (UnknownHostException e) {
-		System.out.println("getLocalHost failed");
+		System.err.println("getLocalHost failed");
 		return;
 	}
 	setTSIGKey(name, key);
@@ -147,9 +160,14 @@ sendTCP(Message query, byte [] out) throws IOException {
 			inLength = dataIn.readUnsignedShort();
 			in = new byte[inLength];
 			dataIn.readFully(in);
+			if (Options.check("verbosemsg"))
+				System.err.println(hexdump.dump("in", in));
 		}
 		catch (IOException e) {
-			System.out.println(";; No response");
+			if (Options.check("verbose")) {
+				System.err.println(";;" + e);
+				System.err.println(";; No response");
+			}
 			throw e;
 		}
 	}
@@ -164,8 +182,11 @@ sendTCP(Message query, byte [] out) throws IOException {
 		throw new WireParseException("Error parsing message");
 	}
 	if (tsig != null) {
+		response.TSIGsigned = true;
 		boolean ok = tsig.verify(response, in, query.getTSIG());
-		System.out.println(";; TSIG verify: " + ok);
+		if (Options.check("verbose"))
+			System.err.println("TSIG verify: " + ok);
+		response.TSIGverified = ok;
 	}
 	return response;
 }
@@ -181,18 +202,28 @@ send(Message query) throws IOException {
 	Message response;
 	DatagramSocket s;
 	DatagramPacket dp;
-	int udpLength = 512;
+	short udpLength = 512;
+
+	if (Options.check("verbose"))
+		System.err.println("Sending to " + addr.getHostAddress() +
+				   ":" + port);
+
+	if (query.getQuestion().getType() == Type.AXFR)
+		return sendAXFR(query);
 
 	query = (Message) query.clone();
 	if (EDNSlevel >= 0) {
 		udpLength = 1280;
-		query.addRecord(EDNS.newOPT(udpLength), Section.ADDITIONAL);
+		Record opt = new OPTRecord(udpLength, Rcode.NOERROR, EDNSlevel);
+		query.addRecord(opt, Section.ADDITIONAL);
 	}
 
 	if (tsig != null)
 		tsig.apply(query, null);
 
 	out = query.toWire();
+	if (Options.check("verbosemsg"))
+		System.err.println(hexdump.dump("out", out));
 
 	if (useTCP || out.length > udpLength)
 		return sendTCP(query, out);
@@ -208,7 +239,10 @@ send(Message query) throws IOException {
 			s.receive(dp);
 		}
 		catch (IOException e) {
-			System.out.println(";; No response");
+			if (Options.check("verbose")) {
+				System.err.println(";;" + e);
+				System.err.println(";; No response");
+			}
 			throw e;
 		}
 	}
@@ -217,15 +251,22 @@ send(Message query) throws IOException {
 	}
 	in = new byte [dp.getLength()];
 	System.arraycopy(dp.getData(), 0, in, 0, in.length);
+	if (Options.check("verbosemsg"))
+		System.err.println(hexdump.dump("in", in));
 	try {
 		response = new Message(in);
 	}
 	catch (IOException e) {
+		if (Options.check("verbose"))
+			e.printStackTrace();
 		throw new WireParseException("Error parsing message");
 	}
 	if (tsig != null) {
+		response.TSIGsigned = true;
 		boolean ok = tsig.verify(response, in, query.getTSIG());
-		System.out.println(";; TSIG verify: " + ok);
+		if (Options.check("verbose"))
+			System.err.println("TSIG verify: " + ok);
+		response.TSIGverified = ok;
 	}
 
 	s.close();
@@ -252,11 +293,7 @@ sendAsync(final Message query, final ResolverListener listener) {
 	return id;
 }
 
-/**
- * Sends a zone transfer message, and waits for a response
- * @return The response
- */
-public Message
+private Message
 sendAXFR(Message query) throws IOException {
 	byte [] out, in;
 	Socket s;
@@ -274,6 +311,8 @@ sendAXFR(Message query) throws IOException {
 			tsig.apply(query, null);
 
 		out = query.toWire();
+		if (Options.check("verbosemsg"))
+			System.err.println(hexdump.dump("out", out));
 		OutputStream sOut = s.getOutputStream();
 		new DataOutputStream(sOut).writeShort(out.length);
 		sOut.write(out);
@@ -281,8 +320,11 @@ sendAXFR(Message query) throws IOException {
 
 		response = new Message();
 		response.getHeader().setID(query.getHeader().getID());
-		if (tsig != null)
+		if (tsig != null) {
 			tsig.verifyAXFRStart();
+			response.TSIGsigned = true;
+			response.TSIGverified = true;
+		}
 		while (soacount < 2) {
 			try {
 				InputStream sIn = s.getInputStream();
@@ -292,9 +334,14 @@ sendAXFR(Message query) throws IOException {
 				dataIn.readFully(in);
 			}
 			catch (IOException e) {
-				System.out.println(";; No response");
+				if (Options.check("verbose")) {
+					System.err.println(";;" + e);
+					System.err.println(";; No response");
+				}
 				throw e;
 			}
+			if (Options.check("verbosemsg"))
+				System.err.println(hexdump.dump("in", in));
 			try {
 				m = new Message(in);
 			}
@@ -302,12 +349,26 @@ sendAXFR(Message query) throws IOException {
 				throw new WireParseException
 						("Error parsing message");
 			}
+			if (m.getHeader().getRcode() != Rcode.NOERROR) {
+				if (soacount == 0)
+					return m;
+				else {
+					if (Options.check("verbosemsg")) {
+						System.err.println("Invalid AXFR packet: ");
+						System.err.println(m);
+					}
+					throw new WireParseException
+						("Invalid AXFR message");
+				}
+			}
 			if (m.getHeader().getCount(Section.QUESTION) > 1 ||
 			    m.getHeader().getCount(Section.ANSWER) <= 0 ||
 			    m.getHeader().getCount(Section.AUTHORITY) != 0)
 			{
-				System.out.println("Invalid AXFR packet: ");
-				System.out.println(m);
+				if (Options.check("verbosemsg")) {
+					System.err.println("Invalid AXFR packet: ");
+					System.err.println(m);
+				}
 				throw new WireParseException
 						("Invalid AXFR message");
 			}
@@ -325,7 +386,25 @@ sendAXFR(Message query) throws IOException {
 				boolean ok = tsig.verifyAXFR(m, in,
 							     query.getTSIG(),
 							     required, first);
-				System.out.println("TSIG verify: " + ok);
+				if (!ok)
+					response.TSIGverified = false;
+				if (Options.check("verbose")) {
+					String status;
+					if (m.getTSIG() == null) {
+						if (!ok)
+							status = "expected";
+						else
+							status = "<>";
+					}
+					else {
+						if (!ok)
+							status = "failed";
+						else
+							status = "ok";
+					}
+					System.err.println("TSIG verify: " +
+							   status);
+				}
 			}
 			first = false;
 		}

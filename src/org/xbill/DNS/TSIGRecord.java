@@ -101,7 +101,7 @@ toString() {
 
 	sb.append (timeSigned.getTime() / 1000);
 	sb.append (" ");
-	sb.append (Rcode.string(error));
+	sb.append (Rcode.TSIGstring(error));
 	sb.append ("\n");
 	sb.append (base64.formatString(signature, 64, "\t", false));
 	if (other != null) {
@@ -130,7 +130,7 @@ toString() {
 
 /** Returns the shared key's algorithm */
 public Name
-getAlg() {
+getAlgorithm() {
 	return alg;
 }
 
