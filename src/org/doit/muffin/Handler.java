@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.19 2003/05/20 21:11:27 flefloch Exp $ */
+/* $Id: Handler.java,v 1.20 2003/05/24 17:46:44 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -752,7 +752,7 @@ public class Handler implements Runnable
         return currentLength > 0 ? currentLength : 0;
     }
 
-    /** 
+    /**
      * Uncompress gzip encoded content.
      */
     void uncompressContent(Reply reply) throws IOException
@@ -808,10 +808,12 @@ public class Handler implements Runnable
                 + "</a>\r\n");
         buf.append("<p>\r\nThe following error was encountered:\r\n<p>\r\n");
         buf.append("<ul><li>" + e.toString() + "</ul>\r\n");
-        String s = HttpErrorFactory.getFactory().createError(400, buf.toString()).toString();
+
+
+        byte[] err = HttpErrorFactory.getFactory().createError(400, buf.toString()).toString().getBytes();
         try
         {
-            out.write(s.getBytes(), 0, s.length());
+            out.write(err, 0, err.length);
             out.flush();
         }
         catch (Exception ex)
