@@ -1,4 +1,4 @@
-/* $Id: GlossaryFrame.java,v 1.10 2003/06/07 14:27:34 forger77 Exp $ */
+/* $Id: GlossaryFrame.java,v 1.11 2003/06/28 15:03:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,7 +31,7 @@ public class GlossaryFrame extends AbstractFrame
 {
 
     /**
-     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)
+     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(AbstractFilterFactory)
      */
     public GlossaryFrame(AbstractFilterFactory parent)
     {
