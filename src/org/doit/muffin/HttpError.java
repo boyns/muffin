@@ -1,4 +1,4 @@
-/* $Id: HttpError.java,v 1.2 1998/08/13 06:01:18 boyns Exp $ */
+/* $Id: HttpError.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -27,7 +27,7 @@ class HttpError
     StringBuffer content = null;
     Reply reply = null;
     
-    HttpError (Options options, int code, String message)
+    HttpError(Options options, int code, String message)
     {
 	String error;
 	switch (code)
@@ -53,42 +53,42 @@ class HttpError
 	    break;
 	}
 
-	reply = new Reply ();
+	reply = new Reply();
 	reply.statusLine = "HTTP/1.0 " + code + " " + error;
-	reply.setHeaderField ("Content-type", "text/html");
-	reply.setHeaderField ("Server", "Muffin/" + options.getString ("muffin.version"));
+	reply.setHeaderField("Content-type", "text/html");
+	reply.setHeaderField("Server", "Muffin/" + options.getString("muffin.version"));
 
-	content = new StringBuffer ();
-	content.append (Httpd.head (error));
-	content.append (message);
-	content.append (Httpd.tail ());
+	content = new StringBuffer();
+	content.append(Httpd.head(error));
+	content.append(message);
+	content.append(Httpd.tail());
     }
 
-    Reply getReply ()
+    Reply getReply()
     {
 	return reply;
     }
 
-    String getContent ()
+    String getContent()
     {
 	if (content == null)
 	{
 	    return null;
 	}
-	return content.toString ();
+	return content.toString();
     }
 
-    public String toString ()
+    public String toString()
     {
-	StringBuffer buf = new StringBuffer ();
+	StringBuffer buf = new StringBuffer();
 	if (reply != null)
 	{
-	    buf.append (reply.toString ());
+	    buf.append(reply.toString());
 	}
 	if (content != null)
 	{
-	    buf.append (content.toString ());
+	    buf.append(content.toString());
 	}
-	return buf.toString ();
+	return buf.toString();
     }
 }

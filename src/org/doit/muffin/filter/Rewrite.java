@@ -1,4 +1,4 @@
-/* $Id: Rewrite.java,v 1.2 1998/08/13 06:02:44 boyns Exp $ */
+/* $Id: Rewrite.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -44,145 +44,155 @@ public class Rewrite implements FilterFactory
     Vector rules = null;
     Vector rewrite = null;
 
-    public Rewrite ()
+    public Rewrite()
     {
     }
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	String filename = prefs.getUserFile ("rewrite");
-	prefs.putString ("Rewrite.rules", filename);
-	prefs.putInteger ("Rewrite.historySize", 500);
-	prefs.setOverride (o);
-	messages = new MessageArea (prefs.getInteger ("Rewrite.historySize"));
-	load ();
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	String filename = prefs.getUserFile("rewrite");
+	prefs.putString("Rewrite.rules", filename);
+	prefs.putInteger("Rewrite.historySize", 500);
+	prefs.putString("Rewrite.logfile", Main.getOptions().getString("muffin.logfile"));
+	prefs.setOverride(o);
+
+	messages = new MessageArea(prefs.getUserFile(prefs.getString("Rewrite.logfile")),
+				   "Rewrite",
+				   prefs.getInteger("Rewrite.historySize"));
+
+	load();
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new RewriteFrame (prefs, this);
+	    frame = new RewriteFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new RewriteFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new RewriteFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    String rewrite (String url)
+    String rewrite(Request request, String url)
     {
 	RE re = null;
 	REMatch match = null;
-	Enumeration e = rules.elements ();
+	Enumeration e = rules.elements();
 
 	int index = 0;
-	while (match == null && e.hasMoreElements ())
+	while (match == null && e.hasMoreElements())
 	{
-	    re = (RE) e.nextElement ();
-	    match = re.getMatch (url);
+	    re = (RE) e.nextElement();
+	    match = re.getMatch(url);
 	    index++;
 	}
 	    
 	if (match != null)
 	{
-	    String s = (String) rewrite.elementAt (index - 1);
+	    String s = (String) rewrite.elementAt(index - 1);
 	    try
 	    {
-		String sub = match.substituteInto (s);
-		process ("RULE #" + index + ": " + url + " -> " + sub + "\n");
+		String sub = match.substituteInto(s);
+		report(request, "RULE #" + index + ": " + url + " -> " + sub);
 		url = sub;
 	    }
 	    catch (REException ex)
 	    {
-		System.out.println ("rewrite: " + ex);
+		System.out.println("rewrite: " + ex);
 	    }
 	}
 	
 	return url;
     }
 
-    void load ()
+    void load()
     {
-	String filename = prefs.getUserFile (prefs.getString ("Rewrite.rules"));
+	String filename = prefs.getUserFile(prefs.getString("Rewrite.rules"));
 	try
 	{
-	    load (new FileReader (new File (filename)));
+	    load(new FileReader(new File(filename)));
 	}
 	catch (Exception e)
 	{
 	}
     }
 
-    void load (Reader reader)
+    void load(Reader reader)
     {
-	rules = new Vector ();
-	rewrite = new Vector ();
+	rules = new Vector();
+	rewrite = new Vector();
 		
 	try
 	{
-	    BufferedReader in = new BufferedReader (reader);
+	    BufferedReader in = new BufferedReader(reader);
 	    String s;
-	    RE blank = new RE ("^[# \t\n]");
+	    RE blank = new RE("^[# \t\n]");
 	    
-	    while ((s = in.readLine ()) != null)
+	    while ((s = in.readLine()) != null)
 	    {
-		if (blank.getMatch (s) != null)
+		if (blank.getMatch(s) != null)
 		{
 		    continue;
 		}
 
-		StringTokenizer st = new StringTokenizer (s, " \t");
+		StringTokenizer st = new StringTokenizer(s, " \t");
 		try
 		{
-		    rules.addElement (new RE (st.nextToken ()));
-		    rewrite.addElement (st.nextToken ());
+		    rules.addElement(new RE(st.nextToken()));
+		    rewrite.addElement(st.nextToken());
 		}
 		catch (REException e)
 		{
-		    System.out.println ("REException: " + e);
+		    System.out.println("REException: " + e);
 		}
 	    }
-	    in.close ();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    void process (String s)
+    void report(Request request, String message)
     {
-	messages.append (s);
+	report("[" + request.getRequest() + "] " + message);
+    }
+
+    void report(String message)
+    {
+	messages.append(message + "\n");
     }
 }

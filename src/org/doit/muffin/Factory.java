@@ -1,4 +1,4 @@
-/* $Id: Factory.java,v 1.2 1998/08/13 06:01:08 boyns Exp $ */
+/* $Id: Factory.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -31,25 +31,25 @@ public interface Factory
      * Set the manager of this factory.  The manager is normally
      * used to save preferences in the main preferences file.
      */
-    public void setManager (FilterManager m);
+    public void setManager(FilterManager m);
 
     /**
      * Set factory preferences.
      */
-    public void setPrefs (Prefs p);
+    public void setPrefs(Prefs p);
 
     /**
      * Return factory preferences.
      */
-    public Prefs getPrefs ();
+    public Prefs getPrefs();
 
     /**
      * View factory preferences.
      */
-    public void viewPrefs ();
+    public void viewPrefs();
 
     /**
      * Shutdown the factory.  Method called when factory is disabled.
      */
-    public void shutdown ();
+    public void shutdown();
 }

@@ -1,4 +1,4 @@
-/* $Id: Decaf.java,v 1.2 1998/08/13 06:02:05 boyns Exp $ */
+/* $Id: Decaf.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,82 +37,90 @@ public class Decaf implements FilterFactory
     private RE javaScriptTags = null;
     private RE javaScriptAttrs = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
 
 	try
 	{
-	    javaScriptTags = new RE ("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
-	    javaScriptAttrs = new RE ("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
+	    javaScriptTags = new RE("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
+	    javaScriptAttrs = new RE("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putBoolean ("Decaf.noJavaScript", true);
-	prefs.putBoolean ("Decaf.noJava", false);
-	prefs.putInteger ("Decaf.historySize", 500);
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putBoolean("Decaf.noJavaScript", true);
+	prefs.putBoolean("Decaf.noJava", false);
+	prefs.putInteger("Decaf.historySize", 500);
+	prefs.putString("Decaf.logfile", Main.getOptions().getString("muffin.logfile"));
+	prefs.setOverride(o);
 
-	messages = new MessageArea (prefs.getInteger ("Decaf.historySize"));
+	messages = new MessageArea(prefs.getUserFile(prefs.getString("Decaf.logfile")),
+				   "Decaf",
+				   prefs.getInteger("Decaf.historySize"));
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new DecafFrame (prefs, this);
+	    frame = new DecafFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new DecafFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new DecafFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    public boolean isJavaScriptTag (String pattern)
+    public boolean isJavaScriptTag(String pattern)
     {
-	return javaScriptTags.getMatch (pattern) != null;
+	return javaScriptTags.getMatch(pattern) != null;
     }
 
-    public boolean isJavaScriptAttr (String pattern)
+    public boolean isJavaScriptAttr(String pattern)
     {
-	return javaScriptAttrs.getMatch (pattern) != null;
+	return javaScriptAttrs.getMatch(pattern) != null;
     }
     
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void process (String s)
+    void report(Request request, String message)
     {
-	messages.append (s);
+	report("[" + request.getRequest() + "] " + message);
+    }
+
+    void report(String message)
+    {
+	messages.append(message + "\n");
     }
 }
 

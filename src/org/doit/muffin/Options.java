@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.3 1998/10/01 06:38:47 boyns Exp $ */
+/* $Id: Options.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -43,143 +43,146 @@ class Options extends Prefs implements ConfigurationListener
     boolean noWindow = false;
     Configuration configs = null;
     
-    Options (Configuration configs)
+    Options(Configuration configs)
     {
 	this.configs = configs;
 
 	/* Load the properties with some reasonable defaults. */
-	putInteger ("muffin.port", 51966);
-	putString ("muffin.httpProxyHost", "");
-	putString ("muffin.httpProxyPort", "");
-	putString ("muffin.httpsProxyHost", "");
-	putString ("muffin.httpsProxyPort", "");
-	putString ("muffin.geometry", "");
-	putBoolean ("muffin.noWindow", false);
+	putInteger("muffin.port", 51966);
+	putString("muffin.httpProxyHost", "");
+	putString("muffin.httpProxyPort", "");
+	putString("muffin.httpsProxyHost", "");
+	putString("muffin.httpsProxyPort", "");
+	putString("muffin.geometry", "");
+	putBoolean("muffin.noWindow", false);
         
 	/* By default only allow the localhost access */
 	try
 	{
-	    InetAddress thishost = InetAddress.getLocalHost ();
-	    putString ("muffin.hostsAllow", "127.0.0.1," + thishost.getHostAddress ());
+	    InetAddress thishost = InetAddress.getLocalHost();
+	    putString("muffin.hostsAllow", "127.0.0.1," + thishost.getHostAddress());
 	}
 	/* If this fails allow access to everyone */
 	catch (Exception e)
 	{
-	    putString ("muffin.hostsAllow", "ALL");
+	    putString("muffin.hostsAllow", "ALL");
 	}
 	/* Deny the rest */
-	putString ("muffin.hostsDeny", "ALL");
+	putString("muffin.hostsDeny", "ALL");
 
 	/* Use hostsAllow and hostsDeny as defaults */
-	putString ("muffin.adminAllow", getString ("muffin.hostsAllow"));
-	putString ("muffin.adminDeny", getString ("muffin.hostsDeny"));
-	putString ("muffin.adminUser", "");
-	putString ("muffin.adminPassword", "");
+	putString("muffin.adminAllow", getString("muffin.hostsAllow"));
+	putString("muffin.adminDeny", getString("muffin.hostsDeny"));
+	putString("muffin.adminUser", "");
+	putString("muffin.adminPassword", "");
 
 	/* Default colors */
-	putColor ("muffin.bg", Color.lightGray);
-	putColor ("muffin.fg", Color.black);
+	putColor("muffin.bg", Color.lightGray);
+	putColor("muffin.fg", Color.black);
 
 	/* Default fonts */
- 	putString ("muffin.font", "helvetica-bold-12");
- 	putString ("muffin.smallfont", "helvetica-plain-10");
- 	putString ("muffin.bigfont", "helvetica-bold-16");
+ 	putString("muffin.font", "helvetica-bold-12");
+ 	putString("muffin.smallfont", "helvetica-plain-10");
+ 	putString("muffin.bigfont", "helvetica-bold-16");
 
-	include (configs.getUserPrefs ());
+	/* Default log file */
+ 	putString("muffin.logfile", "muffin.log");
 
-	configs.addConfigurationListener (this);
+	include(configs.getUserPrefs());
+
+	configs.addConfigurationListener(this);
     }
 
-    public void configurationChanged (String name)
+    public void configurationChanged(String name)
     {
-	include (configs.getUserPrefs ());
+	include(configs.getUserPrefs());
     }
 
-    void include (UserPrefs prefs)
+    void include(UserPrefs prefs)
     {
-	Prefs p = prefs.extract ("muffin");
-	merge (p);
-	sync ();
+	Prefs p = prefs.extract("muffin");
+	merge(p);
+	sync();
     }
 
-    void createFrame ()
+    void createFrame()
     {
 	if (frame == null)
 	{
-	    frame = new OptionsFrame (this, configs);
+	    frame = new OptionsFrame(this, configs);
 	}
-	frame.hideshow ();	
+	frame.hideshow();	
     }
     
-    void updateHostsAllow ()
+    void updateHostsAllow()
     {
-	hostsAllow = new Vector (100);
-	StringTokenizer st = new StringTokenizer (getString ("muffin.hostsAllow"), ", \t");
-	while (st.hasMoreTokens ())
+	hostsAllow = new Vector(100);
+	StringTokenizer st = new StringTokenizer(getString("muffin.hostsAllow"), ", \t");
+	while (st.hasMoreTokens())
 	{
-	    hostsAllow.addElement (st.nextToken ());
+	    hostsAllow.addElement(st.nextToken());
 	}
     }
 
-    void updateHostsDeny ()
+    void updateHostsDeny()
     {
-	hostsDeny = new Vector (100);
-	StringTokenizer st = new StringTokenizer (getString ("muffin.hostsDeny"), ", \t");
-	while (st.hasMoreTokens ())
+	hostsDeny = new Vector(100);
+	StringTokenizer st = new StringTokenizer(getString("muffin.hostsDeny"), ", \t");
+	while (st.hasMoreTokens())
 	{
-	    hostsDeny.addElement (st.nextToken ());
+	    hostsDeny.addElement(st.nextToken());
 	}
     }
 
-    void updateAdminAllow ()
+    void updateAdminAllow()
     {
-	adminAllow = new Vector (100);
-	StringTokenizer st = new StringTokenizer (getString ("muffin.adminAllow"), ", \t");
-	while (st.hasMoreTokens ())
+	adminAllow = new Vector(100);
+	StringTokenizer st = new StringTokenizer(getString("muffin.adminAllow"), ", \t");
+	while (st.hasMoreTokens())
 	{
-	    adminAllow.addElement (st.nextToken ());
+	    adminAllow.addElement(st.nextToken());
 	}
     }
 
-    void updateAdminDeny ()
+    void updateAdminDeny()
     {
-	adminDeny = new Vector (100);
-	StringTokenizer st = new StringTokenizer (getString ("muffin.adminDeny"), ", \t");
-	while (st.hasMoreTokens ())
+	adminDeny = new Vector(100);
+	StringTokenizer st = new StringTokenizer(getString("muffin.adminDeny"), ", \t");
+	while (st.hasMoreTokens())
 	{
-	    adminDeny.addElement (st.nextToken ());
+	    adminDeny.addElement(st.nextToken());
 	}
     }
 
-    void sync ()
+    void sync()
     {
-	updateHostsAllow ();
-	updateHostsDeny ();
-	updateAdminAllow ();
-	updateAdminDeny ();
+	updateHostsAllow();
+	updateHostsDeny();
+	updateAdminAllow();
+	updateAdminDeny();
     }
     
-    boolean hostAccess (InetAddress addr)
+    boolean hostAccess(InetAddress addr)
     {
-	String ip = addr.getHostAddress ();
+	String ip = addr.getHostAddress();
 	    
 	/* First check if the addr is on the allow list */
-	Enumeration e = hostsAllow.elements ();
- 	while (e.hasMoreElements ())
+	Enumeration e = hostsAllow.elements();
+ 	while (e.hasMoreElements())
  	{
-	    String str = (String) e.nextElement ();
-	    if (str.equals ("ALL") || ip.startsWith (str))
+	    String str = (String) e.nextElement();
+	    if (str.equals("ALL") || ip.startsWith(str))
 	    {
 		return true;
 	    }
 	}
 
 	/* Next check if the addr is on the deny list */
-	e = hostsDeny.elements ();
- 	while (e.hasMoreElements ())
+	e = hostsDeny.elements();
+ 	while (e.hasMoreElements())
  	{
-	    String str = (String) e.nextElement ();
-	    if (str.equals ("ALL") || ip.startsWith (str))
+	    String str = (String) e.nextElement();
+	    if (str.equals("ALL") || ip.startsWith(str))
 	    {
 		return false;
 	    }
@@ -189,27 +192,27 @@ class Options extends Prefs implements ConfigurationListener
 	return true;
     }
 
-    boolean adminInetAccess (InetAddress addr)
+    boolean adminInetAccess(InetAddress addr)
     {
-	String ip = addr.getHostAddress ();
+	String ip = addr.getHostAddress();
 	    
 	/* First check if the addr is on the allow list */
-	Enumeration e = adminAllow.elements ();
- 	while (e.hasMoreElements ())
+	Enumeration e = adminAllow.elements();
+ 	while (e.hasMoreElements())
  	{
-	    String str = (String) e.nextElement ();
-	    if (str.equals ("ALL") || ip.startsWith (str))
+	    String str = (String) e.nextElement();
+	    if (str.equals("ALL") || ip.startsWith(str))
 	    {
 		return true;
 	    }
 	}
 
 	/* Next check if the addr is on the deny list */
-	e = adminDeny.elements ();
- 	while (e.hasMoreElements ())
+	e = adminDeny.elements();
+ 	while (e.hasMoreElements())
  	{
-	    String str = (String) e.nextElement ();
-	    if (str.equals ("ALL") || ip.startsWith (str))
+	    String str = (String) e.nextElement();
+	    if (str.equals("ALL") || ip.startsWith(str))
 	    {
 		return false;
 	    }
@@ -219,15 +222,15 @@ class Options extends Prefs implements ConfigurationListener
 	return true;
     }
 
-    boolean useHttpProxy ()
+    boolean useHttpProxy()
     {
-	return ((getString ("muffin.httpProxyHost")).length () > 0
-		&& getInteger ("muffin.httpProxyPort") > 0);
+	return((getString("muffin.httpProxyHost")).length() > 0
+		&& getInteger("muffin.httpProxyPort") > 0);
     }
 
-    boolean useHttpsProxy ()
+    boolean useHttpsProxy()
     {
-	return ((getString ("muffin.httpsProxyHost")).length () > 0
-		&& getInteger ("muffin.httpsProxyPort") > 0);
+	return((getString("muffin.httpsProxyHost")).length() > 0
+		&& getInteger("muffin.httpsProxyPort") > 0);
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: StopProxy.java,v 1.2 1998/08/13 06:03:02 boyns Exp $ */
+/* $Id: StopProxy.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -32,60 +32,60 @@ public class StopProxy implements FilterFactory
     StopProxyFrame frame = null;
     MessageArea messages = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putString ("StopProxy.PageTitle", "Proxy Server");
-        prefs.putInteger ("StopProxy.historySize", 500);
-        prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putString("StopProxy.PageTitle", "Proxy Server");
+        prefs.putInteger("StopProxy.historySize", 500);
+        prefs.setOverride(o);
 
-        messages = new MessageArea (prefs.getInteger ("StopProxy.historySize"));
+        messages = new MessageArea(prefs.getInteger("StopProxy.historySize"));
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new StopProxyFrame (prefs, this);
+	    frame = new StopProxyFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new StopProxyFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new StopProxyFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void process (String s)
+    void process(String s)
     {
-	messages.append (s);
+	messages.append(s);
     }
 }
 

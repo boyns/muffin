@@ -1,4 +1,4 @@
-/* $Id: GlossaryFilter.java,v 1.2 1998/08/13 06:02:16 boyns Exp $ */
+/* $Id: GlossaryFilter.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 package org.doit.muffin.filter;
 
@@ -20,55 +20,55 @@ public class GlossaryFilter implements ContentFilter
     InputObjectStream in = null;
     OutputObjectStream out = null;
 
-    public GlossaryFilter (Glossary factory)
+    public GlossaryFilter(Glossary factory)
     {
 	this.factory = factory;
     }
 
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
 
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
 
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("Glossary");
+	Thread.currentThread().setName("Glossary");
 	
-	ObjectStreamToInputStream htmlInput = new ObjectStreamToInputStream (in);
-	ObjectStreamToOutputStream htmlOutput = new ObjectStreamToOutputStream (out);
+	ObjectStreamToInputStream htmlInput = new ObjectStreamToInputStream(in);
+	ObjectStreamToOutputStream htmlOutput = new ObjectStreamToOutputStream(out);
 	
-	ByteArrayOutputStream htmlbuf = new ByteArrayOutputStream ();
+	ByteArrayOutputStream htmlbuf = new ByteArrayOutputStream();
 	try
 	{
 	    byte buf[] = new byte[1024];
 	    int n;
-	    while ((n = htmlInput.read (buf, 0, buf.length)) > 0)
+	    while ((n = htmlInput.read(buf, 0, buf.length)) > 0)
 	    {
-		htmlbuf.write (buf, 0, n);
+		htmlbuf.write(buf, 0, n);
 	    }
-	    htmlbuf.close ();
+	    htmlbuf.close();
 	}
 	catch (Exception e)
 	{
 	}
 
-	ByteArrayInputStream html = new ByteArrayInputStream (htmlbuf.toByteArray ());
+	ByteArrayInputStream html = new ByteArrayInputStream(htmlbuf.toByteArray());
 	MultiSearchReader root;
 	int start;
 	BufferedReader cookedSource=new BufferedReader(new InputStreamReader(html));
@@ -81,33 +81,33 @@ public class GlossaryFilter implements ContentFilter
 	{
 	    MultiSearchResult match=new MultiSearchResult(-1," ");
 	    start=0;
-	    while(match!=null)
+	    while (match!=null)
 	    {
 		match=root.search(match.getOffset()+match.getMatch().length(),cookedSource);
-		if(root.getTagStatus()==MultiSearchReader.INSIDE_TAG && match!=null)
+		if (root.getTagStatus()==MultiSearchReader.INSIDE_TAG && match!=null)
 		{
 		    sink.write(match.getMatch());
 		    continue;
 		}
-		if(match!=null)
+		if (match!=null)
 		{
-		    sink.write ("<a href=\"");
-		    sink.write (factory.lookup (match.getMatch ()));
-		    sink.write ("\">");
-		    sink.write (match.getMatch());
-		    sink.write ("</a>");
+		    sink.write("<a href=\"");
+		    sink.write(factory.lookup(match.getMatch()));
+		    sink.write("\">");
+		    sink.write(match.getMatch());
+		    sink.write("</a>");
 		}
 	    }
-	    sink.close ();
-	    buffer.writeTo (htmlOutput);
-	    htmlOutput.flush ();
-	    htmlOutput.close ();
-	    out.flush ();
-	    out.close ();
+	    sink.close();
+	    buffer.writeTo(htmlOutput);
+	    htmlOutput.flush();
+	    htmlOutput.close();
+	    out.flush();
+	    out.close();
 	} 
-	catch(Exception e) 
+	catch (Exception e) 
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.2 1998/08/13 06:00:33 boyns Exp $ */
+/* $Id: Tag.java,v 1.3 1998/12/19 21:24:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import sdsu.util.TokenCharacters;
 import sdsu.util.SimpleTokenizer;
+import gnu.regexp.*;
 
 public class Tag
 {
@@ -36,19 +37,19 @@ public class Tag
     private boolean parsed = false;
     private boolean modified = false;
 
-    public Tag (String name, String data)
+    public Tag(String name, String data)
     {
 	this.name = name;
 	this.data = data;
     }
 
-    private void parse ()
+    private void parse()
     {
 	parsed = true;
 
 	if (data == null
-	    || name.length () <= 0
-	    || name.startsWith ("<!doctype"))
+	    || name.length() <= 0
+	    || name.startsWith("<!doctype"))
 	{
 	    return;
 	}
@@ -57,25 +58,25 @@ public class Tag
 	{
 	    boolean oldModified = modified;
 		
-	    //String str = new String (contents, contentsIndex, contentsEnd - contentsIndex);
+	    //String str = new String(contents, contentsIndex, contentsEnd - contentsIndex);
 	    
-	    TokenCharacters chars = new TokenCharacters ("", "", '"', '"', " \t\r\n");
-	    chars.addQuoteChars ('\'', '\'');
+	    TokenCharacters chars = new TokenCharacters("", "", '"', '"', " \t\r\n");
+	    chars.addQuoteChars('\'', '\'');
 
-	    SimpleTokenizer st = new SimpleTokenizer (data, chars);
-	    st.setEatEscapeChar (false);
+	    SimpleTokenizer st = new SimpleTokenizer(data, chars);
+	    st.setEatEscapeChar(false);
 
-	    while (st.hasMoreTokens ())
+	    while (st.hasMoreTokens())
 	    {
-		String key = st.nextToken ("=");
-		if (st.separator () == '=')
+		String key = st.nextToken("=");
+		if (st.separator() == '=')
 		{
-		    String value = st.nextToken ("");
-		    put (key, value);
+		    String value = st.nextToken("");
+		    put(key, value);
 		}
 		else
 		{
-		    put (key, null);
+		    put(key, null);
 		}
 	    }
 
@@ -83,134 +84,140 @@ public class Tag
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    public String name ()
+    public String name()
     {
 	return name;
     }
 
-    public boolean is (String s)
+    public boolean is(String s)
     {
-	return name.equals (s);
+	return name.equals(s);
     }
 
-    public boolean has (String key)
+    public boolean has(String key)
     {
-	if (!parsed) parse ();
-	return attributes != null ? attributes.containsKey (key) : false;
+	if (!parsed) parse();
+	return attributes != null ? attributes.containsKey(key) : false;
     }
 
-    public String get (String key)
+    public String get(String key)
     {
-	if (!parsed) parse ();
+	if (!parsed) parse();
 	if (attributes == null) return null;
-	Object obj = attributes.get (key);
+	Object obj = attributes.get(key);
 	if (obj instanceof String)
 	{
-	    return (String) obj;
+	    return(String) obj;
 	}
 	else
 	{
 	    /* NoValue */
-	    return obj.toString ();
+	    return obj.toString();
 	}
     }
 
-    public void put (String key, String value)
+    public void put(String key, String value)
     {
-	if (!parsed) parse ();
+	if (!parsed) parse();
 	if (attributes == null)
 	{
-	    attributes = new Hashtable (13);
+	    attributes = new Hashtable(13);
 	}
-	attributes.put (key.toLowerCase (),
-			(value == null) ? new NoValue () : (Object) value);
+	attributes.put(key.toLowerCase(),
+			(value == null) ? new NoValue() : (Object) value);
 	modified = true;
     }
 
-    public String remove (String key)
+    public String remove(String key)
     {
 	String value = null;
 	
-	if (!parsed) parse ();
+	if (!parsed) parse();
 	if (attributes != null)
 	{
-	    Object obj = attributes.remove (key);
+	    Object obj = attributes.remove(key);
 	    modified = true;
 	    if (obj != null)
 	    {
-		value = obj.toString ();
+		value = obj.toString();
 	    }
 	}
 	return value;
     }
 
-    public void rename (String newName)
+    public void rename(String newName)
     {
 	name = newName;
 	modified = true;
     }
 
-    public boolean isModified ()
+    public boolean isModified()
     {
 	return modified;
     }
 
-    public Enumeration enumerate ()
+    public Enumeration enumerate()
     {
-	if (!parsed) parse ();
-	return attributes != null ? attributes.keys () : null;
+	if (!parsed) parse();
+	return attributes != null ? attributes.keys() : null;
     }
 
-    public int attributeCount ()
+    public int attributeCount()
     {
-	if (!parsed) parse ();
-	return attributes != null ? attributes.size () : 0;
+	if (!parsed) parse();
+	return attributes != null ? attributes.size() : 0;
+    }
+
+    public boolean matches(RE re)
+    {
+	REMatch match = re.getMatch(name);
+	return match != null;
     }
     
-    public String toString ()
+    public String toString()
     {
-	StringBuffer buf = new StringBuffer ();
-	buf.append ("<");
-	buf.append (name);
+	StringBuffer buf = new StringBuffer();
+	buf.append("<");
+	buf.append(name);
 	if (!modified)
 	{
 	    if (data != null)
 	    {
-		buf.append (" ");
-		buf.append (data);
+		buf.append(" ");
+		buf.append(data);
 	    }
 	}
 	else
 	{
-	    if (attributes != null && !attributes.isEmpty ())
+	    if (attributes != null && !attributes.isEmpty())
 	    {
 		String key, value;
 		Object obj;
-		Enumeration e = attributes.keys ();
-		while (e.hasMoreElements ())
+		Enumeration e = attributes.keys();
+		while (e.hasMoreElements())
 		{
-		    key = (String) e.nextElement ();
-		    buf.append (" ");
-		    buf.append (key);
-		    obj = get (key);
+		    key = (String) e.nextElement();
+		    buf.append(" ");
+		    buf.append(key);
+		    obj = get(key);
 		    if (obj instanceof String)
 		    {
 			value = (String) obj;
-			buf.append ("=");
-			boolean containsQuote = value.indexOf ("\"") != -1;
-			buf.append (containsQuote ? "'" : "\"");
-			buf.append (value);
-			buf.append (containsQuote ? "'" : "\"");
+			buf.append("=");
+			boolean containsQuote = value.indexOf("\"") != -1;
+			buf.append(containsQuote ? "'" : "\"");
+			buf.append(value);
+			buf.append(containsQuote ? "'" : "\"");
 		    }
 		    /* obj can also be instanceof NoValue -> do nothing */
 		}
 	    }
 	}
-	buf.append (">");
-	return buf.toString ();
+	buf.append(">");
+	return buf.toString();
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: Filter.java,v 1.2 1998/08/13 06:01:09 boyns Exp $ */
+/* $Id: Filter.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,5 +37,5 @@ public interface Filter
      *
      * @param prefs filter preferences
      */
-    public void setPrefs (Prefs prefs);
+    public void setPrefs(Prefs prefs);
 }

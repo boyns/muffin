@@ -1,4 +1,4 @@
-/* $Id: EmptyFont.java,v 1.2 1998/08/13 06:02:10 boyns Exp $ */
+/* $Id: EmptyFont.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -32,70 +32,70 @@ public class EmptyFont implements FilterFactory
     EmptyFontFrame frame = null;
     MessageArea messages = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-        prefs.putBoolean ("EmptyFont.debug", false);
-        prefs.putInteger ("EmptyFont.historySize", 500);
-        prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+        prefs.putBoolean("EmptyFont.debug", false);
+        prefs.putInteger("EmptyFont.historySize", 500);
+        prefs.setOverride(o);
 
-        messages = new MessageArea (prefs.getInteger ("EmptyFont.historySize"));
+        messages = new MessageArea(prefs.getInteger("EmptyFont.historySize"));
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new EmptyFontFrame (prefs, this);
+	    frame = new EmptyFontFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new EmptyFontFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new EmptyFontFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
 /*
-    void process (String s)
+    void process(String s)
     {
-	messages.append (s);
+	messages.append(s);
     }
 */
 
-    void debug (String s)
+    void debug(String s)
     {
-	if (prefs.getBoolean ("EmptyFont.debug"))
+	if (prefs.getBoolean("EmptyFont.debug"))
 	{
-	    messages.append (s);
+	    messages.append(s);
 	}
     }
 }

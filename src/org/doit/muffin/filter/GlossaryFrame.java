@@ -1,4 +1,4 @@
-/* $Id: GlossaryFrame.java,v 1.2 1998/08/13 06:02:18 boyns Exp $ */
+/* $Id: GlossaryFrame.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -33,124 +33,124 @@ public class GlossaryFrame extends MuffinFrame implements ActionListener, Window
     
     TextField input = null;
     
-    public GlossaryFrame (Prefs prefs, Glossary parent)
+    public GlossaryFrame(Prefs prefs, Glossary parent)
     {
-	super ("Muffin: Glossary");
+	super("Muffin: Glossary");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-        panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
 
-	panel.add (new Label ("Form File:", Label.RIGHT));
+	panel.add(new Label("Form File:", Label.RIGHT));
 
-	input = new TextField (50);
-	input.setText (prefs.getString ("Glossary.glossaryfile"));
-	panel.add (input);
+	input = new TextField(50);
+	input.setText(prefs.getString("Glossary.glossaryfile"));
+	panel.add(input);
 
-	Button browse = new Button ("Browse...");
-	browse.setActionCommand ("doBrowse");
-	browse.addActionListener (this);
-	panel.add (browse);
+	Button browse = new Button("Browse...");
+	browse.setActionCommand("doBrowse");
+	browse.addActionListener(this);
+	panel.add(browse);
 
-	add ("Center", panel);
+	add("Center", panel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 5));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 5));
 	Button b;
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Reload File");
-	b.setActionCommand ("doReload");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Reload File");
+	b.setActionCommand("doReload");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("Glossary.glossaryfile", input.getText ());
+	    prefs.putString("Glossary.glossaryfile", input.getText());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doReload".equals (arg))
+	else if ("doReload".equals(arg))
 	{
-	    parent.load ();
+	    parent.load();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doBrowse".equals (arg))
+	else if ("doBrowse".equals(arg))
 	{
-	    FileDialog dialog = new FileDialog (this, "Glossary Load");
-	    dialog.show ();
-	    if (dialog.getFile () != null)
+	    FileDialog dialog = new FileDialog(this, "Glossary Load");
+	    dialog.show();
+	    if (dialog.getFile() != null)
 	    {
-		input.setText (dialog.getDirectory () + dialog.getFile ());
+		input.setText(dialog.getDirectory() + dialog.getFile());
 	    }
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("GlossaryFilter");
+	    new HelpFrame("GlossaryFilter");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

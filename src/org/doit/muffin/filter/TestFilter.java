@@ -1,4 +1,4 @@
-/* $Id: TestFilter.java,v 1.2 1998/08/13 06:03:06 boyns Exp $ */
+/* $Id: TestFilter.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -38,70 +38,70 @@ public class TestFilter implements HttpFilter, RequestFilter
     Reply reply;
     Request request;
 
-    public TestFilter (Test factory)
+    public TestFilter(Test factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public void filter (Request request)
+    public void filter(Request request)
     {
-	synchronized (factory)
+	synchronized(factory)
 	{
-	    Integer i = (Integer) factory.table.get (request.getURL ());
+	    Integer i = (Integer) factory.table.get(request.getURL());
 	    if (i != null)
 	    {
-		i = new Integer (i.intValue () + 1);
+		i = new Integer(i.intValue() + 1);
 	    }
 	    else
 	    {
-		i = new Integer (1);
+		i = new Integer(1);
 	    }
-	    factory.table.put (request.getURL (), i);
+	    factory.table.put(request.getURL(), i);
 	}
     }
 
-    public boolean wantRequest (Request request)
+    public boolean wantRequest(Request request)
     {
-	return request.getURL ().startsWith ("http://test");
+	return request.getURL().startsWith("http://test");
     }
 
-    public void sendRequest (Request request)
+    public void sendRequest(Request request)
     {
     }
 
-    public Reply recvReply (Request request)
+    public Reply recvReply(Request request)
     {
-	Reply reply = new Reply ();
+	Reply reply = new Reply();
 
-	reply.setStatusLine ("HTTP/1.0 200 Ok");
-	reply.setHeaderField ("Content-type", "text/html");
+	reply.setStatusLine("HTTP/1.0 200 Ok");
+	reply.setHeaderField("Content-type", "text/html");
 
-	StringBuffer buf = new StringBuffer ();
+	StringBuffer buf = new StringBuffer();
 
-	Enumeration e = factory.table.keys ();
+	Enumeration e = factory.table.keys();
 	
-	buf.append ("<ul>\n");
-	while (e.hasMoreElements ())
+	buf.append("<ul>\n");
+	while (e.hasMoreElements())
 	{
-	    String url = (String) e.nextElement ();
-	    Integer count = (Integer) factory.table.get (url);
-	    buf.append ("<li>" + url + " -> " + count + "\n");
+	    String url = (String) e.nextElement();
+	    Integer count = (Integer) factory.table.get(url);
+	    buf.append("<li>" + url + " -> " + count + "\n");
 	}
-	buf.append ("</ul>\n");
+	buf.append("</ul>\n");
 	
-	byte bytes[] = buf.toString ().getBytes ();
-	reply.setHeaderField ("Content-length", Integer.toString (bytes.length));
-	reply.setContent ((InputStream) new ByteArrayInputStream (bytes));
+	byte bytes[] = buf.toString().getBytes();
+	reply.setHeaderField("Content-length", Integer.toString(bytes.length));
+	reply.setContent((InputStream) new ByteArrayInputStream(bytes));
 	
 	return reply;
     }
 
-    public void close ()
+    public void close()
     {
     }
 }

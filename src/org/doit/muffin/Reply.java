@@ -1,4 +1,4 @@
-/* $Id: Reply.java,v 1.2 1998/08/13 06:01:38 boyns Exp $ */
+/* $Id: Reply.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,57 +37,57 @@ public class Reply extends Message
 {
     InputStream in = null;
 
-    public Reply ()
+    public Reply()
     {
     }
 
-    public Reply (InputStream in)
+    public Reply(InputStream in)
     {
-	setContent (in);
+	setContent(in);
     }
 
-    public void setContent (InputStream in)
+    public void setContent(InputStream in)
     {
 	this.in = in;
     }
 
-    public InputStream getContent ()
+    public InputStream getContent()
     {
 	return in;
     }
     
-    void read () throws IOException
+    void read() throws IOException
     {
 	if (in != null)
 	{
-	    read (in);
+	    read(in);
 	}
     }
     
-    void read (InputStream in) throws IOException
+    void read(InputStream in) throws IOException
     {
-	statusLine = readLine (in);
-	if (statusLine == null || statusLine.length () == 0)
+	statusLine = readLine(in);
+	if (statusLine == null || statusLine.length() == 0)
 	{
-	    throw new IOException ("Missing HTTP status line");
+	    throw new IOException("Missing HTTP status line");
 	}
 
 	/* Look for HTTP/0.9 */
-	if (!statusLine.startsWith ("HTTP"))
+	if (!statusLine.startsWith("HTTP"))
 	{
 	    /* Put back the line */
 	    if (this.in != null)
 	    {
-		String putback = new String (statusLine + "\n");
-		this.in = new SequenceInputStream (new StringBufferInputStream (putback), in);
+		String putback = new String(statusLine + "\n");
+		this.in = new SequenceInputStream(new StringBufferInputStream(putback), in);
 	    }
 	    /* Fake a status line and upgrade to HTTP/1.0 */
 	    statusLine = "HTTP/1.0 200 OK";
 	    return;
 	}
 	
-	readHeaders (in);
-	int code = getStatusCode ();
+	readHeaders(in);
+	int code = getStatusCode();
 
 	/* RFC 2068: 204 and 304 MUST NOT contain a message body. */
 	switch (code)
@@ -95,40 +95,40 @@ public class Reply extends Message
 	case 204: /* No Content */
 	case 304: /* Not Modified */
 	    /* Ignore the message body if it exists */
-	    if (containsHeaderField ("Content-length"))
+	    if (containsHeaderField("Content-length"))
 	    {
-		System.out.println ("RFC 2068: Ignoring message-body from " + code + " response - "
-				    + getHeaderField ("Server"));
+		System.out.println("RFC 2068: Ignoring message-body from " + code + " response - "
+				    + getHeaderField("Server"));
 		int contentLength = 0;
 		try 
 		{
-		    contentLength = Integer.parseInt (getHeaderField ("Content-length"));
+		    contentLength = Integer.parseInt(getHeaderField("Content-length"));
 		}
 		catch (Exception e)
 		{
 		}
 		int n;
 		byte buffer[] = new byte[8192];
-		while ((n = in.read (buffer, 0, buffer.length)) > 0)
+		while ((n = in.read(buffer, 0, buffer.length)) > 0)
 		{
 		    /* ignore */
 		}
-		removeHeaderField ("Content-length");
+		removeHeaderField("Content-length");
 	    }
 	    break;
 	}
     }
 
-    void write (OutputStream out) throws IOException
+    void write(OutputStream out) throws IOException
     {
-	String s = toString ();
-	out.write (s.getBytes (), 0, s.length ());
-	out.flush ();
+	String s = toString();
+	out.write(s.getBytes(), 0, s.length());
+	//out.flush();
     }
 
-    public boolean hasContent ()
+    public boolean hasContent()
     {
-	switch (getStatusCode ())
+	switch (getStatusCode())
 	{
 	case 204:
 	case 304:
@@ -139,52 +139,52 @@ public class Reply extends Message
 	}
     }
 
-    public String getProtocol ()
+    public String getProtocol()
     {
-	StringTokenizer st = new StringTokenizer (statusLine);
-	String protocol = (String) st.nextToken ();
+	StringTokenizer st = new StringTokenizer(statusLine);
+	String protocol = (String) st.nextToken();
 	return protocol;
     }
 
-    public int getStatusCode ()
+    public int getStatusCode()
     {
-	StringTokenizer st = new StringTokenizer (statusLine);
-	String protocol = (String) st.nextToken ();
-	String status = (String) st.nextToken ();
+	StringTokenizer st = new StringTokenizer(statusLine);
+	String protocol = (String) st.nextToken();
+	String status = (String) st.nextToken();
 	int code = 0;
 	try
 	{
-	    code = Integer.parseInt (status);
+	    code = Integer.parseInt(status);
 	}
 	catch (Exception e)
 	{
-	    System.out.println ("Malformed or missing status code");
+	    System.out.println("Malformed or missing status code");
 	}
 	return code;
     }
 
-    private Hashtable headerParser (String header)
+    private Hashtable headerParser(String header)
     {
-	Hashtable table = new Hashtable ();
-	String type = getHeaderField (header);
+	Hashtable table = new Hashtable();
+	String type = getHeaderField(header);
 	if (type == null)
 	{
 	    return table;
 	}
 
-	StringTokenizer st = new StringTokenizer (type, ";");
+	StringTokenizer st = new StringTokenizer(type, ";");
 	int count = 0;
-	while (st.hasMoreTokens ())
+	while (st.hasMoreTokens())
 	{
-	    String token = st.nextToken ();
-	    token = token.trim ();
+	    String token = st.nextToken();
+	    token = token.trim();
 	    String name;
 	    String value;
-	    int i = token.indexOf ('=');
+	    int i = token.indexOf('=');
 	    if (i != -1)
 	    {
-		name = token.substring (0, i);
-		value = token.substring (i+1);
+		name = token.substring(0, i);
+		value = token.substring(i+1);
 	    }
 	    else
 	    {
@@ -194,11 +194,11 @@ public class Reply extends Message
 
 	    if (count == 0)
 	    {
-		table.put (header, name);
+		table.put(header, name);
 	    }
 	    else
 	    {
-		table.put (name, value);
+		table.put(name, value);
 	    }
 
 	    count++;
@@ -207,50 +207,50 @@ public class Reply extends Message
 	return table;
     }
 
-    public String getContentType ()
+    public String getContentType()
     {
-	Hashtable table = headerParser ("Content-type");
-	return (String) table.get ("Content-type");
+	Hashtable table = headerParser("Content-type");
+	return(String) table.get("Content-type");
     }
 
-    public String getBoundary ()
+    public String getBoundary()
     {
-	Hashtable table = headerParser ("Content-type");
-	return (String) table.get ("boundary");
+	Hashtable table = headerParser("Content-type");
+	return(String) table.get("boundary");
     }
 
-    public String getTransferEncoding ()
+    public String getTransferEncoding()
     {
-	Hashtable table = headerParser ("Transfer-Encoding");
-	return (String) table.get ("Transfer-Encoding");
+	Hashtable table = headerParser("Transfer-Encoding");
+	return(String) table.get("Transfer-Encoding");
     }
 
-    public int getChunkSize (InputStream in) throws IOException
+    public int getChunkSize(InputStream in) throws IOException
     {
-	String line = readLine (in);
-	line = line.trim (); /* apache can have trailing spaces */
+	String line = readLine(in);
+	line = line.trim(); /* apache can have trailing spaces */
 	int size = -1;
 	try
 	{
-	    size = Integer.valueOf (line, 16).intValue ();
+	    size = Integer.valueOf(line, 16).intValue();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
 	return size;
     }
 
-    public void getChunkedFooter (InputStream in) throws IOException
+    public void getChunkedFooter(InputStream in) throws IOException
     {
 	for (;;)
 	{
-	    String line = readLine (in);
+	    String line = readLine(in);
 	    if (line == null)
 	    {
 		break;
 	    }
-	    int i = line.indexOf (':');
+	    int i = line.indexOf(':');
 	    if (i == -1)
 	    {
 		break;
@@ -258,16 +258,16 @@ public class Reply extends Message
 	}
     }
 
-    public void setStatusLine (String line)
+    public void setStatusLine(String line)
     {
 	this.statusLine = line;
     }
 
-    public static Reply createRedirect (String url)
+    public static Reply createRedirect(String url)
     {
-	Reply r = new Reply ();
-	r.setStatusLine ("HTTP/1.0 302 Moved Temporarily");
-	r.setHeaderField ("Location", url);
+	Reply r = new Reply();
+	r.setStatusLine("HTTP/1.0 302 Moved Temporarily");
+	r.setHeaderField("Location", url);
 	return r;
     }
 }

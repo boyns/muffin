@@ -1,4 +1,4 @@
-/* $Id: HttpFilter.java,v 1.2 1998/08/13 06:01:19 boyns Exp $ */
+/* $Id: HttpFilter.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,5 +30,5 @@ import java.io.IOException;
  */
 public interface HttpFilter extends HttpRelay, Filter
 {
-    public boolean wantRequest (Request request);
+    public boolean wantRequest(Request request);
 }

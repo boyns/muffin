@@ -1,4 +1,4 @@
-/* $Id: StopProxyFrame.java,v 1.2 1998/08/13 06:03:04 boyns Exp $ */
+/* $Id: StopProxyFrame.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -32,111 +32,111 @@ public class StopProxyFrame extends MuffinFrame implements ActionListener, Windo
     StopProxy parent;
     TextField input = null;
     
-    public StopProxyFrame (Prefs prefs, StopProxy parent)
+    public StopProxyFrame(Prefs prefs, StopProxy parent)
     {
-	super ("Muffin: StopProxy");
+	super("Muffin: StopProxy");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-        panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
 	GridBagConstraints c;
 	
-	panel.add (new Label ("Page Title:", Label.RIGHT));
+	panel.add(new Label("Page Title:", Label.RIGHT));
 
-	input = new TextField (40);
-	input.setText (prefs.getString ("StopProxy.PageTitle"));
-        c = new GridBagConstraints ();
+	input = new TextField(40);
+	input.setText(prefs.getString("StopProxy.PageTitle"));
+        c = new GridBagConstraints();
         c.anchor = GridBagConstraints.WEST;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        layout.setConstraints (input, c);
-        panel.add (input);
+        layout.setConstraints(input, c);
+        panel.add(input);
 	
-	add ("North", panel);
+	add("North", panel);
 	
-	parent.messages.setEditable (false);
-	add ("Center", parent.messages);
+	parent.messages.setEditable(false);
+	add("Center", parent.messages);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
 
-	add ("South", buttonPanel);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("StopProxy.PageTitle", input.getText ());
+	    prefs.putString("StopProxy.PageTitle", input.getText());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    parent.messages.clear ();
+	    parent.messages.clear();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

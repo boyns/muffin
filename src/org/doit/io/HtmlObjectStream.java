@@ -1,4 +1,4 @@
-/* $Id: HtmlObjectStream.java,v 1.2 1998/08/13 06:00:42 boyns Exp $ */
+/* $Id: HtmlObjectStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,38 +29,38 @@ import java.io.InputStream;
 
 public class HtmlObjectStream extends SourceObjectStream
 {
-    public HtmlObjectStream (InputObjectStream in) throws IOException
+    public HtmlObjectStream(InputObjectStream in) throws IOException
     {
-	super (in);
+	super(in);
     }
 
-    public void run ()
+    public void run()
     {
 	boolean debug = false;
 	
 	try
 	{
-	    HtmlTokenizer html = new HtmlTokenizer (new FixedBufferedInputStream (src, sourceLength));
+	    HtmlTokenizer html = new HtmlTokenizer(new FixedBufferedInputStream(src, sourceLength));
 	    Token token;
-	    while ((token = html.getToken ()) != null)
+	    while ((token = html.getToken()) != null)
 	    {
 		if (debug)
 		{
-		    System.out.println ("---START TOKEN---");
-		    System.out.println (token);
-		    System.out.println ("---END TOKEN---");
+		    System.out.println("---START TOKEN---");
+		    System.out.println(token);
+		    System.out.println("---END TOKEN---");
 		}
-		write (token);
+		write(token);
 	    }
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
 
 	try
 	{
-	    close ();
+	    close();
 	}
 	catch (IOException e)
 	{

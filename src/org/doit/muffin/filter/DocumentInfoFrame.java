@@ -1,4 +1,4 @@
-/* $Id: DocumentInfoFrame.java,v 1.2 1998/08/13 06:02:09 boyns Exp $ */
+/* $Id: DocumentInfoFrame.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,167 +37,167 @@ public class DocumentInfoFrame extends MuffinFrame implements ActionListener, It
     Choice locationChoice = null;
     Choice alignChoice = null;
     
-    public DocumentInfoFrame (Prefs prefs, DocumentInfo parent)
+    public DocumentInfoFrame(Prefs prefs, DocumentInfo parent)
     {
-	super ("Muffin: DocumentInfo");
+	super("Muffin: DocumentInfo");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
 	GridBagConstraints c;
-        panel.setLayout (layout);
+        panel.setLayout(layout);
 
-	panel.add (new Label ("Location:"));
-	locationChoice = new Choice ();
-	locationChoice.addItemListener (this);
-	locationChoice.addItem ("top");
-	locationChoice.addItem ("bottom");
-	locationChoice.select (prefs.getString ("DocumentInfo.location"));
+	panel.add(new Label("Location:"));
+	locationChoice = new Choice();
+	locationChoice.addItemListener(this);
+	locationChoice.addItem("top");
+	locationChoice.addItem("bottom");
+	locationChoice.select(prefs.getString("DocumentInfo.location"));
 
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (locationChoice, c);
- 	panel.add (locationChoice);
+	layout.setConstraints(locationChoice, c);
+ 	panel.add(locationChoice);
 
-	panel.add (new Label ("Align:"));
-	alignChoice = new Choice ();
-	alignChoice.addItemListener (this);
-	alignChoice.addItem ("left");
-	alignChoice.addItem ("right");
-	alignChoice.select (prefs.getString ("DocumentInfo.align"));
+	panel.add(new Label("Align:"));
+	alignChoice = new Choice();
+	alignChoice.addItemListener(this);
+	alignChoice.addItem("left");
+	alignChoice.addItem("right");
+	alignChoice.select(prefs.getString("DocumentInfo.align"));
 
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (alignChoice, c);
-	panel.add (alignChoice);
+	layout.setConstraints(alignChoice, c);
+	panel.add(alignChoice);
 
-	panel.add (new Label ("Info:"));
-	info = new TextField (50);
-	info.setText (prefs.getString ("DocumentInfo.info"));
-	c = new GridBagConstraints ();
+	panel.add(new Label("Info:"));
+	info = new TextField(50);
+	info.setText(prefs.getString("DocumentInfo.info"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (info, c);
-	panel.add (info);
+	layout.setConstraints(info, c);
+	panel.add(info);
 	
-	panel.add (new Label ("HTML Before:"));
-	htmlBefore = new TextField (50);
-	htmlBefore.setText (prefs.getString ("DocumentInfo.htmlBefore"));
-	c = new GridBagConstraints ();
+	panel.add(new Label("HTML Before:"));
+	htmlBefore = new TextField(50);
+	htmlBefore.setText(prefs.getString("DocumentInfo.htmlBefore"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (htmlBefore, c);
-	panel.add (htmlBefore);
+	layout.setConstraints(htmlBefore, c);
+	panel.add(htmlBefore);
 
-	panel.add (new Label ("HTML After:"));
-	htmlAfter = new TextField (50);
-	htmlAfter.setText (prefs.getString ("DocumentInfo.htmlAfter"));
-	c = new GridBagConstraints ();
+	panel.add(new Label("HTML After:"));
+	htmlAfter = new TextField(50);
+	htmlAfter.setText(prefs.getString("DocumentInfo.htmlAfter"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (htmlBefore, c);
-	panel.add (htmlAfter);
+	layout.setConstraints(htmlBefore, c);
+	panel.add(htmlAfter);
 
-	add ("Center", panel);
+	add("Center", panel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void itemStateChanged (ItemEvent event)
+    public void itemStateChanged(ItemEvent event)
     {
-// 	Object obj = event.getItem ();
+// 	Object obj = event.getItem();
 // 	if (obj == locationChoice)
 // 	{
-// 	    prefs.putString ("DocumentInfo.location", obj.toString ());
+// 	    prefs.putString("DocumentInfo.location", obj.toString());
 // 	}
 // 	else if (obj == alignChoice)
 // 	{
-// 	    prefs.putString ("DocumentInfo.align", obj.toString ());
+// 	    prefs.putString("DocumentInfo.align", obj.toString());
 // 	}
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("DocumentInfo.location", locationChoice.getSelectedItem ());
-	    prefs.putString ("DocumentInfo.align", alignChoice.getSelectedItem ());
-	    prefs.putString ("DocumentInfo.info", (info.getText ()).trim ());
-	    prefs.putString ("DocumentInfo.htmlBefore", htmlBefore.getText ());
-	    prefs.putString ("DocumentInfo.htmlAfter", htmlAfter.getText ());
+	    prefs.putString("DocumentInfo.location", locationChoice.getSelectedItem());
+	    prefs.putString("DocumentInfo.align", alignChoice.getSelectedItem());
+	    prefs.putString("DocumentInfo.info", (info.getText()).trim());
+	    prefs.putString("DocumentInfo.htmlBefore", htmlBefore.getText());
+	    prefs.putString("DocumentInfo.htmlAfter", htmlAfter.getText());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("DocumentInfo");
+	    new HelpFrame("DocumentInfo");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

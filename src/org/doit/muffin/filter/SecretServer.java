@@ -1,4 +1,4 @@
-/* $Id: SecretServer.java,v 1.2 1998/08/13 06:02:50 boyns Exp $ */
+/* $Id: SecretServer.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,52 +30,52 @@ public class SecretServer implements FilterFactory
     Prefs prefs;
     SecretServerFrame frame = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putString ("SecretServer.server", "");
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putString("SecretServer.server", "");
+	prefs.setOverride(o);
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new SecretServerFrame (prefs, this);
+	    frame = new SecretServerFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new SecretServerFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new SecretServerFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 }

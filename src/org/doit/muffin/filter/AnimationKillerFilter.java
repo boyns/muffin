@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.3 1998/09/23 06:55:44 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.4 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,54 +37,54 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
     OutputObjectStream out = null;
     Request request;
 
-    AnimationKillerFilter (AnimationKiller factory)
+    AnimationKillerFilter(AnimationKiller factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public void filter (Request request) throws FilterException
+    public void filter(Request request) throws FilterException
     {
 	this.request = request;
     }
 
-    public void filter (Reply reply) throws FilterException
+    public void filter(Reply reply) throws FilterException
     {
-// 	String s = reply.getContentType ();
-// 	if (s != null && s.startsWith ("multipart/x-mixed-replace"))
+// 	String s = reply.getContentType();
+// 	if (s != null && s.startsWith("multipart/x-mixed-replace"))
 // 	{
-// 	    factory.process ("Found server push " + request.getURL () + "\n");
-// 	    throw new FilterException ("Killed server push " + request.getURL ());
+// 	    factory.process("Found server push " + request.getURL() + "\n");
+// 	    throw new FilterException("Killed server push " + request.getURL());
 // 	}
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
-	String s = reply.getContentType ();
+	String s = reply.getContentType();
 	if (s == null)
 	{
 	    return false;
 	}
-	return s.startsWith ("image/gif");
+	return s.startsWith("image/gif");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
 
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("AnimationKiller");
+	Thread.currentThread().setName("AnimationKiller");
 
 	try
 	{
@@ -99,19 +99,19 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 	    int index = 0;
 	    boolean killed = false;
 	    
-	    PushbackInputStream gifInput = new PushbackInputStream (new ObjectStreamToInputStream (in));
-	    ObjectStreamToOutputStream gifOutput = new ObjectStreamToOutputStream (out);
+	    PushbackInputStream gifInput = new PushbackInputStream(new ObjectStreamToInputStream(in));
+	    ObjectStreamToOutputStream gifOutput = new ObjectStreamToOutputStream(out);
 
 	    int count = 0;
 
 	    /* Look for the GIF89a block extension */
-	    while ((b = gifInput.read ()) != -1)
+	    while ((b = gifInput.read()) != -1)
 	    {
 		count++;
 		
 		if (killed)
 		{
-		    gifOutput.write (b);
+		    gifOutput.write(b);
 		    continue;
 		}
 		
@@ -126,11 +126,11 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 			index = 0;
 			killed = true;
 
-			factory.process ("Found GIF animation " + request.getURL () + "\n");
+			factory.report(request, "GIF animation detected");
 
-			if (prefs.getBoolean ("AnimationKiller.break"))
+			if (prefs.getBoolean("AnimationKiller.break"))
 			{
-			    while ((b = gifInput.read ()) != -1)
+			    while ((b = gifInput.read()) != -1)
 			    {
 				/* ignore the rest */
 			    }
@@ -140,41 +140,41 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 			{
 			    String id = null;
 			    
-			    if (prefs.getInteger ("AnimationKiller.maxLoops") == -1)
+			    if (prefs.getInteger("AnimationKiller.maxLoops") == -1)
 			    {
-				gifOutput.write (0x21);
-				gifOutput.write (0xfe); /* comment extension */
-				id = new String ("XXXXXXXX1.0");
+				gifOutput.write(0x21);
+				gifOutput.write(0xfe); /* comment extension */
+				id = new String("XXXXXXXX1.0");
 			    }
 			    else
 			    {
-				gifOutput.write (0x21);
-				gifOutput.write (0xff); /* application extension */
-				id = new String ("NETSCAPE2.0");
+				gifOutput.write(0x21);
+				gifOutput.write(0xff); /* application extension */
+				id = new String("NETSCAPE2.0");
 			    }
-			    gifOutput.write (0x0b);
-			    gifOutput.write (id.getBytes (), 0, id.length ());
-			    gifOutput.write (0x03);
-			    gifOutput.write (0x01);
+			    gifOutput.write(0x0b);
+			    gifOutput.write(id.getBytes(), 0, id.length());
+			    gifOutput.write(0x03);
+			    gifOutput.write(0x01);
 			
-			    b = gifInput.read (); // high
-			    b = gifInput.read (); // low
-			    b = gifInput.read (); // terminator
+			    b = gifInput.read(); // high
+			    b = gifInput.read(); // low
+			    b = gifInput.read(); // terminator
 			    
-			    if (prefs.getInteger ("AnimationKiller.maxLoops") == -1)
+			    if (prefs.getInteger("AnimationKiller.maxLoops") == -1)
 			    {
-				gifOutput.write (0x00); // low
-				gifOutput.write (0x00); // high
+				gifOutput.write(0x00); // low
+				gifOutput.write(0x00); // high
 			    }
 			    else
 			    {
-				int loops = prefs.getInteger ("AnimationKiller.maxLoops");
+				int loops = prefs.getInteger("AnimationKiller.maxLoops");
 				int high = loops / 256;
 				int low = loops % 256;
-				gifOutput.write (low);
-				gifOutput.write (high);
+				gifOutput.write(low);
+				gifOutput.write(high);
 			    }
-			    gifOutput.write (0x00); // terminator
+			    gifOutput.write(0x00); // terminator
 			}
 		    }
 		}
@@ -182,22 +182,22 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 		{
 		    for (i = 0; i < index; i++)
 		    {
-			gifOutput.write (undo[i]);
+			gifOutput.write(undo[i]);
 		    }
-		    gifInput.unread (b);
+		    gifInput.unread(b);
 		    count--;
 		    index = 0;
 		}
 		else
 		{
-		    gifOutput.write (b);
+		    gifOutput.write(b);
 		}
 	    }
 
-	    gifOutput.flush ();
-	    gifOutput.close ();
- 	    out.flush ();
- 	    out.close ();
+	    gifOutput.flush();
+	    gifOutput.close();
+ 	    out.flush();
+ 	    out.close();
 	}
 	catch (IOException e)
 	{

@@ -1,4 +1,4 @@
-/* $Id: ObjectStreamToInputStream.java,v 1.2 1998/08/13 06:00:44 boyns Exp $ */
+/* $Id: ObjectStreamToInputStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -36,16 +36,16 @@ public class ObjectStreamToInputStream extends InputStream
     protected ByteArray array = null;
     protected int index = 0;
 
-    public ObjectStreamToInputStream (InputObjectStream in)
+    public ObjectStreamToInputStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public int read () throws IOException
+    public int read() throws IOException
     {
 	if (array == null)
 	{
-	    Object obj = (Object) in.read ();
+	    Object obj = (Object) in.read();
 	    if (obj == null)
 	    {
 		return -1;
@@ -57,23 +57,23 @@ public class ObjectStreamToInputStream extends InputStream
 	    }
 	    else if (obj instanceof String)
 	    {
-		array = new ByteArray ((String)obj);
+		array = new ByteArray((String)obj);
 	    }
 	    else
 	    {
-		throw new IOException ("Unknown Object " + obj.toString ());
+		throw new IOException("Unknown Object " + obj.toString());
 	    }
 	    
 	    index = 0;
 	}
 
-	if (array.length () == 0)
+	if (array.length() == 0)
 	{
 	    return -1;
 	}
 
 	int b = array.bytes[index++];
-	if (index == array.length ())
+	if (index == array.length())
 	{
 	    array = null;
 	    index = 0;

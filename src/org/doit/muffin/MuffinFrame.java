@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.3 1998/10/01 06:38:46 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -38,50 +38,105 @@ import gnu.regexp.*;
 
 public class MuffinFrame extends Frame
 {
-    static Vector frames = new Vector ();
-    
-    public MuffinFrame (String title)
-    {
-	super (title);
+    static Vector frames = new Vector();
 
-	if (! Main.getOptions ().getBoolean ("muffin.noWindow"))
+    public MuffinFrame(String title)
+    {
+	super(title);
+
+	if (! Main.getOptions().getBoolean("muffin.noWindow"))
 	{
-	    setFont (Main.getOptions ().getFont ("muffin.font"));
-	    setIcon ();
-	    configColors (this);
+	    setFont(Main.getOptions().getFont("muffin.font"));
+	    setIcon();
+	    configColors(this);
 	}
 	
-	frames.addElement (this);
+	frames.addElement(this);
     }
 
-    void setIcon ()
+    void moveNearMuffin()
+    {
+	if (getTitle().equals("Muffin"))
+	{
+	    return;
+	}
+
+	Dimension screenSize = getToolkit().getScreenSize();
+	MuffinFrame muffin = getFrame("Muffin");
+	Dimension muffinSize = muffin.getSize();
+	Point muffinLocation = muffin.getLocationOnScreen();
+	Dimension size = getSize();
+	int x = 0, y = 0;
+
+// 	x = muffinLocation.x + muffinSize.width;
+// 	y = muffinLocation.y;
+
+// 	if (x + size.width > screenSize.width)
+// 	{
+// 	    x = muffinLocation.x - size.width;
+// 	    if (x < 0) x = 0;
+// 	}
+// 	if (y + size.height > screenSize.height)
+// 	{
+// 	    y -= (y + size.height) - screenSize.height;
+// 	    if (y < 0) y = 0;
+// 	}
+
+	x = muffinLocation.x + (int)(Math.random() * 20);
+	y = muffinLocation.y + (int)(Math.random() * 20);
+
+	setLocation(x, y);
+    }
+
+    void setIcon()
     {
 	try
 	{
 	    Image image;
-	    MediaTracker tracker = new MediaTracker (this);
-	    URL url = getClass ().getResource ("images/mufficon.jpg");
+	    MediaTracker tracker = new MediaTracker(this);
+	    URL url = getClass().getResource("/images/mufficon.jpg");
 	    if (url != null)
 	    {
-		image = Toolkit.getDefaultToolkit ().createImage ((ImageProducer) url.getContent ());
-		tracker.addImage (image, 1);
-		tracker.waitForAll ();
-		setIconImage (image);
+		image = Toolkit.getDefaultToolkit().createImage((ImageProducer) url.getContent());
+		tracker.addImage(image, 1);
+		tracker.waitForAll();
+		setIconImage(image);
 	    }
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    public void dispose ()
+    public void show()
     {
-	frames.removeElement (this);
-	super.dispose ();
+	moveNearMuffin();
+	super.show();
     }
 
-    public void updateGeometry (String geometry)
+    public void dispose()
+    {
+	frames.removeElement(this);
+	super.dispose();
+    }
+
+    public String getGeometry()
+    {
+	Dimension size = getSize();
+	Point location = getLocationOnScreen();
+	StringBuffer buf = new StringBuffer();
+	buf.append(size.width);
+	buf.append("x");
+	buf.append(size.height);
+	buf.append("+");
+	buf.append(location.x);
+	buf.append("+");
+	buf.append(location.y);
+	return buf.toString();
+    }
+
+    public void updateGeometry(String geometry)
     {
 	if (geometry == null && geometry.length() <= 0)
 	{
@@ -93,7 +148,7 @@ public class MuffinFrame extends Frame
 	
 	try
 	{
-	    RE re = new RE("([0-9]+x[0-9]+)?(\\+[0-9]+\\+[0-9]+)?");
+	    RE re = new RE("([0-9]+x[0-9]+)?([\\+\\-][0-9]+[\\+\\-][0-9]+)?");
 	    REMatch match = re.getMatch(geometry);
 
 	    if (match != null)
@@ -101,10 +156,10 @@ public class MuffinFrame extends Frame
 		int i, j;
 
 		i = match.getSubStartIndex(1);
-		if (i != -1)
+		j = match.getSubEndIndex(1);
+		if (i != -1 && j != -1 && i != j)
 		{
-		    j = match.getSubEndIndex(1);
-		    String s = geometry.substring(i ,j);
+		    String s = geometry.substring(i, j);
 		    int n = s.indexOf('x');
 		    if (n != -1)
 		    {
@@ -114,16 +169,24 @@ public class MuffinFrame extends Frame
 		}
 
 		i = match.getSubStartIndex(2);
-		if (i != -1)
+		j = match.getSubEndIndex(2);
+		if (i != -1 && j != -1 && i != j)
 		{
-		    j = match.getSubEndIndex(2);
+		    Dimension screenSize = getToolkit().getScreenSize();
 		    String s = geometry.substring(i, j);
 		    int n = s.lastIndexOf('+');
-		    if (n != -1)
-		    {
-			pos = new Point(Integer.parseInt(s.substring(1, n)),
-					Integer.parseInt(s.substring(n+1)));
-		    }
+		    if (n == -1 || n == 0)
+			n = s.lastIndexOf('-');
+
+		    int x = Integer.parseInt(s.substring(s.charAt(0) == '+' ? 1 : 0, n));
+		    int y = Integer.parseInt(s.substring(s.charAt(n) == '+' ? n+1 : n));
+
+		    if (x < 0)
+			x = screenSize.width + x;
+		    if (y < 0)
+			y = screenSize.height + y;
+		    
+		    pos = new Point(x, y);
 		}
 	    }
 	}
@@ -132,35 +195,37 @@ public class MuffinFrame extends Frame
 	    e.printStackTrace();
 	}
 
-	pack ();
-	setSize (loc != null ? loc : getPreferredSize ());
+	hide();
+	pack();
+	setSize(loc != null ? loc : getPreferredSize());
 	if (pos != null)
 	{
 	    setLocation(pos);
 	}
+	show();
     }
 
-    static void configColors (Frame frame)
+    static void configColors(Frame frame)
     {
-	frame.setBackground (Main.getOptions ().getColor ("muffin.bg"));
-	frame.setForeground (Main.getOptions ().getColor ("muffin.fg"));
+	frame.setBackground(Main.getOptions().getColor("muffin.bg"));
+	frame.setForeground(Main.getOptions().getColor("muffin.fg"));
     }
 
-    static void repaintFrames ()
+    static void repaintFrames()
     {
-	for (int i = 0; i < frames.size (); i++)
+	for (int i = 0; i < frames.size(); i++)
 	{
-	    Frame frame = (Frame) frames.elementAt (i);
-	    configColors (frame);
-	    frame.repaint ();
+	    Frame frame = (Frame) frames.elementAt(i);
+	    configColors(frame);
+	    frame.repaint();
 	}
     }
 
-    static MuffinFrame getFrame (String title)
+    static MuffinFrame getFrame(String title)
     {
-	for (int i = 0; i < frames.size (); i++)
+	for (int i = 0; i < frames.size(); i++)
 	{
-	    MuffinFrame frame = (MuffinFrame) frames.elementAt (i);
+	    MuffinFrame frame = (MuffinFrame) frames.elementAt(i);
 	    if (frame.getTitle().equals(title))
 	    {
 		return frame;

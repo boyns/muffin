@@ -1,4 +1,4 @@
-/* $Id: Icon.java,v 1.2 1998/08/13 06:01:24 boyns Exp $ */
+/* $Id: Icon.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -50,101 +50,101 @@ class Icon extends java.awt.Canvas implements MouseListener
     /**
      * Create an Icon.
      */
-    Icon (Options options)
+    Icon(Options options)
     {
 	this.options = options;
 	
 	try
 	{
-	    MediaTracker tracker = new MediaTracker (this);
+	    MediaTracker tracker = new MediaTracker(this);
 	    URL url;
-	    url = getClass ().getResource ("images/mufficon.jpg");
+	    url = getClass().getResource("/images/mufficon.jpg");
 	    if (url != null)
 	    {
-		icon = Toolkit.getDefaultToolkit ().createImage ((ImageProducer) url.getContent ());
-		tracker.addImage (icon, 1);
+		icon = Toolkit.getDefaultToolkit().createImage((ImageProducer) url.getContent());
+		tracker.addImage(icon, 1);
 	    }
-	    url = getClass ().getResource ("images/nomuff.jpg");
+	    url = getClass().getResource("/images/nomuff.jpg");
 	    if (url != null)
 	    {
-		nomuff = Toolkit.getDefaultToolkit ().createImage ((ImageProducer) url.getContent ());
-		tracker.addImage (nomuff, 2);
+		nomuff = Toolkit.getDefaultToolkit().createImage((ImageProducer) url.getContent());
+		tracker.addImage(nomuff, 2);
 	    }
-	    tracker.waitForAll ();
-	    addMouseListener (this);
+	    tracker.waitForAll();
+	    addMouseListener(this);
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    public Dimension getPreferredSize ()
+    public Dimension getPreferredSize()
     {
-	return new Dimension (36, 36);
+	return new Dimension(36, 36);
     }
 
-    public Dimension getPreferredSize (int rows)
+    public Dimension getPreferredSize(int rows)
     {
-	return new Dimension (36, 36);
+	return new Dimension(36, 36);
     }
 
-    public Dimension getMinimumSize ()
+    public Dimension getMinimumSize()
     {
-	return new Dimension (36, 36);
+	return new Dimension(36, 36);
     }
 
-    public Dimension getMinimumSize (int rows)
+    public Dimension getMinimumSize(int rows)
     {
-	return new Dimension (36, 36);
+	return new Dimension(36, 36);
     }
 
-    public void mouseReleased (MouseEvent e)
+    public void mouseReleased(MouseEvent e)
     {
 	raised = !raised;
-	options.putBoolean ("muffin.passthru", !raised);
-	repaint ();
+	options.putBoolean("muffin.passthru", !raised);
+	repaint();
     }
     
-    public void mousePressed (MouseEvent e)
+    public void mousePressed(MouseEvent e)
     {
     }
     
-    public void mouseClicked (MouseEvent e)
+    public void mouseClicked(MouseEvent e)
     {
     }
     
-    public void mouseEntered (MouseEvent e)
+    public void mouseEntered(MouseEvent e)
     {
     }
     
-    public void mouseExited (MouseEvent e)
+    public void mouseExited(MouseEvent e)
     {
     }
 
     /**
      * Paint the muffin.
      */
-    public void paint (Graphics g)
+    public void paint(Graphics g)
     {
 	int i;
 
-	g.setColor (Color.lightGray);
+	g.setColor(Color.lightGray);
 	for (i = 0; i < 2; i++)
 	{
-	    g.draw3DRect (i, i, 36 - i*2, 36 - i*2, raised);
+	    g.draw3DRect(i, i, 36 - i*2, 36 - i*2, raised);
 	}
 	
 	if (icon != null)
 	{
-	    g.drawImage (icon, 2, 2, this);
+	    g.drawImage(icon, 2, 2, this);
 	}
 	if (!raised && nomuff != null)
 	{
-	    g.drawImage (nomuff, 6, 6, this);
+	    g.drawImage(nomuff, 6, 6, this);
 	}
 	
-	g.setColor (Color.lightGray);
-	g.drawRect (2, 2, 32, 32);
+	g.setColor(Color.lightGray);
+	g.drawRect(2, 2, 32, 32);
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: RetryRequestException.java,v 1.2 1998/08/13 06:01:42 boyns Exp $ */
+/* $Id: RetryRequestException.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -24,13 +24,13 @@ package org.doit.muffin;
 
 class RetryRequestException extends Exception
 {
-    RetryRequestException ()
+    RetryRequestException()
     {
-	super ();
+	super();
     }
     
-    RetryRequestException (String message)
+    RetryRequestException(String message)
     {
-	super (message);
+	super(message);
     }
 }

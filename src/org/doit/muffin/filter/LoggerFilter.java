@@ -1,4 +1,4 @@
-/* $Id: LoggerFilter.java,v 1.2 1998/08/13 06:02:28 boyns Exp $ */
+/* $Id: LoggerFilter.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,18 +29,18 @@ public class LoggerFilter implements RequestFilter
     Prefs prefs;
     Logger factory;
 
-    LoggerFilter (Logger factory)
+    LoggerFilter(Logger factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public void filter (Request r) throws FilterException
+    public void filter(Request r) throws FilterException
     {
-	factory.process (r.getClient ().getInetAddress () + " -> " + r.getRequest () + "\n");
+	factory.report(r, r.getClient().getInetAddress().getHostAddress());
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: Token.java,v 1.3 1998/08/13 06:00:34 boyns Exp $ */
+/* $Id: Token.java,v 1.4 1998/12/19 21:24:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,27 +37,27 @@ public class Token extends ByteArray
 
     private Tag cachedTag = null;
 
-    public Token ()
+    public Token()
     {
     }
 
-    public Token (int type)
+    public Token(int type)
     {
 	this.type = type;
     }
 
-    public Token (Token token)
+    public Token(Token token)
     {
-	super (token.toString ());
+	super(token.toString());
 	this.type = token.type;
     }
 
-    public int getType ()
+    public int getType()
     {
 	return type;
     }
 
-    public Tag createTag ()
+    public Tag createTag()
     {
 	if (cachedTag != null)
 	{
@@ -98,28 +98,28 @@ public class Token extends ByteArray
 	    }
 	}
 
-	String name = new String (bytes, start, end - start).toLowerCase ();
+	String name = new String(bytes, start, end - start).toLowerCase();
 	String data = null;
 	if (rest > 0 && offset - rest -1 > 0)
 	{
-	    data = new String (bytes, rest, offset - rest - 1);
+	    data = new String(bytes, rest, offset - rest - 1);
 	}
 
-	cachedTag = new Tag (name, data);
+	cachedTag = new Tag(name, data);
 	return cachedTag;
     }
 
 
-    public void importTag (Tag newTag)
+    public void importTag(Tag newTag)
     {
 	// AJP modification: newTag may be a replacement tag but may not be
-	// marked as modified so check tag "name" is the same (also do check
+	// marked as modified so check tag "name" is the same(also do check
 	// for cachedTag, just in case)
-	if (newTag.isModified ()
+	if (newTag.isModified()
 	    || cachedTag == null
-	    || !cachedTag.name ().equals(newTag.name ()))
+	    || !cachedTag.name().equals(newTag.name()))
 	{
-	    bytes = newTag.toString ().getBytes ();
+	    bytes = newTag.toString().getBytes();
 	    offset = bytes.length;
 	    cachedTag = newTag;
 	}

@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFilter.java,v 1.2 1998/08/13 06:02:11 boyns Exp $ */
+/* $Id: EmptyFontFilter.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -34,36 +34,36 @@ public class EmptyFontFilter implements ContentFilter
     OutputObjectStream out = null;
     // Request request = null;
 
-    EmptyFontFilter (EmptyFont factory)
+    EmptyFontFilter(EmptyFont factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	// this.request = request;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
     
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("EmptyFont");
+	Thread.currentThread().setName("EmptyFont");
 	
 	try
 	{
@@ -71,27 +71,27 @@ public class EmptyFontFilter implements ContentFilter
 	    Token fontTag = null;
 
 	    Object obj;
-            while ((obj = in.read ()) != null)
+            while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
+		if (token.getType() == Token.TT_TAG)
 		{
-		    tag = token.createTag ();
+		    tag = token.createTag();
 
 		    /* <font> */
-		    if (tag.is ("font"))
+		    if (tag.is("font"))
 		    {
 			// Got a font tag. If we have just seen a font tag,
 		    	// we ought to save them both, but just write out
 		    	// the previous one for now.
 			if (fontTag != null)
-			    out.write (fontTag);
+			    out.write(fontTag);
 			// Save the FONT tag until we get more details
-			// fontTag = new Token (token);
+			// fontTag = new Token(token);
 			fontTag = token;
 			// factory.debug("Got a FONT tag\n");
 		    }
-		    else if (tag.is ("/font") && (fontTag != null))
+		    else if (tag.is("/font") && (fontTag != null))
 		    {
 			// Empty <font...></font>, eat them both!
 			fontTag = null;
@@ -101,20 +101,20 @@ public class EmptyFontFilter implements ContentFilter
 		    {
 			if (fontTag != null)
 			{
-			    out.write (fontTag);
+			    out.write(fontTag);
 			    fontTag = null;
 			    // factory.debug("FONT tag not empty - issue it and the tag\n");
 			}
-			out.write (token);
+			out.write(token);
 		    }
 		}
-		else if (token.getType () == Token.TT_COMMENT)
+		else if (token.getType() == Token.TT_COMMENT)
 		{
 		    // Treat comments as "white-space" - do not put out the
-		    // FONT tag (if any) yet
+		    // FONT tag(if any) yet
 		    // if (fontTag != null)
 		    //	factory.debug("Got a comment - keep FONT tag for now\n");
-		    out.write (token);
+		    out.write(token);
 		}
 		else
 		{
@@ -123,9 +123,9 @@ public class EmptyFontFilter implements ContentFilter
 			// Check if all whitespace
 			int nb;
 			boolean whitespace = true;
-			byte bytes[] = token.getBytes ();
+			byte bytes[] = token.getBytes();
 			// factory.debug("Got text - check if white-space....\n");
-			for (nb = 0; (nb < token.length ()) && whitespace; nb++)
+			for (nb = 0; (nb < token.length()) && whitespace; nb++)
 			{
 			    if (bytes[nb] > ' ')
 		    		whitespace = false;
@@ -134,21 +134,21 @@ public class EmptyFontFilter implements ContentFilter
 			if (!whitespace)
 			{
 			    // factory.debug("FONT tag not empty - output it\n");
-			    out.write (fontTag);
+			    out.write(fontTag);
 			    fontTag = null;
 			}
 			// factory.debug("Now output the text: \"" + token.toString() + "\"\n");
 		    }
-		    out.write (token);
+		    out.write(token);
 		}
 	    }
 	    
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

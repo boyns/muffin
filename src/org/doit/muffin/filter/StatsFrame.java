@@ -1,4 +1,4 @@
-/* $Id: StatsFrame.java,v 1.2 1998/08/13 06:03:01 boyns Exp $ */
+/* $Id: StatsFrame.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -35,70 +35,70 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
     Stats parent;
     TextArea text;
 
-    public StatsFrame (Prefs prefs, Stats parent)
+    public StatsFrame(Prefs prefs, Stats parent)
     {
-	super ("Muffin: Stats");
+	super("Muffin: Stats");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	text = new TextArea ();
-        text.setEditable (false);
-        add ("Center", text);
+	text = new TextArea();
+        text.setEditable(false);
+        add("Center", text);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
-	b = new Button ("Update");
-	b.setActionCommand ("doUpdate");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Reset");
-	b.setActionCommand ("doReset");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
+	b = new Button("Update");
+	b.setActionCommand("doUpdate");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Reset");
+	b.setActionCommand("doReset");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
 
-	add ("South", buttonPanel);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    void reset ()
+    void reset()
     {
-	text.setText ("");
-	parent.reset ();
+	text.setText("");
+	parent.reset();
     }
 
-    void print (Hashtable h)
+    void print(Hashtable h)
     {
         String key;
         Integer count;
         int total = 0;
 
-        for (Enumeration e = h.keys (); e.hasMoreElements (); )
+        for (Enumeration e = h.keys(); e.hasMoreElements(); )
         {
-            key = (String) e.nextElement ();
-            count = (Integer) h.get (key);
-            text.append ("    " + key + ": " + count + "\n");
-            total += count.intValue ();
+            key = (String) e.nextElement();
+            count = (Integer) h.get(key);
+            text.append("    " + key + ": " + count + "\n");
+            total += count.intValue();
         }
-        text.append ("    TOTAL: " + total + "\n");
+        text.append("    TOTAL: " + total + "\n");
     }
 
-    void printUniqueServers ()
+    void printUniqueServers()
     {
 	String s ;
 	Integer i, y;
@@ -129,94 +129,94 @@ public class StatsFrame extends MuffinFrame implements ActionListener, WindowLis
 	text.append("\n");
     }
     
-    void update ()
+    void update()
     {
 	String key;
         Integer count;
 
-        text.setText ("");
+        text.setText("");
 
-//         text.append ("Filter started: " + startDate.toLocaleString());
-//         text.append ("\n");
+//         text.append("Filter started: " + startDate.toLocaleString());
+//         text.append("\n");
 
-//         text.append ("Current date: " + (new Date ()).toLocaleString ());
-//         text.append ("\n");
+//         text.append("Current date: " + (new Date()).toLocaleString());
+//         text.append("\n");
         
-        text.append ("Requests: ");
-        text.append (parent.requests + "\n");
-	text.append ("\n");
+        text.append("Requests: ");
+        text.append(parent.requests + "\n");
+	text.append("\n");
         
-        text.append ("Replies: ");
-        text.append (parent.replies + "\n");
-	text.append ("\n");
+        text.append("Replies: ");
+        text.append(parent.replies + "\n");
+	text.append("\n");
         
-        text.append ("Hosts: " + parent.hosts.size () + "\n");
-        print (parent.hosts);
-	text.append ("\n");
+        text.append("Hosts: " + parent.hosts.size() + "\n");
+        print(parent.hosts);
+	text.append("\n");
         
-        text.append ("Servers: " + parent.servers.size () + "\n");
-        print (parent.servers);
-	text.append ("\n");
+        text.append("Servers: " + parent.servers.size() + "\n");
+        print(parent.servers);
+	text.append("\n");
 
-	printUniqueServers ();
+	printUniqueServers();
         
-        text.append ("Content-types:\n");
-        print (parent.contentTypes);
-	text.append ("\n");
+        text.append("Content-types:\n");
+        print(parent.contentTypes);
+	text.append("\n");
 
-        text.append ("Content-lengths:\n");
-        print (parent.contentLengths);
-	text.append ("\n");
+        text.append("Content-lengths:\n");
+        print(parent.contentLengths);
+	text.append("\n");
     }
      
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doUpdate".equals (arg))
+	if ("doUpdate".equals(arg))
 	{
-	    update ();
+	    update();
 	}
-	else if ("doReset".equals (arg))
+	else if ("doReset".equals(arg))
 	{
-	    reset ();
+	    reset();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("Stats");
+	    new HelpFrame("Stats");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

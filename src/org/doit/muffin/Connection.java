@@ -1,4 +1,4 @@
-/* $Id: Connection.java,v 1.2 1998/08/13 06:01:03 boyns Exp $ */
+/* $Id: Connection.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -46,11 +46,11 @@ class Connection
      *
      * @param socket a socket
      */
-    Connection (Socket socket) throws IOException
+    Connection(Socket socket) throws IOException
     {
 	this.socket = socket;
-	in = socket.getInputStream ();
-	out = socket.getOutputStream ();
+	in = socket.getInputStream();
+	out = socket.getOutputStream();
     }
 
     /**
@@ -59,19 +59,19 @@ class Connection
      * @param host remote hostname
      * @param port remote port
      */
-    Connection (String host, int port) throws IOException
+    Connection(String host, int port) throws IOException
     {
-	this (new Socket (host, port));
+	this(new Socket(host, port));
     }
 
-    Connection ()
+    Connection()
     {
     }
 
     /**
      * Return the input stream.
      */
-    InputStream getInputStream ()
+    InputStream getInputStream()
     {
 	return in;
     }
@@ -79,17 +79,17 @@ class Connection
     /**
      * Return the output stream.
      */
-    OutputStream getOutputStream ()
+    OutputStream getOutputStream()
     {
 	return out;
     }
 
-    void setInputStream (InputStream in)
+    void setInputStream(InputStream in)
     {
 	this.in = in;
     }
     
-    void setOutputStream (OutputStream out)
+    void setOutputStream(OutputStream out)
     {
 	this.out = out;
     }
@@ -97,38 +97,38 @@ class Connection
     /**
      * Close the connection.
      */
-    void close ()
+    void close()
     {
 	if (socket != null)
 	{
 	    try
 	    {
-		socket.close ();
+		socket.close();
 	    }
 	    catch (Exception e)
 	    {
-		System.out.println ("Connection: " + e);
+		System.out.println("Connection: " + e);
 	    }
 	}
     }
 
-    public Socket getSocket ()
+    public Socket getSocket()
     {
 	return socket;
     }
 
-    public InetAddress getInetAddress ()
+    public InetAddress getInetAddress()
     {
-	return socket.getInetAddress ();
+	return socket.getInetAddress();
     }
     
-    public int getPort ()
+    public int getPort()
     {
-	return socket.getPort ();
+	return socket.getPort();
     }
 
-    public String toString ()
+    public String toString()
     {
-	return getInetAddress () + ":" + getPort ();
+	return getInetAddress().getHostAddress() + ":" + getPort();
     }
 }

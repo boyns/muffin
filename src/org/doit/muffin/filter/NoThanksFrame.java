@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.2 1998/08/13 06:02:32 boyns Exp $ */
+/* $Id: NoThanksFrame.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -39,239 +39,239 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
     TextField input = null;
     TextArea text = null;
     
-    public NoThanksFrame (Prefs prefs, NoThanks parent)
+    public NoThanksFrame(Prefs prefs, NoThanks parent)
     {
-	super ("Muffin: NoThanks");
+	super("Muffin: NoThanks");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-        panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
 	GridBagConstraints c;
 	
-	panel.add (new Label ("Kill File:", Label.RIGHT));
+	panel.add(new Label("Kill File:", Label.RIGHT));
 
-	input = new TextField (40);
-	input.setText (prefs.getString ("NoThanks.killfile"));
-	panel.add (input);
+	input = new TextField(40);
+	input.setText(prefs.getString("NoThanks.killfile"));
+	panel.add(input);
 
-	Button browse = new Button ("Browse...");
-	browse.setActionCommand ("doBrowse");
-	browse.addActionListener (this);
-	c = new GridBagConstraints ();
+	Button browse = new Button("Browse...");
+	browse.setActionCommand("doBrowse");
+	browse.addActionListener(this);
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (browse, c);
-	panel.add (browse);
+	layout.setConstraints(browse, c);
+	panel.add(browse);
 
-	add ("North", panel);
+	add("North", panel);
 
-	panel = new Panel ();
-	layout = new GridBagLayout ();
-        panel.setLayout (layout);
+	panel = new Panel();
+	layout = new GridBagLayout();
+        panel.setLayout(layout);
 
-	Label l = new Label ("Kill File");
-	c = new GridBagConstraints ();
-	c.insets = new Insets (0, 10, 5, 10);
+	Label l = new Label("Kill File");
+	c = new GridBagConstraints();
+	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	text = new TextArea ();
-	c = new GridBagConstraints ();
+	text = new TextArea();
+	c = new GridBagConstraints();
 	c.gridheight = 3;
-	c.insets = new Insets (0, 10, 5, 10);
-	layout.setConstraints (text, c);
-	panel.add (text);
+	c.insets = new Insets(0, 10, 5, 10);
+	layout.setConstraints(text, c);
+	panel.add(text);
 
 	Button b;
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Load");
-	b.setActionCommand ("doLoad");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Load");
+	b.setActionCommand("doLoad");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	l = new Label ("Message Log");
-	c = new GridBagConstraints ();
-	c.insets = new Insets (0, 10, 5, 10);
+	l = new Label("Message Log");
+	c = new GridBagConstraints();
+	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	c = new GridBagConstraints ();
-	c.insets = new Insets (0, 10, 5, 10);
+	c = new GridBagConstraints();
+	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (parent.messages, c);
-	parent.messages.setEditable (false);
-	panel.add (parent.messages);
+	layout.setConstraints(parent.messages, c);
+	parent.messages.setEditable(false);
+	panel.add(parent.messages);
 
-	add ("Center", panel);
+	add("Center", panel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 3));
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 3));
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	loadFile ();
+	loadFile();
 
-	show ();
+	show();
     }
 
-    void loadFile ()
+    void loadFile()
     {
-	text.setText ("");
+	text.setText("");
 	
-	File file = new File (prefs.getString ("NoThanks.killfile"));
-	if (!file.exists ())
+	File file = new File(prefs.getString("NoThanks.killfile"));
+	if (!file.exists())
 	{
 	    return;
 	}
 	
 	try
 	{
-	    BufferedReader in = new BufferedReader (new FileReader (file));
+	    BufferedReader in = new BufferedReader(new FileReader(file));
 	    String s;
-	    while ((s = in.readLine ()) != null)
+	    while ((s = in.readLine()) != null)
 	    {
-		text.append (s + "\n");
+		text.append(s + "\n");
 	    }
-	    in.close ();
-	    text.setCaretPosition (0);
+	    in.close();
+	    text.setCaretPosition(0);
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
     }
 
-    void saveFile ()
+    void saveFile()
     {
 	try
 	{
-	    File file = new File (prefs.getString ("NoThanks.killfile"));
-	    if (file.exists ())
+	    File file = new File(prefs.getString("NoThanks.killfile"));
+	    if (file.exists())
 	    {
-		file.delete ();
+		file.delete();
 	    }
-	    FileWriter writer = new FileWriter (file);
-	    writer.write (text.getText ());
-	    writer.close ();
+	    FileWriter writer = new FileWriter(file);
+	    writer.write(text.getText());
+	    writer.close();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("NoThanks.killfile", input.getText ());
-	    parent.load (new StringReader (text.getText ()));
+	    prefs.putString("NoThanks.killfile", input.getText());
+	    parent.load(new StringReader(text.getText()));
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
-	    saveFile ();
+	    parent.save();
+	    saveFile();
 	}
-	else if ("doLoad".equals (arg))
+	else if ("doLoad".equals(arg))
 	{
-	    parent.load ();
-	    loadFile ();
+	    parent.load();
+	    loadFile();
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    parent.messages.clear ();
+	    parent.messages.clear();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doBrowse".equals (arg))
+	else if ("doBrowse".equals(arg))
 	{
-	    FileDialog dialog = new FileDialog (this, "NoThanks Load");
-	    dialog.show ();
-	    if (dialog.getFile () != null)
+	    FileDialog dialog = new FileDialog(this, "NoThanks Load");
+	    dialog.show();
+	    if (dialog.getFile() != null)
 	    {
-		input.setText (dialog.getDirectory () + dialog.getFile ());
+		input.setText(dialog.getDirectory() + dialog.getFile());
 	    }
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("NoThanks");
+	    new HelpFrame("NoThanks");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: AutoSaveable.java,v 1.2 1998/08/13 06:00:54 boyns Exp $ */
+/* $Id: AutoSaveable.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -27,6 +27,6 @@ package org.doit.muffin;
  */
 public interface AutoSaveable
 {
-    void autoSave ();
+    void autoSave();
 }
 

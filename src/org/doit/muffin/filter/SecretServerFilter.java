@@ -1,4 +1,4 @@
-/* $Id: SecretServerFilter.java,v 1.2 1998/08/13 06:02:51 boyns Exp $ */
+/* $Id: SecretServerFilter.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,28 +29,28 @@ public class SecretServerFilter implements ReplyFilter
     Prefs prefs;
     SecretServer factory;
 
-    SecretServerFilter (SecretServer factory)
+    SecretServerFilter(SecretServer factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public void filter (Reply r) throws FilterException
+    public void filter(Reply r) throws FilterException
     {
-	String s = prefs.getString ("SecretServer.server");
-	if (s.length () > 0)
+	String s = prefs.getString("SecretServer.server");
+	if (s.length() > 0)
 	{
-	    if (s.equalsIgnoreCase ("NONE"))
+	    if (s.equalsIgnoreCase("NONE"))
 	    {
-		r.removeHeaderField ("Server");
+		r.removeHeaderField("Server");
 	    }
 	    else
 	    {
-		r.setHeaderField ("Server", s);
+		r.setHeaderField("Server", s);
 	    }
 	}
     }

@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.2 1998/08/13 06:01:00 boyns Exp $ */
+/* $Id: Configuration.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -42,230 +42,230 @@ class Configuration extends Prefs
     ConfigurationFrame frame = null;
     Vector configurationListeners = null;
     
-    Configuration ()
+    Configuration()
     {
-	autoConfigPatterns = new Vector ();
-	autoConfigNames = new Vector ();
-	configurationListeners = new Vector ();
+	autoConfigPatterns = new Vector();
+	autoConfigNames = new Vector();
+	configurationListeners = new Vector();
     }
 
-    void addConfigurationListener (Object obj)
+    void addConfigurationListener(Object obj)
     {
-	configurationListeners.addElement (obj);
-	updateConfigurationListener (obj);
+	configurationListeners.addElement(obj);
+	updateConfigurationListener(obj);
     }
 
-    synchronized void updateConfigurationListener (Object obj)
+    synchronized void updateConfigurationListener(Object obj)
     {
 	if (obj instanceof Label)
 	{
 	    Label label = (Label) obj;
-	    label.setText ("Current Configuration: " + getCurrent ());
-	    label.doLayout ();
+	    label.setText("Current Configuration: " + getCurrent());
+	    label.doLayout();
 	}
 	else if (obj instanceof Choice)
 	{
 	    Choice choice = (Choice) obj;
-	    choice.select (getCurrent ());
+	    choice.select(getCurrent());
 	}
 	else if (obj instanceof ConfigurationListener)
 	{
 	    ConfigurationListener cl = (ConfigurationListener) obj;
-	    cl.configurationChanged (getCurrent ());
+	    cl.configurationChanged(getCurrent());
 	}
     }
 
-    void updateConfigurationListeners ()
+    void updateConfigurationListeners()
     {
-	for (int i = 0; i < configurationListeners.size (); i++)
+	for (int i = 0; i < configurationListeners.size(); i++)
 	{
-	    Object obj = configurationListeners.elementAt (i);
-	    updateConfigurationListener (obj);
+	    Object obj = configurationListeners.elementAt(i);
+	    updateConfigurationListener(obj);
 	}
     }
 
-    void setDefault (String name)
+    void setDefault(String name)
     {
 	defaultConfig = name;
     }
 
-    String getDefault ()
+    String getDefault()
     {
 	return defaultConfig;
     }
     
-    synchronized void setCurrent (String name)
+    synchronized void setCurrent(String name)
     {
 	currentConfig = name;
-	if (! exists (currentConfig))
+	if (! exists(currentConfig))
 	{
-	    createConfig (currentConfig);
+	    createConfig(currentConfig);
 	}
-	updateConfigurationListeners ();
+	updateConfigurationListeners();
     }
 
-    String getCurrent ()
+    String getCurrent()
     {
 	return currentConfig;
     }
 
-    void createConfig (String name)
+    void createConfig(String name)
     {
-	if (! name.endsWith (".conf"))
+	if (! name.endsWith(".conf"))
 	{
 	    name = name + ".conf";
 	}
-	System.out.println ("Creating new configuration: " + name);
-	UserPrefs prefs = new UserPrefs (name);
-	prefs.setUserDirectory (getUserDirectory ());
-	put (name, prefs);
-	updateConfigurationListeners ();
+	System.out.println("Creating new configuration: " + name);
+	UserPrefs prefs = new UserPrefs(name);
+	prefs.setUserDirectory(getUserDirectory());
+	put(name, prefs);
+	updateConfigurationListeners();
     }
 
-    UserPrefs getUserPrefs ()
+    UserPrefs getUserPrefs()
     {
-	return getUserPrefs (currentConfig);
+	return getUserPrefs(currentConfig);
     }
 
-    UserPrefs getUserPrefs (String config)
+    UserPrefs getUserPrefs(String config)
     {
-	UserPrefs prefs = (UserPrefs) get (config);
-	prefs.load (); /* Load if necessary */
+	UserPrefs prefs = (UserPrefs) get(config);
+	prefs.load(); /* Load if necessary */
 	return prefs;
     }
 
-    String autoConfig (String pattern)
+    String autoConfig(String pattern)
     {
-	for (int i = 0; i < autoConfigPatterns.size (); i++)
+	for (int i = 0; i < autoConfigPatterns.size(); i++)
 	{
-	    RE re = (RE) autoConfigPatterns.elementAt (i);
-	    if (re.getMatch (pattern) != null)
+	    RE re = (RE) autoConfigPatterns.elementAt(i);
+	    if (re.getMatch(pattern) != null)
 	    {
-		return (String) autoConfigNames.elementAt (i);
+		return(String) autoConfigNames.elementAt(i);
 	    }
 	}
 	return defaultConfig;
     }
 
-    String getAutoConfigFile ()
+    String getAutoConfigFile()
     {
-	return getUserFile (autoConfigFile);
+	return getUserFile(autoConfigFile);
     }
 
-    String getUserConfigFile (String name)
+    String getUserConfigFile(String name)
     {
-	return getUserFile (name);
+	return getUserFile(name);
     }
 
-    boolean deleteUserConfigFile (String name)
+    boolean deleteUserConfigFile(String name)
     {
-	File file = new File (getUserConfigFile (name));
-	return file.delete ();
+	File file = new File(getUserConfigFile(name));
+	return file.delete();
     }
 
-    boolean delete (String name)
+    boolean delete(String name)
     {
-	if (name.equals (getDefault ()))
+	if (name.equals(getDefault()))
 	{
-	    System.out.println ("Can't delete default configuration");
+	    System.out.println("Can't delete default configuration");
 	    return false;
 	}
 	
-	remove (name);
+	remove(name);
 
-	if (name.equals (getCurrent ()))
+	if (name.equals(getCurrent()))
 	{
-	    setCurrent (getDefault ());
+	    setCurrent(getDefault());
 	}
 
 	return true;
     }
 
-    void load (Reader reader)
+    void load(Reader reader)
     {
-	autoConfigPatterns = new Vector ();
-	autoConfigNames = new Vector ();
+	autoConfigPatterns = new Vector();
+	autoConfigNames = new Vector();
 	
 	try
 	{
-	    BufferedReader in = new BufferedReader (reader);
+	    BufferedReader in = new BufferedReader(reader);
 	    String s;
-	    while ((s = in.readLine ()) != null)
+	    while ((s = in.readLine()) != null)
 	    {
-		StringTokenizer st = new StringTokenizer (s, " \t");
-		String pattern = st.nextToken ();
-		String name = st.nextToken ();
+		StringTokenizer st = new StringTokenizer(s, " \t");
+		String pattern = st.nextToken();
+		String name = st.nextToken();
 
-		RE re = new RE (pattern);
-		autoConfigPatterns.addElement (re);
-		autoConfigNames.addElement (name);
+		RE re = new RE(pattern);
+		autoConfigPatterns.addElement(re);
+		autoConfigNames.addElement(name);
 	    }
-	    in.close ();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
     }
 
-    void load ()
+    void load()
     {
-	File file = new File (getAutoConfigFile ());
-	if (!file.exists ())
+	File file = new File(getAutoConfigFile());
+	if (!file.exists())
 	{
-	    System.out.println (file.getAbsolutePath () + " does not exist");
+	    System.out.println(file.getAbsolutePath() + " does not exist");
 	    return;
 	}
 
-	System.out.println ("Using " + file.getAbsolutePath ());
+	System.out.println("Using " + file.getAbsolutePath());
 	try
 	{
-	    load (new FileReader (file));
+	    load(new FileReader(file));
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
     }
 
-    void reload ()
+    void reload()
     {
-	load ();
+	load();
 	if (frame != null)
 	{
-	    frame.loadAutoConfigFile ();
+	    frame.loadAutoConfigFile();
 	}
     }
 
-    void rescan ()
+    void rescan()
     {
-	clear ();
-	scan ();
+	clear();
+	scan();
     }
 
-    void scan ()
+    void scan()
     {
-	File dir = new File (getUserDirectory ());
-	if (!dir.exists ())
+	File dir = new File(getUserDirectory());
+	if (!dir.exists())
 	{
 	    return;
 	}
 
-	String list[] = dir.list (new ConfFileFilter ());
+	String list[] = dir.list(new ConfFileFilter());
 	for (int i = 0; i < list.length; i++)
 	{
-	    UserPrefs prefs = new UserPrefs (list[i]);
-	    prefs.setUserDirectory (getUserDirectory ());
-	    put (list[i], prefs);
+	    UserPrefs prefs = new UserPrefs(list[i]);
+	    prefs.setUserDirectory(getUserDirectory());
+	    put(list[i], prefs);
 	}
     }
 
-    void createFrame ()
+    void createFrame()
     {
 	if (frame == null)
 	{
-	    frame = new ConfigurationFrame (this);
+	    frame = new ConfigurationFrame(this);
 	}
-	frame.show ();
+	frame.show();
     }
 }

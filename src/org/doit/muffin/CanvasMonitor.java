@@ -1,4 +1,4 @@
-/* $Id: CanvasMonitor.java,v 1.3 1998/10/01 03:13:41 boyns Exp $ */
+/* $Id: CanvasMonitor.java,v 1.4 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -58,35 +58,35 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
     /**
      * Create the CanvasMonitor.
      */
-    CanvasMonitor (Main parent)
+    CanvasMonitor(Main parent)
     {
 	this.parent = parent;
 	
-	handlers = new Vector (100);
+	handlers = new Vector(100);
 
-	font = Main.getOptions ().getFont ("muffin.smallfont");
-	fontMetrics = getFontMetrics (font);
-	setFont (font);
+	font = Main.getOptions().getFont("muffin.smallfont");
+	fontMetrics = getFontMetrics(font);
+	setFont(font);
 
-	colorTable = new Hashtable ();
-	colorTable.put ("text/html", Color.cyan);
-	colorTable.put ("text/plain", Color.cyan);
+	colorTable = new Hashtable();
+	colorTable.put("text/html", Color.cyan);
+	colorTable.put("text/plain", Color.cyan);
 	
-	colorTable.put ("image/gif", Color.green);
-	colorTable.put ("image/jpeg", Color.green);
-	colorTable.put ("image/jpg", Color.green);
-	colorTable.put ("image/tiff", Color.green);
-	colorTable.put ("image/x-png", Color.green);
+	colorTable.put("image/gif", Color.green);
+	colorTable.put("image/jpeg", Color.green);
+	colorTable.put("image/jpg", Color.green);
+	colorTable.put("image/tiff", Color.green);
+	colorTable.put("image/x-png", Color.green);
 
-	colorTable.put ("audio/basic", Color.orange);
-	colorTable.put ("audio/x-wav", Color.orange);
-	colorTable.put ("audio/x-aiff", Color.orange);
-	colorTable.put ("audio/x-realaudio", Color.orange);
+	colorTable.put("audio/basic", Color.orange);
+	colorTable.put("audio/x-wav", Color.orange);
+	colorTable.put("audio/x-aiff", Color.orange);
+	colorTable.put("audio/x-realaudio", Color.orange);
 	
-	colorTable.put ("secure", Color.yellow);
-	colorTable.put ("default", Color.white);
+	colorTable.put("secure", Color.yellow);
+	colorTable.put("default", Color.white);
 
-	addMouseListener (this);
+	addMouseListener(this);
     }
 
     /**
@@ -94,10 +94,10 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
      *
      * @param h handler to be monitored
      */
-    public void register (Handler h)
+    public void register(Handler h)
     {
-	handlers.addElement (h);
-	repaint ();
+	handlers.addElement(h);
+	repaint();
     }
 
     /**
@@ -105,10 +105,10 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
      *
      * @param h handler to be unregistered.
      */
-    public void unregister (Handler h)
+    public void unregister(Handler h)
     {
-	handlers.removeElement (h);
-	repaint ();
+	handlers.removeElement(h);
+	repaint();
     }
 
     /**
@@ -116,32 +116,32 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
      *
      * @param h handler that needs updating
      */
-    public void update (Handler h)
+    public void update(Handler h)
     {
-	repaint ();
+	repaint();
     }
 
     /**
      * Suspend monitoring.
      */
-    public void suspend ()
+    public void suspend()
     {
 	suspended = true;
-	repaint ();
+	repaint();
     }
 
     /**
      * Resume monitoring.
      */
-    public void resume ()
+    public void resume()
     {
 	suspended = false;
-	repaint ();
+	repaint();
     }
 
-    public Enumeration enumerate ()
+    public Enumeration enumerate()
     {
-	return handlers.elements ();
+	return handlers.elements();
     }
 
     public void minimize(boolean enable)
@@ -153,30 +153,30 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
     /**
      * Make sure the canvas is a fixed size.
      */
-    public Dimension getPreferredSize ()
+    public Dimension getPreferredSize()
     {
-	return getMinimumSize ();
+	return getMinimumSize();
     }
 
     /**
      * Make sure the canvas is a fixed size.
      */
-    public Dimension getMinimumSize ()
+    public Dimension getMinimumSize()
     {
 	return minimized ? smallSize : normalSize;
     }
 
-    public void update (Graphics g)
+    public void update(Graphics g)
     {
-	paint (g);
+	paint(g);
     }
     
-    public void paint (Graphics g)
+    public void paint(Graphics g)
     {
-        Dimension d = getSize ();
-	Image dbuf = createImage (d.width, d.height);
-	draw (dbuf.getGraphics ());
-	g.drawImage (dbuf, 0, 0, this);
+        Dimension d = getSize();
+	Image dbuf = createImage(d.width, d.height);
+	draw(dbuf.getGraphics());
+	g.drawImage(dbuf, 0, 0, this);
     }
     
     /**
@@ -185,49 +185,49 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
      *
      * @param g graphics object
      */
-    void draw (Graphics g)
+    void draw(Graphics g)
     {
-	Insets insets = new Insets (5, 5, 5, 5);
-	Dimension d = getSize ();
+	Insets insets = new Insets(5, 5, 5, 5);
+	Dimension d = getSize();
 
 	if (suspended)
 	{
-	    Color c = Main.getOptions ().getColor ("muffin.bg");
-	    c = c.darker ();
-	    g.setColor (c);
-	    g.fill3DRect (2, 2, d.width-4, d.height-4, false);
+	    Color c = Main.getOptions().getColor("muffin.bg");
+	    c = c.darker();
+	    g.setColor(c);
+	    g.fill3DRect(2, 2, d.width-4, d.height-4, false);
 	}
 	else
 	{
-	    g.setColor (Main.getOptions ().getColor ("muffin.bg"));
-	    g.fill3DRect (2, 2, d.width-4, d.height-4, true);
+	    g.setColor(Main.getOptions().getColor("muffin.bg"));
+	    g.fill3DRect(2, 2, d.width-4, d.height-4, true);
 	}
 	
 	int y = insets.top;
 	
-	Enumeration e = handlers.elements ();
- 	while (e.hasMoreElements ())
+	Enumeration e = handlers.elements();
+ 	while (e.hasMoreElements())
  	{
-	    Object obj = e.nextElement ();
+	    Object obj = e.nextElement();
  	    Handler handler = (Handler) obj;
 	    Reply reply = handler.reply;
 	    Request request = handler.request;
 
-	    int h = minimized ? 5 : fontMetrics.getHeight ();
-	    int currentBytes = handler.getCurrentBytes ();
-	    int totalBytes = handler.getTotalBytes ();
+	    int h = minimized ? 5 : fontMetrics.getHeight();
+	    int currentBytes = handler.getCurrentBytes();
+	    int totalBytes = handler.getTotalBytes();
 	    int meterLength = 0;
 	    int meterMax = d.width - insets.left - insets.right;
 	    String contentType = null;
-	    StringBuffer buf = new StringBuffer ();
+	    StringBuffer buf = new StringBuffer();
 
 	    if (reply != null)
 	    {
-		contentType = reply.getContentType ();
+		contentType = reply.getContentType();
 		if (contentType != null)
 		{
-		    buf.append (contentType);
-		    buf.append (" ");
+		    buf.append(contentType);
+		    buf.append(" ");
 		}
 		
 		if (totalBytes > 0)
@@ -239,94 +239,94 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
 			percentComplete = 1.0;
 		    }
 		    meterLength = (int)(percentComplete*meterMax);
-		    buf.append ((int)(percentComplete*100));
-		    buf.append ("% of ");
+		    buf.append((int)(percentComplete*100));
+		    buf.append("% of ");
 		    if (totalBytes >= 1024)
 		    {
-			buf.append (totalBytes/1024);
-			buf.append ("k");
+			buf.append(totalBytes/1024);
+			buf.append("k");
 		    }
 		    else
 		    {
-			buf.append (totalBytes);
-			buf.append (" bytes");
+			buf.append(totalBytes);
+			buf.append(" bytes");
 		    }
 		}
 		else
 		{
 		    if (currentBytes >= 1024)
 		    {
-			buf.append (currentBytes/1024);
-			buf.append ("k");
+			buf.append(currentBytes/1024);
+			buf.append("k");
 		    }
 		    else
 		    {
-			buf.append (currentBytes);
-			buf.append (" bytes");
+			buf.append(currentBytes);
+			buf.append(" bytes");
 		    }
 		}
 
-		if (request.getCommand ().equals ("CONNECT"))
+		if (request.getCommand().equals("CONNECT"))
 		{
-		    buf.append (" - ");
-		    buf.append (request.getHost ());
+		    buf.append(" - ");
+		    buf.append(request.getHost());
 		}
 		else
 		{
-		    String url = request.getURL ();
-		    String path = request.getPath ();
-		    String doc = request.getDocument ();
+		    String url = request.getURL();
+		    String path = request.getPath();
+		    String doc = request.getDocument();
 
-		    if (fontMetrics.stringWidth (buf.toString () + url + " - ") < meterMax - 5)
+		    if (fontMetrics.stringWidth(buf.toString() + url + " - ") < meterMax - 5)
 		    {
-			buf.append (" - ");
-			buf.append (url);
+			buf.append(" - ");
+			buf.append(url);
 		    }
-		    else if (fontMetrics.stringWidth (buf.toString () + path + " - ") < meterMax - 5)
+		    else if (fontMetrics.stringWidth(buf.toString() + path + " - ") < meterMax - 5)
 		    {
-			buf.append (" - ");
-			buf.append (path);
+			buf.append(" - ");
+			buf.append(path);
 		    }
-		    else if (fontMetrics.stringWidth (buf.toString () + doc + " - ") < meterMax - 5)
+		    else if (fontMetrics.stringWidth(buf.toString() + doc + " - ") < meterMax - 5)
 		    {
-			buf.append (" - ");
-			buf.append (doc);
+			buf.append(" - ");
+			buf.append(doc);
 		    }
 		}
 	    }
 	    else if (request != null)
 	    {
-		buf.append ("Contacting ");
-		String url = request.getURL ();
+		buf.append("Contacting ");
+		String url = request.getURL();
 
-		if (request.getCommand ().equals ("CONNECT"))
+		if (request.getCommand().equals("CONNECT"))
 		{
-		    buf.append (request.getHost ());
-		    buf.append (" ");
-		    buf.append (request.getPort ());
+		    buf.append(request.getHost());
+		    buf.append(" ");
+		    buf.append(request.getPort());
 		}
-		else if (fontMetrics.stringWidth (buf.toString () + url) < meterMax - 5)
+		else if (fontMetrics.stringWidth(buf.toString() + url) < meterMax - 5)
 		{
-		    buf.append (url);
+		    buf.append(url);
 		}
 		else
 		{
-		    buf.append (request.getHost ());
-		    String path = request.getPath ();
-		    String doc = request.getDocument ();
-		    if (fontMetrics.stringWidth (buf.toString () + path) < meterMax - 5)
+		    buf.append(request.getHost());
+		    String path = request.getPath();
+		    String doc = request.getDocument();
+		    if (fontMetrics.stringWidth(buf.toString() + path) < meterMax - 5)
 		    {
-			buf.append (path);
+			buf.append(path);
 		    }
-		    else if (fontMetrics.stringWidth (buf.toString () + doc + "...") < meterMax - 5)
+		    else if (fontMetrics.stringWidth(buf.toString() + doc + "...") < meterMax - 5)
 		    {
-			buf.append ("...");
-			buf.append (doc);
+			buf.append("...");
+			buf.append(doc);
 		    }
 		}
-		if (fontMetrics.stringWidth (buf.toString () + " ...") < meterMax - 5)
+		if (fontMetrics.stringWidth(buf.toString() + " ...") < meterMax - 5)
 		{
-		    buf.append (" ...");
+		    buf.append(" ...");
 		}
 	    }
 	    else
@@ -334,45 +334,45 @@ class CanvasMonitor extends Canvas implements Monitor, MouseListener
 		continue;
 	    }
 
-	    boolean isSecure = request.getCommand ().equals ("CONNECT");
+	    boolean isSecure = request.getCommand().equals("CONNECT");
 	    
 	    if (minimized)
 	    {
-		g.setColor (Main.getOptions ().getColor ("muffin.fg"));
-		g.drawRect (insets.left, y, meterMax, h);
+		g.setColor(Main.getOptions().getColor("muffin.fg"));
+		g.drawRect(insets.left, y, meterMax, h);
 	    }
 	    else
 	    {
-		g.setColor (Main.getOptions ().getColor ("muffin.bg"));
-		g.fill3DRect (insets.left, y, meterMax, h, true);
+		g.setColor(Main.getOptions().getColor("muffin.bg"));
+		g.fill3DRect(insets.left, y, meterMax, h, true);
 	    }
 	    
 	    if (isSecure)
 	    {
-		g.setColor ((Color) colorTable.get ("secure"));
+		g.setColor((Color) colorTable.get("secure"));
 	    }
-	    else if (contentType == null || !colorTable.containsKey (contentType))
+	    else if (contentType == null || !colorTable.containsKey(contentType))
 	    {
-		g.setColor ((Color) colorTable.get ("default"));
+		g.setColor((Color) colorTable.get("default"));
 	    }
 	    else
 	    {
-		g.setColor ((Color) colorTable.get (contentType));
+		g.setColor((Color) colorTable.get(contentType));
 	    }
 
 	    if (isSecure)
 	    {
-		g.fillRect (insets.left + 1, y + 1, meterMax - 2, h - 2);
+		g.fillRect(insets.left + 1, y + 1, meterMax - 2, h - 2);
 	    }
 	    else
 	    {
-		g.fillRect (insets.left + 1, y + 1, meterLength - 2, h - 2);
+		g.fillRect(insets.left + 1, y + 1, meterLength - 2, h - 2);
 	    }
 
 	    if (!minimized)
 	    {
-		g.setColor (Color.black);
-		g.drawString (buf.toString (), insets.left + 5, y+h-fontMetrics.getMaxDescent ());
+		g.setColor(Color.black);
+		g.drawString(buf.toString(), insets.left + 5, y+h-fontMetrics.getMaxDescent());
 	    }
 	    
 	    y += h + (minimized ? 2 : 5);

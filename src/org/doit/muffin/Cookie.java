@@ -1,4 +1,4 @@
-/* $Id: Cookie.java,v 1.2 1998/08/13 06:01:06 boyns Exp $ */
+/* $Id: Cookie.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -28,78 +28,78 @@ import java.util.StringTokenizer;
 
 public class Cookie extends Hashtable
 {
-    public Cookie (String cookie, Request request)
+    public Cookie(String cookie, Request request)
     {
-	parse (cookie, request);
+	parse(cookie, request);
     }
     
-    private void parse (String cookie, Request request)
+    private void parse(String cookie, Request request)
     {
-	StringTokenizer st = new StringTokenizer (cookie, ";");
-	while (st.hasMoreTokens ())
+	StringTokenizer st = new StringTokenizer(cookie, ";");
+	while (st.hasMoreTokens())
 	{
-	    String token = st.nextToken ();
-	    token = token.trim ();
+	    String token = st.nextToken();
+	    token = token.trim();
 	    String name;
 	    String value;
-	    int i = token.indexOf ('=');
+	    int i = token.indexOf('=');
 	    if (i != -1)
 	    {
-		name = token.substring (0, i);
-		value = token.substring (i+1);
+		name = token.substring(0, i);
+		value = token.substring(i+1);
 	    }
 	    else
 	    {
 		name = token;
 		value = "";
 	    }
-	    put (name, value);
+	    put(name, value);
 	}
-	if (! containsKey ("domain"))
+	if (! containsKey("domain"))
 	{
-	    put ("domain", request.getHost ());
+	    put("domain", request.getHost());
 	}
-	if (! containsKey ("path"))
+	if (! containsKey("path"))
 	{
-	    put ("path", request.getPath ());
+	    put("path", request.getPath());
 	}
     }
 
-    public String getDomain ()
+    public String getDomain()
     {
-	return (String) get ("domain");
+	return(String) get("domain");
     }
     
-    public String getPath ()
+    public String getPath()
     {
-	return (String) get ("path");
+	return(String) get("path");
     }
 
-    public boolean compare (Request request)
+    public boolean compare(Request request)
     {
-	return request.getHost ().endsWith (getDomain ())
-	    && request.getPath ().startsWith (getPath ());
+	return request.getHost().endsWith(getDomain())
+	    && request.getPath().startsWith(getPath());
     }
 
-    public String toString ()
+    public String toString()
     {
-	StringBuffer buf = new StringBuffer ();
-	Enumeration e = keys ();
-	while (e.hasMoreElements ())
+	StringBuffer buf = new StringBuffer();
+	Enumeration e = keys();
+	while (e.hasMoreElements())
 	{
-	    if (buf.length () > 0)
+	    if (buf.length() > 0)
 	    {
-		buf.append ("; ");
+		buf.append("; ");
 	    }
-	    String key = (String) e.nextElement ();
-	    String value = (String) get (key);
-	    buf.append (key);
-	    if (value.length () > 0)
+	    String key = (String) e.nextElement();
+	    String value = (String) get(key);
+	    buf.append(key);
+	    if (value.length() > 0)
 	    {
-		buf.append ("=");
-		buf.append (value);
+		buf.append("=");
+		buf.append(value);
 	    }
 	}
-	return buf.toString ();
+	return buf.toString();
     }
 }

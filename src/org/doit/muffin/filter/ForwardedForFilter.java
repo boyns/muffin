@@ -1,4 +1,4 @@
-/* $Id: ForwardedForFilter.java,v 1.2 1998/08/13 06:02:14 boyns Exp $ */
+/* $Id: ForwardedForFilter.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,26 +29,26 @@ public class ForwardedForFilter implements RequestFilter
     Prefs prefs;
     ForwardedFor factory;
 
-    ForwardedForFilter (ForwardedFor factory)
+    ForwardedForFilter(ForwardedFor factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public void filter (Request request) throws FilterException
+    public void filter(Request request) throws FilterException
     {
-	String addr = request.getClient ().getInetAddress ().getHostAddress ();
-	if (request.containsHeaderField ("X-Forwarded-For"))
+	String addr = request.getClient().getInetAddress().getHostAddress();
+	if (request.containsHeaderField("X-Forwarded-For"))
 	{
-	    request.appendHeaderField ("X-Forwarded-For", ", " + addr);
+	    request.appendHeaderField("X-Forwarded-For", ", " + addr);
 	}
 	else
 	{
-	    request.setHeaderField ("X-Forwarded-For", addr);
+	    request.setHeaderField("X-Forwarded-For", addr);
 	}
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: Https.java,v 1.2 1998/08/13 06:01:22 boyns Exp $ */
+/* $Id: Https.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -31,22 +31,22 @@ class Https extends HttpConnection
 {
     boolean proxy = false;
     
-    Https (String host, int port) throws IOException
+    Https(String host, int port) throws IOException
     {
-	super (host, port);
+	super(host, port);
     }
 
-    Https (String host, int port, boolean isProxy) throws IOException
+    Https(String host, int port, boolean isProxy) throws IOException
     {
-	this (host, port);
+	this(host, port);
 	proxy = isProxy;
     }
 
-    public void sendRequest (Request request) throws java.io.IOException, RetryRequestException
+    public void sendRequest(Request request) throws java.io.IOException, RetryRequestException
     {
 	if (proxy)
 	{
-	    super.sendRequest (request);
+	    super.sendRequest(request);
 	}
 	else
 	{
@@ -54,17 +54,17 @@ class Https extends HttpConnection
 	}
     }
     
-    public Reply recvReply (Request request) throws java.io.IOException, RetryRequestException
+    public Reply recvReply(Request request) throws java.io.IOException, RetryRequestException
     {
-	Reply reply = new Reply (getInputStream ());
+	Reply reply = new Reply(getInputStream());
 	if (proxy)
 	{
-	    reply.read ();
+	    reply.read();
 	}
 	else
 	{
 	    reply.statusLine = "HTTP/1.0 200 Connection established";
-	    reply.setHeaderField ("Proxy-agent", "Muffin");
+	    reply.setHeaderField("Proxy-agent", "Muffin");
 	}
         return reply;
     }

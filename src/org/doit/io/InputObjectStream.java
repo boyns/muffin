@@ -1,4 +1,4 @@
-/* $Id: InputObjectStream.java,v 1.2 1998/08/13 06:00:43 boyns Exp $ */
+/* $Id: InputObjectStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -34,7 +34,7 @@ import java.util.Vector;
 public class InputObjectStream
 {
     protected final int maxObjects = 64;
-    protected Vector objects = new Vector ();
+    protected Vector objects = new Vector();
 
     protected Thread inputThread = null;
     protected Thread outputThread = null;
@@ -42,54 +42,54 @@ public class InputObjectStream
     protected boolean closed = true;
     protected boolean connected = false;
 
-    public InputObjectStream (OutputObjectStream out) throws IOException
+    public InputObjectStream(OutputObjectStream out) throws IOException
     {
-	connect (out);
+	connect(out);
     }
 
-    public InputObjectStream ()
+    public InputObjectStream()
     {
     }
 
-    public void connect (OutputObjectStream out) throws IOException
+    public void connect(OutputObjectStream out) throws IOException
     {
 	if (connected)
 	{
-	    throw new IOException ("Input side already connected");
+	    throw new IOException("Input side already connected");
 	}
-	out.connect (this);
+	out.connect(this);
 	connected = true;
     }
     
-    public synchronized Object read () throws IOException
+    public synchronized Object read() throws IOException
     {
-	inputThread = Thread.currentThread ();
+	inputThread = Thread.currentThread();
 
-	while (objects.isEmpty ())
+	while (objects.isEmpty())
 	{
 	    if (closed)
 	    {
 		return null; /* EOF */
 	    }
-	    if (outputThread != null && !outputThread.isAlive ())
+	    if (outputThread != null && !outputThread.isAlive())
 	    {
-		throw new IOException ("Output side not connected");
+		throw new IOException("Output side not connected");
 	    }
-	    notify ();
+	    notify();
 	    try
 	    {
-		wait ();
+		wait();
 	    }
 	    catch (InterruptedException e)
 	    {
-		throw new InterruptedIOException ();
+		throw new InterruptedIOException();
 	    }
 	}
 
-	Object o = objects.firstElement ();
+	Object o = objects.firstElement();
 	try
 	{
-	    objects.removeElementAt (0);
+	    objects.removeElementAt(0);
 	}
 	catch (Exception e)
 	{
@@ -97,43 +97,43 @@ public class InputObjectStream
 	return o;
     }
 
-    public synchronized void unread (Object obj) throws IOException
+    public synchronized void unread(Object obj) throws IOException
     {
-	objects.insertElementAt (obj, 0);
+	objects.insertElementAt(obj, 0);
     }
     
-    public void close () throws IOException
+    public void close() throws IOException
     {
-	objects.removeAllElements ();
+	objects.removeAllElements();
     }
 
-    protected synchronized void append (Object newObject) throws IOException
+    protected synchronized void append(Object newObject) throws IOException
     {
-	outputThread = Thread.currentThread ();
+	outputThread = Thread.currentThread();
 
-	while (objects.size () == maxObjects)
+	while (objects.size() == maxObjects)
 	{
-	    if (inputThread != null && !inputThread.isAlive ())
+	    if (inputThread != null && !inputThread.isAlive())
 	    {
-		throw new IOException ("Input side not connected");
+		throw new IOException("Input side not connected");
 	    }
-	    notify ();
+	    notify();
 	    try
 	    {
-		wait ();
+		wait();
 	    }
 	    catch (InterruptedException e)
 	    {
-		throw new InterruptedIOException ();
+		throw new InterruptedIOException();
 	    }
 	}
 
-	objects.addElement (newObject);
+	objects.addElement(newObject);
     }
 
-    protected synchronized void done ()
+    protected synchronized void done()
     {
 	closed = true;
-	notify ();
+	notify();
     }
 }

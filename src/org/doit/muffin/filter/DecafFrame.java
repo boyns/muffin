@@ -1,4 +1,4 @@
-/* $Id: DecafFrame.java,v 1.2 1998/08/13 06:02:07 boyns Exp $ */
+/* $Id: DecafFrame.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -32,124 +32,124 @@ public class DecafFrame extends MuffinFrame implements ActionListener, WindowLis
     Decaf parent;
     Checkbox noJava, noJavaScript;
     
-    public DecafFrame (Prefs prefs, Decaf parent)
+    public DecafFrame(Prefs prefs, Decaf parent)
     {
-	super ("Muffin: Decaf");
+	super("Muffin: Decaf");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-	panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+	panel.setLayout(layout);
 	GridBagConstraints c;
 
-	noJavaScript = new Checkbox ("No JavaScript");
-	noJavaScript.setState (prefs.getBoolean ("Decaf.noJavaScript"));
-	noJava = new Checkbox ("No Java");
-	noJava.setState (prefs.getBoolean ("Decaf.noJava"));
+	noJavaScript = new Checkbox("No JavaScript");
+	noJavaScript.setState(prefs.getBoolean("Decaf.noJavaScript"));
+	noJava = new Checkbox("No Java");
+	noJava.setState(prefs.getBoolean("Decaf.noJava"));
 	
-	c = new GridBagConstraints ();
-	layout.setConstraints (noJavaScript, c);
-	panel.add (noJavaScript);
+	c = new GridBagConstraints();
+	layout.setConstraints(noJavaScript, c);
+	panel.add(noJavaScript);
 	
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (noJava, c);
-	panel.add (noJava);
+	layout.setConstraints(noJava, c);
+	panel.add(noJava);
 	
-	add ("North", panel);
+	add("North", panel);
 	
-	parent.messages.setEditable (false);
-	add ("Center", parent.messages);
+	parent.messages.setEditable(false);
+	add("Center", parent.messages);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 5));
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 5));
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
 
-	add ("South", buttonPanel);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putBoolean ("Decaf.noJavaScript", noJavaScript.getState ());
-	    prefs.putBoolean ("Decaf.noJava", noJava.getState ());
+	    prefs.putBoolean("Decaf.noJavaScript", noJavaScript.getState());
+	    prefs.putBoolean("Decaf.noJava", noJava.getState());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    parent.messages.clear ();
+	    parent.messages.clear();
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("Decaf");
+	    new HelpFrame("Decaf");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

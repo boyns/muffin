@@ -1,4 +1,4 @@
-/* $Id: ImageCanvas.java,v 1.2 1998/08/13 06:01:25 boyns Exp $ */
+/* $Id: ImageCanvas.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -45,22 +45,22 @@ public class ImageCanvas extends java.awt.Canvas
     /**
      * Create an ImageCanvas.
      */
-    public ImageCanvas (String imageFile, Color bg, boolean border)
+    public ImageCanvas(String imageFile, Color bg, boolean border)
     {
 	try
 	{
-	    MediaTracker tracker = new MediaTracker (this);
-	    URL url = getClass ().getResource (imageFile);
+	    MediaTracker tracker = new MediaTracker(this);
+	    URL url = getClass().getResource(imageFile);
 	    if (url != null)
 	    {
-		image = Toolkit.getDefaultToolkit ().createImage ((ImageProducer) url.getContent ());
-		tracker.addImage (image, 1);
-		tracker.waitForAll ();
+		image = Toolkit.getDefaultToolkit().createImage((ImageProducer) url.getContent());
+		tracker.addImage(image, 1);
+		tracker.waitForAll();
 	    }
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
 	
 	this.bg = bg;
@@ -68,45 +68,45 @@ public class ImageCanvas extends java.awt.Canvas
 
 	if (bg != null)
 	{
-	    setBackground (bg);
+	    setBackground(bg);
 	}
     }
 
-    public ImageCanvas (Image image)
+    public ImageCanvas(Image image)
     {
 	this.image = image;
     }
     
-    public Dimension getPreferredSize ()
+    public Dimension getPreferredSize()
     {
-	return new Dimension (image.getWidth (this), image.getHeight (this));
+	return new Dimension(image.getWidth(this), image.getHeight(this));
     }
 
-    public Dimension getPreferredSize (int rows)
+    public Dimension getPreferredSize(int rows)
     {
-	return new Dimension (image.getWidth (this), image.getHeight (this));
+	return new Dimension(image.getWidth(this), image.getHeight(this));
     }
 
-    public Dimension getMinimumSize ()
+    public Dimension getMinimumSize()
     {
-	return new Dimension (image.getWidth (this), image.getHeight (this));
+	return new Dimension(image.getWidth(this), image.getHeight(this));
     }
 
-    public Dimension getMinimumSize (int rows)
+    public Dimension getMinimumSize(int rows)
     {
-	return new Dimension (image.getWidth (this), image.getHeight (this));
+	return new Dimension(image.getWidth(this), image.getHeight(this));
     }
 
-    public void paint (Graphics g)
+    public void paint(Graphics g)
     {
 	if (image != null)
 	{
-	    g.drawImage (image, 0, 0, this);
+	    g.drawImage(image, 0, 0, this);
 	}
 	if (border)
 	{
-	    g.setColor (Color.black);
-	    g.drawRect (0, 0, image.getWidth (this)-1, image.getHeight (this)-1);
+	    g.setColor(Color.black);
+	    g.drawRect(0, 0, image.getWidth(this)-1, image.getHeight(this)-1);
 	}
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: Test.java,v 1.2 1998/08/13 06:03:05 boyns Exp $ */
+/* $Id: Test.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,41 +29,41 @@ public class Test implements FilterFactory
 {
     FilterManager manager;
     Prefs prefs;
-    Hashtable table = new Hashtable ();
+    Hashtable table = new Hashtable();
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new TestFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new TestFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 }
 

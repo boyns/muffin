@@ -1,4 +1,4 @@
-/* $Id: YesNoDialog.java,v 1.2 1998/08/13 06:03:11 boyns Exp $ */
+/* $Id: YesNoDialog.java,v 1.3 1998/12/19 21:24:21 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,79 +29,79 @@ public class YesNoDialog extends Dialog implements ActionListener, WindowListene
 {
     boolean answer = false;
     
-    public YesNoDialog (Frame frame, String question)
+    public YesNoDialog(Frame frame, String question)
     {
-	super (frame, "Muffin: Question", true);
+	super(frame, "Muffin: Question", true);
 
-	setFont (new Font ("Helvetica", Font.BOLD, 12));
+	setFont(new Font("Helvetica", Font.BOLD, 12));
 	
-	add ("Center", new Label (question));
+	add("Center", new Label(question));
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
 	Button b;
-	b = new Button ("Yes");
-	b.setActionCommand ("doYes");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("No");
-	b.setActionCommand ("doNo");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Yes");
+	b.setActionCommand("doYes");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("No");
+	b.setActionCommand("doNo");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
-	pack ();
-	setSize (getPreferredSize ());
+	addWindowListener(this);
+	pack();
+	setSize(getPreferredSize());
     }
 
-    public boolean isYes ()
+    public boolean isYes()
     {
 	return answer;
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doYes".equals (arg))
+	if ("doYes".equals(arg))
 	{
 	    answer = true;
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doNo".equals (arg))
+	else if ("doNo".equals(arg))
 	{
 	    answer = false;
-	    setVisible (false);
+	    setVisible(false);
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

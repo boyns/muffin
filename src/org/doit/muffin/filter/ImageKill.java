@@ -41,85 +41,93 @@ public class ImageKill implements FilterFactory
     MessageArea messages = null;
     private RE exclude = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putInteger ("ImageKill.minheight", 10);
-	prefs.putInteger ("ImageKill.minwidth", 100);
-	prefs.putInteger ("ImageKill.ratio", 5);
-	prefs.putBoolean ("ImageKill.keepmaps", true);
-	prefs.putString ("ImageKill.exclude", "(button|map)");
-	prefs.putInteger ("ImageKill.historySize", 500);
-	prefs.setOverride (o);
-	messages =
-	    new MessageArea (prefs.getInteger ("ImageKill.historySize"));
-	setExclude ();
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putInteger("ImageKill.minheight", 10);
+	prefs.putInteger("ImageKill.minwidth", 100);
+	prefs.putInteger("ImageKill.ratio", 5);
+	prefs.putBoolean("ImageKill.keepmaps", true);
+	prefs.putString("ImageKill.exclude", "(button|map)");
+	prefs.putInteger("ImageKill.historySize", 500);
+	prefs.putString("ImageKill.logfile", Main.getOptions().getString("muffin.logfile"));
+	prefs.setOverride(o);
+
+	messages = new MessageArea(prefs.getUserFile(prefs.getString("ImageKill.logfile")),
+				   "ImageKill",
+				   prefs.getInteger("ImageKill.historySize"));
+	setExclude();
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new ImageKillFrame (prefs, this);
+	    frame = new ImageKillFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new ImageKillFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new ImageKillFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void process (String s)
+    void report(Request request, String message)
     {
-	messages.append (s);
+	report("[" + request.getRequest() + "] " + message);
     }
 
-    boolean isExcluded (String s)
+    void report(String message)
     {
-	return (exclude != null && exclude.getMatch (s) != null);
+	messages.append(message + "\n");
+    }
+
+    boolean isExcluded(String s)
+    {
+	return(exclude != null && exclude.getMatch(s) != null);
     }
 
     public void setExclude()
     {
         exclude = null;
-        String ex = prefs.getString ("ImageKill.exclude");
-	if (ex != null && !ex.equals (""))
+        String ex = prefs.getString("ImageKill.exclude");
+	if (ex != null && !ex.equals(""))
 	{
             try {
-	        exclude = new RE (ex);
+	        exclude = new RE(ex);
 	    }
 	    catch (REException e) {
-	        System.out.println ("NoThanks REException: "
-				    + e.getMessage ());
+	        System.out.println("NoThanks REException: "
+				    + e.getMessage());
 	    }
 	}
     }

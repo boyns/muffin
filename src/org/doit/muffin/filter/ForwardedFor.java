@@ -1,4 +1,4 @@
-/* $Id: ForwardedFor.java,v 1.2 1998/08/13 06:02:13 boyns Exp $ */
+/* $Id: ForwardedFor.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,33 +29,33 @@ public class ForwardedFor implements FilterFactory
     FilterManager manager;
     Prefs prefs;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new ForwardedForFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new ForwardedForFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
     }
 }

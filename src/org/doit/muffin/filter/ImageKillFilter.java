@@ -42,87 +42,86 @@ public class ImageKillFilter implements ContentFilter
     OutputObjectStream out = null;
     Request request = null;
 
-    ImageKillFilter (ImageKill factory)
+    ImageKillFilter(ImageKill factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	this.request = request;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
     
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("ImageKill");
+	Thread.currentThread().setName("ImageKill");
 
 	try
 	{
-	    int minheight = prefs.getInteger ("ImageKill.minheight");
-	    int minwidth = prefs.getInteger ("ImageKill.minwidth");
-	    int ratio = prefs.getInteger ("ImageKill.ratio");
-	    boolean keepmaps = prefs.getBoolean ("ImageKill.keepmaps");
+	    int minheight = prefs.getInteger("ImageKill.minheight");
+	    int minwidth = prefs.getInteger("ImageKill.minwidth");
+	    int ratio = prefs.getInteger("ImageKill.ratio");
+	    boolean keepmaps = prefs.getBoolean("ImageKill.keepmaps");
 
 	    Tag tag;
 	    Object obj;
 	    while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
+		if (token.getType() == Token.TT_TAG)
 		{
-		    tag = token.createTag ();
-		    if (tag.is ("img") && 
-			tag.has ("width") && 
-			tag.has ("height") &&
-			!(keepmaps && tag.has ("usemap")) &&
-			!factory.isExcluded (tag.get ("src")))
+		    tag = token.createTag();
+		    if (tag.is("img") && 
+			tag.has("width") && 
+			tag.has("height") &&
+			!(keepmaps && tag.has("usemap")) &&
+			!factory.isExcluded(tag.get("src")))
 		    {
 			try
 			{
-			    int h = Integer.parseInt (tag.get ("height"));
+			    int h = Integer.parseInt(tag.get("height"));
 			    if (h > minheight)
 			    {
-				int w = Integer.parseInt (tag.get ("width"));
-				if  ((w > minwidth) && (w/h > ratio))
+				int w = Integer.parseInt(tag.get("width"));
+				if ((w > minwidth) && (w/h > ratio))
 				{
-				    factory.process
-					("tag removed: " + tag + "\n");
+				    factory.report(request,
+						   "removed tag " + tag);
 				    continue;
 				}
 			    }
 			}
 			catch (NumberFormatException e) {
-			    factory.process ("malformed image size: "
-					     + tag + "\n");
+			    factory.report(request, "malformed image size " + tag);
 			}
 		    }
 		}
-		out.write (token);
+		out.write(token);
 	    }
 	    
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

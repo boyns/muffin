@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFrame.java,v 1.2 1998/08/13 06:02:12 boyns Exp $ */
+/* $Id: EmptyFontFrame.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -32,109 +32,109 @@ public class EmptyFontFrame extends MuffinFrame implements ActionListener, Windo
     EmptyFont parent;
     Checkbox debug;
     
-    public EmptyFontFrame (Prefs prefs, EmptyFont parent)
+    public EmptyFontFrame(Prefs prefs, EmptyFont parent)
     {
-	super ("Muffin: EmptyFont");
+	super("Muffin: EmptyFont");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-	panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+	panel.setLayout(layout);
 	GridBagConstraints c;
 
-	debug = new Checkbox ("Debug");
-	debug.setState (prefs.getBoolean ("EmptyFont.debug"));
+	debug = new Checkbox("Debug");
+	debug.setState(prefs.getBoolean("EmptyFont.debug"));
 	
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (debug, c);
-	panel.add (debug);
+	layout.setConstraints(debug, c);
+	panel.add(debug);
 	
-	add ("North", panel);
+	add("North", panel);
 	
-	parent.messages.setEditable (false);
-	add ("Center", parent.messages);
+	parent.messages.setEditable(false);
+	add("Center", parent.messages);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
 
-	add ("South", buttonPanel);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putBoolean ("EmptyFont.debug", debug.getState ());
+	    prefs.putBoolean("EmptyFont.debug", debug.getState());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    parent.messages.clear ();
+	    parent.messages.clear();
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

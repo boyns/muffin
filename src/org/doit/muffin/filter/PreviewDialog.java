@@ -1,4 +1,4 @@
-/* $Id: PreviewDialog.java,v 1.2 1998/08/13 06:02:37 boyns Exp $ */
+/* $Id: PreviewDialog.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -33,100 +33,100 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
     TextArea text = null;
     Image image = null;
     
-    PreviewDialog (Frame frame, Request request, Reply reply, byte content[])
+    PreviewDialog(Frame frame, Request request, Reply reply, byte content[])
     {
-	super (frame, "Muffin: Preview " + request.getURL (), true);
+	super(frame, "Muffin: Preview " + request.getURL(), true);
 
 	this.content = content;
 	    
-	if (reply.getContentType ().startsWith ("text"))
+	if (reply.getContentType().startsWith("text"))
 	{
-	    text = new TextArea ();
-	    text.setEditable (true);
-	    text.setText (new String (content));
-	    add ("Center", text);
+	    text = new TextArea();
+	    text.setEditable(true);
+	    text.setText(new String(content));
+	    add("Center", text);
 	}
-	else if (reply.getContentType ().startsWith ("image"))
+	else if (reply.getContentType().startsWith("image"))
 	{
-	    image = Toolkit.getDefaultToolkit ().createImage (content);
-	    ImageCanvas ic = new ImageCanvas (image);
-	    add ("Center", ic);
+	    image = Toolkit.getDefaultToolkit().createImage(content);
+	    ImageCanvas ic = new ImageCanvas(image);
+	    add("Center", ic);
 	}
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
 	Button b;
-	b = new Button ("Accept");
-	b.setActionCommand ("doAccept");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Reject");
-	b.setActionCommand ("doReject");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Accept");
+	b.setActionCommand("doAccept");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Reject");
+	b.setActionCommand("doReject");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
-	pack ();
-	setSize (getPreferredSize ());
+	addWindowListener(this);
+	pack();
+	setSize(getPreferredSize());
     }
 
-    public boolean accept ()
+    public boolean accept()
     {
 	return accepted;
     }
 
-    public byte[] getContent ()
+    public byte[] getContent()
     {
 	return content;
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doAccept".equals (arg))
+	if ("doAccept".equals(arg))
 	{
 	    accepted = true;
 	    if (text != null)
 	    {
-		content = text.getText ().getBytes ();
+		content = text.getText().getBytes();
 	    }
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doReject".equals (arg))
+	else if ("doReject".equals(arg))
 	{
 	    accepted = false;
-	    setVisible (false);
+	    setVisible(false);
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

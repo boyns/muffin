@@ -1,4 +1,4 @@
-/* $Id: HttpRelay.java,v 1.2 1998/08/13 06:01:20 boyns Exp $ */
+/* $Id: HttpRelay.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -28,7 +28,7 @@ import java.io.IOException;
 
 public interface HttpRelay
 {
-    void sendRequest (Request request) throws IOException, RetryRequestException;
-    Reply recvReply (Request request) throws IOException, RetryRequestException;
-    void close ();
+    void sendRequest(Request request) throws IOException, RetryRequestException;
+    Reply recvReply(Request request) throws IOException, RetryRequestException;
+    void close();
 }

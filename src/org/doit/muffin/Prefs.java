@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.2 1998/08/13 06:01:35 boyns Exp $ */
+/* $Id: Prefs.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -40,124 +40,124 @@ public class Prefs extends Hashtable
     
     boolean allowOverride = true;
     
-    public Prefs (int capacity)
+    public Prefs(int capacity)
     {
-	super (capacity);
+	super(capacity);
     }
 
-    public Prefs ()
+    public Prefs()
     {
-	super ();
+	super();
     }
 
-    public void setUserDirectory (String dir)
+    public void setUserDirectory(String dir)
     {
 	userDirectory = dir;
     }
 
-    public String getUserDirectory ()
+    public String getUserDirectory()
     {
 	/* Check for a pathname */
-	if (userDirectory.indexOf (System.getProperty ("file.separator")) != -1)
+	if (userDirectory.indexOf(System.getProperty("file.separator")) != -1)
 	{
 	    return userDirectory;
 	}
 	/* Use user.home */
 	else
 	{
-	    return System.getProperty ("user.home") +
-		System.getProperty ("file.separator") +
+	    return System.getProperty("user.home") +
+		System.getProperty("file.separator") +
 		userDirectory;
 	}
     }
 
-    public void checkDirectory (String name)
+    public void checkDirectory(String name)
     {
-	File dir = new File (name);
-	if (!dir.exists ())
+	File dir = new File(name);
+	if (!dir.exists())
 	{
-	    System.out.println ("Creating " + name);
-	    if (!dir.mkdirs ())
+	    System.out.println("Creating " + name);
+	    if (!dir.mkdirs())
 	    {
-		System.out.println ("Can't create " + name);
+		System.out.println("Can't create " + name);
 	    }
 	}
     }
 
-    public void checkUserDirectory ()
+    public void checkUserDirectory()
     {
-	checkDirectory (getUserDirectory ());
+	checkDirectory(getUserDirectory());
     }
 
-    public String getUserFile (String file)
+    public String getUserFile(String file)
     {
-	if (file.indexOf (System.getProperty ("file.separator")) != -1)
+	if (file.indexOf(System.getProperty("file.separator")) != -1)
 	{
 	    return file;
 	}
-	return getUserDirectory () + System.getProperty ("file.separator") + file;
+	return getUserDirectory() + System.getProperty("file.separator") + file;
     }
 
-    public boolean exists (Object key)
+    public boolean exists(Object key)
     {
-	return containsKey (key);
+	return containsKey(key);
     }
 
-    public synchronized Object put (Object key, Object value)
+    public synchronized Object put(Object key, Object value)
     {
-	if (allowOverride || !exists (key))
+	if (allowOverride || !exists(key))
 	{
-	    return super.put (key, value);
+	    return super.put(key, value);
 	}
 	return null;
     }
 
-    public void setOverride (boolean o)
+    public void setOverride(boolean o)
     {
 	allowOverride = o;
     }
 
-    public boolean getOverride ()
+    public boolean getOverride()
     {
 	return allowOverride;
     }
     
-    public void putString (String key, String value)
+    public void putString(String key, String value)
     {
-	put (key, value);
+	put(key, value);
     }
 
-    public void putBoolean (String key, boolean value)
+    public void putBoolean(String key, boolean value)
     {
-	put (key, value ? "true" : "false");
+	put(key, value ? "true" : "false");
     }
 
-    public void putInteger (String key, int value)
+    public void putInteger(String key, int value)
     {
-	put (key, Integer.toString (value));
+	put(key, Integer.toString(value));
     }
 
-    public String getString (String key)
+    public String getString(String key)
     {
-	return (String) get (key);
+	return(String) get(key);
     }
 
-    public boolean getBoolean (String key)
+    public boolean getBoolean(String key)
     {
-	String val = getString (key);
+	String val = getString(key);
 	if (val == null)
 	{
 	    return false;
 	}
-	return "true".equalsIgnoreCase (val) ? true : false;
+	return "true".equalsIgnoreCase(val) ? true : false;
     }
 
-    public int getInteger (String key)
+    public int getInteger(String key)
     {
 	int val;
 	try
 	{
-	    val = Integer.parseInt (getString (key));
+	    val = Integer.parseInt(getString(key));
 	}
 	catch (Exception e)
 	{
@@ -166,11 +166,11 @@ public class Prefs extends Hashtable
 	return val;
     }
 
-    String toHexString (int value, int length)
+    String toHexString(int value, int length)
     {
-	String s = Integer.toHexString (value);
+	String s = Integer.toHexString(value);
 
-	while (s.length () < length)
+	while (s.length() < length)
 	{
 	    s = "0" + s;
 	}
@@ -178,20 +178,20 @@ public class Prefs extends Hashtable
 	return s;
     }
 
-    public void putColor (String key, Color c)
+    public void putColor(String key, Color c)
     {
-	putString (key, "#"
-		   + toHexString (c.getRed (), 2)
-		   + toHexString (c.getGreen (), 2)
-		   + toHexString (c.getBlue (), 2));
+	putString(key, "#"
+		   + toHexString(c.getRed(), 2)
+		   + toHexString(c.getGreen(), 2)
+		   + toHexString(c.getBlue(), 2));
     }
 
-    public Color getColor (String key)
+    public Color getColor(String key)
     {
 	Color c = null;
 	try
 	{
-	    c = Color.decode (getString (key));
+	    c = Color.decode(getString(key));
 	}
 	catch (Exception e)
 	{
@@ -199,84 +199,84 @@ public class Prefs extends Hashtable
 	return c;
     }
 
-    public Font getFont (String key)
+    public Font getFont(String key)
     {
-	return Font.decode (getString (key));
+	return Font.decode(getString(key));
     }
 
-    public Prefs extract (String clazz)
+    public Prefs extract(String clazz)
     {
-	Prefs prefs = new Prefs ();
-	Enumeration e = keys ();
-	while (e.hasMoreElements ())
+	Prefs prefs = new Prefs();
+	Enumeration e = keys();
+	while (e.hasMoreElements())
 	{
-	    String key = (String) e.nextElement ();
-	    if (key.startsWith (clazz + "."))
+	    String key = (String) e.nextElement();
+	    if (key.startsWith(clazz + "."))
 	    {
-		prefs.put (key, get (key));
+		prefs.put(key, get(key));
 	    }
 	}
 	return prefs;
     }
 
-    public void merge (Prefs prefs)
+    public void merge(Prefs prefs)
     {
-	Enumeration e = prefs.keys ();
-	while (e.hasMoreElements ())
+	Enumeration e = prefs.keys();
+	while (e.hasMoreElements())
 	{
-	    String key = (String) e.nextElement ();
-	    put (key, prefs.get (key));
+	    String key = (String) e.nextElement();
+	    put(key, prefs.get(key));
 	}
     }
 
-    public String[] getStringList (String key)
+    public String[] getStringList(String key)
     {
-	String tokens = getString (key);
+	String tokens = getString(key);
 	if (tokens == null)
 	{
 	    return new String[0];
 	}
-	StringTokenizer st = new StringTokenizer (tokens, ",");
-	String list[] = new String[st.countTokens ()];
-	for (int i = 0; st.hasMoreTokens (); i++)
+	StringTokenizer st = new StringTokenizer(tokens, ",");
+	String list[] = new String[st.countTokens()];
+	for (int i = 0; st.hasMoreTokens(); i++)
 	{
-	    list[i] = new String ((String) st.nextToken ());
+	    list[i] = new String((String) st.nextToken());
 	}
 	return list;
     }
 
-    public void putStringList (String key, String list[])
+    public void putStringList(String key, String list[])
     {
-	StringBuffer buf = new StringBuffer ();
+	StringBuffer buf = new StringBuffer();
 	for (int i = 0; i < list.length; i++)
 	{
-	    buf.append (list[i]);
+	    buf.append(list[i]);
 	    if (i != list.length - 1)
 	    {
-		buf.append (",");
+		buf.append(",");
 	    }
 	}
-	putString (key, buf.toString ());
+	putString(key, buf.toString());
     }
 
-    public synchronized Enumeration sortedKeys ()
+    public synchronized Enumeration sortedKeys()
     {
-	Enumeration e = keys ();
-	SortedList sorter = new SortedList (StringIgnoreCaseComparer.getInstance ());
-	while (e.hasMoreElements ())
+	Enumeration e = keys();
+	SortedList sorter = new SortedList(StringIgnoreCaseComparer.getInstance());
+	while (e.hasMoreElements())
 	{
-	    sorter.addElement ((String) e.nextElement ());
+	    sorter.addElement((String) e.nextElement());
 	}
-	return sorter.elements ();
+	return sorter.elements();
     }
 
-    void print ()
+    void print()
     {
-	Enumeration e = keys ();
-	while (e.hasMoreElements ())
+	Enumeration e = keys();
+	while (e.hasMoreElements())
 	{
-	    String key = (String) e.nextElement ();
-	    System.out.println (" * " + key + " = " + get (key));
+	    String key = (String) e.nextElement();
+	    System.out.println(" * " + key + " = " + get(key));
 	}
     }
 }

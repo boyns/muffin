@@ -1,4 +1,4 @@
-/* $Id: PreviewFilter.java,v 1.2 1998/08/13 06:02:38 boyns Exp $ */
+/* $Id: PreviewFilter.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -41,36 +41,36 @@ public class PreviewFilter implements ContentFilter
     Reply reply;
     Request request;
 
-    PreviewFilter (Preview factory)
+    PreviewFilter(Preview factory)
     {
 	this.factory = factory;
     }
 
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	this.request = request;
 	this.reply = reply;
 
-	String type = reply.getContentType ();
+	String type = reply.getContentType();
 	if (type == null)
 	{
 	    return false;
 	}
 
-	if (prefs.getString ("Preview.contentTypes").equals ("ALL"))
+	if (prefs.getString("Preview.contentTypes").equals("ALL"))
 	{
 	    return true;
 	}
 	
-	String previewTypes[] = prefs.getStringList ("Preview.contentTypes");
+	String previewTypes[] = prefs.getStringList("Preview.contentTypes");
 	for (int i = 0; i < previewTypes.length; i++)
 	{
-	    if (type.startsWith (previewTypes[i]))
+	    if (type.startsWith(previewTypes[i]))
 	    {
 		return true;
 	    }
@@ -79,96 +79,96 @@ public class PreviewFilter implements ContentFilter
 	return false;
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
 
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("Preview");
+	Thread.currentThread().setName("Preview");
 
 	try
 	{
-	    ByteArray buffer = new ByteArray (8192);
+	    ByteArray buffer = new ByteArray(8192);
 	    boolean accepted = false;
 	    byte content[] = null;
 	    Object obj;
 
-	    while ((obj = in.read ()) != null)
+	    while ((obj = in.read()) != null)
 	    {
 		ByteArray b = (ByteArray) obj;
-		buffer.append (b);
+		buffer.append(b);
 	    }
 	    
-	    synchronized (factory.previewFrame)
+	    synchronized(factory.previewFrame)
 	    {
-		PreviewDialog dialog = new PreviewDialog (factory.previewFrame,
+		PreviewDialog dialog = new PreviewDialog(factory.previewFrame,
 							  request,
 							  reply,
-							  buffer.getBytes ());
-		dialog.show ();
-		if (dialog.accept ())
+							  buffer.getBytes());
+		dialog.show();
+		if (dialog.accept())
 		{
-		    content = dialog.getContent ();
+		    content = dialog.getContent();
 		    accepted = true;
 		}
-		dialog.dispose ();
+		dialog.dispose();
 	    }
 
 	    if (accepted)
 	    {
-		InputObjectStream in = new InputObjectStream ();
+		InputObjectStream in = new InputObjectStream();
 		SourceObjectStream src;
 
-		if (reply.containsHeaderField ("Content-type") &&
-		    reply.getContentType ().equals ("text/html"))
+		if (reply.containsHeaderField("Content-type") &&
+		    reply.getContentType().equals("text/html"))
 		{
-		    src = new HtmlObjectStream (in);
+		    src = new HtmlObjectStream(in);
 		}
 		else
 		{
-		    src = new SourceObjectStream (in);
+		    src = new SourceObjectStream(in);
 		}
-		src.setSourceInputStream (new ByteArrayInputStream (content));
+		src.setSourceInputStream(new ByteArrayInputStream(content));
 
-		Thread thread = new Thread (src);
-		thread.setName ("Preview ObjectStream Source");
-		thread.start ();
+		Thread thread = new Thread(src);
+		thread.setName("Preview ObjectStream Source");
+		thread.start();
 
-		while ((obj = in.read ()) != null)
+		while ((obj = in.read()) != null)
 		{
-		    out.write (obj);
+		    out.write(obj);
 		}
 	    }
 	    else
 	    {
-		if (reply.containsHeaderField ("Content-type") &&
-		    reply.getContentType ().startsWith ("text"))
+		if (reply.containsHeaderField("Content-type") &&
+		    reply.getContentType().startsWith("text"))
 		{
-		    Token token = new Token (Token.TT_TEXT);
-		    token.append ("Rejected by Preview filter");
-		    out.write (token);
+		    Token token = new Token(Token.TT_TEXT);
+		    token.append("Rejected by Preview filter");
+		    out.write(token);
 		}
 		else
 		{
-		    ByteArray b = new ByteArray ();
-		    b.append ((byte)0x0);
-		    out.write (b);
+		    ByteArray b = new ByteArray();
+		    b.append((byte)0x0);
+		    out.write(b);
 		}
 	    }
 
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

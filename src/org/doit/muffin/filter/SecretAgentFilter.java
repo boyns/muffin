@@ -1,4 +1,4 @@
-/* $Id: SecretAgentFilter.java,v 1.2 1998/08/13 06:02:48 boyns Exp $ */
+/* $Id: SecretAgentFilter.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,28 +29,28 @@ public class SecretAgentFilter implements RequestFilter
     Prefs prefs;
     SecretAgent factory;
 
-    SecretAgentFilter (SecretAgent factory)
+    SecretAgentFilter(SecretAgent factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public void filter (Request r) throws FilterException
+    public void filter(Request r) throws FilterException
     {
-	String s = prefs.getString ("SecretAgent.userAgent");
-	if (s.length () > 0)
+	String s = prefs.getString("SecretAgent.userAgent");
+	if (s.length() > 0)
 	{
-	    if (s.equalsIgnoreCase ("NONE"))
+	    if (s.equalsIgnoreCase("NONE"))
 	    {
-		r.removeHeaderField ("User-Agent");
+		r.removeHeaderField("User-Agent");
 	    }
 	    else
 	    {
-		r.setHeaderField ("User-Agent", s);
+		r.setHeaderField("User-Agent", s);
 	    }
 	}
     }

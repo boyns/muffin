@@ -1,4 +1,4 @@
-/* $Id: StatsFilter.java,v 1.2 1998/08/13 06:03:00 boyns Exp $ */
+/* $Id: StatsFilter.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,23 +29,23 @@ public class StatsFilter implements RequestFilter, ReplyFilter
     Prefs prefs;
     Stats factory;
 
-    StatsFilter (Stats factory)
+    StatsFilter(Stats factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public void filter (Request r) throws FilterException
+    public void filter(Request r) throws FilterException
     {
-	factory.recordRequest (r);
+	factory.recordRequest(r);
     }
     
-    public void filter (Reply r) throws FilterException
+    public void filter(Reply r) throws FilterException
     {
-	factory.recordReply (r);
+	factory.recordReply(r);
     }
 }

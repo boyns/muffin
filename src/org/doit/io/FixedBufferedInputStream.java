@@ -1,4 +1,4 @@
-/* $Id: FixedBufferedInputStream.java,v 1.2 1998/08/13 06:00:41 boyns Exp $ */
+/* $Id: FixedBufferedInputStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -41,13 +41,13 @@ public class FixedBufferedInputStream extends FilterInputStream
     private int index = 0;
     private boolean eof = false;
 
-    public FixedBufferedInputStream (InputStream in, int maxBytes)
+    public FixedBufferedInputStream(InputStream in, int maxBytes)
     {
-	super (in);
+	super(in);
 	this.maxBytes = maxBytes;
     }
 
-    public int read () throws IOException
+    public int read() throws IOException
     {
 	if (eof)
 	{
@@ -56,10 +56,10 @@ public class FixedBufferedInputStream extends FilterInputStream
 	
 	if (bytes == null)
 	{
-	    int n = (maxBytes > 0) ? Math.min (maxBytes - byteCount, BUFSIZE) : BUFSIZE;
+	    int n = (maxBytes > 0) ? Math.min(maxBytes - byteCount, BUFSIZE) : BUFSIZE;
 	    bytes = new byte[n];
 
-	    n = read (bytes);
+	    n = read(bytes);
 	    if (n <= 0)
 	    {
 		eof = true;

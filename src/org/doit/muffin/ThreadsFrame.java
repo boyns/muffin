@@ -1,4 +1,4 @@
-/* $Id: ThreadsFrame.java,v 1.2 1998/08/13 06:01:46 boyns Exp $ */
+/* $Id: ThreadsFrame.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -44,125 +44,125 @@ class ThreadsFrame extends MuffinFrame implements ActionListener, WindowListener
     Thread startThread;
     TextArea text;
 
-    ThreadsFrame (Thread startThread)
+    ThreadsFrame(Thread startThread)
     {
-	super ("Muffin: Threads");
+	super("Muffin: Threads");
 
 	this.startThread = startThread;
 
-	text = new TextArea ();
-	text.setEditable (false);
-	//text.setFont (new Font ("Fixed", Font.PLAIN, 12));
+	text = new TextArea();
+	text.setEditable(false);
+	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
 
-	add ("Center", text);
+	add("Center", text);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
-	b = new Button ("Update");
-	b.setActionCommand ("doUpdate");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
+	b = new Button("Update");
+	b.setActionCommand("doUpdate");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 
-	pack ();
-	setSize (getPreferredSize ());
-	show ();
-	update ();
+	pack();
+	setSize(getPreferredSize());
+	show();
+	update();
     }
 
-    void appendString (String s)
+    void appendString(String s)
     {
-	text.append (s);
+	text.append(s);
     }
     
-    void appendString (String s, int size)
+    void appendString(String s, int size)
     {
-	StringBuffer buf = new StringBuffer ();
+	StringBuffer buf = new StringBuffer();
 	    
-	if (s.length () > size)
+	if (s.length() > size)
 	{
-	    buf.append (s.substring (0, size));
+	    buf.append(s.substring(0, size));
 	}
 	else
 	{
-	    buf.append (s);
+	    buf.append(s);
 	}
 
-	int n = size - buf.length ();
+	int n = size - buf.length();
 	while (n-- > 0)
 	{
-	    buf.append (" ");
+	    buf.append(" ");
 	}
-	text.append (buf.toString ());
+	text.append(buf.toString());
     }
     
-    synchronized void update ()
+    synchronized void update()
     {
-	text.setText ("");
+	text.setText("");
 
 	Thread list[] = new Thread[1024];
-	int count = startThread.enumerate (list);
+	int count = startThread.enumerate(list);
 
 	for (int i = 0; i < count; i++)
 	{
-	    appendString (list[i].getName ());
-	    appendString (" -> ");
-	    appendString (list[i].getThreadGroup ().getName ());
-	    appendString ("\n");
+	    appendString(list[i].getName());
+	    appendString(" -> ");
+	    appendString(list[i].getThreadGroup().getName());
+	    appendString("\n");
 	}
 	if (count == 0)
 	{
-	    text.append ("No threads?\n");
+	    text.append("No threads?\n");
 	}
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doUpdate".equals (arg))
+	else if ("doUpdate".equals(arg))
 	{
-	    update ();
+	    update();
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

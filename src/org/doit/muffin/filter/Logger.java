@@ -1,4 +1,4 @@
-/* $Id: Logger.java,v 1.2 1998/08/13 06:02:27 boyns Exp $ */
+/* $Id: Logger.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -31,60 +31,67 @@ public class Logger implements FilterFactory
     LoggerFrame frame = null;
     MessageArea messages = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 	
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putInteger ("Logger.historySize", 500);
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putInteger("Logger.historySize", 500);
+	prefs.putString("Logger.logfile", Main.getOptions().getString("muffin.logfile"));
+	prefs.setOverride(o);
 
-
-	messages = new MessageArea (prefs.getInteger ("Logger.historySize"));
+	messages = new MessageArea(prefs.getUserFile(prefs.getString("Logger.logfile")),
+				   "Logger",
+				   prefs.getInteger("Logger.historySize"));
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new LoggerFrame (prefs, this);
+	    frame = new LoggerFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new LoggerFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new LoggerFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void process (String s)
+    void report(Request request, String message)
     {
-	messages.append (s);
+	report("[" + request.getRequest() + "] " + message);
+    }
+
+    void report(String message)
+    {
+	messages.append(message + "\n");
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: HistoryDataCountComparer.java,v 1.2 1998/08/13 06:02:21 boyns Exp $ */
+/* $Id: HistoryDataCountComparer.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -28,7 +28,7 @@ class HistoryDataCountComparer extends Comparer
 {
     private static Comparer singleInstance;
 	
-    private HistoryDataCountComparer () {}	
+    private HistoryDataCountComparer() {}	
 	
     public static Comparer getInstance()
     {
@@ -39,22 +39,22 @@ class HistoryDataCountComparer extends Comparer
 	return singleInstance;
     }
 		
-    public final boolean lessThan (Object leftOperand, Object rightOperand)  
+    public final boolean lessThan(Object leftOperand, Object rightOperand)  
 	throws ClassCastException
     {
-	return ((HistoryData)leftOperand).count > ((HistoryData)rightOperand).count;
+	return((HistoryData)leftOperand).count > ((HistoryData)rightOperand).count;
     }
 
-    public final boolean greaterThan (Object leftOperand, Object rightOperand) 
+    public final boolean greaterThan(Object leftOperand, Object rightOperand) 
 	throws ClassCastException
     {
-	return ((HistoryData)leftOperand).count < ((HistoryData)rightOperand).count;
+	return((HistoryData)leftOperand).count < ((HistoryData)rightOperand).count;
     }
 
-    public final boolean equals (Object leftOperand, Object rightOperand) 
+    public final boolean equals(Object leftOperand, Object rightOperand) 
 	throws ClassCastException
     {
-	return ((HistoryData)leftOperand).count == ((HistoryData)rightOperand).count;
+	return((HistoryData)leftOperand).count == ((HistoryData)rightOperand).count;
     }
 }
 

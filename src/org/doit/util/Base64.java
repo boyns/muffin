@@ -1,5 +1,3 @@
-/* $Id: Base64.java,v 1.2 1998/08/13 06:03:07 boyns Exp $ */
-
 /* Base64 is a trimmed version of Codecs.java written by Ronald
    Tschalaer.  Base64 was created to suit the needs of Muffin. */
 
@@ -12,7 +10,7 @@
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
  *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
+ *  version 2 of the License, or(at your option) any later version.
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -62,11 +60,11 @@ public class Base64
     /**
      * This class isn't meant to be instantiated.
      */
-    private Base64 () {}
+    private Base64() {}
     
     /**
      * This method decodes the given string using the base64-encoding
-     * specified in RFC-2045 (Section 6.8).
+     * specified in RFC-2045(Section 6.8).
      *
      * @param  str the base64-encoded string.
      * @return the decoded <var>str</var>.
@@ -77,14 +75,14 @@ public class Base64
 
 // 	byte data[] = new byte[str.length()];
 // 	str.getBytes(0, str.length(), data, 0);
-	byte data[] = str.getBytes ();
+	byte data[] = str.getBytes();
 
 	return new String(base64Decode(data));
     }
 
     /**
      * This method decodes the given byte[] using the base64-encoding
-     * specified in RFC-2045 (Section 6.8).
+     * specified in RFC-2045(Section 6.8).
      *
      * @param  data the base64-encoded data.
      * @return the decoded <var>data</var>.

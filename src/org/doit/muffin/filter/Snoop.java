@@ -1,4 +1,4 @@
-/* $Id: Snoop.java,v 1.2 1998/08/13 06:02:56 boyns Exp $ */
+/* $Id: Snoop.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -31,59 +31,59 @@ public class Snoop implements FilterFactory
     SnoopFrame frame = null;
     MessageArea messages = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putInteger ("Snoop.historySize", 500);
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putInteger("Snoop.historySize", 500);
+	prefs.setOverride(o);
 
-	messages = new MessageArea (prefs.getInteger ("Snoop.historySize"));
+	messages = new MessageArea(prefs.getInteger("Snoop.historySize"));
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new SnoopFrame (prefs, this);
+	    frame = new SnoopFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new SnoopFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new SnoopFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void process (String s)
+    void process(String s)
     {
-	messages.append (s);
+	messages.append(s);
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: HistoryFilter.java,v 1.2 1998/08/13 06:02:23 boyns Exp $ */
+/* $Id: HistoryFilter.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -38,62 +38,62 @@ public class HistoryFilter implements HttpFilter, RequestFilter
     Reply reply;
     Request request;
 
-    public HistoryFilter (History history)
+    public HistoryFilter(History history)
     {
 	this.history = history;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public void filter (Request request)
+    public void filter(Request request)
     {
-	String url = request.getURL ();
-	synchronized (history)
+	String url = request.getURL();
+	synchronized(history)
 	{
-	    HistoryData b = history.get (url);
+	    HistoryData b = history.get(url);
 	    b.count++;
-	    b.time = System.currentTimeMillis ();
+	    b.time = System.currentTimeMillis();
 	}
     }
 
-    public boolean wantRequest (Request request)
+    public boolean wantRequest(Request request)
     {
-	return request.getURL ().startsWith ("http://" + history.getClass ().getName ());
+	return request.getURL().startsWith("http://" + history.getClass().getName());
     }
 
-    public void sendRequest (Request request)
+    public void sendRequest(Request request)
     {
     }
 
-    public Reply recvReply (Request request)
+    public Reply recvReply(Request request)
     {
-	Reply reply = new Reply ();
+	Reply reply = new Reply();
 
-	reply.setStatusLine ("HTTP/1.0 200 Ok");
-	reply.setHeaderField ("Content-type", "text/html");
+	reply.setStatusLine("HTTP/1.0 200 Ok");
+	reply.setHeaderField("Content-type", "text/html");
 
-	Enumeration e = history.sortByCount ();
-	StringBuffer buf = new StringBuffer ();
+	Enumeration e = history.sortByCount();
+	StringBuffer buf = new StringBuffer();
 
-	buf.append ("<ul>\n");
-	while (e.hasMoreElements ())
+	buf.append("<ul>\n");
+	while (e.hasMoreElements())
 	{
-	    HistoryData b = (HistoryData) e.nextElement ();
-	    buf.append ("<li><a href=\"" + b.url + "\">" + b.url + "</a> -> " + b.count + " " + b.time + "\n");
+	    HistoryData b = (HistoryData) e.nextElement();
+	    buf.append("<li><a href=\"" + b.url + "\">" + b.url + "</a> -> " + b.count + " " + b.time + "\n");
 	}
-	buf.append ("</ul>\n");
+	buf.append("</ul>\n");
 	
-	byte bytes[] = buf.toString ().getBytes ();
-	reply.setHeaderField ("Content-length", Integer.toString (bytes.length));
-	reply.setContent ((InputStream) new ByteArrayInputStream (bytes));
+	byte bytes[] = buf.toString().getBytes();
+	reply.setHeaderField("Content-length", Integer.toString(bytes.length));
+	reply.setContent((InputStream) new ByteArrayInputStream(bytes));
 	
 	return reply;
     }
 
-    public void close ()
+    public void close()
     {
     }
 }

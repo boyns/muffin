@@ -1,4 +1,4 @@
-/* $Id: About.java,v 1.2 1998/08/13 06:00:53 boyns Exp $ */
+/* $Id: About.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -48,71 +48,71 @@ class About extends MuffinFrame implements ActionListener, WindowListener
      * Create About.
      *
      */
-    About (Options options)
+    About(Options options)
     {
-	super ("About Muffin");
+	super("About Muffin");
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
 	GridBagConstraints c;
 	Label l;
-	panel.setLayout (layout);
-	panel.setBackground (Color.white);
+	panel.setLayout(layout);
+	panel.setBackground(Color.white);
 
- 	l = new Label ("Muffin");
- 	l.setFont (Main.getOptions ().getFont ("muffin.bigfont"));
- 	c = new GridBagConstraints ();
+ 	l = new Label("Muffin");
+ 	l.setFont(Main.getOptions().getFont("muffin.bigfont"));
+ 	c = new GridBagConstraints();
  	c.gridwidth = GridBagConstraints.REMAINDER;
- 	layout.setConstraints (l, c);
- 	panel.add (l);
+ 	layout.setConstraints(l, c);
+ 	panel.add(l);
 
-	StringTokenizer st = new StringTokenizer (Main.copyleft (), "\n");
-	while (st.hasMoreTokens ())
+	StringTokenizer st = new StringTokenizer(Main.copyleft(), "\n");
+	while (st.hasMoreTokens())
 	{
-	    l = new Label (st.nextToken ());
-	    l.setFont (Main.getOptions ().getFont ("muffin.smallfont"));
-	    c = new GridBagConstraints ();
+	    l = new Label(st.nextToken());
+	    l.setFont(Main.getOptions().getFont("muffin.smallfont"));
+	    c = new GridBagConstraints();
 	    c.gridwidth = GridBagConstraints.REMAINDER;
-	    layout.setConstraints (l, c);
-	    panel.add (l);
+	    layout.setConstraints(l, c);
+	    panel.add(l);
 	}
 	
-	ImageCanvas logo = new ImageCanvas ("images/muffin.jpg", null, false);
-	c = new GridBagConstraints ();
+	ImageCanvas logo = new ImageCanvas("/images/muffin.jpg", null, false);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (logo, c);
-	panel.add (logo);
+	layout.setConstraints(logo, c);
+	panel.add(logo);
 
-	l = new Label ("Muffin logo by Rebecca Smith");
-	l.setFont (Main.getOptions ().getFont ("muffin.smallfont"));
-	c = new GridBagConstraints ();
+	l = new Label("Muffin logo by Rebecca Smith");
+	l.setFont(Main.getOptions().getFont("muffin.smallfont"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	l = new Label ("More information is available at:");
-	c = new GridBagConstraints ();
+	l = new Label("More information is available at:");
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	l = new Label (options.getString ("muffin.url"));
-	c = new GridBagConstraints ();
+	l = new Label(options.getString("muffin.url"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	add ("Center", panel);
+	add("Center", panel);
 
-	Button b = new Button ("OK");
-	b.addActionListener (this);
-	add ("South", b);
+	Button b = new Button("OK");
+	b.addActionListener(this);
+	add("South", b);
 
-	addWindowListener (this);
+	addWindowListener(this);
 
-	pack ();
-	setSize (getPreferredSize ());
-	show ();
+	pack();
+	setSize(getPreferredSize());
+	show();
     }
 
     /**
@@ -120,37 +120,37 @@ class About extends MuffinFrame implements ActionListener, WindowListener
      *
      * @param event some event
      */
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	setVisible (false);
+	setVisible(false);
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

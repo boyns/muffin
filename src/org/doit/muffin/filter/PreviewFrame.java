@@ -1,4 +1,4 @@
-/* $Id: PreviewFrame.java,v 1.2 1998/08/13 06:02:39 boyns Exp $ */
+/* $Id: PreviewFrame.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -32,111 +32,111 @@ public class PreviewFrame extends MuffinFrame implements ActionListener, WindowL
     Preview parent;
     TextField input = null;
     
-    public PreviewFrame (Prefs prefs, Preview parent)
+    public PreviewFrame(Prefs prefs, Preview parent)
     {
-	super ("Muffin: Preview");
+	super("Muffin: Preview");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-        panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
 	GridBagConstraints c;
 	     
-	panel.add (new Label ("Content types to preview:", Label.RIGHT));
+	panel.add(new Label("Content types to preview:", Label.RIGHT));
 
-	input = new TextField (50);
-	input.setText (prefs.getString ("Preview.contentTypes"));
-	c = new GridBagConstraints ();
+	input = new TextField(50);
+	input.setText(prefs.getString("Preview.contentTypes"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (input, c);
-	panel.add (input);
+	layout.setConstraints(input, c);
+	panel.add(input);
 
-	Label label = new Label ("Example: text/html,image/gif");
-	c = new GridBagConstraints ();
+	Label label = new Label("Example: text/html,image/gif");
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (label, c);
-	panel.add (label);
+	layout.setConstraints(label, c);
+	panel.add(label);
 
-	add ("Center", panel);
+	add("Center", panel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
-	show ();
+	pack();
+	setSize(getPreferredSize());
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("Preview.contentTypes", input.getText ());
+	    prefs.putString("Preview.contentTypes", input.getText());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("Preview");
+	    new HelpFrame("Preview");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

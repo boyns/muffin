@@ -1,4 +1,4 @@
-/* $Id: ContentFilter.java,v 1.2 1998/08/13 06:01:05 boyns Exp $ */
+/* $Id: ContentFilter.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -44,20 +44,20 @@ public interface ContentFilter extends Filter, Runnable
      * @param request the request
      * @param reply the reply
      */
-    public boolean needsFiltration (Request request, Reply reply);
+    public boolean needsFiltration(Request request, Reply reply);
 
     /**
      * Set the input stream to be used.
      *
      * @param in the input stream
      */
-    public void setInputObjectStream (InputObjectStream in);
+    public void setInputObjectStream(InputObjectStream in);
     
     /**
      * Set the output stream to be used.
      *
      * @param out the output stream
      */
-    public void setOutputObjectStream (OutputObjectStream out);
+    public void setOutputObjectStream(OutputObjectStream out);
 }
 

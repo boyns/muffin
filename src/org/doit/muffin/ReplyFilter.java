@@ -1,4 +1,4 @@
-/* $Id: ReplyFilter.java,v 1.2 1998/08/13 06:01:39 boyns Exp $ */
+/* $Id: ReplyFilter.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -27,5 +27,5 @@ package org.doit.muffin;
  */
 public interface ReplyFilter extends Filter
 {
-    public void filter (Reply r) throws FilterException;
+    public void filter(Reply r) throws FilterException;
 }

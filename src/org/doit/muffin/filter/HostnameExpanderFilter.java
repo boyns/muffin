@@ -1,4 +1,4 @@
-/* $Id: HostnameExpanderFilter.java,v 1.2 1998/08/13 06:02:25 boyns Exp $ */
+/* $Id: HostnameExpanderFilter.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -31,30 +31,30 @@ public class HostnameExpanderFilter implements RedirectFilter
     Prefs prefs;
     HostnameExpander factory;
 
-    HostnameExpanderFilter (HostnameExpander factory)
+    HostnameExpanderFilter(HostnameExpander factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsRedirection (Request r)
+    public boolean needsRedirection(Request r)
     {
-	String host = r.getHost ();
-	return host.indexOf (".") < 0; /* doesn't have a dot */
+	String host = r.getHost();
+	return host.indexOf(".") < 0; /* doesn't have a dot */
     }
     
-    public String redirect (Request r)
+    public String redirect(Request r)
     {
-	String domain = prefs.getString ("HostnameExpander.defaultDomain");
-	String host = expandHostname (r.getHost ());
-	if (host == null && domain.length () > 0)
+	String domain = prefs.getString("HostnameExpander.defaultDomain");
+	String host = expandHostname(r.getHost());
+	if (host == null && domain.length() > 0)
 	{
-	    host = r.getHost ();
-	    if (! domain.startsWith ("."))
+	    host = r.getHost();
+	    if (! domain.startsWith("."))
 	    {
 		host = host + ".";
 	    }
@@ -62,17 +62,17 @@ public class HostnameExpanderFilter implements RedirectFilter
 	}
 	if (host != null)
 	{
-	    StringBuffer buf = new StringBuffer ();
-	    buf.append ("http://");
-	    buf.append (host);
-	    if (r.getPort () != 80)
+	    StringBuffer buf = new StringBuffer();
+	    buf.append("http://");
+	    buf.append(host);
+	    if (r.getPort() != 80)
 	    {
-		buf.append (":");
-		buf.append (r.getPort ());
+		buf.append(":");
+		buf.append(r.getPort());
 	    }
-	    buf.append (r.getPath ());
-	    factory.process (r.getHost () + " -> " + buf.toString () + "\n");
-	    return buf.toString ();
+	    buf.append(r.getPath());
+	    factory.report(r, r.getHost() + " -> " + buf.toString());
+	    return buf.toString();
 	}
 	return null;
     }
@@ -83,7 +83,7 @@ public class HostnameExpanderFilter implements RedirectFilter
      * not locally resolvable and *is* resovable to
      * www.$host.{com,edu,net,org}.
      */
-    String expandHostname (String host)
+    String expandHostname(String host)
     {
         String resolve;
         int pos;
@@ -101,8 +101,8 @@ public class HostnameExpanderFilter implements RedirectFilter
 
 	if (address == null)
 	{
-	    String prefix[] = prefs.getStringList ("HostnameExpander.prefix");
-	    String suffix[] = prefs.getStringList ("HostnameExpander.suffix");
+	    String prefix[] = prefs.getStringList("HostnameExpander.prefix");
+	    String suffix[] = prefs.getStringList("HostnameExpander.suffix");
 	    
 	    for (int i = 0; i < prefix.length; i++)
 	    {

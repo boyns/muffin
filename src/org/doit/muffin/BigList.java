@@ -1,4 +1,4 @@
-/* $Id: BigList.java,v 1.2 1998/08/13 06:00:55 boyns Exp $ */
+/* $Id: BigList.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,38 +37,38 @@ public class BigList extends List
     int width = 200;
     int height = 150;
     
-    public BigList (int rows, boolean mult)
+    public BigList(int rows, boolean mult)
     {
-	super (rows, mult);
+	super(rows, mult);
     }
 
-    public void setHeight (int h)
+    public void setHeight(int h)
     {
 	height = h;
     }
 
-    public void setWidth (int w)
+    public void setWidth(int w)
     {
 	width = w;
     }
 	
-    public Dimension getPreferredSize ()
+    public Dimension getPreferredSize()
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 
-    public Dimension getPreferredSize (int rows)
+    public Dimension getPreferredSize(int rows)
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 
-    public Dimension getMinimumSize ()
+    public Dimension getMinimumSize()
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 
-    public Dimension getMinimumSize (int rows)
+    public Dimension getMinimumSize(int rows)
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 }

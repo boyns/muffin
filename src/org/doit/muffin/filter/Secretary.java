@@ -1,4 +1,4 @@
-/* $Id: Secretary.java,v 1.2 1998/08/13 06:02:53 boyns Exp $ */
+/* $Id: Secretary.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,87 +37,87 @@ public class Secretary extends Hashtable implements FilterFactory
     Prefs prefs;
     SecretaryFrame frame = null;
 
-    public Secretary ()
+    public Secretary()
     {
-	super (33);
+	super(33);
     }
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	String filename = prefs.getUserFile ("formfile");
-	prefs.putString ("Secretary.formfile", filename);
-	prefs.setOverride (o);
-	load ();
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	String filename = prefs.getUserFile("formfile");
+	prefs.putString("Secretary.formfile", filename);
+	prefs.setOverride(o);
+	load();
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new SecretaryFrame (prefs, this);
+	    frame = new SecretaryFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new SecretaryFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new SecretaryFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void load ()
+    void load()
     {
-	String filename = prefs.getUserFile (prefs.getString ("Secretary.formfile"));
-	//System.out.println ("Secretary loading " + filename);
-	File file = new File (filename);
-	if (!file.exists ())
+	String filename = prefs.getUserFile(prefs.getString("Secretary.formfile"));
+	//System.out.println("Secretary loading " + filename);
+	File file = new File(filename);
+	if (!file.exists())
 	{
-	    System.out.println ("Secretary can't open " + filename);
+	    System.out.println("Secretary can't open " + filename);
 	    return;
 	}
 	try
 	{
-	    FileInputStream in = new FileInputStream (file);
-	    Properties props = new Properties ();
-	    props.load (in);
-	    Enumeration e = props.keys ();
-	    while (e.hasMoreElements ())
+	    FileInputStream in = new FileInputStream(file);
+	    Properties props = new Properties();
+	    props.load(in);
+	    Enumeration e = props.keys();
+	    while (e.hasMoreElements())
 	    {
-		String key = (String) e.nextElement ();
-		put (key, props.get (key));
+		String key = (String) e.nextElement();
+		put(key, props.get(key));
 	    }
-	    in.close ();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.3 1998/10/06 06:01:57 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.4 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,82 +37,82 @@ class UserPrefs extends Prefs
     String rcfile = "unknown";
     boolean loaded = false;
 
-    UserPrefs ()
+    UserPrefs()
     {
     }
     
-    UserPrefs (String filename)
+    UserPrefs(String filename)
     {
-	setPrefsFile (filename);
+	setPrefsFile(filename);
     }
 
-    void setPrefsFile (String filename)
+    void setPrefsFile(String filename)
     {
 	rcfile = filename;
     }
 
-    void unload ()
+    void unload()
     {
-	clear ();
+	clear();
 	loaded = false;
     }
     
-    void load ()
+    void load()
     {
 	if (loaded)
 	{
 	    return;
 	}
-	File file = new File (getUserFile (rcfile));
-	if (!file.exists ())
+	File file = new File(getUserFile(rcfile));
+	if (!file.exists())
 	{
 	    return;
 	}
-	//System.out.println ("Loading " + file.getAbsolutePath ());
+	//System.out.println("Loading " + file.getAbsolutePath());
 	try
 	{
-	    FileInputStream in = new FileInputStream (file);
-	    Properties props = new Properties ();
-	    props.load (in);
-	    Enumeration e = props.keys ();
-	    while (e.hasMoreElements ())
+	    FileInputStream in = new FileInputStream(file);
+	    Properties props = new Properties();
+	    props.load(in);
+	    Enumeration e = props.keys();
+	    while (e.hasMoreElements())
 	    {
-		String key = (String) e.nextElement ();
-		put (key, props.get (key));
+		String key = (String) e.nextElement();
+		put(key, props.get(key));
 	    }
-	    in.close ();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
 	loaded = true;
     }
 
-    void save ()
+    void save()
     {
 	// XXX commented due to reportred stack overflow
 	// bug.  For now just use plain old properties.
-	//Properties props = new SortedProperties ();
+	//Properties props = new SortedProperties();
 	Properties props = new Properties();
-	Enumeration e = keys ();
-	while (e.hasMoreElements ())
+	Enumeration e = keys();
+	while (e.hasMoreElements())
 	{
-	    String key = (String) e.nextElement ();
-	    props.put (key, get (key));
+	    String key = (String) e.nextElement();
+	    props.put(key, get(key));
 	}
-	checkUserDirectory ();
-	File file = new File (getUserFile (rcfile));
-	System.out.println ("Saving " + file.getAbsolutePath ());
+	checkUserDirectory();
+	File file = new File(getUserFile(rcfile));
+	System.out.println("Saving " + file.getAbsolutePath());
 	try
 	{
-	    FileOutputStream out = new FileOutputStream (file);
-	    props.save (out, null);
-	    out.close ();
+	    FileOutputStream out = new FileOutputStream(file);
+	    props.save(out, null);
+	    out.close();
 	}
 	catch (Exception ex)
 	{
-	    System.out.println (ex);
+	    System.out.println(ex);
 	}
     }
 }

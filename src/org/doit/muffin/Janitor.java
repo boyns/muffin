@@ -1,4 +1,4 @@
-/* $Id: Janitor.java,v 1.2 1998/08/13 06:01:26 boyns Exp $ */
+/* $Id: Janitor.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -27,40 +27,40 @@ import java.util.Vector;
 
 class Janitor implements Runnable
 {
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("Janitor");
+	Thread.currentThread().setName("Janitor");
 	
 	for (;;)
 	{
 	    try
 	    {
-		Thread.sleep (30 * 1000); /* 30 seconds */
+		Thread.sleep(30 * 1000); /* 30 seconds */
 	    }
 	    catch (Exception e)
 	    {
-		e.printStackTrace ();
+		e.printStackTrace();
 	    }
 
 	    /* Clean HTTP persistent server connections. */
-	    Http.clean ();
+	    Http.clean();
 
 	    /* Clean keep-alive client connections. */
-	    Server.clean ();
+	    Server.clean();
 
 	    /* AutoSave any AutoSaveable filters */
-	    FilterManager manager = Main.getFilterManager ();
-	    Enumeration configs = manager.configs.keys ();
-	    while (configs.hasMoreElements ())
+	    FilterManager manager = Main.getFilterManager();
+	    Enumeration configs = manager.configs.keys();
+	    while (configs.hasMoreElements())
 	    {
-		String config = (String) configs.nextElement ();
-		Vector enabled = manager.getEnabledFilters (config);
-		for (int i = 0; i < enabled.size (); i++)
+		String config = (String) configs.nextElement();
+		Vector enabled = manager.getEnabledFilters(config);
+		for (int i = 0; i < enabled.size(); i++)
 		{
-		    FilterFactory ff = (FilterFactory) enabled.elementAt (i);
+		    FilterFactory ff = (FilterFactory) enabled.elementAt(i);
 		    if (ff instanceof AutoSaveable)
 		    {
-			((AutoSaveable) ff).autoSave ();
+			((AutoSaveable) ff).autoSave();
 		    }
 		}
 	    }

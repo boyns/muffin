@@ -1,4 +1,4 @@
-/* $Id: Client.java,v 1.2 1998/08/13 06:00:58 boyns Exp $ */
+/* $Id: Client.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -37,9 +37,9 @@ class Client extends Connection
     /**
      * Create a Client from a Socket.
      */
-    Client (Socket s) throws IOException
+    Client(Socket s) throws IOException
     {
-	super (s);
+	super(s);
     }
 
     /**
@@ -48,10 +48,10 @@ class Client extends Connection
      * @returns a Request.
      * @see muffin.Request
      */
-    Request read () throws IOException
+    Request read() throws IOException
     {
-	Request request = new Request (this);
-	request.read (in);
+	Request request = new Request(this);
+	request.read(in);
 	return request;
     }
 
@@ -60,8 +60,8 @@ class Client extends Connection
      *
      * @see muffin.Reply
      */
-    void write (Reply reply) throws IOException
+    void write(Reply reply) throws IOException
     {
-	reply.write (out);
+	reply.write(out);
     }
 }

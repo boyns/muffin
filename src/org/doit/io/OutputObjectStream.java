@@ -1,4 +1,4 @@
-/* $Id: OutputObjectStream.java,v 1.2 1998/08/13 06:00:46 boyns Exp $ */
+/* $Id: OutputObjectStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -35,53 +35,53 @@ public class OutputObjectStream
     protected InputObjectStream in = null;
     protected boolean connected = false;
 
-    public OutputObjectStream (InputObjectStream in) throws IOException
+    public OutputObjectStream(InputObjectStream in) throws IOException
     {
-	connect (in);
+	connect(in);
     }
 
-    public OutputObjectStream ()
+    public OutputObjectStream()
     {
     }
 
-    public void connect (InputObjectStream in) throws IOException
+    public void connect(InputObjectStream in) throws IOException
     {
 	if (connected)
 	{
-	    throw new IOException ("Output side already connected");
+	    throw new IOException("Output side already connected");
 	}
 	if (in.connected)
 	{
-	    throw new IOException ("Input side already connected");
+	    throw new IOException("Input side already connected");
 	}
 
 	this.in = in;
 	in.closed = false;
-	in.objects.removeAllElements ();
+	in.objects.removeAllElements();
 	connected = true;
     }
 
-    public void write (Object obj) throws IOException
+    public void write(Object obj) throws IOException
     {
-	in.append (obj);
+	in.append(obj);
     }
 
-    public synchronized void flush () throws IOException
+    public synchronized void flush() throws IOException
     {
 	if (in != null)
 	{
-	    synchronized (in)
+	    synchronized(in)
 	    {
-		in.notify ();
+		in.notify();
 	    }
 	}
     }
 
-    public void close () throws IOException
+    public void close() throws IOException
     {
 	if (in != null)
 	{
-	    in.done ();
+	    in.done();
 	}
     }
 }

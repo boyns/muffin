@@ -1,4 +1,4 @@
-/* $Id: ConnectionsFrame.java,v 1.2 1998/08/13 06:01:04 boyns Exp $ */
+/* $Id: ConnectionsFrame.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -44,105 +44,105 @@ class ConnectionsFrame extends MuffinFrame implements ActionListener, WindowList
     Monitor monitor;
     TextArea text;
 
-    ConnectionsFrame (Monitor monitor)
+    ConnectionsFrame(Monitor monitor)
     {
-	super ("Muffin: Connections");
+	super("Muffin: Connections");
 
 	this.monitor = monitor;
 
-	text = new TextArea ();
-	text.setEditable (false);
-	add ("Center", text);
+	text = new TextArea();
+	text.setEditable(false);
+	add("Center", text);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
-	b = new Button ("Update");
-	b.setActionCommand ("doUpdate");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
+	b = new Button("Update");
+	b.setActionCommand("doUpdate");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 
-	pack ();
-	setSize (getPreferredSize ());
-	show ();
-	update ();
+	pack();
+	setSize(getPreferredSize());
+	show();
+	update();
     }
     
-    void update ()
+    void update()
     {
-	text.setText ("");
+	text.setText("");
 	Enumeration e;
 	int count = 0;
 
-	e = monitor.enumerate ();
-	while (e.hasMoreElements ())
+	e = monitor.enumerate();
+	while (e.hasMoreElements())
 	{
-	    Object obj = (Object) e.nextElement ();
-	    text.append (obj.toString () + "\n");
+	    Object obj = (Object) e.nextElement();
+	    text.append(obj.toString() + "\n");
 	    count++;
 	}
 	
-	e = Http.enumerate ();
-	while (e.hasMoreElements ())
+	e = Http.enumerate();
+	while (e.hasMoreElements())
 	{
-	    Object obj = (Object) e.nextElement ();
-	    text.append (obj.toString () + "\n");
+	    Object obj = (Object) e.nextElement();
+	    text.append(obj.toString() + "\n");
 	    count++;
 	}
 
 	if (count == 0)
 	{
-	    text.append ("No connections\n");
+	    text.append("No connections\n");
 	}
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doUpdate".equals (arg))
+	else if ("doUpdate".equals(arg))
 	{
-	    update ();
+	    update();
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

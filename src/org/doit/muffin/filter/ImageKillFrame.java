@@ -41,178 +41,178 @@ public class ImageKillFrame extends MuffinFrame
     Label l1, l2, l3, l4, l5;
     Checkbox cb_keepmaps;    
 
-    public ImageKillFrame (Prefs prefs, ImageKill parent)
+    public ImageKillFrame(Prefs prefs, ImageKill parent)
     {
-	super ("Muffin: ImageKill");
+	super("Muffin: ImageKill");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-	panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+	panel.setLayout(layout);
 	GridBagConstraints c;
 
-	l1 = new Label ("Remove images if:");
-	l2 = new Label ("higher than ");
-	l3 = new Label ("and wider than ");
-	l4 = new Label ("and width/height ratio is greater than ");
-	l5 = new Label ("but not if img.src contains ");
-	t_minheight = new TextField (5);
-	t_minwidth = new TextField (5);
-	t_ratio = new TextField (5);
-	t_exclude = new TextField (30);
-	cb_keepmaps = new Checkbox ("Don't remove image maps");
+	l1 = new Label("Remove images if:");
+	l2 = new Label("higher than ");
+	l3 = new Label("and wider than ");
+	l4 = new Label("and width/height ratio is greater than ");
+	l5 = new Label("but not if img.src contains ");
+	t_minheight = new TextField(5);
+	t_minwidth = new TextField(5);
+	t_ratio = new TextField(5);
+	t_exclude = new TextField(30);
+	cb_keepmaps = new Checkbox("Don't remove image maps");
 
-	t_minheight.setText (Integer.toString
-			     (prefs.getInteger ("ImageKill.minheight")));
-	t_minwidth.setText (Integer.toString
-			    (prefs.getInteger ("ImageKill.minwidth")));
-	t_ratio.setText (Integer.toString
-			 (prefs.getInteger ("ImageKill.ratio")));
-	t_exclude.setText (prefs.getString ("ImageKill.exclude"));
-	cb_keepmaps.setState (prefs.getBoolean ("ImageKill.keepmaps"));
+	t_minheight.setText(Integer.toString
+			     (prefs.getInteger("ImageKill.minheight")));
+	t_minwidth.setText(Integer.toString
+			    (prefs.getInteger("ImageKill.minwidth")));
+	t_ratio.setText(Integer.toString
+			 (prefs.getInteger("ImageKill.ratio")));
+	t_exclude.setText(prefs.getString("ImageKill.exclude"));
+	cb_keepmaps.setState(prefs.getBoolean("ImageKill.keepmaps"));
 
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridx = 0;
 	c.gridy = 0;
-	layout.setConstraints (l1, c);
-	panel.add (l1);
+	layout.setConstraints(l1, c);
+	panel.add(l1);
 	c.gridy = 1;
 	c.anchor = GridBagConstraints.EAST;
-	layout.setConstraints (l2, c);
-	panel.add (l2);
+	layout.setConstraints(l2, c);
+	panel.add(l2);
 	c.gridy = 2;
-	layout.setConstraints (l3, c);
-	panel.add (l3);
+	layout.setConstraints(l3, c);
+	panel.add(l3);
 	c.gridy = 3;
-	layout.setConstraints (l4, c);
-	panel.add (l4);
+	layout.setConstraints(l4, c);
+	panel.add(l4);
 	c.gridy = 4;
-	layout.setConstraints (l5, c);
-	panel.add (l5);
+	layout.setConstraints(l5, c);
+	panel.add(l5);
 	c.gridy = 5;
-	layout.setConstraints (cb_keepmaps, c);
-	panel.add (cb_keepmaps);
+	layout.setConstraints(cb_keepmaps, c);
+	panel.add(cb_keepmaps);
 	c.gridx = 1;
 	c.gridy = 1;
 	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (t_minheight, c);
-	panel.add (t_minheight);
+	layout.setConstraints(t_minheight, c);
+	panel.add(t_minheight);
 	c.gridy = 2;
-	layout.setConstraints (t_minwidth, c);
-	panel.add (t_minwidth);
+	layout.setConstraints(t_minwidth, c);
+	panel.add(t_minwidth);
 	c.gridy = 3;
-	layout.setConstraints (t_ratio, c);
-	panel.add (t_ratio);
+	layout.setConstraints(t_ratio, c);
+	panel.add(t_ratio);
 	c.gridy = 4;
-	layout.setConstraints (t_exclude, c);
-	panel.add (t_exclude);
-	add ("North", panel);
+	layout.setConstraints(t_exclude, c);
+	panel.add(t_exclude);
+	add("North", panel);
 	
-	parent.messages.setEditable (false);
-	add ("Center", parent.messages);
+	parent.messages.setEditable(false);
+	add("Center", parent.messages);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 5));
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 5));
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
 
-	add ("South", buttonPanel);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-            applyPrefs ();
+            applyPrefs();
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-            applyPrefs ();
-	    parent.save ();
+            applyPrefs();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    parent.messages.clear ();
+	    parent.messages.clear();
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("ImageKill");
+	    new HelpFrame("ImageKill");
 	}
     }
 
-    private void applyPrefs ()
+    private void applyPrefs()
     {
-        prefs.putInteger ("ImageKill.minheight", 
-			  Integer.parseInt (t_minheight.getText ()));
-	prefs.putInteger ("ImageKill.minwidth",
-			  Integer.parseInt (t_minwidth.getText ()));
-	prefs.putInteger ("ImageKill.ratio",
-			  Integer.parseInt (t_ratio.getText ()));
-	prefs.putBoolean ("ImageKill.keepmaps", cb_keepmaps.getState ());
-	prefs.putString ("ImageKill.exclude", t_exclude.getText ());
-	parent.setExclude ();
+        prefs.putInteger("ImageKill.minheight", 
+			  Integer.parseInt(t_minheight.getText()));
+	prefs.putInteger("ImageKill.minwidth",
+			  Integer.parseInt(t_minwidth.getText()));
+	prefs.putInteger("ImageKill.ratio",
+			  Integer.parseInt(t_ratio.getText()));
+	prefs.putBoolean("ImageKill.keepmaps", cb_keepmaps.getState());
+	prefs.putString("ImageKill.exclude", t_exclude.getText());
+	parent.setExclude();
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

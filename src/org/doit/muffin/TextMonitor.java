@@ -1,4 +1,4 @@
-/* $Id: TextMonitor.java,v 1.3 1998/10/01 06:38:49 boyns Exp $ */
+/* $Id: TextMonitor.java,v 1.4 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -36,63 +36,63 @@ class TextMonitor implements Monitor
     boolean suspended = false;
     String infoString;
     
-    TextMonitor (String infoString)
+    TextMonitor(String infoString)
     {
 	this.infoString = infoString;
-	handlers = new Vector (100);
+	handlers = new Vector(100);
     }
 
-    public void register (Handler h)
+    public void register(Handler h)
     {
-	handlers.addElement (h);
-	//System.out.println (h.request.getURL ()); 
+	handlers.addElement(h);
+	//System.out.println(h.request.getURL()); 
     }
 
-    public void unregister (Handler h)
+    public void unregister(Handler h)
     {
-	handlers.removeElement (h);
-	//System.out.println (h.request.getURL ());
+	handlers.removeElement(h);
+	//System.out.println(h.request.getURL());
     }
     
-    public void update (Handler h)
+    public void update(Handler h)
     {
     }
     
-    public void suspend ()
+    public void suspend()
     {
 	suspended = true;
     }
 
-    public void resume ()
+    public void resume()
     {
 	suspended = false;
     }
 
-    public Enumeration enumerate ()
+    public Enumeration enumerate()
     {
-	return handlers.elements ();
+	return handlers.elements();
     }
 
-    public void minimize (boolean enable)
+    public void minimize(boolean enable)
     {
     }
 
-//     void draw ()
+//     void draw()
 //     {
-// 	//System.out.print ("[H[2J");
-// 	System.out.println (infoString);
-// 	System.out.println ("--------------------------------------------------------------------------------");
+// 	//System.out.print("[H[2J");
+// 	System.out.println(infoString);
+// 	System.out.println("--------------------------------------------------------------------------------");
 	
-// 	Enumeration e = handlers.elements ();
-//  	while (e.hasMoreElements ())
+// 	Enumeration e = handlers.elements();
+//  	while (e.hasMoreElements())
 // 	{
-// 	    Object obj = e.nextElement ();
+// 	    Object obj = e.nextElement();
 //  	    Handler handler = (Handler) obj;
 
-// 	    int currentBytes = handler.getCurrentBytes ();
-// 	    int totalBytes = handler.getTotalBytes ();
+// 	    int currentBytes = handler.getCurrentBytes();
+// 	    int totalBytes = handler.getTotalBytes();
 // 	    String contentType = null;
-// 	    StringBuffer buf = new StringBuffer ();
+// 	    StringBuffer buf = new StringBuffer();
 
 // 	    if (handler.reply != null)
 // 	    {
@@ -100,44 +100,44 @@ class TextMonitor implements Monitor
 // 		{
 // 		    int n = (int)((double)currentBytes/totalBytes*100);
 // 		    int i;
-// 		    buf.append ("[");
+// 		    buf.append("[");
 // 		    for (i = 0; i < 100; i += 10)
 // 		    {
 // 			if (n > i)
 // 			{
-// 			    buf.append ("-");
+// 			    buf.append("-");
 // 			}
 // 			else if (i > n && i-10 < n)
 // 			{
-// 			    buf.append (">");
+// 			    buf.append(">");
 // 			}
 // 			else
 // 			{
-// 			    buf.append (" ");
+// 			    buf.append(" ");
 // 			}
 // 		    }
-// 		    buf.append ("] ");
-// 		    buf.append (currentBytes);
-// 		    buf.append (" bytes ");
-//                     buf.append (n);
-// 		    buf.append ("%");
+// 		    buf.append("] ");
+// 		    buf.append(currentBytes);
+// 		    buf.append(" bytes ");
+//                     buf.append(n);
+// 		    buf.append("%");
 // 		}
 // 		else
 // 		{
-// 		    buf.append ("[          ] ");
-// 		    buf.append (currentBytes);
-// 		    buf.append (" bytes");
+// 		    buf.append("[          ] ");
+// 		    buf.append(currentBytes);
+// 		    buf.append(" bytes");
 // 		}
 // 	    }
 // 	    else
 // 	    {
-// 		buf.append ("[contacting]");
+// 		buf.append("[contacting]");
 // 	    }
-// 	    buf.append (" ");
-// 	    buf.append (handler.request.getURL ());
-// 	    buf.setLength (80);
-// 	    System.out.println (buf);
+// 	    buf.append(" ");
+// 	    buf.append(handler.request.getURL());
+// 	    buf.setLength(80);
+// 	    System.out.println(buf);
 // 	}
-// 	System.out.println ();
+// 	System.out.println();
 //     }
 }

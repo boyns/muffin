@@ -1,4 +1,4 @@
-/* $Id: SocketManager.java,v 1.2 1998/08/13 06:01:44 boyns Exp $ */
+/* $Id: SocketManager.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,54 +29,54 @@ import java.net.Socket;
 
 class SocketManager
 {
-    static Hashtable cache = new Hashtable (13);
+    static Hashtable cache = new Hashtable(13);
     
-    static Socket open (String host, int port) throws IOException
+    static Socket open(String host, int port) throws IOException
     {
-	return new Socket (host, port);
+	return new Socket(host, port);
 	
-// 	Socket socket = lookup (key (host, port));
+// 	Socket socket = lookup(key(host, port));
 // 	if (socket == null)
 // 	{
-// 	    socket = new Socket (host, port);
-// 	    insert (key (host, port), socket);
+// 	    socket = new Socket(host, port);
+// 	    insert(key(host, port), socket);
 // 	}
 // 	return socket;
     }
 
-    static void close (Socket socket) throws IOException
+    static void close(Socket socket) throws IOException
     {
-	socket.close ();
+	socket.close();
 	
-//	delete (socket);
+//	delete(socket);
     }
 
-    static String key (String host, int port)
+    static String key(String host, int port)
     {
-	return host.toLowerCase () + ":" + port;
+	return host.toLowerCase() + ":" + port;
     }
 
-    static Socket lookup (String key)
+    static Socket lookup(String key)
     {
- 	Socket socket = (Socket) cache.get (key);
+ 	Socket socket = (Socket) cache.get(key);
  	return socket;
     }
 
-    static void insert (String key, Socket socket)
+    static void insert(String key, Socket socket)
     {
-	cache.put (key, socket);
+	cache.put(key, socket);
     }
 
-    static void delete (Socket socket)
+    static void delete(Socket socket)
     {
-	Enumeration e = cache.keys ();
-	while (e.hasMoreElements ())
+	Enumeration e = cache.keys();
+	while (e.hasMoreElements())
 	{
-	    String key = (String) e.nextElement ();
-	    Socket s = lookup (key);
+	    String key = (String) e.nextElement();
+	    Socket s = lookup(key);
 	    if (s == socket)
 	    {
-		cache.remove (key);
+		cache.remove(key);
 		return;
 	    }
 	}

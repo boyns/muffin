@@ -1,4 +1,4 @@
-/* $Id: SecretaryFilter.java,v 1.3 1998/09/25 04:53:57 boyns Exp $ */
+/* $Id: SecretaryFilter.java,v 1.4 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -35,36 +35,36 @@ public class SecretaryFilter implements ContentFilter
     OutputObjectStream out = null;
     Request request = null;
 
-    public SecretaryFilter (Secretary factory)
+    public SecretaryFilter(Secretary factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	this.request = request;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
 
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("Secretary");
+	Thread.currentThread().setName("Secretary");
 	
 	try
 	{
@@ -73,28 +73,28 @@ public class SecretaryFilter implements ContentFilter
 	    String selectName = null;
 
 	    Object obj;
-            while ((obj = in.read ()) != null)
+            while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
+		if (token.getType() == Token.TT_TAG)
 		{
-		    Tag tag = token.createTag ();
-		    if (tag.is ("form"))
+		    Tag tag = token.createTag();
+		    if (tag.is("form"))
 		    {
 			inform = true;
 		    }
-		    else if (tag.is ("/form"))
+		    else if (tag.is("/form"))
 		    {
 			inform = false;
 		    }
-		    else if (tag.is ("select"))
+		    else if (tag.is("select"))
 		    {
-			if (tag.has ("name"))
+			if (tag.has("name"))
 			{
-			    selectName = tag.get ("name").toLowerCase ();
+			    selectName = tag.get("name").toLowerCase();
 			}
 		    }
-		    else if (tag.is ("/select"))
+		    else if (tag.is("/select"))
 		    {
 			selectName = null;
 		    }
@@ -104,40 +104,40 @@ public class SecretaryFilter implements ContentFilter
 			         || tag.get("type").equalsIgnoreCase("text")
 			         || tag.get("type").equalsIgnoreCase("password")))
 		    {
-			String name = tag.get ("name").toLowerCase ();
-			if (factory.containsKey (name))
+			String name = tag.get("name").toLowerCase();
+			if (factory.containsKey(name))
 			{
-			    tag.put ("value", (String) factory.get (name));
+			    tag.put("value", (String) factory.get(name));
 			}
 		    }
 		    /* <option value=XXX> */
-		    else if (inform && tag.is ("option")
+		    else if (inform && tag.is("option")
 			     && selectName != null
-			     && factory.containsKey (selectName)
-			     && tag.has ("value"))
+			     && factory.containsKey(selectName)
+			     && tag.has("value"))
 		    {
-			if (tag.has ("selected"))
+			if (tag.has("selected"))
 			{
-			    tag.remove ("selected");
+			    tag.remove("selected");
 			}
 			
-			String value = tag.get ("value");
-			if (factory.get (selectName).equals (tag.get ("value")))
+			String value = tag.get("value");
+			if (factory.get(selectName).equals(tag.get("value")))
 			{
-			    tag.put ("selected", "");
+			    tag.put("selected", "");
 			}
 		    }
 
-		    token.importTag (tag);
+		    token.importTag(tag);
 		}
-		out.write (token);
+		out.write(token);
 	    }
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: CookieMonsterFilter.java,v 1.2 1998/08/13 06:02:03 boyns Exp $ */
+/* $Id: CookieMonsterFilter.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,42 +30,42 @@ public class CookieMonsterFilter implements RequestFilter, ReplyFilter
     CookieMonster factory;
     Request request = null;
 
-    CookieMonsterFilter (CookieMonster factory)
+    CookieMonsterFilter(CookieMonster factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public void filter (Request r) throws FilterException
+    public void filter(Request r) throws FilterException
     {
 	this.request = r;
 	
-	if (r.containsHeaderField ("Cookie"))
+	if (r.containsHeaderField("Cookie"))
 	{
-	    String cookie = r.getHeaderField ("Cookie");
-	    factory.process ("Browser sending \"" + cookie + "\" for " + request.getURL () + "\n");
-	    if (prefs.getBoolean ("CookieMonster.eatRequestCookies"))
+	    String cookie = r.getHeaderField("Cookie");
+	    factory.report(r, "Cookie \"" + cookie + "\"");
+	    if (prefs.getBoolean("CookieMonster.eatRequestCookies"))
 	    {
-		r.removeHeaderField ("Cookie");
-		factory.process ("Eating " + cookie + "\n");
+		r.removeHeaderField("Cookie");
+		factory.report(r, "ate \"" + cookie + "\"");
 	    }
 	}
     }
     
-    public void filter (Reply r) throws FilterException
+    public void filter(Reply r) throws FilterException
     {
-	if (r.containsHeaderField ("Set-Cookie"))
+	if (r.containsHeaderField("Set-Cookie"))
 	{
-	    Cookie cookie = new Cookie (r.getHeaderField ("Set-Cookie"), request);
-	    factory.process ("Server sent \"" + cookie.toString () + "\" for " + request.getURL () + "\n");
-	    if (prefs.getBoolean ("CookieMonster.eatReplyCookies"))
+	    Cookie cookie = new Cookie(r.getHeaderField("Set-Cookie"), request);
+	    factory.report(request, "Set-Cookie \"" + cookie.toString() + "\"");
+	    if (prefs.getBoolean("CookieMonster.eatReplyCookies"))
 	    {
-		r.removeHeaderField ("Set-Cookie");
-		factory.process ("Eating " + cookie.toString () + "\n");
+		r.removeHeaderField("Set-Cookie");
+		factory.report(request, "ate " + cookie.toString());
 	    }
 	}
     }

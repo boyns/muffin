@@ -1,4 +1,4 @@
-/* $Id: PainterFilter.java,v 1.2 1998/08/13 06:02:34 boyns Exp $ */
+/* $Id: PainterFilter.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
+import gnu.regexp.*;
 
 public class PainterFilter implements ContentFilter
 {
@@ -34,186 +35,186 @@ public class PainterFilter implements ContentFilter
     OutputObjectStream out = null;
     Request request = null;
 
-    PainterFilter (Painter factory)
+    PainterFilter(Painter factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	this.request = request;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
     
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("Painter");
+	Thread.currentThread().setName("Painter");
 	
 	try
 	{
 	    Tag tag;
-
 	    Object obj;
-            while ((obj = in.read ()) != null)
+	    RE pattern1 = new RE("^(body|td|table)$");
+	    RE pattern2 = new RE("^(tr|th)$");
+
+            while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
+		if (token.getType() == Token.TT_TAG)
 		{
-		    tag = token.createTag ();
+		    tag = token.createTag();
 
-		    /* <body> or <td> */
-		    if (tag.is ("body") || tag.is ("td"))
+		    if (tag.matches(pattern1))
 		    {
 			String value;
 
-			value = prefs.getString ("Painter.bgcolor");
-			if (value.length () > 0)
+			value = prefs.getString("Painter.bgcolor");
+			if (value.length() > 0)
 			{
-			    if (value.equalsIgnoreCase ("None"))
+			    if (value.equalsIgnoreCase("None"))
 			    {
-				tag.remove ("bgcolor");
-				tag.remove ("background");
+				tag.remove("bgcolor");
+				tag.remove("background");
 			    }
 			    else
 			    {
-				tag.put ("bgcolor", value);
-				tag.remove ("background");
+				tag.put("bgcolor", value);
+				tag.remove("background");
 			    }
 			}
 			else
 			{
-			    value = prefs.getString ("Painter.background");
-			    if (value.length () > 0)
+			    value = prefs.getString("Painter.background");
+			    if (value.length() > 0)
 			    {
-				if (value.equalsIgnoreCase ("None"))
+				if (value.equalsIgnoreCase("None"))
 				{
-				    tag.remove ("background");
-				    tag.remove ("bgcolor");
+				    tag.remove("background");
+				    tag.remove("bgcolor");
 				}
 				else
 				{
-				    tag.put ("background", value);
-				    tag.remove ("bgcolor");
+				    tag.put("background", value);
+				    tag.remove("bgcolor");
 				}
 			    }
 			}
 			
-			value = prefs.getString ("Painter.text");
-			if (value.length () > 0)
+			value = prefs.getString("Painter.text");
+			if (value.length() > 0)
 			{
-			    if (value.equalsIgnoreCase ("None"))
+			    if (value.equalsIgnoreCase("None"))
 			    {
-				tag.remove ("text");
+				tag.remove("text");
 			    }
 			    else
 			    {
-				tag.put ("text", value);
+				tag.put("text", value);
 			    }
 			}
 
-			value = prefs.getString ("Painter.link");
-			if (value.length () > 0)
+			value = prefs.getString("Painter.link");
+			if (value.length() > 0)
 			{
-			    if (value.equalsIgnoreCase ("None"))
+			    if (value.equalsIgnoreCase("None"))
 			    {
-				tag.remove ("link");
+				tag.remove("link");
 			    }
 			    else
 			    {
-				tag.put ("link", value);
+				tag.put("link", value);
 			    }
 			}
 
-			value = prefs.getString ("Painter.alink");
-			if (value.length () > 0)
+			value = prefs.getString("Painter.alink");
+			if (value.length() > 0)
 			{
-			    if (value.equalsIgnoreCase ("None"))
+			    if (value.equalsIgnoreCase("None"))
 			    {
-				tag.remove ("alink");
+				tag.remove("alink");
 			    }
 			    else
 			    {
-				tag.put ("alink", value);
+				tag.put("alink", value);
 			    }
 			}
 
-			value = prefs.getString ("Painter.vlink");
-			if (value.length () > 0)
+			value = prefs.getString("Painter.vlink");
+			if (value.length() > 0)
 			{
-			    if (value.equalsIgnoreCase ("None"))
+			    if (value.equalsIgnoreCase("None"))
 			    {
-				tag.remove ("vlink");
+				tag.remove("vlink");
 			    }
 			    else
 			    {
-				tag.put ("vlink", value);
+				tag.put("vlink", value);
+			    }
+			}
+		    }
+		    else if (tag.matches(pattern2) && tag.has("bgcolor"))
+		    {
+			String value = prefs.getString("Painter.bgcolor");
+			if (value.length() > 0)
+			{
+			    if (value.equalsIgnoreCase("None"))
+			    {
+				tag.remove("bgcolor");
+			    }
+			    else
+			    {
+				tag.put("bgcolor", value);
 			    }
 			}
 		    }
 		    /* <font> */
-		    else if (tag.is ("font") && tag.has ("color"))
+		    else if (tag.is("font") && tag.has("color"))
 		    {
-			String value = prefs.getString ("Painter.text");
-			if (value.length () > 0)
+			String value = prefs.getString("Painter.text");
+			if (value.length() > 0)
 			{
-			    if (value.equalsIgnoreCase ("None"))
+			    if (value.equalsIgnoreCase("None"))
 			    {
-				tag.remove ("color");
+				tag.remove("color");
 			    }
 			    else
 			    {
-				tag.put ("color", value);
-			    }
-			}
-		    }
-		    /* <table> <tr> <th> <td> */
-		    else if ((tag.is ("table") || tag.is ("tr") || tag.is ("th") || tag.is ("td")) && tag.has ("bgcolor"))
-		    {
-			String value = prefs.getString ("Painter.bgcolor");
-			if (value.length () > 0)
-			{
-			    if (value.equalsIgnoreCase ("None"))
-			    {
-				tag.remove ("bgcolor");
-			    }
-			    else
-			    {
-				tag.put ("bgcolor", value);
+				tag.put("color", value);
 			    }
 			}
 		    }
 
-		    token.importTag (tag);
-		    out.write (token);
+		    token.importTag(tag);
+		    out.write(token);
 		}
 		else
 		{
-		    out.write (token);
+		    out.write(token);
 		}
 	    }
 	    
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

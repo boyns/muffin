@@ -1,4 +1,4 @@
-/* $Id: RefererFrame.java,v 1.2 1998/08/13 06:02:43 boyns Exp $ */
+/* $Id: RefererFrame.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -34,9 +34,9 @@ public class RefererFrame extends MuffinFrame implements ActionListener, ItemLis
     TextField input = null;
     Checkbox samedomain = null;
     
-    public RefererFrame (Prefs prefs, Referer parent)
+    public RefererFrame(Prefs prefs, Referer parent)
     {
-	super ("Muffin: Referer");
+	super("Muffin: Referer");
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -50,127 +50,127 @@ public class RefererFrame extends MuffinFrame implements ActionListener, ItemLis
             "Uhm... no",
 	};
 	
-	Panel panel = new Panel ();
-        GridBagLayout layout = new GridBagLayout ();
+	Panel panel = new Panel();
+        GridBagLayout layout = new GridBagLayout();
         GridBagConstraints c;
-        panel.setLayout (layout);
+        panel.setLayout(layout);
 
-        panel.add (new Label ("Referer:", Label.RIGHT));
+        panel.add(new Label("Referer:", Label.RIGHT));
 
-        input = new TextField (32);
-	input.setText (prefs.getString ("Referer.referer"));
-        c = new GridBagConstraints ();
+        input = new TextField(32);
+	input.setText(prefs.getString("Referer.referer"));
+        c = new GridBagConstraints();
         c.anchor = GridBagConstraints.WEST;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        layout.setConstraints (input, c);
-        panel.add (input);
+        layout.setConstraints(input, c);
+        panel.add(input);
 
-        panel.add (new Label ("Sample Referers:", Label.RIGHT));
+        panel.add(new Label("Sample Referers:", Label.RIGHT));
 
-        Choice choice = new Choice ();
-	choice.addItemListener (this);
+        Choice choice = new Choice();
+	choice.addItemListener(this);
         for (int i = 0; i < sampleReferers.length; i++)
         {
-            choice.addItem (sampleReferers[i]);
+            choice.addItem(sampleReferers[i]);
         }
         
-        c = new GridBagConstraints ();
+        c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
-        layout.setConstraints (choice, c);
-        panel.add (choice);
+        layout.setConstraints(choice, c);
+        panel.add(choice);
 
-	samedomain = new Checkbox ("Allow Same Domain");
-	samedomain.setState (prefs.getBoolean ("Referer.allowSameDomain"));
-	c = new GridBagConstraints ();
+	samedomain = new Checkbox("Allow Same Domain");
+	samedomain.setState(prefs.getBoolean("Referer.allowSameDomain"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (samedomain, c);
-	panel.add (samedomain);
+	layout.setConstraints(samedomain, c);
+	panel.add(samedomain);
 
-        add ("Center", panel);
+        add("Center", panel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void itemStateChanged (ItemEvent event)
+    public void itemStateChanged(ItemEvent event)
     {
-	input.setText (event.getItem ().toString ());
+	input.setText(event.getItem().toString());
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("Referer.referer", input.getText ());
-	    prefs.putBoolean ("Referer.allowSameDomain", samedomain.getState ());
+	    prefs.putString("Referer.referer", input.getText());
+	    prefs.putBoolean("Referer.allowSameDomain", samedomain.getState());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("Referer");
+	    new HelpFrame("Referer");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: HtmlTokenizer.java,v 1.2 1998/08/13 06:00:31 boyns Exp $ */
+/* $Id: HtmlTokenizer.java,v 1.3 1998/12/19 21:24:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -34,24 +34,24 @@ public class HtmlTokenizer extends PushbackInputStream
     private InputStream in;
     private int nextTokenType = Token.TT_NONE;
 
-    public HtmlTokenizer (InputStream in)
+    public HtmlTokenizer(InputStream in)
     {
-	super (in, 32);
+	super(in, 32);
     }
 
-    public Token getToken () throws IOException
+    public Token getToken() throws IOException
     {
 	int ch;
 	boolean quoted = false;
 	int quoteChar = 0;
 	int badIndex = 0;
 	int scriptIndex = 0;
-	ByteArray undo = new ByteArray ();
+	ByteArray undo = new ByteArray();
 
-	Token token = new Token (nextTokenType);
+	Token token = new Token(nextTokenType);
 	nextTokenType = Token.TT_NONE;
 
-	while ((ch = read ()) != -1)
+	while ((ch = read()) != -1)
 	{
 	    switch (token.type)
 	    {
@@ -61,32 +61,32 @@ public class HtmlTokenizer extends PushbackInputStream
 	    case Token.TT_SCRIPT:
 		if (scriptPattern[scriptIndex] == ' ')
 		{
-		    if (Character.isWhitespace ((char)ch))
+		    if (Character.isWhitespace((char)ch))
 		    {
-			undo.append ((byte)ch);
+			undo.append((byte)ch);
 			break; /* XXX */
 		    }
 		    scriptIndex++;
 		}
-		if ((char)scriptPattern[scriptIndex] == Character.toLowerCase ((char)ch))
+		if ((char)scriptPattern[scriptIndex] == Character.toLowerCase((char)ch))
 		{
-		    undo.append ((byte)ch);
+		    undo.append((byte)ch);
 		    scriptIndex++;
 		    if (scriptIndex == scriptPattern.length)
 		    {
 			/* put back the end tag for next time */
-			for (int i = undo.length () - 1; i >= 0; i--)
+			for (int i = undo.length() - 1; i >= 0; i--)
 			{
-			    unread (undo.get (i));
+			    unread(undo.get(i));
 			}
-			token.chop (undo.length () - 1);
+			token.chop(undo.length() - 1);
 			return token;
 		    }
 		}
 		else if (scriptIndex > 0)
 		{
 		    scriptIndex = 0;
-		    undo.erase ();
+		    undo.erase();
 		}
 		break;
 
@@ -107,10 +107,10 @@ public class HtmlTokenizer extends PushbackInputStream
 			{
 			    badIndex = 0;
 			    quoted = false;
-			    System.out.println ("HTML: Missing start or end quote");
-			    System.out.println ();
-			    System.out.println (new String (token.bytes));
-			    System.out.println ();
+			    System.out.println("HTML: Missing start or end quote");
+			    System.out.println();
+			    System.out.println(new String(token.bytes));
+			    System.out.println();
 			}
 		    }
 		    // AJP modification - Allow for tags inside a tag!
@@ -124,7 +124,7 @@ public class HtmlTokenizer extends PushbackInputStream
 		{
 		    if (token.type != Token.TT_NONE)
 		    {
-			unread (ch);
+			unread(ch);
 			return token;
 		    }
 		    token.type = Token.TT_TAG;
@@ -142,7 +142,7 @@ public class HtmlTokenizer extends PushbackInputStream
 		}
 	    }
 
-	    token.append ((byte)ch);
+	    token.append((byte)ch);
 
 	    /* see if the tag is really a comment */
 	    if (token.type == Token.TT_TAG && token.offset == 4)
@@ -176,8 +176,8 @@ public class HtmlTokenizer extends PushbackInputStream
 	if (token.type == Token.TT_TAG)
 	{
 	    /* force the tag to be parsed */
-	    Tag tag = token.createTag ();
-	    if (tag.is ("script"))
+	    Tag tag = token.createTag();
+	    if (tag.is("script"))
 	    {
 		nextTokenType = Token.TT_SCRIPT;
 	    }

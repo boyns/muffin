@@ -1,4 +1,4 @@
-/* $Id: RefererFilter.java,v 1.2 1998/08/13 06:02:41 boyns Exp $ */
+/* $Id: RefererFilter.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,76 +29,76 @@ public class RefererFilter implements RequestFilter
     Prefs prefs;
     Referer factory;
 
-    RefererFilter (Referer factory)
+    RefererFilter(Referer factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    String getHost (String url)
+    String getHost(String url)
     {
 	String s;
 	
-    	if (url.startsWith ("http://"))
+    	if (url.startsWith("http://"))
 	{
-	    s = url.substring (7, url.indexOf ('/', 7));
+	    s = url.substring(7, url.indexOf('/', 7));
 	}
 	else
 	{
 	    s = url;
 	}
 
-	if (s.indexOf (':') != -1)
+	if (s.indexOf(':') != -1)
 	{
-	    return s.substring (0, s.indexOf (':'));
+	    return s.substring(0, s.indexOf(':'));
 	}
 	return s;
     }
 
-    String getDomain (String host)
+    String getDomain(String host)
     {
-	int i = host.lastIndexOf ('.');
+	int i = host.lastIndexOf('.');
 	if (i == -1)
 	{
 	    return null;
 	}
-	int d = host.lastIndexOf ('.', i-1);
+	int d = host.lastIndexOf('.', i-1);
 	if (d == -1)
 	{
 	    return null;
 	}
-	return host.substring (d + 1);
+	return host.substring(d + 1);
     }
     
-    public void filter (Request r) throws FilterException
+    public void filter(Request r) throws FilterException
     {
-	String s = prefs.getString ("Referer.referer");
-	if (s == null || s.length () == 0)
+	String s = prefs.getString("Referer.referer");
+	if (s == null || s.length() == 0)
 	{
 	    return;
 	}
 	
-	if (r.containsHeaderField ("Referer") && prefs.getBoolean ("Referer.allowSameDomain"))
+	if (r.containsHeaderField("Referer") && prefs.getBoolean("Referer.allowSameDomain"))
 	{
-	    String refdom = getDomain (getHost (r.getHeaderField ("Referer")));
-	    String reqdom = getDomain (r.getHost ());
-	    if (refdom != null && reqdom != null && refdom.equalsIgnoreCase (reqdom))
+	    String refdom = getDomain(getHost(r.getHeaderField("Referer")));
+	    String reqdom = getDomain(r.getHost());
+	    if (refdom != null && reqdom != null && refdom.equalsIgnoreCase(reqdom))
 	    {
 		return;
 	    }
 	}
 	    
-	if (s.equalsIgnoreCase ("NONE"))
+	if (s.equalsIgnoreCase("NONE"))
 	{
-	    r.removeHeaderField ("Referer");
+	    r.removeHeaderField("Referer");
 	}
 	else
 	{
-	    r.setHeaderField ("Referer", s);
+	    r.setHeaderField("Referer", s);
 	}
     }
 }

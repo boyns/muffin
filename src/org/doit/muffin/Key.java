@@ -1,4 +1,4 @@
-/* $Id: Key.java,v 1.2 1998/08/13 06:01:27 boyns Exp $ */
+/* $Id: Key.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -36,7 +36,7 @@ class Key
     /**
      * Create a Key.
      */
-    Key (String name)
+    Key(String name)
     {
 	this.name = name;
     }
@@ -44,24 +44,24 @@ class Key
     /**
      * Return a lowercase hashCode.
      */
-    public int hashCode ()
+    public int hashCode()
     {
-	String s = name.toLowerCase ();
-	return s.hashCode ();
+	String s = name.toLowerCase();
+	return s.hashCode();
     }
 
     /**
      * Return a lowercase equals.
      */
-    public boolean equals (Object obj)
+    public boolean equals(Object obj)
     {
-	return name.equalsIgnoreCase (obj.toString ());
+	return name.equalsIgnoreCase(obj.toString());
     }
 
     /** 
      * Return the key.
      */
-    public String toString ()
+    public String toString()
     {
 	return name;
     }

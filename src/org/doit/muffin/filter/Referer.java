@@ -1,4 +1,4 @@
-/* $Id: Referer.java,v 1.2 1998/08/13 06:02:40 boyns Exp $ */
+/* $Id: Referer.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,53 +30,53 @@ public class Referer implements FilterFactory
     Prefs prefs;
     RefererFrame frame = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putString ("Referer.referer", "");
-	prefs.putBoolean ("Referer.allowSameDomain", false);
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putString("Referer.referer", "");
+	prefs.putBoolean("Referer.allowSameDomain", false);
+	prefs.setOverride(o);
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new RefererFrame (prefs, this);
+	    frame = new RefererFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new RefererFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new RefererFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 }

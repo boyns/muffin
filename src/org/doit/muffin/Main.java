@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.5 1998/10/01 06:38:44 boyns Exp $ */
+/* $Id: Main.java,v 1.6 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -51,7 +51,7 @@ import gnu.getopt.*;
 public class Main extends MuffinFrame
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    final static String version = "0.7.3";
+    final static String version = "0.8";
     static Options options;
     static Configuration configs;
     static FilterManager manager;
@@ -67,156 +67,156 @@ public class Main extends MuffinFrame
     /**
      * Create Main.
      */
-    public Main ()
+    public Main()
     {
-	super ("Muffin");
+	super("Muffin");
 
-	infoString = new String ("Muffin " + options.getString ("muffin.version") +
-				 " running on " + options.getString ("muffin.host") +
-				 " port " + options.getString ("muffin.port"));
+	infoString = new String("Muffin " + options.getString("muffin.version") +
+				 " running on " + options.getString("muffin.host") +
+				 " port " + options.getString("muffin.port"));
 	
-	manager = new FilterManager (options, configs);
+	manager = new FilterManager(options, configs);
 
-	if (options.getBoolean ("muffin.noWindow"))
+	if (options.getBoolean("muffin.noWindow"))
 	{
-	    TextMonitor tm = new TextMonitor (infoString);
+	    TextMonitor tm = new TextMonitor(infoString);
 	    monitor = tm;
 	}
 	else
 	{
-	    monitor = new CanvasMonitor (this);
-	    gui ();
+	    monitor = new CanvasMonitor(this);
+	    gui();
 	}
 
 	/* Startup the Janitor */
-	new Thread (new Janitor ()).start ();
+	new Thread(new Janitor()).start();
 
-	server = new Server (options.getInteger ("muffin.port"),
+	server = new Server(options.getInteger("muffin.port"),
 			     monitor, manager, options);
 
-	System.out.println (infoString);
+	System.out.println(infoString);
 
-	server.run ();
+	server.run();
     }
 
     /**
      * Initialize the GUI interface.
      */
-    void gui ()
+    void gui()
     {
-	menuBar = new MenuBar ();
+	menuBar = new MenuBar();
 
-	Menu menu = new Menu ("File");
-	//menu.setFont (new Font ("Helvetica", Font.BOLD, 12));
+	Menu menu = new Menu("File");
+	//menu.setFont(new Font("Helvetica", Font.BOLD, 12));
 	MenuItem item;
-	item = new MenuItem ("Quit");
-	item.setActionCommand ("doQuit");
-	item.addActionListener (this);
-	//item.setFont (new Font ("Helvetica", Font.BOLD, 12));
-	menu.add (item);
-	menuBar.add (menu);
+	item = new MenuItem("Quit");
+	item.setActionCommand("doQuit");
+	item.addActionListener(this);
+	//item.setFont(new Font("Helvetica", Font.BOLD, 12));
+	menu.add(item);
+	menuBar.add(menu);
 
-	menu = new Menu ("View");
-	item = new MenuItem ("Configurations...");
-	item.setActionCommand ("doConfigs");
-	item.addActionListener (this);
-	menu.add (item);
-	item = new MenuItem ("Connections...");
-	item.setActionCommand ("doConnections");
-	item.addActionListener (this);
-	menu.add (item);
-	item = new MenuItem ("Filters...");
-	item.setActionCommand ("doFilters");
-	item.addActionListener (this);
-	menu.add (item);
-	item = new MenuItem ("Options...");
-	item.setActionCommand ("doOptions");
-	item.addActionListener (this);
-	menu.add (item);
-	item = new MenuItem ("Regex Tester...");
-	item.setActionCommand ("doRegex");
-	item.addActionListener (this);
-	menu.add (item);
-	item = new MenuItem ("Threads...");
-	item.setActionCommand ("doThreads");
-	item.addActionListener (this);
-	menu.add (item);
-	menuBar.add (menu);
+	menu = new Menu("View");
+	item = new MenuItem("Configurations...");
+	item.setActionCommand("doConfigs");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("Connections...");
+	item.setActionCommand("doConnections");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("Filters...");
+	item.setActionCommand("doFilters");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("Options...");
+	item.setActionCommand("doOptions");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("Regex Tester...");
+	item.setActionCommand("doRegex");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("Threads...");
+	item.setActionCommand("doThreads");
+	item.addActionListener(this);
+	menu.add(item);
+	menuBar.add(menu);
 
-	menu = new Menu ("Help");
-	item = new MenuItem ("About Muffin...");
-	item.setActionCommand ("doAbout");
-	item.addActionListener (this);
-	menu.add (item);
-	item = new MenuItem ("License...");
-	item.setActionCommand ("doLicense");
-	item.addActionListener (this);
-	menu.add (item);
-	menuBar.setHelpMenu (menu);
+	menu = new Menu("Help");
+	item = new MenuItem("About Muffin...");
+	item.setActionCommand("doAbout");
+	item.addActionListener(this);
+	menu.add(item);
+	item = new MenuItem("License...");
+	item.setActionCommand("doLicense");
+	item.addActionListener(this);
+	menu.add(item);
+	menuBar.setHelpMenu(menu);
 	
-	setMenuBar (menuBar);
+	setMenuBar(menuBar);
 
 	if (monitor instanceof Canvas)
 	{
 	    Canvas canvas = (Canvas) monitor;
-	    add ("Center", canvas);
+	    add("Center", canvas);
 	}
 
-	GridBagLayout layout = new GridBagLayout ();
-	controlPanel = new Panel ();
-	controlPanel.setLayout (layout);
+	GridBagLayout layout = new GridBagLayout();
+	controlPanel = new Panel();
+	controlPanel.setLayout(layout);
 
-	GridBagConstraints c = new GridBagConstraints ();
+	GridBagConstraints c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
-	c.insets = new Insets (2, 5, 2, 5);
+	c.insets = new Insets(2, 5, 2, 5);
 	c.weightx = 1.0;
 
 	Button b;
-	b = new Button ("Filters...");
-	b.setFont (new Font ("Helvetica", Font.BOLD, 12));
-	b.setActionCommand ("doFilters");
-	b.addActionListener (this);
-	layout.setConstraints (b, c);
-	controlPanel.add (b);
-	b = new Button ("Options...");
-	b.setActionCommand ("doOptions");
-	b.addActionListener (this);
-	layout.setConstraints (b, c);
-	controlPanel.add (b);
-	suspendButton = new Button ("Suspend");
-	suspendButton.setActionCommand ("doSuspend");
-	suspendButton.addActionListener (this);
-	layout.setConstraints (suspendButton, c);
-	controlPanel.add (suspendButton);
-	b = new Button ("Stop");
-	b.setActionCommand ("doStop");
-	b.addActionListener (this);
-	layout.setConstraints (b, c);
-	controlPanel.add (b);
+	b = new Button("Filters...");
+	b.setFont(new Font("Helvetica", Font.BOLD, 12));
+	b.setActionCommand("doFilters");
+	b.addActionListener(this);
+	layout.setConstraints(b, c);
+	controlPanel.add(b);
+	b = new Button("Options...");
+	b.setActionCommand("doOptions");
+	b.addActionListener(this);
+	layout.setConstraints(b, c);
+	controlPanel.add(b);
+	suspendButton = new Button("Suspend");
+	suspendButton.setActionCommand("doSuspend");
+	suspendButton.addActionListener(this);
+	layout.setConstraints(suspendButton, c);
+	controlPanel.add(suspendButton);
+	b = new Button("Stop");
+	b.setActionCommand("doStop");
+	b.addActionListener(this);
+	layout.setConstraints(b, c);
+	controlPanel.add(b);
 	
-	Icon icon = new Icon (options);
+	Icon icon = new Icon(options);
 	c.anchor = GridBagConstraints.EAST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (icon, c);
-	controlPanel.add (icon);
+	layout.setConstraints(icon, c);
+	controlPanel.add(icon);
 	
-	add ("North", controlPanel);
+	add("North", controlPanel);
 
-	infoLabel = new Label (infoString);
-	infoLabel.setFont (options.getFont ("muffin.smallfont"));
-	add ("South", infoLabel);
+	infoLabel = new Label(infoString);
+	infoLabel.setFont(options.getFont("muffin.smallfont"));
+	add("South", infoLabel);
 
-	addWindowListener (this);
-	configs.addConfigurationListener (this);
+	addWindowListener(this);
+	configs.addConfigurationListener(this);
 
-	updateGeometry (options.getString ("muffin.geometry"));
+	updateGeometry(options.getString("muffin.geometry"));
 
-	show ();
+	show();
     }
 
-    public void configurationChanged (String name)
+    public void configurationChanged(String name)
     {
-	infoLabel.setText (infoString + " (" + name + ")");
+	infoLabel.setText(infoString + " (" + name + ")");
     }
 
     /**
@@ -224,64 +224,64 @@ public class Main extends MuffinFrame
      *
      * @param event some event.
      */
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doQuit".equals (arg))
+	if ("doQuit".equals(arg))
 	{
-	    closeApplication ();
+	    closeApplication();
 	}
-	else if ("doConnections".equals (arg))
+	else if ("doConnections".equals(arg))
 	{
-	    new ConnectionsFrame (monitor);
+	    new ConnectionsFrame(monitor);
 	}
-	else if ("doThreads".equals (arg))
+	else if ("doThreads".equals(arg))
 	{
-	    new ThreadsFrame (Thread.currentThread ());
+	    new ThreadsFrame(Thread.currentThread());
 	}
-	else if ("doRegex".equals (arg))
+	else if ("doRegex".equals(arg))
 	{
-	    new RegexFrame ();
+	    new RegexFrame();
 	}
-	else if ("doAbout".equals (arg))
+	else if ("doAbout".equals(arg))
 	{
-	    new About (options);
+	    new About(options);
 	}
-	else if ("doLicense".equals (arg))
+	else if ("doLicense".equals(arg))
 	{
-	    new HelpFrame ("COPYING");
+	    new HelpFrame("COPYING");
 	}
-	else if ("doStop".equals (arg))
+	else if ("doStop".equals(arg))
 	{
-	    server.stop ();
+	    server.stop();
 	}
-	else if ("doSuspend".equals (arg))
+	else if ("doSuspend".equals(arg))
 	{
-  	    suspendButton.setLabel ("Resume");
- 	    suspendButton.setActionCommand ("doResume");
- 	    server.suspend ();
- 	    monitor.suspend ();
+  	    suspendButton.setLabel("Resume");
+ 	    suspendButton.setActionCommand("doResume");
+ 	    server.suspend();
+ 	    monitor.suspend();
 
 	}
-	else if ("doResume".equals (arg))
+	else if ("doResume".equals(arg))
 	{
-  	    suspendButton.setLabel ("Suspend");
- 	    suspendButton.setActionCommand ("doSuspend");
- 	    server.resume ();
- 	    monitor.resume ();
+  	    suspendButton.setLabel("Suspend");
+ 	    suspendButton.setActionCommand("doSuspend");
+ 	    server.resume();
+ 	    monitor.resume();
 	}
-	else if ("doFilters".equals (arg))
+	else if ("doFilters".equals(arg))
 	{
-	    manager.createFrame ();
+	    manager.createFrame();
 	}
-	else if ("doOptions".equals (arg))
+	else if ("doOptions".equals(arg))
 	{
-	    options.createFrame ();
+	    options.createFrame();
 	}
-	else if ("doConfigs".equals (arg))
+	else if ("doConfigs".equals(arg))
 	{
-	    configs.createFrame ();
+	    configs.createFrame();
 	}
 	else
 	{
@@ -306,121 +306,130 @@ public class Main extends MuffinFrame
 	    monitor.minimize(false);
 	}
 
- 	pack();
- 	setSize(getPreferredSize());
+	if (options.exists("muffin.geometry"))
+	{
+	    updateGeometry(options.getString("muffin.geometry"));
+	}
+	else
+	{
+	    hide();
+	    setSize(getPreferredSize());
+	    pack();
+	    show();
+	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	closeApplication ();
+	closeApplication();
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 
-    void closeApplication ()
+    void closeApplication()
     {
 	/* Disable all enabled filters */
-	manager.disableAll ();
+	manager.disableAll();
 	    
-	setVisible (false);
-	System.exit (0);
+	setVisible(false);
+	System.exit(0);
     }
 
-    static void systemInfo ()
+    static void systemInfo()
     {
-	System.out.println ("Muffin:");
-	System.out.println ("-------");
-	System.out.println ("muffin.version " + version);
-	System.out.println ();
-	System.out.println ("Java Virtual Machine:");
-	System.out.println ("---------------------");
-    	System.out.println ("java.version " + System.getProperty ("java.version"));
-	System.out.println ("java.class.version " + System.getProperty ("java.class.version"));
-	System.out.println ("java.class.path " + System.getProperty ("java.class.path"));
-	System.out.println ("java.home " + System.getProperty ("java.home"));
-	System.out.println ("java.vendor " + System.getProperty ("java.vendor"));
-	System.out.println ();
-	System.out.println ("Operating System:");
-	System.out.println ("-----------------");
-	System.out.println ("os.version " + System.getProperty ("os.version"));
-	System.out.println ("os.arch " + System.getProperty ("os.arch"));
-	System.out.println ("os.name " + System.getProperty ("os.name"));
-	System.out.println ();
-	System.out.println ("User:");
-	System.out.println ("-----");
-	System.out.println ("user.name " + System.getProperty ("user.name"));
-	System.out.println ("user.dir " + System.getProperty ("user.dir"));
-	System.out.println ("user.home " + System.getProperty ("user.home"));
+	System.out.println("Muffin:");
+	System.out.println("-------");
+	System.out.println("muffin.version " + version);
+	System.out.println();
+	System.out.println("Java Virtual Machine:");
+	System.out.println("---------------------");
+    	System.out.println("java.version " + System.getProperty("java.version"));
+	System.out.println("java.class.version " + System.getProperty("java.class.version"));
+	System.out.println("java.class.path " + System.getProperty("java.class.path"));
+	System.out.println("java.home " + System.getProperty("java.home"));
+	System.out.println("java.vendor " + System.getProperty("java.vendor"));
+	System.out.println();
+	System.out.println("Operating System:");
+	System.out.println("-----------------");
+	System.out.println("os.version " + System.getProperty("os.version"));
+	System.out.println("os.arch " + System.getProperty("os.arch"));
+	System.out.println("os.name " + System.getProperty("os.name"));
+	System.out.println();
+	System.out.println("User:");
+	System.out.println("-----");
+	System.out.println("user.name " + System.getProperty("user.name"));
+	System.out.println("user.dir " + System.getProperty("user.dir"));
+	System.out.println("user.home " + System.getProperty("user.home"));
     }
 
-    static String copyleft ()
+    static String copyleft()
     {
-	StringBuffer buf = new StringBuffer ();
-	buf.append ("Muffin version " + version + ", Copyright (C) 1996-1998 Mark R. Boyns <boyns@doit.org>\n");
-	buf.append ("Muffin comes with ABSOLUTELY NO WARRANTY; for details see Help/License.\n");
-	buf.append ("This is free software, and you are welcome to redistribute it\n");
-	buf.append ("under certain conditions; see Help/License for details.\n");
-	return buf.toString ();
+	StringBuffer buf = new StringBuffer();
+	buf.append("Muffin version " + version + ", Copyright (C) 1996-1998 Mark R. Boyns <boyns@doit.org>\n");
+	buf.append("Muffin comes with ABSOLUTELY NO WARRANTY; for details see Help/License.\n");
+	buf.append("This is free software, and you are welcome to redistribute it\n");
+	buf.append("under certain conditions; see Help/License for details.\n");
+	return buf.toString();
     }
 
-    public static Options getOptions ()
+    public static Options getOptions()
     {
 	return options;
     }
 
-    public static FilterManager getFilterManager ()
+    public static FilterManager getFilterManager()
     {
 	return manager;
     }
 
-    public static void main (String argv[])
+    public static void main(String argv[])
     {
-	System.out.println (copyleft ());
+	System.out.println(copyleft());
 
 	int c;
 	String arg;
 	LongOpt longopts[] = new LongOpt[14];
 
-	longopts[0] = new LongOpt ("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
-	longopts[1] = new LongOpt ("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
-	longopts[2] = new LongOpt ("dir", LongOpt.REQUIRED_ARGUMENT, null, 'd');
-	longopts[3] = new LongOpt ("httpProxyHost", LongOpt.REQUIRED_ARGUMENT, null, 2);
-	longopts[4] = new LongOpt ("httpProxyPort", LongOpt.REQUIRED_ARGUMENT, null, 3);
-	longopts[5] = new LongOpt ("httpsProxyHost", LongOpt.REQUIRED_ARGUMENT, null, 4);
-	longopts[6] = new LongOpt ("httpsProxyPort", LongOpt.REQUIRED_ARGUMENT, null, 5);
-	longopts[7] = new LongOpt ("nw", LongOpt.NO_ARGUMENT, null, 6);
-	longopts[8] = new LongOpt ("font", LongOpt.REQUIRED_ARGUMENT, null, 7);
-	longopts[9] = new LongOpt ("smallfont", LongOpt.REQUIRED_ARGUMENT, null, 8);
-	longopts[10] = new LongOpt ("bigfont", LongOpt.REQUIRED_ARGUMENT, null, 9);
-	longopts[11] = new LongOpt ("help", LongOpt.NO_ARGUMENT, null, 'h');
-	longopts[12] = new LongOpt ("version", LongOpt.NO_ARGUMENT, null, 'v');
-	longopts[13] = new LongOpt ("geometry", LongOpt.REQUIRED_ARGUMENT, null, 'g');
+	longopts[0] = new LongOpt("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');
+	longopts[1] = new LongOpt("conf", LongOpt.REQUIRED_ARGUMENT, null, 'c');
+	longopts[2] = new LongOpt("dir", LongOpt.REQUIRED_ARGUMENT, null, 'd');
+	longopts[3] = new LongOpt("httpProxyHost", LongOpt.REQUIRED_ARGUMENT, null, 2);
+	longopts[4] = new LongOpt("httpProxyPort", LongOpt.REQUIRED_ARGUMENT, null, 3);
+	longopts[5] = new LongOpt("httpsProxyHost", LongOpt.REQUIRED_ARGUMENT, null, 4);
+	longopts[6] = new LongOpt("httpsProxyPort", LongOpt.REQUIRED_ARGUMENT, null, 5);
+	longopts[7] = new LongOpt("nw", LongOpt.NO_ARGUMENT, null, 6);
+	longopts[8] = new LongOpt("font", LongOpt.REQUIRED_ARGUMENT, null, 7);
+	longopts[9] = new LongOpt("smallfont", LongOpt.REQUIRED_ARGUMENT, null, 8);
+	longopts[10] = new LongOpt("bigfont", LongOpt.REQUIRED_ARGUMENT, null, 9);
+	longopts[11] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
+	longopts[12] = new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v');
+	longopts[13] = new LongOpt("geometry", LongOpt.REQUIRED_ARGUMENT, null, 'g');
 
-	Prefs args = new Prefs ();
-	Getopt g = new Getopt ("Muffin", argv, "v", longopts, true);
-	while ((c = g.getopt ()) != -1)
+	Prefs args = new Prefs();
+	Getopt g = new Getopt("Muffin", argv, "v", longopts, true);
+	while ((c = g.getopt()) != -1)
 	{
 	    switch (c)
 	    {
@@ -431,82 +440,82 @@ public class Main extends MuffinFrame
 	    case 'p': /* --port */
 		try 
 		{
-		    args.putInteger ("port", Integer.parseInt (g.getOptarg ()));
+		    args.putInteger("port", Integer.parseInt(g.getOptarg()));
 		}
 		catch (Exception e)
 		{
-		    System.out.println ("invalid port: " + g.getOptarg ());
-		    System.exit (1);
+		    System.out.println("invalid port: " + g.getOptarg());
+		    System.exit(1);
 		}
 		break;
 
 	    case 'c': /* --conf */
-		args.putString ("conf", g.getOptarg ());
+		args.putString("conf", g.getOptarg());
 		break;
 		
 	    case 'd': /* --dir */
-		args.putString ("dir", g.getOptarg ());
+		args.putString("dir", g.getOptarg());
 		break;
 
 	    case 2: /* httpProxyHost */
-		args.putString ("httpProxyHost", g.getOptarg ());
+		args.putString("httpProxyHost", g.getOptarg());
 		break;
 		
 	    case 3: /* httpProxyPort */
 		try
 		{
-		    args.putInteger ("httpProxyPort", Integer.parseInt (g.getOptarg ()));
+		    args.putInteger("httpProxyPort", Integer.parseInt(g.getOptarg()));
 		}
 		catch (Exception e)
 		{
-		    System.out.println ("invalid httpProxyPort: " + g.getOptarg ());
-		    System.exit (1);
+		    System.out.println("invalid httpProxyPort: " + g.getOptarg());
+		    System.exit(1);
 		}
 		break;
 
 	    case 4: /* httpsProxyHost */
-		args.putString ("httpsProxyHost", g.getOptarg ());
+		args.putString("httpsProxyHost", g.getOptarg());
 		break;
 
 	    case 5: /* httpsProxyPort */
 		try
 		{
-		    args.putInteger ("httpsProxyPort", Integer.parseInt (g.getOptarg ()));
+		    args.putInteger("httpsProxyPort", Integer.parseInt(g.getOptarg()));
 		}
 		catch (Exception e)
 		{
-		    System.out.println ("invalid httpsProxyPort: " + g.getOptarg ());
-		    System.exit (1);
+		    System.out.println("invalid httpsProxyPort: " + g.getOptarg());
+		    System.exit(1);
 		}
 		break;
 
 	    case 6: /* --nw */
-		args.putBoolean ("noWindow", true);
+		args.putBoolean("noWindow", true);
 		break;
 		
 	    case 'v': /* --version */
-		systemInfo ();
-		System.exit (0);
+		systemInfo();
+		System.exit(0);
 		break;
 		
 	    case 7: /* --font */
-		args.putString ("font", g.getOptarg ());
+		args.putString("font", g.getOptarg());
 		break;
 
 	    case 8: /* --smallfont */
-		args.putString ("smallfont", g.getOptarg ());
+		args.putString("smallfont", g.getOptarg());
 		break;
 		
 	    case 9: /* --bigfont */
-		args.putString ("bigfont", g.getOptarg ());
+		args.putString("bigfont", g.getOptarg());
 		break;
 
 	    case 'g': /* --geometry */
-		args.putString ("geometry", g.getOptarg ());
+		args.putString("geometry", g.getOptarg());
 		break;
 
 	    case 'h': /* --help */
-		System.out.println ("usage: java Muffin [options]\n\n"
+		System.out.println("usage: java Muffin [options]\n\n"
 				    + "-conf NAME            Default configuration.\n"
 				    + "-dir DIR              Preferences directory.\n"
 				    + "-font FONT            Default font.\n"
@@ -520,87 +529,87 @@ public class Main extends MuffinFrame
 				    + "-nw                   Don't create any windows.\n"
 				    + "-port PORT            Listen on PORT for browser requests.\n"
 				    + "-v                    Display muffin version.\n");
-		System.exit (0);
+		System.exit(0);
 		break;
 
 	    case '?':
-		System.exit (1);
+		System.exit(1);
 		
 	    default:
 		break;
 	    }
 	}
 
-	configs = new Configuration ();
-	if (args.exists ("dir"))
+	configs = new Configuration();
+	if (args.exists("dir"))
 	{
-	    configs.setUserDirectory (args.getString ("dir"));
+	    configs.setUserDirectory(args.getString("dir"));
 	}
-	configs.load ();
-	configs.scan ();
+	configs.load();
+	configs.scan();
 	String defaultConfig = "default.conf";
-	if (args.exists ("conf"))
+	if (args.exists("conf"))
 	{
-	    defaultConfig = args.getString ("conf");
+	    defaultConfig = args.getString("conf");
 	}
-	configs.setDefault (defaultConfig);
-	configs.setCurrent (defaultConfig);
+	configs.setDefault(defaultConfig);
+	configs.setCurrent(defaultConfig);
 
 	/* Create muffin run-time options */
-	options = new Options (configs);
-	options.putString ("muffin.version", version);
-	options.putString ("muffin.url", "http://muffin.doit.org/");
+	options = new Options(configs);
+	options.putString("muffin.version", version);
+	options.putString("muffin.url", "http://muffin.doit.org/");
 	try
 	{
-	    options.putString ("muffin.host", (InetAddress.getLocalHost ()).getHostName ());
+	    options.putString("muffin.host", (InetAddress.getLocalHost()).getHostName());
 	}
 	catch (Exception e)
 	{
-	    options.putString ("muffin.host", "127.0.0.1");
+	    options.putString("muffin.host", "127.0.0.1");
 	}
-	if (args.exists ("port"))
+	if (args.exists("port"))
 	{
-	    options.putInteger ("muffin.port", args.getInteger ("port"));
+	    options.putInteger("muffin.port", args.getInteger("port"));
 	}
-	if (args.exists ("httpProxyHost"))
+	if (args.exists("httpProxyHost"))
 	{
-	    options.putString ("muffin.httpProxyHost", args.getString ("httpProxyHost"));
+	    options.putString("muffin.httpProxyHost", args.getString("httpProxyHost"));
 	}
-	if (args.exists ("httpProxyPort"))
+	if (args.exists("httpProxyPort"))
 	{
-	    options.putInteger ("muffin.httpProxyPort", args.getInteger ("httpProxyPort"));
+	    options.putInteger("muffin.httpProxyPort", args.getInteger("httpProxyPort"));
 	}
-	if (args.exists ("httpsProxyHost"))
+	if (args.exists("httpsProxyHost"))
 	{
-	    options.putString ("muffin.httpsProxyHost", args.getString ("httpsProxyHost"));
+	    options.putString("muffin.httpsProxyHost", args.getString("httpsProxyHost"));
 	}
-	if (args.exists ("httpsProxyPort"))
+	if (args.exists("httpsProxyPort"))
 	{
-	    options.putInteger ("muffin.httpsProxyPort", args.getInteger ("httpsProxyPort"));
+	    options.putInteger("muffin.httpsProxyPort", args.getInteger("httpsProxyPort"));
 	}
-	if (args.exists ("noWindow"))
+	if (args.exists("noWindow"))
 	{
-	    options.putBoolean ("muffin.noWindow", args.getBoolean ("noWindow"));
+	    options.putBoolean("muffin.noWindow", args.getBoolean("noWindow"));
 	}
-	if (args.exists ("font"))
+	if (args.exists("font"))
 	{
-	    options.putString ("muffin.font", args.getString ("font"));
+	    options.putString("muffin.font", args.getString("font"));
 	}
-	if (args.exists ("smallfont"))
+	if (args.exists("smallfont"))
 	{
-	    options.putString ("muffin.smallfont", args.getString ("smallfont"));
+	    options.putString("muffin.smallfont", args.getString("smallfont"));
 	}
-	if (args.exists ("bigfont"))
+	if (args.exists("bigfont"))
 	{
-	    options.putString ("muffin.bigfont", args.getString ("bigfont"));
+	    options.putString("muffin.bigfont", args.getString("bigfont"));
 	}
-	if (args.exists ("geometry"))
+	if (args.exists("geometry"))
 	{
-	    options.putString ("muffin.geometry", args.getString ("geometry"));
+	    options.putString("muffin.geometry", args.getString("geometry"));
 	}
 
-	options.sync ();
+	options.sync();
 
-	new Main ();
+	new Main();
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: HostnameExpanderFrame.java,v 1.2 1998/08/13 06:02:26 boyns Exp $ */
+/* $Id: HostnameExpanderFrame.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -35,138 +35,138 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
     TextField prefix;
     TextField suffix;
     
-    public HostnameExpanderFrame (Prefs prefs, HostnameExpander parent)
+    public HostnameExpanderFrame(Prefs prefs, HostnameExpander parent)
     {
-	super ("Muffin: HostnameExpander");
+	super("Muffin: HostnameExpander");
 
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
 	GridBagConstraints c;
-        panel.setLayout (layout);
+        panel.setLayout(layout);
 	
-	panel.add (new Label ("Default Domain:"));
-	domain = new TextField (50);
-	domain.setText (prefs.getString ("HostnameExpander.defaultDomain"));
-	c = new GridBagConstraints ();
+	panel.add(new Label("Default Domain:"));
+	domain = new TextField(50);
+	domain.setText(prefs.getString("HostnameExpander.defaultDomain"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (domain, c);
-	panel.add (domain);
+	layout.setConstraints(domain, c);
+	panel.add(domain);
 
-	panel.add (new Label ("Host Prefix:"));
-	prefix = new TextField (50);
-	prefix.setText (prefs.getString ("HostnameExpander.prefix"));
-	c = new GridBagConstraints ();
+	panel.add(new Label("Host Prefix:"));
+	prefix = new TextField(50);
+	prefix.setText(prefs.getString("HostnameExpander.prefix"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (prefix, c);
-	panel.add (prefix);
+	layout.setConstraints(prefix, c);
+	panel.add(prefix);
 
-	panel.add (new Label ("Host Suffix:"));
-	suffix = new TextField (50);
-	suffix.setText (prefs.getString ("HostnameExpander.suffix"));
-	c = new GridBagConstraints ();
+	panel.add(new Label("Host Suffix:"));
+	suffix = new TextField(50);
+	suffix.setText(prefs.getString("HostnameExpander.suffix"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (suffix, c);
-	panel.add (suffix);
+	layout.setConstraints(suffix, c);
+	panel.add(suffix);
 
-	add ("North", panel);
+	add("North", panel);
 
-        parent.messages.setEditable (false);
-        add ("Center", parent.messages);
+        parent.messages.setEditable(false);
+        add("Center", parent.messages);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 5));
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 5));
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
 
-	add ("South", buttonPanel);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    parent.messages.clear ();
+	    parent.messages.clear();
 	}
-	else if ("doApply".equals (arg))
+	else if ("doApply".equals(arg))
 	{
-	    prefs.putString ("HostnameExpander.defaultDomain", domain.getText ().trim ());
-	    prefs.putString ("HostnameExpander.prefix", prefix.getText ().trim ());
-	    prefs.putString ("HostnameExpander.suffix", suffix.getText ().trim ());
+	    prefs.putString("HostnameExpander.defaultDomain", domain.getText().trim());
+	    prefs.putString("HostnameExpander.prefix", prefix.getText().trim());
+	    prefs.putString("HostnameExpander.suffix", suffix.getText().trim());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("HostnameExpander");
+	    new HelpFrame("HostnameExpander");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

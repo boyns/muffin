@@ -1,4 +1,4 @@
-/* $Id: DecafFilter.java,v 1.2 1998/08/13 06:02:06 boyns Exp $ */
+/* $Id: DecafFilter.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -36,72 +36,72 @@ public class DecafFilter implements ContentFilter, ReplyFilter
     OutputObjectStream out = null;
     Request request = null;
 
-    DecafFilter (Decaf factory)
+    DecafFilter(Decaf factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public void filter (Reply reply) throws FilterException
+    public void filter(Reply reply) throws FilterException
     {
-	if (prefs.getBoolean ("Decaf.noJavaScript"))
+	if (prefs.getBoolean("Decaf.noJavaScript"))
 	{
-	    String content = reply.getContentType ();
-	    if (content != null && content.equalsIgnoreCase ("application/x-javascript"))
+	    String content = reply.getContentType();
+	    if (content != null && content.equalsIgnoreCase("application/x-javascript"))
 	    {
-		factory.process ("Rejecting " + content + "\n");
-		throw new FilterException ("Decaf " + content + " rejected");
+		factory.report("rejecting " + content);
+		throw new FilterException("Decaf " + content + " rejected");
 	    }
 	}
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	this.request = request;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
     
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("Decaf");
+	Thread.currentThread().setName("Decaf");
 
 	try
 	{
 	    boolean eatingJavaScript = false;
 	    boolean eatingJava = false;
-	    boolean noJavaScript = prefs.getBoolean ("Decaf.noJavaScript");
-	    boolean noJava = prefs.getBoolean ("Decaf.noJava");
+	    boolean noJavaScript = prefs.getBoolean("Decaf.noJavaScript");
+	    boolean noJava = prefs.getBoolean("Decaf.noJava");
 
 	    Tag tag;
 	    Object obj;
-	    while ((obj = in.read ()) != null)
+	    while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
+		if (token.getType() == Token.TT_TAG)
 		{
-		    tag = token.createTag ();
+		    tag = token.createTag();
 
-		    if (eatingJavaScript && tag.is ("/script"))
+		    if (eatingJavaScript && tag.is("/script"))
 		    {
 			eatingJavaScript = false;
 			continue;
 		    }
-		    if (eatingJava && tag.is ("/applet"))
+		    if (eatingJava && tag.is("/applet"))
 		    {
 			eatingJava = false;
 			continue;
@@ -109,93 +109,92 @@ public class DecafFilter implements ContentFilter, ReplyFilter
 		    
 		    if (noJavaScript)
 		    {
-			if (tag.is ("script"))
+			if (tag.is("script"))
 			{
 			    eatingJavaScript = true;
-			    factory.process ("Removed <script> from " + request.getURL () + "\n");
+			    factory.report(request, "removed <script>");
 			}
-			else if (factory.isJavaScriptTag (tag.name ()) && tag.attributeCount () > 0)
+			else if (factory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
 			{
-			    StringBuffer str = new StringBuffer ();
+			    StringBuffer str = new StringBuffer();
 			    String value;
 
-			    Enumeration e = tag.enumerate ();
-			    while (e.hasMoreElements ())
+			    Enumeration e = tag.enumerate();
+			    while (e.hasMoreElements())
 			    {
-				String attr = (String) e.nextElement ();
-				if (factory.isJavaScriptAttr (attr))
+				String attr = (String) e.nextElement();
+				if (factory.isJavaScriptAttr(attr))
 				{
-				    value = tag.remove (attr);
+				    value = tag.remove(attr);
 				    if (value != null)
 				    {
-					str.append ("* <");
-					str.append (tag.name ());
-					str.append ("> ");
-					str.append (attr);
-					str.append ("=\"");
-					str.append (value);
-					str.append ("\"\n");
+					str.append("<");
+					str.append(tag.name());
+					str.append("> ");
+					str.append(attr);
+					str.append("=\"");
+					str.append(value);
+					str.append("\" ");
 				    }
 				}
 			    }
 
-			    if (tag.has ("href")
-				&& tag.get ("href").startsWith ("javascript:"))
+			    if (tag.has("href")
+				&& tag.get("href").startsWith("javascript:"))
 			    {
-				value = tag.remove ("href");
-				str.append ("* <");
-				str.append (tag.name ());
-				str.append ("> ");
-				str.append ("href=\"");
-				str.append (value);
-				str.append ("\"\n");
+				value = tag.remove("href");
+				str.append("<");
+				str.append(tag.name());
+				str.append("> ");
+				str.append("href=\"");
+				str.append(value);
+				str.append("\" ");
 			    }
 
-			    if (tag.has ("language")
-				&& tag.get ("language").equalsIgnoreCase ("javascript"))
+			    if (tag.has("language")
+				&& tag.get("language").equalsIgnoreCase("javascript"))
 			    {
-				value = tag.remove ("language");
-				str.append ("* <");
-				str.append (tag.name ());
-				str.append ("> ");
-				str.append ("language=\"");
-				str.append (value);
-				str.append ("\"\n");
+				value = tag.remove("language");
+				str.append("<");
+				str.append(tag.name());
+				str.append("> ");
+				str.append("language=\"");
+				str.append(value);
+				str.append("\" ");
 			    }
 
-			    if (str.length () > 0)
+			    if (str.length() > 0)
 			    {
-				factory.process ("JavaScript removed from " + request.getURL () + "\n");
-				factory.process (str.toString ());
+				factory.report(request, "removed " + str.toString());
 			    }
 			}
 		    }
 		    if (noJava)
 		    {
-			if (tag.is ("applet"))
+			if (tag.is("applet"))
 			{
 			    eatingJava = true;
-			    factory.process ("Removed <applet> from " + request.getURL () + "\n");
+			    factory.report(request, "removed <applet>");
 			}
 		    }
 		    if (!eatingJavaScript && !eatingJava)
 		    {
-			token.importTag (tag);
-			out.write (token);
+			token.importTag(tag);
+			out.write(token);
 		    }
 		}
 		else if (!eatingJavaScript && !eatingJava)
 		{
-		    out.write (token);
+		    out.write(token);
 		}
 	    }
 	    
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

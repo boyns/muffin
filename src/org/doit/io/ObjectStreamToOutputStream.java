@@ -1,4 +1,4 @@
-/* $Id: ObjectStreamToOutputStream.java,v 1.2 1998/08/13 06:00:45 boyns Exp $ */
+/* $Id: ObjectStreamToOutputStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -36,30 +36,30 @@ public class ObjectStreamToOutputStream extends OutputStream
     protected OutputObjectStream out;
     protected ByteArray array = null;
 
-    public ObjectStreamToOutputStream (OutputObjectStream out)
+    public ObjectStreamToOutputStream(OutputObjectStream out)
     {
 	this.out = out;
     }
 
-    public void write (int b) throws IOException
+    public void write(int b) throws IOException
     {
 	if (array == null)
 	{
-	    array = new ByteArray (maxLength);
+	    array = new ByteArray(maxLength);
 	}
-	array.append ((byte)b);
-	if (array.length () == maxLength)
+	array.append((byte)b);
+	if (array.length() == maxLength)
 	{
-	    out.write (array);
+	    out.write(array);
 	    array = null;
 	}
     }
 
-    public void flush () throws IOException
+    public void flush() throws IOException
     {
 	if (array != null)
 	{
-	    out.write (array);
+	    out.write(array);
 	}
     }
 }

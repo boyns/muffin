@@ -1,4 +1,4 @@
-/* $Id: Monitor.java,v 1.3 1998/10/01 06:38:45 boyns Exp $ */
+/* $Id: Monitor.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -36,32 +36,32 @@ interface Monitor
     /**
      * Register a hander.
      */
-    void register (Handler h);
+    void register(Handler h);
     
     /**
      * Unregister a hander.
      */
-    void unregister (Handler h);
+    void unregister(Handler h);
     
     /**
      * Update a handler.
      */
-    void update (Handler h);
+    void update(Handler h);
     
     /**
      * Supend the monitor.
      */
-    void suspend ();
+    void suspend();
     
     /**
      * Resume the monitor.
      */
-    void resume ();
+    void resume();
 
     /**
      * Return a list of handlers being monitored.
      */
-    Enumeration enumerate ();
+    Enumeration enumerate();
 
     /**
      * Minimize the monitor.

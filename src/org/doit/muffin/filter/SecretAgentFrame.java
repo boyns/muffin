@@ -1,4 +1,4 @@
-/* $Id: SecretAgentFrame.java,v 1.2 1998/08/13 06:02:49 boyns Exp $ */
+/* $Id: SecretAgentFrame.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -33,9 +33,9 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
     
     TextField input = null;
     
-    public SecretAgentFrame (Prefs prefs, SecretAgent parent)
+    public SecretAgentFrame(Prefs prefs, SecretAgent parent)
     {
-	super ("Muffin: Secret Agent");
+	super("Muffin: Secret Agent");
 
 	this.prefs = prefs;
 	this.parent = parent;
@@ -43,7 +43,7 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
 	String sampleAgents[] =
 	{
 	    "Secret/1.0",
-	    "Muffin (muffin.doit.org)",
+	    "Muffin(muffin.doit.org)",
 	    "NONE",
 	    "Uhm... no. (WWW compatible)",
 	    "aolbrowser 1.1 Macintosh; 68K",
@@ -52,146 +52,146 @@ public class SecretAgentFrame extends MuffinFrame implements ActionListener, Ite
 	    "Lynx 2.5  libwww-FM/2.14",
 	    "Lynx/2.6  libwww-FM/2.14",
 	    "MacWeb/1.00ALPHA3.2  libwww/2.17",
-	    "Microsoft Internet Explorer/4.40.425 (Windows 95)",
+	    "Microsoft Internet Explorer/4.40.425(Windows 95)",
 	    "MOMspider/1.00 libwww-perl/0.40",
-	    "Mozilla/0.9 Beta (Windows)",
-	    "Mozilla/1.0 (Windows)",
-	    "Mozilla/1.0N (Macintosh)",
-	    "Mozilla/1.1 (Windows; I; 16bit)",
-	    "Mozilla/1.1N (Macintosh; I; PPC)",
-	    "Mozilla/1.2 (Windows; U; 16bit)",
-	    "Mozilla/1.22 (compatible; MSIE 1.5; Windows 95)",
-	    "Mozilla/1.22 (compatible; MSIE 2.0; Windows 95)",
-	    "Mozilla/2.0 (X11; U; SunOS 5.4 sun4m)",
-	    "Mozilla/2.0 (compatible; MSIE 2.0; Mac_PowerPC)",
-	    "Mozilla/2.01 (WinNT; U)",
-	    "Mozilla/2.01Gold (Win95; I)",
-	    "Mozilla/2.02 (Macintosh; I; PPC)",
-	    "Mozilla/3.0 (Win95; I)",
-	    "Mozilla/3.0Gold (X11; U; Linux 2.0.22 i586)",
+	    "Mozilla/0.9 Beta(Windows)",
+	    "Mozilla/1.0(Windows)",
+	    "Mozilla/1.0N(Macintosh)",
+	    "Mozilla/1.1(Windows; I; 16bit)",
+	    "Mozilla/1.1N(Macintosh; I; PPC)",
+	    "Mozilla/1.2(Windows; U; 16bit)",
+	    "Mozilla/1.22(compatible; MSIE 1.5; Windows 95)",
+	    "Mozilla/1.22(compatible; MSIE 2.0; Windows 95)",
+	    "Mozilla/2.0(X11; U; SunOS 5.4 sun4m)",
+	    "Mozilla/2.0(compatible; MSIE 2.0; Mac_PowerPC)",
+	    "Mozilla/2.01(WinNT; U)",
+	    "Mozilla/2.01Gold(Win95; I)",
+	    "Mozilla/2.02(Macintosh; I; PPC)",
+	    "Mozilla/3.0(Win95; I)",
+	    "Mozilla/3.0Gold(X11; U; Linux 2.0.22 i586)",
 	    "Mozilla/4.01 [de] (WinNT; I)",
 	    "Mozilla/4.02 [en] (X11; U; SunOS 5.5.1 sun4u)",
-	    "Mozilla/4.0 (compatible; MSIE 4.0b1; SunOS 5.5 sun4u; X11)",
+	    "Mozilla/4.0(compatible; MSIE 4.0b1; SunOS 5.5 sun4u; X11)",
 	    "NCSA Mosaic for the X Window System/2.0",
-	    "NCSA Mosaic/2.0 (Windows x86)",
-	    "NCSA_Mosaic/2.6-1 (X11;OpenVMS Unknown VAX_ALPHA)",
-	    "NCSA_Mosaic/2.7b5 (X11;SunOS 5.5 sun4m)",
+	    "NCSA Mosaic/2.0(Windows x86)",
+	    "NCSA_Mosaic/2.6-1(X11;OpenVMS Unknown VAX_ALPHA)",
+	    "NCSA_Mosaic/2.7b5(X11;SunOS 5.5 sun4m)",
 	    "PRODIGY-WB 3.1d",
 	};
 	
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
 	GridBagConstraints c;
-        panel.setLayout (layout);
+        panel.setLayout(layout);
 
-	panel.add (new Label ("User-Agent:", Label.RIGHT));
+	panel.add(new Label("User-Agent:", Label.RIGHT));
 
-	input = new TextField (32);
-	input.setText (prefs.getString ("SecretAgent.userAgent"));
-	c = new GridBagConstraints ();
+	input = new TextField(32);
+	input.setText(prefs.getString("SecretAgent.userAgent"));
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (input, c);
-	panel.add (input);
+	layout.setConstraints(input, c);
+	panel.add(input);
 
-	panel.add (new Label ("Sample Agents:", Label.RIGHT));
+	panel.add(new Label("Sample Agents:", Label.RIGHT));
 
-	Choice choice = new Choice ();
-	choice.addItemListener (this);
+	Choice choice = new Choice();
+	choice.addItemListener(this);
 	for (int i = 0; i < sampleAgents.length; i++)
 	{
-	    choice.addItem (sampleAgents[i]);
+	    choice.addItem(sampleAgents[i]);
 	}
 	
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (choice, c);
-	panel.add (choice);
+	layout.setConstraints(choice, c);
+	panel.add(choice);
 	
-	add ("Center", panel);
+	add("Center", panel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 4));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 4));
 	Button b;
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	pack ();
-	setSize (getPreferredSize ());
+	pack();
+	setSize(getPreferredSize());
 
-	show ();
+	show();
     }
 
-    public void itemStateChanged (ItemEvent event)
+    public void itemStateChanged(ItemEvent event)
     {
-	input.setText (event.getItem ().toString ());
+	input.setText(event.getItem().toString());
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    prefs.putString ("SecretAgent.userAgent", input.getText ());
+	    prefs.putString("SecretAgent.userAgent", input.getText());
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    parent.save ();
+	    parent.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    new HelpFrame ("SecretAgent");
+	    new HelpFrame("SecretAgent");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

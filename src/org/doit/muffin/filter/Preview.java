@@ -1,4 +1,4 @@
-/* $Id: Preview.java,v 1.2 1998/08/13 06:02:36 boyns Exp $ */
+/* $Id: Preview.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,50 +29,50 @@ public class Preview implements FilterFactory
 {
     FilterManager manager;
     Prefs prefs;
-    Frame previewFrame = new Frame ();
+    Frame previewFrame = new Frame();
     Frame frame = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new PreviewFrame (prefs, this);
+	    frame = new PreviewFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new PreviewFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new PreviewFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 }

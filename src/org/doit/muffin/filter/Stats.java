@@ -1,4 +1,4 @@
-/* $Id: Stats.java,v 1.2 1998/08/13 06:02:59 boyns Exp $ */
+/* $Id: Stats.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -38,101 +38,101 @@ public class Stats implements FilterFactory
     Hashtable contentLengths;
     Hashtable contentTypes;
 
-    public Stats ()
+    public Stats()
     {
-	reset ();
+	reset();
     }
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new StatsFrame (prefs, this);
+	    frame = new StatsFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new StatsFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new StatsFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void increment (Hashtable h, String key, int value)
+    void increment(Hashtable h, String key, int value)
     {
-        Integer count = (Integer) h.get (key);
+        Integer count = (Integer) h.get(key);
         if (count == null)
         {
-            count = new Integer (0);
+            count = new Integer(0);
         }
-        count = new Integer (count.intValue () + value);
-        h.put (key, count);
+        count = new Integer(count.intValue() + value);
+        h.put(key, count);
     }
 
-    synchronized void recordRequest (Request r)
+    synchronized void recordRequest(Request r)
     {
 	requests++;
-	String s = r.getHost ();
-	increment (hosts, s != null ? s : "null", 1);
+	String s = r.getHost();
+	increment(hosts, s != null ? s : "null", 1);
     }
     
-    synchronized void recordReply (Reply r)
+    synchronized void recordReply(Reply r)
     {
 	replies++;
-	String s = r.getContentType ();
-        increment (contentTypes, s != null ? s : "null", 1);
+	String s = r.getContentType();
+        increment(contentTypes, s != null ? s : "null", 1);
         if (s != null)
         {
             try 
             {
-                int length = Integer.parseInt (r.getHeaderField ("Content-length"));
-                increment (contentLengths, s, length);
+                int length = Integer.parseInt(r.getHeaderField("Content-length"));
+                increment(contentLengths, s, length);
             }
             catch (Exception e)
             {
             }
         }
         
-        s = r.getHeaderField ("Server");
-        increment (servers, s != null ? s : "null", 1);
+        s = r.getHeaderField("Server");
+        increment(servers, s != null ? s : "null", 1);
     }
 
-    void reset ()
+    void reset()
     {
         requests = 0;
         replies = 0;
-        hosts = new Hashtable (100);
-        servers = new Hashtable (100);
-        contentTypes = new Hashtable (100);
-        contentLengths = new Hashtable (100);
+        hosts = new Hashtable(100);
+        servers = new Hashtable(100);
+        contentTypes = new Hashtable(100);
+        contentLengths = new Hashtable(100);
     }
 }

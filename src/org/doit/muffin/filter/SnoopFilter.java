@@ -1,4 +1,4 @@
-/* $Id: SnoopFilter.java,v 1.2 1998/08/13 06:02:57 boyns Exp $ */
+/* $Id: SnoopFilter.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,23 +29,30 @@ public class SnoopFilter implements RequestFilter, ReplyFilter
     Prefs prefs;
     Snoop factory;
 
-    SnoopFilter (Snoop factory)
+    SnoopFilter(Snoop factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
     
-    public void filter (Request r) throws FilterException
+    public void filter(Request r) throws FilterException
     {
-	factory.process (r.toString (System.getProperty ("line.separator")));
+	String s = r.toString(System.getProperty("line.separator"));
+	if (r.getCommand().equals("POST"))
+	{
+	    String sep = System.getProperty("line.separator");
+	    s += sep;
+	    s += sep;
+	}
+	factory.process(s);
     }
     
-    public void filter (Reply r) throws FilterException
+    public void filter(Reply r) throws FilterException
     {
-	factory.process (r.toString (System.getProperty ("line.separator")));
+	factory.process(r.toString(System.getProperty("line.separator")));
     }
 }

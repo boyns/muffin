@@ -1,4 +1,4 @@
-/* $Id: RedirectFilter.java,v 1.2 1998/08/13 06:01:36 boyns Exp $ */
+/* $Id: RedirectFilter.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -33,7 +33,7 @@ public interface RedirectFilter extends Filter
      *
      * @param request the request
      */
-    public boolean needsRedirection (Request request);
+    public boolean needsRedirection(Request request);
 
     /**
      * Return the URL location where the request should be
@@ -41,5 +41,5 @@ public interface RedirectFilter extends Filter
      *
      * @param request the request
      */
-    public String redirect (Request request);
+    public String redirect(Request request);
 }

@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.3 1998/09/27 18:46:44 boyns Exp $ */
+/* $Id: Request.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -56,23 +56,23 @@ public class Request extends Message
 	}
     }
 
-    Request (Client c)
+    Request(Client c)
     {
 	client = c;
     }
 
-    void read (InputStream in) throws IOException
+    void read(InputStream in) throws IOException
     {
-	statusLine = readLine (in);
-	if (statusLine == null || statusLine.length () == 0)
+	statusLine = readLine(in);
+	if (statusLine == null || statusLine.length() == 0)
 	{
-	    throw new IOException ("Empty request");
+	    throw new IOException("Empty request");
 	}
 
-	StringTokenizer st = new StringTokenizer (statusLine);
-	command = (String) st.nextToken ();
-	url = (String) st.nextToken ();
-	protocol = (String) st.nextToken ();
+	StringTokenizer st = new StringTokenizer(statusLine);
+	command = (String) st.nextToken();
+	url = (String) st.nextToken();
+	protocol = (String) st.nextToken();
 
 	if (httpRegex.getMatch(url) == null)
 	{
@@ -85,165 +85,163 @@ public class Request extends Message
 	    }
 	}
 
-	readHeaders (in);
+	readHeaders(in);
 
-	if (command.equals ("POST"))
+	if (command.equals("POST"))
 	{
 	    try
 	    {
-		int n = Integer.parseInt (getHeaderField ("Content-length"));
+		int n = Integer.parseInt(getHeaderField("Content-length"));
 		data = new byte[n];
 		int offset = 0;
 		while (offset < data.length)
 		{
-		    n = in.read (data, offset, data.length - offset);
+		    n = in.read(data, offset, data.length - offset);
 		    offset += n;
 		}
 	    }
 	    catch (Exception e)
 	    {
-		System.out.println ("Malformed or missing POST Content-length");
+		System.out.println("Malformed or missing POST Content-length");
 	    }
 	}
     }
 
-    void write (OutputStream out) throws IOException
+    void write(OutputStream out) throws IOException
     {
-	String s = toString ();
-	out.write (s.getBytes (), 0, s.length ());
-	out.flush ();
+	String s = toString();
+	out.write(s.getBytes(), 0, s.length());
+	//out.flush();
     }
 
-    public String toString (String sep)
+    public String toString(String sep)
     {
-	if (command.equals ("POST"))
+	if (command.equals("POST"))
 	{
-	    StringBuffer buf = new StringBuffer (super.toString (sep));
-	    buf.append (getData ());
-	    buf.append (sep);
-	    buf.append (sep);
-	    return buf.toString ();
+	    StringBuffer buf = new StringBuffer(super.toString(sep));
+	    buf.append(getData());
+	    return buf.toString();
 	}
 	else
 	{
-	    return super.toString (sep);
+	    return super.toString(sep);
 	}
     }
 
-    public String getRequest ()
+    public String getRequest()
     {
 	return statusLine;
     }
 
-    public String getCommand ()
+    public String getCommand()
     {
 	return command;
     }
     
-    public void setCommand (String command)
+    public void setCommand(String command)
     {
 	this.command = command;
     }
 
-    public String getURL ()
+    public String getURL()
     {
 	return url;
     }
 
-    public void setURL (String url)
+    public void setURL(String url)
     {
 	this.url = url;
     }
 
-    public String getProtocol ()
+    public String getProtocol()
     {
 	return protocol;
     }
 
-    public void setProtocol (String protocol)
+    public void setProtocol(String protocol)
     {
 	this.protocol = protocol;
     }
 
-    public String getHost ()
+    public String getHost()
     {
-	String url = getURL ();
+	String url = getURL();
 	String s;
 
-	if (url.startsWith ("http://"))
+	if (url.startsWith("http://"))
 	{
-	    s = url.substring (7, url.indexOf ('/', 7));
+	    s = url.substring(7, url.indexOf('/', 7));
 	}
 	else
 	{
 	    s = url;
 	}
 
-	if (s.indexOf (':') != -1)
+	if (s.indexOf(':') != -1)
 	{
-	    return s.substring (0, s.indexOf (':'));
+	    return s.substring(0, s.indexOf(':'));
 	}
 	return s;
     }
 
-    public int getPort ()
+    public int getPort()
     {
 	int port = 80;
-	String url = getURL ();
+	String url = getURL();
 	String s;
 
-	if (url.startsWith ("http://"))
+	if (url.startsWith("http://"))
 	{
-	    s = url.substring (7, url.indexOf ('/', 7));
+	    s = url.substring(7, url.indexOf('/', 7));
 	}
 	else
 	{
 	    s = url;
 	}
 
-	if (s.indexOf (':') != -1)
+	if (s.indexOf(':') != -1)
 	{
 	    try
 	    {
-		port = Integer.parseInt (s.substring (s.indexOf (':') + 1));
+		port = Integer.parseInt(s.substring(s.indexOf(':') + 1));
 	    }
 	    catch (Exception e)
 	    {
-		System.out.println ("Invalid port in " + url);
+		System.out.println("Invalid port in " + url);
 	    }
 	}
 	return port;
     }
 
-    public String getData ()
+    public String getData()
     {
 	if (data == null)
 	{
 	    return null;
 	}
-	return new String (data);
+	return new String(data);
     }
 
-    public String getPath ()
+    public String getPath()
     {	
-	String str = getURL ();
+	String str = getURL();
 	int pos = 0;
 	for (int i = 0; i < 3; i++)
 	{
-	    pos = str.indexOf ('/', pos);
+	    pos = str.indexOf('/', pos);
 	    pos++;
 	}
 	pos--;
-	return str.substring (pos);
+	return str.substring(pos);
     }
     
-    public String getDocument ()
+    public String getDocument()
     {
-	String path = getPath ();
-	int n = path.lastIndexOf ('/');
-	if (n == path.length () - 1)
+	String path = getPath();
+	int n = path.lastIndexOf('/');
+	if (n == path.length() - 1)
 	{
-	    n = path.lastIndexOf ('/', n - 1);
+	    n = path.lastIndexOf('/', n - 1);
 	}
 	if (n < 0)
 	{
@@ -251,23 +249,23 @@ public class Request extends Message
 	}
 	else
 	{
-	    return path.substring (n + 1);
+	    return path.substring(n + 1);
 	}
     }
 
-    public Client getClient ()
+    public Client getClient()
     {
 	return client;
     }
 
-    public String getQueryString ()
+    public String getQueryString()
     {
-	String path = getPath ();
-	int n = path.indexOf ('?');
+	String path = getPath();
+	int n = path.indexOf('?');
 	if (n < 0)
 	{
 	    return null;
 	}
-	return path.substring (n + 1);
+	return path.substring(n + 1);
     }
 }

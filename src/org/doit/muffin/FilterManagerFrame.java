@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.2 1998/08/13 06:01:13 boyns Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -64,229 +64,229 @@ class FilterManagerFrame extends MuffinFrame implements ActionListener, ItemList
      *
      * @param manager the filter manager
      */
-    FilterManagerFrame (FilterManager manager)
+    FilterManagerFrame(FilterManager manager)
     {
-	super ("Muffin: Filters");
+	super("Muffin: Filters");
 
 	this.manager = manager;
 
-	setResizable (false);
+	setResizable(false);
 	
-	knownFiltersList = new BigList (10, false);
-	enabledFiltersList = new BigList (10, false);
+	knownFiltersList = new BigList(10, false);
+	enabledFiltersList = new BigList(10, false);
 
 	Label l;
 	Button b;
 	GridBagConstraints c;
 	Panel p;
 
-	p = new Panel ();
-	l = new Label ("Configuration:");
-	//l.setFont (new Font ("Fixed", Font.BOLD, 12));
-	p.add (l);
+	p = new Panel();
+	l = new Label("Configuration:");
+	//l.setFont(new Font("Fixed", Font.BOLD, 12));
+	p.add(l);
 
-	configurationChoice = new Choice ();
-	updateConfigurationChoice ();
-	configurationChoice.addItemListener (this);
-	manager.configs.addConfigurationListener (this);
-	p.add (configurationChoice);
-	add ("North", p);
+	configurationChoice = new Choice();
+	updateConfigurationChoice();
+	configurationChoice.addItemListener(this);
+	manager.configs.addConfigurationListener(this);
+	p.add(configurationChoice);
+	add("North", p);
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-	panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+	panel.setLayout(layout);
 
-	l = new Label ("Known Filters");
-	//l.setFont (new Font ("Fixed", Font.BOLD, 12));
-	c = new GridBagConstraints ();
+	l = new Label("Known Filters");
+	//l.setFont(new Font("Fixed", Font.BOLD, 12));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridheight = 4;
-	c.insets = new Insets (0, 10, 5, 10);
-	layout.setConstraints (knownFiltersList, c);
-	panel.add (knownFiltersList);
+	c.insets = new Insets(0, 10, 5, 10);
+	layout.setConstraints(knownFiltersList, c);
+	panel.add(knownFiltersList);
 
-	b = new Button ("Enable");
-	b.setActionCommand ("doEnable");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Enable");
+	b.setActionCommand("doEnable");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 	
-	b = new Button ("New...");
-	b.setActionCommand ("doNewFilter");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("New...");
+	b.setActionCommand("doNewFilter");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 	
-	b = new Button ("Delete");
-	b.setActionCommand ("doDelete");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Delete");
+	b.setActionCommand("doDelete");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Help");
-	b.setActionCommand ("doHelp");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Help");
+	b.setActionCommand("doHelp");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	l = new Label ("Enabled Filters");
-	//l.setFont (new Font ("Fixed", Font.BOLD, 12));
-	c = new GridBagConstraints ();
+	l = new Label("Enabled Filters");
+	//l.setFont(new Font("Fixed", Font.BOLD, 12));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridheight = 4;
-	c.insets = new Insets (0, 10, 5, 10);
-	layout.setConstraints (enabledFiltersList, c);
-	panel.add (enabledFiltersList);
+	c.insets = new Insets(0, 10, 5, 10);
+	layout.setConstraints(enabledFiltersList, c);
+	panel.add(enabledFiltersList);
 
-	b = new Button ("Preferences...");
-	b.setActionCommand ("doPrefs");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Preferences...");
+	b.setActionCommand("doPrefs");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 	
-	b = new Button ("Move Up");
-	b.setActionCommand ("doUp");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Move Up");
+	b.setActionCommand("doUp");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Move Down");
-	b.setActionCommand ("doDown");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Move Down");
+	b.setActionCommand("doDown");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Disable");
-	b.setActionCommand ("doDisable");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Disable");
+	b.setActionCommand("doDisable");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	add ("Center", panel);
+	add("Center", panel);
 	
-	Panel buttonPanel = new Panel ();
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 	
-	updateKnownFiltersList ();
-	updateEnabledFiltersList ();
+	updateKnownFiltersList();
+	updateEnabledFiltersList();
 
- 	pack ();
- 	setSize (getPreferredSize ());
+ 	pack();
+ 	setSize(getPreferredSize());
     }
 
-    public void configurationChanged (String name)
+    public void configurationChanged(String name)
     {
-	updateKnownFiltersList ();
-	updateEnabledFiltersList ();
-	updateConfigurationChoice ();
+	updateKnownFiltersList();
+	updateEnabledFiltersList();
+	updateConfigurationChoice();
     }
 
-    void updateConfigurationChoice ()
+    void updateConfigurationChoice()
     {
-	configurationChoice.removeAll ();
-	Enumeration e = manager.configs.sortedKeys ();
-	while (e.hasMoreElements ())
+	configurationChoice.removeAll();
+	Enumeration e = manager.configs.sortedKeys();
+	while (e.hasMoreElements())
 	{
-	    String name = (String) e.nextElement ();
-	    configurationChoice.addItem (name);
+	    String name = (String) e.nextElement();
+	    configurationChoice.addItem(name);
 	}
-	configurationChoice.select (manager.configs.getCurrent ());
+	configurationChoice.select(manager.configs.getCurrent());
     }
 
     /**
      * Update the list of known filters on the screen.
      */
-    void updateKnownFiltersList ()
+    void updateKnownFiltersList()
     {
-	if (knownFiltersList.getItemCount () > 0)
+	if (knownFiltersList.getItemCount() > 0)
 	{
-	    knownFiltersList.removeAll ();
+	    knownFiltersList.removeAll();
 	}
-	Enumeration e = manager.knownFilters.elements ();
-	SortedList sorter = new SortedList (StringIgnoreCaseComparer.getInstance ());
-	while (e.hasMoreElements ())
+	Enumeration e = manager.knownFilters.elements();
+	SortedList sorter = new SortedList(StringIgnoreCaseComparer.getInstance());
+	while (e.hasMoreElements())
 	{
-	    sorter.addElement ((String) e.nextElement ());
+	    sorter.addElement((String) e.nextElement());
 	}
-	e = sorter.elements ();
- 	while (e.hasMoreElements ())
+	e = sorter.elements();
+ 	while (e.hasMoreElements())
  	{
-	    String s = (String) e.nextElement ();
-	    knownFiltersList.addItem (s); // DEPRECATION: use add()
+	    String s = (String) e.nextElement();
+	    knownFiltersList.addItem(s); // DEPRECATION: use add()
 	}
     }	
 
     /**
      * Update the list of enabled filters on the screen.
      */
-    void updateEnabledFiltersList ()
+    void updateEnabledFiltersList()
     {
-	if (enabledFiltersList.getItemCount () > 0)
+	if (enabledFiltersList.getItemCount() > 0)
 	{
-	    enabledFiltersList.removeAll ();
+	    enabledFiltersList.removeAll();
 	}
-	Enumeration e = manager.enabledFilters.elements ();
- 	while (e.hasMoreElements ())
+	Enumeration e = manager.enabledFilters.elements();
+ 	while (e.hasMoreElements())
  	{
-	    FilterFactory ff = (FilterFactory) e.nextElement ();
-	    enabledFiltersList.addItem (manager.shortName ((ff.getClass ()).getName ())); // DEPRECATION: use add()
+	    FilterFactory ff = (FilterFactory) e.nextElement();
+	    enabledFiltersList.addItem(manager.shortName((ff.getClass()).getName())); // DEPRECATION: use add()
 	}
     }
 
     /**
      * Hide/show this frame.
      */
-    void hideshow ()
+    void hideshow()
     {
-	if (isShowing ())
+	if (isShowing())
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
 	else
 	{
-	    show ();
+	    show();
 	}
     }
 
@@ -295,16 +295,16 @@ class FilterManagerFrame extends MuffinFrame implements ActionListener, ItemList
      *
      * @param clazz the java filter class name
      */
-    void enable (String clazz)
+    void enable(String clazz)
     {
-	manager.enable (clazz);
-	updateEnabledFiltersList ();
+	manager.enable(clazz);
+	updateEnabledFiltersList();
     }
 
-    void disable (int i)
+    void disable(int i)
     {
-	manager.disable (i);
-	updateEnabledFiltersList ();
+	manager.disable(i);
+	updateEnabledFiltersList();
     }
 
     /**
@@ -312,22 +312,22 @@ class FilterManagerFrame extends MuffinFrame implements ActionListener, ItemList
      *
      * @param clazz the java filter class name
      */
-    void viewPrefs (String clazz)
+    void viewPrefs(String clazz)
     {
-	Enumeration e = manager.enabledFilters.elements ();
-	while (e.hasMoreElements ())
+	Enumeration e = manager.enabledFilters.elements();
+	while (e.hasMoreElements())
 	{
-	    FilterFactory f = (FilterFactory) e.nextElement ();
-	    if (clazz.equals (manager.shortName ((f.getClass ()).getName ())))
+	    FilterFactory f = (FilterFactory) e.nextElement();
+	    if (clazz.equals(manager.shortName((f.getClass()).getName())))
 	    {
-		f.viewPrefs ();
+		f.viewPrefs();
 	    }
 	}
     }
 
-    public void itemStateChanged (ItemEvent event)
+    public void itemStateChanged(ItemEvent event)
     {
-	manager.configs.setCurrent (event.getItem ().toString ());
+	manager.configs.setCurrent(event.getItem().toString());
     }
 
     /**
@@ -335,124 +335,124 @@ class FilterManagerFrame extends MuffinFrame implements ActionListener, ItemList
      *
      * @param event some event
      */
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    manager.save ();
+	    manager.save();
 	}
-	else if ("doEnable".equals (arg))
+	else if ("doEnable".equals(arg))
 	{
-	    int i = knownFiltersList.getSelectedIndex ();
+	    int i = knownFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		enable (knownFiltersList.getItem (i));
+		enable(knownFiltersList.getItem(i));
 	    }
 	}
-	else if ("doDisable".equals (arg))
+	else if ("doDisable".equals(arg))
 	{
-	    int i = enabledFiltersList.getSelectedIndex ();
+	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		disable (i);
+		disable(i);
 	    }
 	}
-	else if ("doNewFilter".equals (arg))
+	else if ("doNewFilter".equals(arg))
 	{
-	    TextDialog dialog = new TextDialog (this, "New filter class name:");
-	    dialog.show ();
-	    String name = dialog.getAnswer ();
-	    if (name != null && name.length () > 0)
+	    TextDialog dialog = new TextDialog(this, "New filter class name:");
+	    dialog.show();
+	    String name = dialog.getAnswer();
+	    if (name != null && name.length() > 0)
 	    {
-		name.trim ();
-		manager.append (name);
+		name.trim();
+		manager.append(name);
 	    }
-	    dialog.dispose ();
+	    dialog.dispose();
 	}
-	else if ("doDelete".equals (arg))
+	else if ("doDelete".equals(arg))
 	{
-	    int i = knownFiltersList.getSelectedIndex ();
+	    int i = knownFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		manager.remove (knownFiltersList.getItem (i));
+		manager.remove(knownFiltersList.getItem(i));
 	    }
 	}
-	else if ("doHelp".equals (arg))
+	else if ("doHelp".equals(arg))
 	{
-	    int i = knownFiltersList.getSelectedIndex ();
+	    int i = knownFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		new HelpFrame (knownFiltersList.getItem (i));
+		new HelpFrame(knownFiltersList.getItem(i));
 	    }
 	}
-	else if ("doPrefs".equals (arg))
+	else if ("doPrefs".equals(arg))
 	{
-	    int i = enabledFiltersList.getSelectedIndex ();
+	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		viewPrefs (enabledFiltersList.getItem (i));
+		viewPrefs(enabledFiltersList.getItem(i));
 	    }
 	}
-	else if ("doUp".equals (arg))
+	else if ("doUp".equals(arg))
 	{
-	    int i = enabledFiltersList.getSelectedIndex ();
+	    int i = enabledFiltersList.getSelectedIndex();
 	    if (i > 0)
 	    {
-		Object prev = manager.enabledFilters.elementAt (i-1);
-		Object curr = manager.enabledFilters.elementAt (i);
-		manager.enabledFilters.setElementAt (curr, i-1);
-		manager.enabledFilters.setElementAt (prev, i);
-		updateEnabledFiltersList ();
-		enabledFiltersList.select (i-1);
+		Object prev = manager.enabledFilters.elementAt(i-1);
+		Object curr = manager.enabledFilters.elementAt(i);
+		manager.enabledFilters.setElementAt(curr, i-1);
+		manager.enabledFilters.setElementAt(prev, i);
+		updateEnabledFiltersList();
+		enabledFiltersList.select(i-1);
 	    }
 	}
-	else if ("doDown".equals (arg))
+	else if ("doDown".equals(arg))
 	{
-	    int i = enabledFiltersList.getSelectedIndex ();
-	    if (i != -1 && i < manager.enabledFilters.size () - 1)
+	    int i = enabledFiltersList.getSelectedIndex();
+	    if (i != -1 && i < manager.enabledFilters.size() - 1)
 	    {
-		Object next = manager.enabledFilters.elementAt (i+1);
-		Object curr = manager.enabledFilters.elementAt (i);
-		manager.enabledFilters.setElementAt (curr, i+1);
-		manager.enabledFilters.setElementAt (next, i);
-		updateEnabledFiltersList ();
-		enabledFiltersList.select (i+1);
+		Object next = manager.enabledFilters.elementAt(i+1);
+		Object curr = manager.enabledFilters.elementAt(i);
+		manager.enabledFilters.setElementAt(curr, i+1);
+		manager.enabledFilters.setElementAt(next, i);
+		updateEnabledFiltersList();
+		enabledFiltersList.select(i+1);
 	    }
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 

@@ -1,4 +1,4 @@
-/* $Id: Glossary.java,v 1.2 1998/08/13 06:02:15 boyns Exp $ */
+/* $Id: Glossary.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -38,92 +38,92 @@ public class Glossary extends Hashtable implements FilterFactory
     Prefs prefs;
     GlossaryFrame frame = null;
 
-    public Glossary ()
+    public Glossary()
     {
-	super (33);
+	super(33);
     }
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	String filename = prefs.getUserFile ("glossary");
-	prefs.putString ("Glossary.glossaryfile", filename);
-	prefs.setOverride (o);
-	load ();
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	String filename = prefs.getUserFile("glossary");
+	prefs.putString("Glossary.glossaryfile", filename);
+	prefs.setOverride(o);
+	load();
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new GlossaryFrame (prefs, this);
+	    frame = new GlossaryFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new GlossaryFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new GlossaryFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    String lookup (String term)
+    String lookup(String term)
     {
-	return (String) get (term.toLowerCase ());
+	return(String) get(term.toLowerCase());
     }
 
-    void load ()
+    void load()
     {
-	String filename = prefs.getUserFile (prefs.getString ("Glossary.glossaryfile"));
-	//System.out.println ("Glossary loading " + filename);
-	File file = new File (filename);
-	if (!file.exists ())
+	String filename = prefs.getUserFile(prefs.getString("Glossary.glossaryfile"));
+	//System.out.println("Glossary loading " + filename);
+	File file = new File(filename);
+	if (!file.exists())
 	{
-	    System.out.println ("Glossary can't open " + filename);
+	    System.out.println("Glossary can't open " + filename);
 	    return;
 	}
 	try
 	{
-	    BufferedReader in = new BufferedReader (new FileReader (file));
+	    BufferedReader in = new BufferedReader(new FileReader(file));
 	    String s;
-	    while ((s = in.readLine ()) != null)
+	    while ((s = in.readLine()) != null)
 	    {
-		StringTokenizer st = new StringTokenizer (s, " \t");
-		String term = st.nextToken ();
-		String url = st.nextToken ();
-		put (term.toLowerCase (), url);
+		StringTokenizer st = new StringTokenizer(s, " \t");
+		String term = st.nextToken();
+		String url = st.nextToken();
+		put(term.toLowerCase(), url);
 	    }
-	    in.close ();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

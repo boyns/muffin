@@ -1,4 +1,4 @@
-/* $Id: History.java,v 1.2 1998/08/13 06:02:19 boyns Exp $ */
+/* $Id: History.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -38,132 +38,132 @@ public class History implements FilterFactory, AutoSaveable
     FilterManager manager;
     Prefs prefs;
 
-    HistoryData get (String url)
+    HistoryData get(String url)
     {
-	HistoryData b = (HistoryData) data.get (url);
+	HistoryData b = (HistoryData) data.get(url);
 	if (b == null)
 	{
-	    b = new HistoryData ();
+	    b = new HistoryData();
 	    b.url = url;
 	    b.time = 0;
 	    b.count = 0;
-	    put (url, b);
+	    put(url, b);
 	}
 	return b;
     }
 
-    void put (String url, HistoryData b)
+    void put(String url, HistoryData b)
     {
-	data.put (url, b);
+	data.put(url, b);
     }
 
-    Enumeration keys ()
+    Enumeration keys()
     {
-	return data.keys ();
+	return data.keys();
     }
 
-    Enumeration sortByCount ()
+    Enumeration sortByCount()
     {
-	SortedList sorter = new SortedList (HistoryDataCountComparer.getInstance ());
-	Enumeration e = keys ();
-	while (e.hasMoreElements ())
+	SortedList sorter = new SortedList(HistoryDataCountComparer.getInstance());
+	Enumeration e = keys();
+	while (e.hasMoreElements())
 	{
-	    sorter.addElement (get ((String) e.nextElement ()));
+	    sorter.addElement(get((String) e.nextElement()));
 	}
-	return sorter.elements ();
+	return sorter.elements();
     }
 
-    Enumeration sortByTime ()
+    Enumeration sortByTime()
     {
-	SortedList sorter = new SortedList (HistoryDataTimeComparer.getInstance ());
-	Enumeration e = keys ();
-	while (e.hasMoreElements ())
+	SortedList sorter = new SortedList(HistoryDataTimeComparer.getInstance());
+	Enumeration e = keys();
+	while (e.hasMoreElements())
 	{
-	    sorter.addElement (get ((String) e.nextElement ()));
+	    sorter.addElement(get((String) e.nextElement()));
 	}
-	return sorter.elements ();
+	return sorter.elements();
     }
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putString ("History.histfile", "history");
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putString("History.histfile", "history");
+	prefs.setOverride(o);
 
-	loadData ();
+	loadData();
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new HistoryFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new HistoryFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
-	saveData ();
+	saveData();
     }
 
-    public void autoSave ()
+    public void autoSave()
     {
-	synchronized (this)
+	synchronized(this)
 	{
-	    saveData ();
+	    saveData();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    void loadData ()
+    void loadData()
     {
 	try
 	{
-	    FileInputStream in = new FileInputStream (prefs.getUserFile (prefs.getString ("History.histfile")));
-	    ObjectInputStream obj = new ObjectInputStream (in);
-	    data = (Hashtable) obj.readObject ();
-	    in.close ();
+	    FileInputStream in = new FileInputStream(prefs.getUserFile(prefs.getString("History.histfile")));
+	    ObjectInputStream obj = new ObjectInputStream(in);
+	    data = (Hashtable) obj.readObject();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
-	    data = new Hashtable ();
+	    System.out.println(e);
+	    data = new Hashtable();
 	}
     }
 
-    void saveData ()
+    void saveData()
     {
 	try
 	{
-	    FileOutputStream out = new FileOutputStream (prefs.getUserFile (prefs.getString ("History.histfile")));
-	    ObjectOutputStream obj = new ObjectOutputStream (out);
-	    obj.writeObject (data);
-	    obj.flush ();
-	    out.close ();
+	    FileOutputStream out = new FileOutputStream(prefs.getUserFile(prefs.getString("History.histfile")));
+	    ObjectOutputStream obj = new ObjectOutputStream(out);
+	    obj.writeObject(data);
+	    obj.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
     }
 }

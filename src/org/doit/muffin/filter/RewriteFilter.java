@@ -1,4 +1,4 @@
-/* $Id: RewriteFilter.java,v 1.2 1998/08/13 06:02:45 boyns Exp $ */
+/* $Id: RewriteFilter.java,v 1.3 1998/12/19 21:24:19 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -31,26 +31,26 @@ public class RewriteFilter implements RedirectFilter
     Rewrite factory;
     Prefs prefs;
 
-    public RewriteFilter (Rewrite factory)
+    public RewriteFilter(Rewrite factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsRedirection (Request r)
+    public boolean needsRedirection(Request r)
     {
 	return true; /* for now */
     }
     
-    public String redirect (Request request)
+    public String redirect(Request request)
     {
-	String orig = request.getURL ();
-	String url = factory.rewrite (orig);
-	if (! url.equals (orig))
+	String orig = request.getURL();
+	String url = factory.rewrite(request, orig);
+	if (! url.equals(orig))
 	{
 	    return url;
 	}

@@ -1,4 +1,4 @@
-/* $Id: DocumentInfo.java,v 1.2 1998/08/13 06:02:08 boyns Exp $ */
+/* $Id: DocumentInfo.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -41,94 +41,94 @@ public class DocumentInfo implements FilterFactory, ContentFilter
     Request request;
     DocumentInfoFrame frame = null;
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 	
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putString ("DocumentInfo.location", "bottom");
-	prefs.putString ("DocumentInfo.align", "right");
-	prefs.putString ("DocumentInfo.info", "URL,Server,LastModified");
-	prefs.putString ("DocumentInfo.htmlBefore", "<small>");
-	prefs.putString ("DocumentInfo.htmlAfter", "</small>");
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putString("DocumentInfo.location", "bottom");
+	prefs.putString("DocumentInfo.align", "right");
+	prefs.putString("DocumentInfo.info", "URL,Server,LastModified");
+	prefs.putString("DocumentInfo.htmlBefore", "<small>");
+	prefs.putString("DocumentInfo.htmlAfter", "</small>");
+	prefs.setOverride(o);
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new DocumentInfoFrame (prefs, this);
+	    frame = new DocumentInfoFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new DocumentInfo ();
-	f.setPrefs (prefs);
+	Filter f = new DocumentInfo();
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	this.request = request;
 	this.reply = reply;
 	
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
 
-    void addURL (StringBuffer buf)
+    void addURL(StringBuffer buf)
     {
-	buf.append ("URL: ");
-	buf.append (request.getURL ());
-	buf.append ("<br>\n");
+	buf.append("URL: ");
+	buf.append(request.getURL());
+	buf.append("<br>\n");
     }
 
-    void addLastModified (StringBuffer buf)
+    void addLastModified(StringBuffer buf)
     {
-	if (! reply.containsHeaderField ("Last-Modified"))
+	if (! reply.containsHeaderField("Last-Modified"))
 	{
 	    return;
 	}
 	
-	buf.append ("Last-Modified: ");
-	String str = reply.getHeaderField ("Last-Modified");
+	buf.append("Last-Modified: ");
+	String str = reply.getHeaderField("Last-Modified");
 	/* Try to put date in localtime */
 	try
 	{
@@ -138,173 +138,173 @@ public class DocumentInfo implements FilterFactory, ContentFilter
 	     * Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
 	     * Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 	     */
-	    SimpleDateFormat format = (SimpleDateFormat) DateFormat.getDateInstance ();
-	    switch (str.charAt (3)) // Try to guess the format
+	    SimpleDateFormat format = (SimpleDateFormat) DateFormat.getDateInstance();
+	    switch (str.charAt(3)) // Try to guess the format
 	    {
 	    case ',':
-		format.applyPattern ("EEE, dd MMM yyyy HH:mm:ss z");
+		format.applyPattern("EEE, dd MMM yyyy HH:mm:ss z");
 		break;
 
 	    case ' ':
-		format.applyPattern ("EEE MMM dd HH:mm:ss yyyy");
+		format.applyPattern("EEE MMM dd HH:mm:ss yyyy");
 		break;
 
 	    default:
-		format.applyPattern ("EEEE, dd-MMM-yyyy HH:mm:ss z");
+		format.applyPattern("EEEE, dd-MMM-yyyy HH:mm:ss z");
 		break;
 	    }
-	    ParsePosition pos = new ParsePosition (0);
-	    Date date = format.parse (reply.getHeaderField ("Last-Modified"), pos);
-	    buf.append (format.format (date));
+	    ParsePosition pos = new ParsePosition(0);
+	    Date date = format.parse(reply.getHeaderField("Last-Modified"), pos);
+	    buf.append(format.format(date));
 	}
 	catch (Exception e)
 	{
-	    buf.append (str);
+	    buf.append(str);
 	}
-	buf.append ("<br>\n");
+	buf.append("<br>\n");
     }
 
-    void addClient (StringBuffer buf)
+    void addClient(StringBuffer buf)
     {
-	buf.append ("Client: ");
-	buf.append (request.getClient ().getInetAddress ());
-	buf.append ("<br>\n");
+	buf.append("Client: ");
+	buf.append(request.getClient().getInetAddress().getHostAddress());
+	buf.append("<br>\n");
     }
     
-    void addDate (StringBuffer buf)
+    void addDate(StringBuffer buf)
     {
-	SimpleDateFormat fmt = (SimpleDateFormat) DateFormat.getDateInstance ();
-	fmt.applyPattern ("EEE, dd MMM yyyy HH:mm:ss z");
-	buf.append ("Date: ");
-	buf.append (fmt.format (new Date ()));
-	buf.append ("<br>\n");
+	SimpleDateFormat fmt = (SimpleDateFormat) DateFormat.getDateInstance();
+	fmt.applyPattern("EEE, dd MMM yyyy HH:mm:ss z");
+	buf.append("Date: ");
+	buf.append(fmt.format(new Date()));
+	buf.append("<br>\n");
     }
 
-    void addHeader (StringBuffer buf, String header)
+    void addHeader(StringBuffer buf, String header)
     {
-	if (request.containsHeaderField (header))
+	if (request.containsHeaderField(header))
 	{
-	    buf.append (header);
-	    buf.append (": ");
-	    buf.append (request.getHeaderField (header));
-	    buf.append ("<br>\n");
+	    buf.append(header);
+	    buf.append(": ");
+	    buf.append(request.getHeaderField(header));
+	    buf.append("<br>\n");
 	}
-	else if (reply.containsHeaderField (header))
+	else if (reply.containsHeaderField(header))
 	{
-	    buf.append (header);
-	    buf.append (": ");
-	    buf.append (reply.getHeaderField (header));
-	    buf.append ("<br>\n");
+	    buf.append(header);
+	    buf.append(": ");
+	    buf.append(reply.getHeaderField(header));
+	    buf.append("<br>\n");
 	}
     }
     
-    String generateInfo ()
+    String generateInfo()
     {
-	StringBuffer buf = new StringBuffer ();
-	StringTokenizer st = new StringTokenizer (prefs.getString ("DocumentInfo.info"), ",");
-	while (st.hasMoreTokens ())
+	StringBuffer buf = new StringBuffer();
+	StringTokenizer st = new StringTokenizer(prefs.getString("DocumentInfo.info"), ",");
+	while (st.hasMoreTokens())
 	{
-	    String token = st.nextToken ();
-	    token = token.trim ();
-	    if (token.equalsIgnoreCase ("URL"))
+	    String token = st.nextToken();
+	    token = token.trim();
+	    if (token.equalsIgnoreCase("URL"))
 	    {
-		addURL (buf);
+		addURL(buf);
 	    }
-	    else if (token.equalsIgnoreCase ("Client"))
+	    else if (token.equalsIgnoreCase("Client"))
 	    {
-		addClient (buf);
+		addClient(buf);
 	    }
-	    else if (token.equalsIgnoreCase ("LastModified"))
+	    else if (token.equalsIgnoreCase("LastModified"))
 	    {
-		addLastModified (buf);
+		addLastModified(buf);
 	    }
-	    else if (token.equalsIgnoreCase ("Date"))
+	    else if (token.equalsIgnoreCase("Date"))
 	    {
-		addDate (buf);
+		addDate(buf);
 	    }
 	    else /* Add any http header if it exists */
 	    {
-		addHeader (buf, token);
+		addHeader(buf, token);
 	    }
 	}
 
-	return buf.toString ();
+	return buf.toString();
     }
 
-    Token generateTop ()
+    Token generateTop()
     {
-	Token info = new Token ();
-	info.append (prefs.getString ("DocumentInfo.htmlBefore"));
-	info.append ("<p align=");
-	info.append (prefs.getString ("DocumentInfo.align"));
-	info.append (">");
-	info.append (generateInfo ());
-	info.append ("</p>\n");
-	info.append (prefs.getString ("DocumentInfo.htmlAfter"));
+	Token info = new Token();
+	info.append(prefs.getString("DocumentInfo.htmlBefore"));
+	info.append("<p align=");
+	info.append(prefs.getString("DocumentInfo.align"));
+	info.append(">");
+	info.append(generateInfo());
+	info.append("</p>\n");
+	info.append(prefs.getString("DocumentInfo.htmlAfter"));
 	return info;
     }
 
-    Token generateBottom ()
+    Token generateBottom()
     {
-	Token info = new Token ();
-	info.append (prefs.getString ("DocumentInfo.htmlBefore"));
-	info.append ("<p align=");
-	info.append (prefs.getString ("DocumentInfo.align"));
-	info.append (">");
-	info.append (generateInfo ());
-	info.append ("</p>\n");
-	info.append (prefs.getString ("DocumentInfo.htmlAfter"));
+	Token info = new Token();
+	info.append(prefs.getString("DocumentInfo.htmlBefore"));
+	info.append("<p align=");
+	info.append(prefs.getString("DocumentInfo.align"));
+	info.append(">");
+	info.append(generateInfo());
+	info.append("</p>\n");
+	info.append(prefs.getString("DocumentInfo.htmlAfter"));
 	return info;
     }
     
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("DocumentInfo");
+	Thread.currentThread().setName("DocumentInfo");
 
 	try
 	{
 	    boolean found = false;
 	    Object obj;
-            while ((obj = in.read ()) != null)
+            while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if (token.getType () == Token.TT_TAG)
+		if (token.getType() == Token.TT_TAG)
 		{
-		    Tag tag = token.createTag ();
-		    if (tag.is ("body")
-			&& prefs.getString ("DocumentInfo.location").equals ("top"))
+		    Tag tag = token.createTag();
+		    if (tag.is("body")
+			&& prefs.getString("DocumentInfo.location").equals("top"))
 		    {
-			out.write (obj);
-			out.write (generateTop ());
+			out.write(obj);
+			out.write(generateTop());
 			found = true;
 		    }
-		    else if (tag.is ("/body")
-			     && prefs.getString ("DocumentInfo.location").equals ("bottom"))
+		    else if (tag.is("/body")
+			     && prefs.getString("DocumentInfo.location").equals("bottom"))
 		    {
-			out.write (generateBottom ());
-			out.write (obj);
+			out.write(generateBottom());
+			out.write(obj);
 			found = true;
 		    }
 		    else
 		    {
-			out.write (obj);
+			out.write(obj);
 		    }
 		}
 		else
 		{
-		    out.write (obj);
+		    out.write(obj);
 		}
 	    }
 	    if (!found) /* no body or /body found */
 	    {
-		out.write (generateBottom ());
+		out.write(generateBottom());
 	    }
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 }

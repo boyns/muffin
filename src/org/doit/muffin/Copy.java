@@ -1,4 +1,4 @@
-/* $Id: Copy.java,v 1.2 1998/08/13 06:01:07 boyns Exp $ */
+/* $Id: Copy.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,25 +30,25 @@ class Copy implements Runnable
     InputStream in = null;
     OutputStream out = null;
     
-    Copy (InputStream in, OutputStream out)
+    Copy(InputStream in, OutputStream out)
     {
 	this.in = in;
 	this.out = out;
     }
 
-    public void run ()
+    public void run()
     {
 	int n;
 	byte buffer[] = new byte[8192];
 
 	try
 	{
-	    while ((n = in.read (buffer, 0, buffer.length)) > 0)
+	    while ((n = in.read(buffer, 0, buffer.length)) > 0)
 	    {
-		out.write (buffer, 0, n);
-		out.flush ();
+		out.write(buffer, 0, n);
+		out.flush();
 	    }
-	    out.flush ();
+	    out.flush();
 	}
 	catch (Exception e)
 	{

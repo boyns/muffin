@@ -1,4 +1,4 @@
-/* $Id: TextDialog.java,v 1.2 1998/08/13 06:03:10 boyns Exp $ */
+/* $Id: TextDialog.java,v 1.3 1998/12/19 21:24:21 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,80 +29,80 @@ public class TextDialog extends Dialog implements ActionListener, WindowListener
 {
     TextField text;
     
-    public TextDialog (Frame frame, String question)
+    public TextDialog(Frame frame, String question)
     {
-	super (frame, "Muffin: Question", true);
+	super(frame, "Muffin: Question", true);
 
-	setFont (new Font ("Helvetica", Font.BOLD, 12));
+	setFont(new Font("Helvetica", Font.BOLD, 12));
 
-	add ("North", new Label (question));
-	text = new TextField (32);
-	add ("Center", text);
+	add("North", new Label(question));
+	text = new TextField(32);
+	add("Center", text);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
 	Button b;
-	b = new Button ("Ok");
-	b.setActionCommand ("doOk");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Cancel");
-	b.setActionCommand ("doCancel");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	b = new Button("Ok");
+	b.setActionCommand("doOk");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Cancel");
+	b.setActionCommand("doCancel");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
-	pack ();
-	setSize (getPreferredSize ());
+	addWindowListener(this);
+	pack();
+	setSize(getPreferredSize());
     }
 
-    public String getAnswer ()
+    public String getAnswer()
     {
-	return text.getText ();
+	return text.getText();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doCancel".equals (arg))
+	if ("doCancel".equals(arg))
 	{
-	    text.setText ("");
-	    setVisible (false);
+	    text.setText("");
+	    setVisible(false);
 	}
-	else if ("doOk".equals (arg))
+	else if ("doOk".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: NoValue.java,v 1.2 1998/08/13 06:00:32 boyns Exp $ */
+/* $Id: NoValue.java,v 1.3 1998/12/19 21:24:08 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,11 +29,11 @@ package org.doit.html;
  */
 class NoValue
 {
-    NoValue ()
+    NoValue()
     {
     }
 
-    public String toString ()
+    public String toString()
     {
 	return null;
     }

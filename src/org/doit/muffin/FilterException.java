@@ -1,4 +1,4 @@
-/* $Id: FilterException.java,v 1.2 1998/08/13 06:01:10 boyns Exp $ */
+/* $Id: FilterException.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -24,13 +24,13 @@ package org.doit.muffin;
 
 public class FilterException extends Exception
 {
-    public FilterException ()
+    public FilterException()
     {
-	super ();
+	super();
     }
     
-    public FilterException (String message)
+    public FilterException(String message)
     {
-	super (message);
+	super(message);
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.2 1998/08/13 06:01:37 boyns Exp $ */
+/* $Id: RegexFrame.java,v 1.3 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -49,123 +49,123 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
     TextField pattern;
     REMatch match = null;
 
-    RegexFrame ()
+    RegexFrame()
     {
-	super ("Muffin: Regular Expression Tester");
+	super("Muffin: Regular Expression Tester");
 
 	Button b;
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-        panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
 	GridBagConstraints c;
 	
-	Label l = new Label ("Regular Expression:", Label.RIGHT);
-	panel.add (l);
+	Label l = new Label("Regular Expression:", Label.RIGHT);
+	panel.add(l);
 
-	pattern = new TextField (32);
-	panel.add (pattern);
+	pattern = new TextField(32);
+	panel.add(pattern);
 
-	b = new Button ("Match");
-	b.setActionCommand ("doMatch");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Match");
+	b.setActionCommand("doMatch");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	add ("North", panel);
+	add("North", panel);
 	
-	text = new TextArea ();
-	text.setEditable (true);
-	//text.setFont (new Font ("Fixed", Font.PLAIN, 12));
-	text.setText ("Insert sample text here...");
-	add ("Center", text);
+	text = new TextArea();
+	text.setEditable(true);
+	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
+	text.setText("Insert sample text here...");
+	add("Center", text);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
-	b = new Button ("Clear");
-	b.setActionCommand ("doClear");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
+	b = new Button("Clear");
+	b.setActionCommand("doClear");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 
-	pack ();
-	setSize (getPreferredSize ());
-	show ();
+	pack();
+	setSize(getPreferredSize());
+	show();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doClear".equals (arg))
+	else if ("doClear".equals(arg))
 	{
-	    text.setText ("");
+	    text.setText("");
 	}
-	else if ("doMatch".equals (arg))
+	else if ("doMatch".equals(arg))
 	{
 	    try
 	    {
-		RE re = new RE (pattern.getText ());
+		RE re = new RE(pattern.getText());
 
 		if (match != null)
 		{
-		    match = re.getMatch (text.getText (), match.getEndIndex (), text.getText ().length ());
+		    match = re.getMatch(text.getText(), match.getEndIndex(), text.getText().length());
 
 		}
 		else
 		{
-		    match = re.getMatch (text.getText ());
+		    match = re.getMatch(text.getText());
 		}
 		
 		if (match != null)
 		{
-		    text.select (match.getStartIndex (), match.getEndIndex ());
+		    text.select(match.getStartIndex(), match.getEndIndex());
 		}
 	    }
 	    catch (Exception e)
 	    {
-		System.out.println (e);
+		System.out.println(e);
 	    }
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

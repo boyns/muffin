@@ -1,4 +1,4 @@
-/* $Id: HttpConnection.java,v 1.2 1998/08/13 06:01:17 boyns Exp $ */
+/* $Id: HttpConnection.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -29,50 +29,50 @@ import java.net.Socket;
 
 abstract class HttpConnection extends Connection implements HttpRelay
 {
-    HttpConnection (String host, int port) throws IOException
+    HttpConnection(String host, int port) throws IOException
     {
-	super (host, port);
+	super(host, port);
     }
 
-    HttpConnection (Socket s) throws IOException
+    HttpConnection(Socket s) throws IOException
     {
-	super (s);
+	super(s);
     }
 
-    public void sendRequest (Request request) throws IOException, RetryRequestException
+    public void sendRequest(Request request) throws IOException, RetryRequestException
     {
-	request.write (getOutputStream ());
+	request.write(getOutputStream());
     }
     
-    public Reply recvReply (Request request) throws IOException, RetryRequestException
+    public Reply recvReply(Request request) throws IOException, RetryRequestException
     {
-	Reply reply = new Reply (getInputStream ());
-	reply.read ();
+	Reply reply = new Reply(getInputStream());
+	reply.read();
 	return reply;
     }
     
-    public void setInputStream (InputStream in)
+    public void setInputStream(InputStream in)
     {
-	super.setInputStream (in);
+	super.setInputStream(in);
     }
     
-    public void setOutputStream (OutputStream out)
+    public void setOutputStream(OutputStream out)
     {
-	super.setOutputStream (out);
+	super.setOutputStream(out);
     }
 
-    public InputStream getInputStream ()
+    public InputStream getInputStream()
     {
-	return super.getInputStream ();
+	return super.getInputStream();
     }
     
-    public OutputStream getOutputStream ()
+    public OutputStream getOutputStream()
     {
-	return super.getOutputStream ();
+	return super.getOutputStream();
     }
 
-    public void close ()
+    public void close()
     {
-	super.close ();
+	super.close();
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: HostnameExpander.java,v 1.2 1998/08/13 06:02:24 boyns Exp $ */
+/* $Id: HostnameExpander.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -34,62 +34,70 @@ public class HostnameExpander implements FilterFactory
     HostnameExpanderFrame frame = null;
     MessageArea messages = null;
     
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
 
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	prefs.putString ("HostnameExpander.defaultDomain", "");
-	prefs.putInteger ("HostnameExpander.historySize", 500);
-	prefs.putStringList ("HostnameExpander.prefix", prefix);
-	prefs.putStringList ("HostnameExpander.suffix", suffix);
-	prefs.setOverride (o);
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	prefs.putString("HostnameExpander.defaultDomain", "");
+	prefs.putInteger("HostnameExpander.historySize", 500);
+	prefs.putStringList("HostnameExpander.prefix", prefix);
+	prefs.putStringList("HostnameExpander.suffix", suffix);
+	prefs.putString("HostnameExpander.logfile", Main.getOptions().getString("muffin.logfile"));
+	prefs.setOverride(o);
 
-	messages = new MessageArea (prefs.getInteger ("HostnameExpander.historySize"));
+	messages = new MessageArea(prefs.getUserFile(prefs.getString("HostnameExpander.logfile")),
+				   "HostnameExpander",
+				   prefs.getInteger("HostnameExpander.historySize"));
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new HostnameExpanderFrame (prefs, this);
+	    frame = new HostnameExpanderFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new HostnameExpanderFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new HostnameExpanderFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
+    }
+    
+    void report(Request request, String message)
+    {
+	report("[" + request.getRequest() + "] " + message);
     }
 
-    void process (String s)
+    void report(String message)
     {
-	messages.append (s);
+	messages.append(message + "\n");
     }
 }

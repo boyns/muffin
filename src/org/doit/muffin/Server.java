@@ -1,4 +1,4 @@
-/* $Id: Server.java,v 1.2 1998/08/13 06:01:43 boyns Exp $ */
+/* $Id: Server.java,v 1.3 1998/12/19 21:24:17 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -40,61 +40,61 @@ class Server
     boolean running = false;
     Thread thread = null;
 
-    Server (int port, Monitor m, FilterManager manager, Options options)
+    Server(int port, Monitor m, FilterManager manager, Options options)
     {
 	try
 	{
-	    server = new ServerSocket (port, 512);
+	    server = new ServerSocket(port, 512);
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
-	    System.exit (0);
+	    System.out.println(e);
+	    System.exit(0);
 	}
-	handlers = new ThreadGroup ("Muffin Handlers");
+	handlers = new ThreadGroup("Muffin Handlers");
 	monitor = m;
 	this.manager = manager;
 	this.options = options;
 
-	thread = Thread.currentThread ();
+	thread = Thread.currentThread();
 
 	/* Initialize internal Httpd */
-	Httpd.init (options, manager, monitor, this);
+	Httpd.init(options, manager, monitor, this);
     }
 
-    synchronized void suspend ()
+    synchronized void suspend()
     {
 	running = false;
 
-	Thread list[] = getThreads ();
+	Thread list[] = getThreads();
 	if (list == null)
 	{
 	    return;
 	}
 	for (int i = 0; i < list.length; i++)
 	{
-	    list[i].suspend (); // DEPRECATION: can't suspend anymore - deadlock
+	    list[i].suspend(); // DEPRECATION: can't suspend anymore - deadlock
 	}
     }
 
-    synchronized void resume ()
+    synchronized void resume()
     {
 	running = true;
 
-	Thread list[] = getThreads ();
+	Thread list[] = getThreads();
 	if (list == null)
 	{
 	    return;
 	}
 	for (int i = 0; i < list.length; i++)
 	{
-	    list[i].resume (); // DEPRECATION: can't resume anymore - deadlock
+	    list[i].resume(); // DEPRECATION: can't resume anymore - deadlock
 	}
     }
 
-    synchronized void stop ()
+    synchronized void stop()
     {
-	Thread list[] = getThreads ();
+	Thread list[] = getThreads();
 	if (list == null)
 	{
 	    return;
@@ -104,25 +104,25 @@ class Server
 	    if (list[i] instanceof Handler)
 	    {
 		Handler h = (Handler) list[i];
-		h.flush ();
-		h.close ();
-		h.kill ();
+		h.flush();
+		h.close();
+		h.kill();
 	    }
 	    else
 	    {
-		list[i].stop (); // DEPRECATION: can't stop anymore - deadlock
+		list[i].stop(); // DEPRECATION: can't stop anymore - deadlock
 	    }
 	}
     }
 
-    static void clean ()
+    static void clean()
     {
-	Thread list[] = getThreads ();
+	Thread list[] = getThreads();
 	if (list == null)
 	{
 	    return;
 	}
-	long now = System.currentTimeMillis ();
+	long now = System.currentTimeMillis();
 	for (int i = 0; i < list.length; i++)
 	{
 	    if (list[i] instanceof Handler)
@@ -130,28 +130,28 @@ class Server
 		Handler h = (Handler) list[i];
 		if (h.idle > 0 && now - h.idle > (1000 * 60 * 5)) /* 5 minutes */
 		{
-		    h.close ();
-		    h.kill ();
+		    h.close();
+		    h.kill();
 		}
 	    }
 	}
     }
 
-    static synchronized Thread[] getThreads ()
+    static synchronized Thread[] getThreads()
     {
-	int n = handlers.activeCount ();
+	int n = handlers.activeCount();
 	if (n < 0)
 	{
 	    return null;
 	}
 	Thread list[] = new Thread[n];
-	handlers.enumerate (list);
+	handlers.enumerate(list);
 	return list;
     }
 
-    void run ()
+    void run()
     {
-	thread.setName ("Muffin Server");
+	thread.setName("Muffin Server");
 	running = true;
 	for (;;)
 	{
@@ -159,39 +159,40 @@ class Server
 
 	    try
 	    {
-		socket = server.accept ();
+		socket = server.accept();
 	    }
 	    catch (Exception e)
 	    {
-		System.out.println (e);
+		System.out.println(e);
 		continue;
 	    }
 
-	    if (!options.hostAccess (socket.getInetAddress ()))
+	    if (!options.hostAccess(socket.getInetAddress()))
 	    {
-		System.out.println (socket.getInetAddress () + ": access denied");
-		error (socket, 403, "No muffins for you!");
+		System.out.println(socket.getInetAddress().getHostAddress()
+				    + ": access denied");
+		error(socket, 403, "No muffins for you!");
 	    }
 	    else if (running)
 	    {
-		Handler h = new Handler (handlers, thread, monitor, manager, options);
-		h.doit (socket);
+		Handler h = new Handler(handlers, thread, monitor, manager, options);
+		h.doit(socket);
 	    }
 	    else
 	    {
-		error (socket, 503, "Muffin proxy service is suspended.");
+		error(socket, 503, "Muffin proxy service is suspended.");
 	    }
 	}
     }
 
-    void error (Socket socket, int code, String message)
+    void error(Socket socket, int code, String message)
     {
 	try
 	{
-	    DataOutputStream out = new DataOutputStream (socket.getOutputStream ());
-	    out.writeBytes ((new HttpError (options, code, message)).toString ());
-	    out.close ();
-	    socket.close ();
+	    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+	    out.writeBytes((new HttpError(options, code, message)).toString());
+	    out.close();
+	    socket.close();
 	}
 	catch (Exception e)
 	{

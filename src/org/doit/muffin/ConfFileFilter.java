@@ -1,4 +1,4 @@
-/* $Id: ConfFileFilter.java,v 1.2 1998/08/13 06:00:59 boyns Exp $ */
+/* $Id: ConfFileFilter.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -27,8 +27,8 @@ import java.io.File;
 
 class ConfFileFilter implements FilenameFilter
 {
-    public boolean accept (File dir, String name)
+    public boolean accept(File dir, String name)
     {
-	return name.endsWith (".conf");
+	return name.endsWith(".conf");
     }
 }

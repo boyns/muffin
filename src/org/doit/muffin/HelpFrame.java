@@ -1,4 +1,4 @@
-/* $Id: HelpFrame.java,v 1.2 1998/08/13 06:01:15 boyns Exp $ */
+/* $Id: HelpFrame.java,v 1.3 1998/12/19 21:24:15 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,14 +30,14 @@ import java.io.InputStream;
 
 public class HelpFrame extends MuffinFrame implements ActionListener, WindowListener
 {
-    public HelpFrame (String helpFile)
+    public HelpFrame(String helpFile)
     {
-	super ("Help: " + helpFile);
+	super("Help: " + helpFile);
 
-	TextArea text = new TextArea ();
-	text.setEditable (false);
+	TextArea text = new TextArea();
+	text.setEditable(false);
 
-	URL url = getClass ().getResource ("doc/" + helpFile + ".txt");
+	URL url = getClass().getResource("/doc/" + helpFile + ".txt");
 	if (url != null)
 	{
 	    try
@@ -45,73 +45,76 @@ public class HelpFrame extends MuffinFrame implements ActionListener, WindowList
 		byte buf[] = new byte[8192];
 		int n;
 
-		InputStream in = url.openStream ();
-		while ((n = in.read (buf, 0, buf.length)) > 0)
+		InputStream in = url.openStream();
+		while ((n = in.read(buf, 0, buf.length)) > 0)
 		{
-		    text.append (new String (buf, 0, n));
+		    text.append(new String(buf, 0, n));
 		}
-		in.close ();
+		in.close();
 	    }
 	    catch (Exception e)
 	    {
-		text.append ("No help available.");
 	    }
 	}
+	else
+	{
+	    text.append("No help available.");
+	}
 
-	add ("Center", text);
+	add("Center", text);
 
 	Button b;
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 1));
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 1));
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
+	addWindowListener(this);
 
-	pack ();
-	setSize (getPreferredSize ());
-	show ();
+	pack();
+	setSize(getPreferredSize());
+	show();
     }
     
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 	
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

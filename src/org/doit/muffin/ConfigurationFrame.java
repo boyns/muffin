@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.2 1998/08/13 06:01:01 boyns Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.3 1998/12/19 21:24:14 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -57,181 +57,181 @@ class ConfigurationFrame extends MuffinFrame implements ActionListener, ItemList
     Configuration configs = null;
     TextArea text = null;
     
-    ConfigurationFrame (Configuration configs)
+    ConfigurationFrame(Configuration configs)
     {
-	super ("Muffin: Configurations");
+	super("Muffin: Configurations");
 
 	this.configs = configs;
 
-	setResizable (false);
+	setResizable(false);
 
-	configNamesList = new BigList (10, false);
+	configNamesList = new BigList(10, false);
 
 	Label l;
 	Button b;
 	GridBagConstraints c;
 
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-	panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+	panel.setLayout(layout);
 
-	Label currentLabel = new Label ();
-	//currentLabel.setFont (new Font ("Fixed", Font.PLAIN, 12));
-	c = new GridBagConstraints ();
+	Label currentLabel = new Label();
+	//currentLabel.setFont(new Font("Fixed", Font.PLAIN, 12));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (currentLabel, c);
-	panel.add (currentLabel);
+	layout.setConstraints(currentLabel, c);
+	panel.add(currentLabel);
 
-	l = new Label ("Known Configurations");
-	//l.setFont (new Font ("Fixed", Font.BOLD, 12));
-	c = new GridBagConstraints ();
+	l = new Label("Known Configurations");
+	//l.setFont(new Font("Fixed", Font.BOLD, 12));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (l, c);
-	panel.add (l);
+	layout.setConstraints(l, c);
+	panel.add(l);
 
-	c = new GridBagConstraints ();
+	c = new GridBagConstraints();
 	c.gridheight = 4;
-	c.insets = new Insets (0, 10, 5, 10);
-	layout.setConstraints (configNamesList, c);
-	panel.add (configNamesList);
+	c.insets = new Insets(0, 10, 5, 10);
+	layout.setConstraints(configNamesList, c);
+	panel.add(configNamesList);
 
-	b = new Button ("New...");
-	b.setActionCommand ("doNew");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("New...");
+	b.setActionCommand("doNew");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 	
-	b = new Button ("Select");
-	b.setActionCommand ("doSelect");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Select");
+	b.setActionCommand("doSelect");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Rescan");
-	b.setActionCommand ("doRescan");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Rescan");
+	b.setActionCommand("doRescan");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	b = new Button ("Delete");
-	b.setActionCommand ("doDelete");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Delete");
+	b.setActionCommand("doDelete");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	l = new Label ("Automatic Configuration");
-	//l.setFont (new Font ("Fixed", Font.BOLD, 12));
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("Automatic Configuration");
+	//l.setFont(new Font("Fixed", Font.BOLD, 12));
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 
-	b = new Button ("Example");
-	b.setActionCommand ("doExample");
-	b.addActionListener (this);
-	c = new GridBagConstraints ();
+	b = new Button("Example");
+	b.setActionCommand("doExample");
+	b.addActionListener(this);
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (b, c);
-	panel.add (b);
+	layout.setConstraints(b, c);
+	panel.add(b);
 
-	text = new TextArea (10, 40);
-	text.setEditable (true);
-	//text.setFont (new Font ("Fixed", Font.PLAIN, 12));
-	c = new GridBagConstraints ();
+	text = new TextArea(10, 40);
+	text.setEditable(true);
+	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (text, c);
-	panel.add (text);
+	layout.setConstraints(text, c);
+	panel.add(text);
 
-	add ("Center", panel);
+	add("Center", panel);
 	
-	Panel buttonPanel = new Panel ();
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Reload");
-	b.setActionCommand ("doReload");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	Panel buttonPanel = new Panel();
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Reload");
+	b.setActionCommand("doReload");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	addWindowListener (this);
-	updateConfigNamesList ();
-	loadAutoConfigFile ();
+	addWindowListener(this);
+	updateConfigNamesList();
+	loadAutoConfigFile();
 
-	configs.addConfigurationListener (currentLabel);
-	configs.addConfigurationListener (this);
+	configs.addConfigurationListener(currentLabel);
+	configs.addConfigurationListener(this);
 	
- 	pack ();
- 	setSize (getPreferredSize ());
+ 	pack();
+ 	setSize(getPreferredSize());
     }
 
-    public void configurationChanged (String name)
+    public void configurationChanged(String name)
     {
-	updateConfigNamesList ();
+	updateConfigNamesList();
     }
 
-    void loadAutoConfigFile ()
+    void loadAutoConfigFile()
     {
-	text.setText ("");
+	text.setText("");
 	
-	File file = new File (configs.getAutoConfigFile ());
-	if (!file.exists ())
+	File file = new File(configs.getAutoConfigFile());
+	if (!file.exists())
 	{
 	    return;
 	}
 	
 	try
 	{
-	    BufferedReader in = new BufferedReader (new FileReader (file));
+	    BufferedReader in = new BufferedReader(new FileReader(file));
 	    String s;
-	    while ((s = in.readLine ()) != null)
+	    while ((s = in.readLine()) != null)
 	    {
-		text.append (s + "\n");
+		text.append(s + "\n");
 	    }
-	    in.close ();
+	    in.close();
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    System.out.println(e);
 	}
     }
 
-    void updateConfigNamesList ()
+    void updateConfigNamesList()
     {
-	if (configNamesList.getItemCount () > 0)
+	if (configNamesList.getItemCount() > 0)
 	{
-	    configNamesList.removeAll ();
+	    configNamesList.removeAll();
 	}
 
-	Enumeration e = configs.sortedKeys ();
-	while (e.hasMoreElements ())
+	Enumeration e = configs.sortedKeys();
+	while (e.hasMoreElements())
 	{
-	    String name = (String) e.nextElement ();
-	    configNamesList.addItem (name); // DEPRECATION: use add()
+	    String name = (String) e.nextElement();
+	    configNamesList.addItem(name); // DEPRECATION: use add()
 	}
     }
 
-    public void itemStateChanged (ItemEvent event)
+    public void itemStateChanged(ItemEvent event)
     {
     }
 
@@ -240,120 +240,120 @@ class ConfigurationFrame extends MuffinFrame implements ActionListener, ItemList
      *
      * @param event some event
      */
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 
-	if ("doClose".equals (arg))
+	if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
-	else if ("doNew".equals (arg))
+	else if ("doNew".equals(arg))
 	{
-	    TextDialog dialog = new TextDialog (this, "New configuration name:");
-	    dialog.show ();
-	    String name = dialog.getAnswer ();
-	    if (name != null && name.length () > 0)
+	    TextDialog dialog = new TextDialog(this, "New configuration name:");
+	    dialog.show();
+	    String name = dialog.getAnswer();
+	    if (name != null && name.length() > 0)
 	    {
-		name.trim ();
-		configs.createConfig (name);
+		name.trim();
+		configs.createConfig(name);
 	    }
-	    dialog.dispose ();
+	    dialog.dispose();
 	}
-	else if ("doDelete".equals (arg))
+	else if ("doDelete".equals(arg))
 	{
-	    int i = configNamesList.getSelectedIndex ();
+	    int i = configNamesList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		String name = configNamesList.getItem (i);
-		if (configs.delete (name))
+		String name = configNamesList.getItem(i);
+		if (configs.delete(name))
 		{
-		    updateConfigNamesList ();
+		    updateConfigNamesList();
 
-		    YesNoDialog dialog = new YesNoDialog (this, "Delete the " + name + " file?");
-		    dialog.show ();
-		    if (dialog.isYes ())
+		    YesNoDialog dialog = new YesNoDialog(this, "Delete the " + name + " file?");
+		    dialog.show();
+		    if (dialog.isYes())
 		    {
-			configs.deleteUserConfigFile (name);
+			configs.deleteUserConfigFile(name);
 		    }
-		    dialog.dispose ();
+		    dialog.dispose();
 		}
 	    }
 	}
-	else if ("doSelect".equals (arg))
+	else if ("doSelect".equals(arg))
 	{
-	    int i = configNamesList.getSelectedIndex ();
+	    int i = configNamesList.getSelectedIndex();
 	    if (i != -1)
 	    {
-		configs.setCurrent (configNamesList.getItem (i));
+		configs.setCurrent(configNamesList.getItem(i));
 	    }
 	}
-	else if ("doRescan".equals (arg))
+	else if ("doRescan".equals(arg))
 	{
-	    configs.rescan ();
-	    updateConfigNamesList ();
+	    configs.rescan();
+	    updateConfigNamesList();
 	}
-	else if ("doReload".equals (arg))
+	else if ("doReload".equals(arg))
 	{
-	    configs.reload ();
+	    configs.reload();
 	}
-	else if ("doApply".equals (arg))
+	else if ("doApply".equals(arg))
 	{
-	    configs.load (new StringReader (text.getText ()));
+	    configs.load(new StringReader(text.getText()));
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
 	    try
 	    {
-		File file = new File (configs.getAutoConfigFile ());
-		if (file.exists ())
+		File file = new File(configs.getAutoConfigFile());
+		if (file.exists())
 		{
-		    file.delete ();
+		    file.delete();
 		}
-		FileWriter writer = new FileWriter (file);
-		writer.write (text.getText ());
-		writer.close ();
+		FileWriter writer = new FileWriter(file);
+		writer.write(text.getText());
+		writer.close();
 	    }
 	    catch (Exception e)
 	    {
-		System.out.println (e);
+		System.out.println(e);
 	    }
 	}
-	else if ("doExample".equals (arg))
+	else if ("doExample".equals(arg))
 	{
-	    text.setText ("counter\t\t\tcounter.conf\n" +
+	    text.setText("counter\t\t\tcounter.conf\n" +
 			  "(cgi-bin|\\.cgi)\t\tcgi.conf\n" +
 			  "^http://.*\\.sdsu\\.edu/\t\tsdsu.conf\n" +
 			  "^http://.*\\.yahoo\\.com/\tyahoo.conf\n");
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

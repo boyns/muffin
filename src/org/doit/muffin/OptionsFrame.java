@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.3 1998/10/01 06:38:48 boyns Exp $ */
+/* $Id: OptionsFrame.java,v 1.4 1998/12/19 21:24:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -60,350 +60,351 @@ class OptionsFrame extends MuffinFrame implements ActionListener, WindowListener
     TextField geometry;
     ColorSample fgSample, bgSample;
 
-    OptionsFrame (Options options, Configuration configs)
+    OptionsFrame(Options options, Configuration configs)
     {
-	super ("Muffin: Options");
+	super("Muffin: Options");
 
 	this.options = options;
 	this.configs = configs;
 
-	setResizable (false);
+	setResizable(false);
 	
-	Panel panel = new Panel ();
-	GridBagLayout layout = new GridBagLayout ();
-	panel.setLayout (layout);
+	Panel panel = new Panel();
+	GridBagLayout layout = new GridBagLayout();
+	panel.setLayout(layout);
 
 	Label l;
 	TextField t;
 	Button b;
 	GridBagConstraints c;
 
-	Label currentLabel = new Label ();
-	//currentLabel.setFont (new Font ("Fixed", Font.PLAIN, 12));
-	c = new GridBagConstraints ();
+	Label currentLabel = new Label();
+	//currentLabel.setFont(new Font("Fixed", Font.PLAIN, 12));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (currentLabel, c);
-	panel.add (currentLabel);
+	layout.setConstraints(currentLabel, c);
+	panel.add(currentLabel);
 
-	l = new Label ("HTTP Proxy:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("HTTP Proxy:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 
-	httpProxyHost = new TextField (20);
-	httpProxyHost.setText (options.getString ("muffin.httpProxyHost"));
-	c = new GridBagConstraints ();
-	layout.setConstraints (httpProxyHost, c);
-	panel.add (httpProxyHost);
+	httpProxyHost = new TextField(20);
+	httpProxyHost.setText(options.getString("muffin.httpProxyHost"));
+	c = new GridBagConstraints();
+	layout.setConstraints(httpProxyHost, c);
+	panel.add(httpProxyHost);
 
-	l = new Label ("Port:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("Port:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	httpProxyPort = new TextField (10);
-	httpProxyPort.setText (options.getString ("muffin.httpProxyPort"));
-	c = new GridBagConstraints ();
+	httpProxyPort = new TextField(10);
+	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (httpProxyPort, c);
-	panel.add (httpProxyPort);
+	layout.setConstraints(httpProxyPort, c);
+	panel.add(httpProxyPort);
 
-	l = new Label ("HTTPS Proxy:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("HTTPS Proxy:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 
-	httpsProxyHost = new TextField (20);
-	httpsProxyHost.setText (options.getString ("muffin.httpsProxyHost"));
-	c = new GridBagConstraints ();
-	layout.setConstraints (httpsProxyHost, c);
-	panel.add (httpsProxyHost);
+	httpsProxyHost = new TextField(20);
+	httpsProxyHost.setText(options.getString("muffin.httpsProxyHost"));
+	c = new GridBagConstraints();
+	layout.setConstraints(httpsProxyHost, c);
+	panel.add(httpsProxyHost);
 
-	l = new Label ("Port:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("Port:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	httpsProxyPort = new TextField (10);
-	httpsProxyPort.setText (options.getString ("muffin.httpsProxyPort"));
-	c = new GridBagConstraints ();
+	httpsProxyPort = new TextField(10);
+	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (httpsProxyPort, c);
-	panel.add (httpsProxyPort);
+	layout.setConstraints(httpsProxyPort, c);
+	panel.add(httpsProxyPort);
 
-	l = new Label ("HostsAllow:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("HostsAllow:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	hostsAllowList = new TextField (50);
-	hostsAllowList.setText (options.getString ("muffin.hostsAllow"));
-	c = new GridBagConstraints ();
+	hostsAllowList = new TextField(50);
+	hostsAllowList.setText(options.getString("muffin.hostsAllow"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (hostsAllowList, c);
-	panel.add (hostsAllowList);
+	layout.setConstraints(hostsAllowList, c);
+	panel.add(hostsAllowList);
 
-	l = new Label ("HostsDeny:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("HostsDeny:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	hostsDenyList = new TextField (50);
-	hostsDenyList.setText (options.getString ("muffin.hostsDeny"));
-	c = new GridBagConstraints ();
+	hostsDenyList = new TextField(50);
+	hostsDenyList.setText(options.getString("muffin.hostsDeny"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (hostsDenyList, c);
-	panel.add (hostsDenyList);
+	layout.setConstraints(hostsDenyList, c);
+	panel.add(hostsDenyList);
 	
-	l = new Label ("AdminAllow:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("AdminAllow:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	adminAllowList = new TextField (50);
-	adminAllowList.setText (options.getString ("muffin.adminAllow"));
-	c = new GridBagConstraints ();
+	adminAllowList = new TextField(50);
+	adminAllowList.setText(options.getString("muffin.adminAllow"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (adminAllowList, c);
-	panel.add (adminAllowList);
+	layout.setConstraints(adminAllowList, c);
+	panel.add(adminAllowList);
 
-	l = new Label ("AdminDeny:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("AdminDeny:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	adminDenyList = new TextField (50);
-	adminDenyList.setText (options.getString ("muffin.adminDeny"));
-	c = new GridBagConstraints ();
+	adminDenyList = new TextField(50);
+	adminDenyList.setText(options.getString("muffin.adminDeny"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (adminDenyList, c);
-	panel.add (adminDenyList);
+	layout.setConstraints(adminDenyList, c);
+	panel.add(adminDenyList);
 
-	l = new Label ("AdminUser:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("AdminUser:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	adminUser = new TextField (50);
-	adminUser.setText (options.getString ("muffin.adminUser"));
-	c = new GridBagConstraints ();
+	adminUser = new TextField(50);
+	adminUser.setText(options.getString("muffin.adminUser"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (adminUser, c);
-	panel.add (adminUser);
+	layout.setConstraints(adminUser, c);
+	panel.add(adminUser);
 
-	l = new Label ("AdminPassword:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("AdminPassword:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	adminPassword = new TextField (50);
-	adminPassword.setText (options.getString ("muffin.adminPassword"));
-	c = new GridBagConstraints ();
+	adminPassword = new TextField(50);
+	adminPassword.setText(options.getString("muffin.adminPassword"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (adminPassword, c);
-	panel.add (adminPassword);
+	layout.setConstraints(adminPassword, c);
+	panel.add(adminPassword);
 
-	l = new Label ("Geometry:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	panel.add (l);
+	l = new Label("Geometry:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	panel.add(l);
 	
-	geometry = new TextField (50);
-	geometry.setText (options.getString ("muffin.geometry"));
-	c = new GridBagConstraints ();
+	geometry = new TextField(50);
+	geometry.setText(options.getString("muffin.geometry"));
+                          //MuffinFrame.getFrame("Muffin").getGeometry());
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints (geometry, c);
-	panel.add (geometry);
+	layout.setConstraints(geometry, c);
+	panel.add(geometry);
 
-	Panel colorPanel = new Panel ();
+	Panel colorPanel = new Panel();
 	
-	l = new Label ("Foreground:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	colorPanel.add (l);
+	l = new Label("Foreground:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	colorPanel.add(l);
 
-	fg = new TextField (7);
-	fg.setText (options.getString ("muffin.fg"));
-	fg.addActionListener (this);
-	c = new GridBagConstraints ();
+	fg = new TextField(7);
+	fg.setText(options.getString("muffin.fg"));
+	fg.addActionListener(this);
+	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (fg, c);
-	colorPanel.add (fg);
+	layout.setConstraints(fg, c);
+	colorPanel.add(fg);
 
-	fgSample = new ColorSample (options.getString ("muffin.fg"));
-	c = new GridBagConstraints ();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (fgSample, c);
-	colorPanel.add (fgSample);
-
-
-	l = new Label ("Background:", Label.RIGHT);
-	c = new GridBagConstraints ();
-	layout.setConstraints (l, c);
-	colorPanel.add (l);
-
-	bg = new TextField (7);
-	bg.setText (options.getString ("muffin.bg"));
-	bg.addActionListener (this);
-	c = new GridBagConstraints ();
-	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (bg, c);
-	colorPanel.add (bg);
-
-	bgSample = new ColorSample (options.getString ("muffin.bg"));
-	c = new GridBagConstraints ();
+	fgSample = new ColorSample(options.getString("muffin.fg"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (bgSample, c);
-	colorPanel.add (bgSample);
+	layout.setConstraints(fgSample, c);
+	colorPanel.add(fgSample);
 
-	c = new GridBagConstraints ();
+
+	l = new Label("Background:", Label.RIGHT);
+	c = new GridBagConstraints();
+	layout.setConstraints(l, c);
+	colorPanel.add(l);
+
+	bg = new TextField(7);
+	bg.setText(options.getString("muffin.bg"));
+	bg.addActionListener(this);
+	c = new GridBagConstraints();
+	c.anchor = GridBagConstraints.WEST;
+	layout.setConstraints(bg, c);
+	colorPanel.add(bg);
+
+	bgSample = new ColorSample(options.getString("muffin.bg"));
+	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.WEST;
-	layout.setConstraints (colorPanel, c);
-	panel.add (colorPanel);
+	layout.setConstraints(bgSample, c);
+	colorPanel.add(bgSample);
 
-	add ("Center", panel);
+	c = new GridBagConstraints();
+	c.gridwidth = GridBagConstraints.REMAINDER;
+	c.anchor = GridBagConstraints.WEST;
+	layout.setConstraints(colorPanel, c);
+	panel.add(colorPanel);
 
-	Panel buttonPanel = new Panel ();
-	buttonPanel.setLayout (new GridLayout (1, 2));
-	b = new Button ("Apply");
-	b.setActionCommand ("doApply");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Save");
-	b.setActionCommand ("doSave");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	b = new Button ("Close");
-	b.setActionCommand ("doClose");
-	b.addActionListener (this);
-	buttonPanel.add (b);
-	add ("South", buttonPanel);
+	add("Center", panel);
 
-	addWindowListener (this);
-	configs.addConfigurationListener (currentLabel);
-	configs.addConfigurationListener (this);
+	Panel buttonPanel = new Panel();
+	buttonPanel.setLayout(new GridLayout(1, 2));
+	b = new Button("Apply");
+	b.setActionCommand("doApply");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Save");
+	b.setActionCommand("doSave");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	b = new Button("Close");
+	b.setActionCommand("doClose");
+	b.addActionListener(this);
+	buttonPanel.add(b);
+	add("South", buttonPanel);
 
-	pack ();
-	setSize (getPreferredSize ());
+	addWindowListener(this);
+	configs.addConfigurationListener(currentLabel);
+	configs.addConfigurationListener(this);
+
+	pack();
+	setSize(getPreferredSize());
     }
     
-    void hideshow ()
+    void hideshow()
     {
-	if (isShowing ())
+	if (isShowing())
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
 	else
 	{
-	    show ();
+	    show();
 	}
     }
 
-    public void configurationChanged (String name)
+    public void configurationChanged(String name)
     {
-	httpProxyHost.setText (options.getString ("muffin.httpProxyHost"));
-	httpProxyPort.setText (options.getString ("muffin.httpProxyPort"));
-	httpsProxyHost.setText (options.getString ("muffin.httpsProxyHost"));
-	httpsProxyPort.setText (options.getString ("muffin.httpsProxyPort"));
-	hostsAllowList.setText (options.getString ("muffin.hostsAllow"));
-	hostsDenyList.setText (options.getString ("muffin.hostsDeny"));
-	adminAllowList.setText (options.getString ("muffin.adminAllow"));
-	adminDenyList.setText (options.getString ("muffin.adminDeny"));
-	adminUser.setText (options.getString ("muffin.adminUser"));
-	adminPassword.setText (options.getString ("muffin.adminPassword"));
-	bg.setText (options.getString ("muffin.bg"));
-	bgSample.setColor (bg.getText ());
-	fg.setText (options.getString ("muffin.fg"));
-	fgSample.setColor (fg.getText ());
+	httpProxyHost.setText(options.getString("muffin.httpProxyHost"));
+	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
+	httpsProxyHost.setText(options.getString("muffin.httpsProxyHost"));
+	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
+	hostsAllowList.setText(options.getString("muffin.hostsAllow"));
+	hostsDenyList.setText(options.getString("muffin.hostsDeny"));
+	adminAllowList.setText(options.getString("muffin.adminAllow"));
+	adminDenyList.setText(options.getString("muffin.adminDeny"));
+	adminUser.setText(options.getString("muffin.adminUser"));
+	adminPassword.setText(options.getString("muffin.adminPassword"));
+	bg.setText(options.getString("muffin.bg"));
+	bgSample.setColor(bg.getText());
+	fg.setText(options.getString("muffin.fg"));
+	fgSample.setColor(fg.getText());
 
-	MuffinFrame.repaintFrames ();
+	MuffinFrame.repaintFrames();
     }
 
-    void sync ()
+    void sync()
     {
-	options.putString ("muffin.httpProxyHost", httpProxyHost.getText ());
-	options.putString ("muffin.httpProxyPort", httpProxyPort.getText ());
-	options.putString ("muffin.httpsProxyHost", httpsProxyHost.getText ());
-	options.putString ("muffin.httpsProxyPort", httpsProxyPort.getText ());
-	options.putString ("muffin.hostsAllow", hostsAllowList.getText ());
-	options.putString ("muffin.hostsDeny", hostsDenyList.getText ());
-	options.putString ("muffin.adminAllow", adminAllowList.getText ());
-	options.putString ("muffin.adminDeny", adminDenyList.getText ());
-	options.putString ("muffin.adminUser", adminUser.getText ());
-	options.putString ("muffin.adminPassword", adminPassword.getText ());
-	options.putString ("muffin.geometry", geometry.getText ());
-	options.putString ("muffin.fg", fg.getText ());
-	options.putString ("muffin.bg", bg.getText ());
-	fgSample.setColor (fg.getText ());
-	bgSample.setColor (bg.getText ());
+	options.putString("muffin.httpProxyHost", httpProxyHost.getText());
+	options.putString("muffin.httpProxyPort", httpProxyPort.getText());
+	options.putString("muffin.httpsProxyHost", httpsProxyHost.getText());
+	options.putString("muffin.httpsProxyPort", httpsProxyPort.getText());
+	options.putString("muffin.hostsAllow", hostsAllowList.getText());
+	options.putString("muffin.hostsDeny", hostsDenyList.getText());
+	options.putString("muffin.adminAllow", adminAllowList.getText());
+	options.putString("muffin.adminDeny", adminDenyList.getText());
+	options.putString("muffin.adminUser", adminUser.getText());
+	options.putString("muffin.adminPassword", adminPassword.getText());
+	options.putString("muffin.geometry", geometry.getText());
+	options.putString("muffin.fg", fg.getText());
+	options.putString("muffin.bg", bg.getText());
+	fgSample.setColor(fg.getText());
+	bgSample.setColor(bg.getText());
 	MuffinFrame.getFrame("Muffin").updateGeometry(options.getString("muffin.geometry"));
-	options.sync ();
+	options.sync();
     }
 
-    public void actionPerformed (ActionEvent event)
+    public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand ();
+	String arg = event.getActionCommand();
 
-	if ("doApply".equals (arg))
+	if ("doApply".equals(arg))
 	{
-	    sync ();
+	    sync();
 
-	    MuffinFrame.repaintFrames ();
+	    MuffinFrame.repaintFrames();
 	}
-	else if ("doSave".equals (arg))
+	else if ("doSave".equals(arg))
 	{
-	    sync ();
-	    UserPrefs userPrefs = configs.getUserPrefs ();
-	    userPrefs.putString ("muffin.httpProxyHost", options.getString ("muffin.httpProxyHost"));
-	    userPrefs.putString ("muffin.httpProxyPort", options.getString ("muffin.httpProxyPort"));
-	    userPrefs.putString ("muffin.httpsProxyHost", options.getString ("muffin.httpsProxyHost"));
-	    userPrefs.putString ("muffin.httpsProxyPort", options.getString ("muffin.httpsProxyPort"));
-	    userPrefs.putString ("muffin.hostsAllow", options.getString ("muffin.hostsAllow"));
-	    userPrefs.putString ("muffin.hostsDeny", options.getString ("muffin.hostsDeny"));
-	    userPrefs.putString ("muffin.adminAllow", options.getString ("muffin.adminAllow"));
-	    userPrefs.putString ("muffin.adminDeny", options.getString ("muffin.adminDeny"));
-	    userPrefs.putString ("muffin.adminUser", options.getString ("muffin.adminUser"));
-	    userPrefs.putString ("muffin.adminPassword", options.getString ("muffin.adminPassword"));
-	    userPrefs.putString ("muffin.geometry", options.getString ("muffin.geometry"));
-	    userPrefs.putString ("muffin.fg", options.getString ("muffin.fg"));
-	    userPrefs.putString ("muffin.bg", options.getString ("muffin.bg"));
-	    userPrefs.save ();
+	    sync();
+	    UserPrefs userPrefs = configs.getUserPrefs();
+	    userPrefs.putString("muffin.httpProxyHost", options.getString("muffin.httpProxyHost"));
+	    userPrefs.putString("muffin.httpProxyPort", options.getString("muffin.httpProxyPort"));
+	    userPrefs.putString("muffin.httpsProxyHost", options.getString("muffin.httpsProxyHost"));
+	    userPrefs.putString("muffin.httpsProxyPort", options.getString("muffin.httpsProxyPort"));
+	    userPrefs.putString("muffin.hostsAllow", options.getString("muffin.hostsAllow"));
+	    userPrefs.putString("muffin.hostsDeny", options.getString("muffin.hostsDeny"));
+	    userPrefs.putString("muffin.adminAllow", options.getString("muffin.adminAllow"));
+	    userPrefs.putString("muffin.adminDeny", options.getString("muffin.adminDeny"));
+	    userPrefs.putString("muffin.adminUser", options.getString("muffin.adminUser"));
+	    userPrefs.putString("muffin.adminPassword", options.getString("muffin.adminPassword"));
+	    userPrefs.putString("muffin.geometry", options.getString("muffin.geometry"));
+	    userPrefs.putString("muffin.fg", options.getString("muffin.fg"));
+	    userPrefs.putString("muffin.bg", options.getString("muffin.bg"));
+	    userPrefs.save();
 	}
-	else if ("doClose".equals (arg))
+	else if ("doClose".equals(arg))
 	{
-	    setVisible (false);
+	    setVisible(false);
 	}
     }
 
-    public void windowActivated (WindowEvent e)
+    public void windowActivated(WindowEvent e)
     {
     }
   
-    public void windowDeactivated (WindowEvent e)
+    public void windowDeactivated(WindowEvent e)
     {
     }
   
-    public void windowClosing (WindowEvent e)
+    public void windowClosing(WindowEvent e)
     {
-	setVisible (false);
+	setVisible(false);
     }
   
-    public void windowClosed (WindowEvent e)
-    {
-    }
-  
-    public void windowIconified (WindowEvent e)
+    public void windowClosed(WindowEvent e)
     {
     }
   
-    public void windowDeiconified (WindowEvent e)
+    public void windowIconified(WindowEvent e)
     {
     }
   
-    public void windowOpened (WindowEvent e)
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+  
+    public void windowOpened(WindowEvent e)
     {
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.2 1998/08/13 06:02:30 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -63,255 +63,258 @@ public class NoThanks implements FilterFactory
     private RE hyperEnd = null;
     private RE requiredTags = null;
 
-    public NoThanks ()
+    public NoThanks()
     {
 	try
 	{
 	    /* tags and attributes based on HTML 4.0 spec */
-	    hyperTags = new RE ("^(a|img|body|form|iframe|frame|layer|object|applet|area|link|base|head|script|input)$");
-	    hyperAttrs = new RE ("^(action|archive|background|base|cite|classdid|codebase|data|href|longdesc|profile|src)$");
-	    hyperEnd = new RE ("^(a|body|form|iframe|layer|object|applet|head|script)$");
-	    requiredTags = new RE ("^(body|head)$");
+	    hyperTags = new RE("^(a|img|body|form|iframe|frame|layer|object|applet|area|link|base|head|script|input)$");
+	    hyperAttrs = new RE("^(action|archive|background|base|cite|classdid|codebase|data|href|longdesc|profile|src)$");
+	    hyperEnd = new RE("^(a|body|form|iframe|layer|object|applet|head|script)$");
+	    requiredTags = new RE("^(body|head)$");
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    public void setManager (FilterManager manager)
+    public void setManager(FilterManager manager)
     {
 	this.manager = manager;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
-	boolean o = prefs.getOverride ();
-	prefs.setOverride (false);
-	String filename = prefs.getUserFile ("killfile");
-	prefs.putString ("NoThanks.killfile", filename);
-	prefs.putInteger ("NoThanks.historySize", 500);
-	prefs.setOverride (o);
-	messages = new MessageArea (prefs.getInteger ("NoThanks.historySize"));
-	load ();
+	boolean o = prefs.getOverride();
+	prefs.setOverride(false);
+	String filename = prefs.getUserFile("killfile");
+	prefs.putString("NoThanks.killfile", filename);
+	prefs.putInteger("NoThanks.historySize", 500);
+	prefs.putString("NoThanks.logfile", Main.getOptions().getString("muffin.logfile"));
+	prefs.setOverride(o);
+	messages = new MessageArea(prefs.getUserFile(prefs.getString("NoThanks.logfile")),
+				   "NoThanks",
+				   prefs.getInteger("NoThanks.historySize"));
+	load();
     }
 
-    public Prefs getPrefs ()
+    public Prefs getPrefs()
     {
 	return prefs;
     }
 
-    public void viewPrefs ()
+    public void viewPrefs()
     {
 	if (frame == null)
 	{
-	    frame = new NoThanksFrame (prefs, this);
+	    frame = new NoThanksFrame(prefs, this);
 	}
-	frame.setVisible (true);
+	frame.setVisible(true);
     }
     
-    public Filter createFilter ()
+    public Filter createFilter()
     {
-	Filter f = new NoThanksFilter (this);
-	f.setPrefs (prefs);
+	Filter f = new NoThanksFilter(this);
+	f.setPrefs(prefs);
 	return f;
     }
 
-    public void shutdown ()
+    public void shutdown()
     {
 	if (frame != null)
 	{
-	    frame.dispose ();
+	    frame.dispose();
 	}
     }
 
-    boolean isKilled (String pattern)
+    boolean isKilled(String pattern)
     {
 	if (kill == null)
 	{
 	    return false;
 	}
 
-	return kill.getMatch (pattern) != null;
+	return kill.getMatch(pattern) != null;
     }
 
-    boolean killComment (String pattern)
+    boolean killComment(String pattern)
     {
 	if (comment == null)
 	{
 	    return false;
 	}
 
-	return comment.getMatch (pattern) != null;
+	return comment.getMatch(pattern) != null;
     }
 
-    boolean killContent (String pattern)
+    boolean killContent(String pattern)
     {
 	if (content == null)
 	{
 	    return false;
 	}
 
-	return content.getMatch (pattern) != null;
+	return content.getMatch(pattern) != null;
     }
 
-    boolean stripTag (String pattern)
+    boolean stripTag(String pattern)
     {
 	if (strip == null)
 	{
 	    return false;
 	}
 	
-	return strip.containsKey (pattern);
+	return strip.containsKey(pattern);
     }
 
-    String stripUntil (String pattern)
+    String stripUntil(String pattern)
     {
 	if (strip == null)
 	{
 	    return null;
 	}
 
-	String s = (String) strip.get (pattern);
-	return (s.length () == 0) ? null : s;
+	String s = (String) strip.get(pattern);
+	return(s.length() == 0) ? null : s;
     }
 
-    boolean replaceTag (String pattern)
+    boolean replaceTag(String pattern)
     {
 	if (replace == null)
 	{
 	    return false;
 	}
 	
-	return replace.containsKey (pattern);
+	return replace.containsKey(pattern);
     }
 
-    Tag replaceTagWith (String pattern)
+    Tag replaceTagWith(String pattern)
     {
 	if (replace == null)
 	{
 	    return null;
 	}
 
-	return (Tag) replace.get (pattern);
+	return(Tag) replace.get(pattern);
     }
     
-    String redirect (String pattern)
+    String redirect(String pattern)
     {
 	if (redirectPatterns == null)
 	{
 	    return null;
 	}
 	
-	for (int i = 0; i < redirectPatterns.size (); i++)
+	for (int i = 0; i < redirectPatterns.size(); i++)
 	{
-	    RE re = (RE) redirectPatterns.elementAt (i);
-	    if (re.getMatch (pattern) != null)
+	    RE re = (RE) redirectPatterns.elementAt(i);
+	    if (re.getMatch(pattern) != null)
 	    {
-		return (String) redirectLocations.elementAt (i);
+		return(String) redirectLocations.elementAt(i);
 	    }
 	}
 	return null;
     }
 
-    boolean checkTag (String pattern)
+    boolean checkTag(String pattern)
     {
-	return hyperTags.getMatch (pattern) != null;
+	return hyperTags.getMatch(pattern) != null;
     }
 
-    boolean checkAttr (String pattern)
+    boolean checkAttr(String pattern)
     {
-	return hyperAttrs.getMatch (pattern) != null;
+	return hyperAttrs.getMatch(pattern) != null;
     }
 
-    boolean hasEnd (String pattern)
+    boolean hasEnd(String pattern)
     {
-	return hyperEnd.getMatch (pattern) != null;
+	return hyperEnd.getMatch(pattern) != null;
     }
 
-    boolean isRequired (String pattern)
+    boolean isRequired(String pattern)
     {
-	return requiredTags.getMatch (pattern) != null;
+	return requiredTags.getMatch(pattern) != null;
     }
     
-    boolean compare (String pattern, RE re)
+    boolean compare(String pattern, RE re)
     {
 	if (pattern == null)
 	{
 	    pattern = "";
 	}
 
-	return re.getMatch (pattern) != null;
+	return re.getMatch(pattern) != null;
     }
 
-    boolean checkTagAttributes (Tag tag)
+    boolean checkTagAttributes(Tag tag)
     {
 	if (tagattrTags == null)
 	{
 	    return false;
 	}
 	
-	return tagattrTags.containsKey (tag.name ());
+	return tagattrTags.containsKey(tag.name());
     }
     
-    boolean processTagAttributes (Tag tag)
+    boolean processTagAttributes(Request request, Tag tag)
     {
-	Enumeration attrs = tag.enumerate ();
+	Enumeration attrs = tag.enumerate();
 	if (attrs == null)
 	{
 	    return false;
 	}
 	
-	while (attrs.hasMoreElements ())
+	while (attrs.hasMoreElements())
 	{
-	    String name = (String) attrs.nextElement ();
-	    String key = tag.name () + "." + name;
-	    if (tagattrStrip.containsKey (key))
+	    String name = (String) attrs.nextElement();
+	    String key = tag.name() + "." + name;
+	    if (tagattrStrip.containsKey(key))
 	    {
-		if (compare (tag.get (name), (RE) tagattrStrip.get (key)))
+		if (compare(tag.get(name), (RE) tagattrStrip.get(key)))
 		{
-		    if (isRequired (tag.name ()))
+		    if (isRequired(tag.name()))
 		    {
-			process ("tagattr removed* " + name + " from " + tag.name () + "\n");
-			tag.remove (name);
+			report(request, "tagattr removed* " + name + " from " + tag.name());
+			tag.remove(name);
 		    }
 		    else
 		    {
-			process ("tagattr stripped " + tag.toString () + "\n");
+			report(request, "tagattr stripped " + tag.toString());
 			return true;
 		    }
 		}
 	    }
-	    if (tagattrRemove.containsKey (key))
+	    if (tagattrRemove.containsKey(key))
 	    {
-		if (compare (tag.get (name), (RE) tagattrRemove.get (key)))
+		if (compare(tag.get(name), (RE) tagattrRemove.get(key)))
 		{
-		    process ("tagattr removed " + name + " from " + tag.name () + "\n");
-		    tag.remove (name);
+		    report(request, "tagattr removed " + name + " from " + tag.name());
+		    tag.remove(name);
 		}
 	    }
-	    if (tagattrReplace.containsKey (key) && tag.get (name) != null)
+	    if (tagattrReplace.containsKey(key) && tag.get(name) != null)
 	    {
-		String pattern = tag.get (name);
-		Vector v = (Vector) tagattrReplace.get (key);
-		Vector vv = (Vector) tagattrReplaceValue.get (key);
-		for (int i = 0; i < v.size (); i++)
+		String pattern = tag.get(name);
+		Vector v = (Vector) tagattrReplace.get(key);
+		Vector vv = (Vector) tagattrReplaceValue.get(key);
+		for (int i = 0; i < v.size(); i++)
 		{
-		    RE re = (RE) v.elementAt (i);
-		    REMatch match = re.getMatch (pattern);
+		    RE re = (RE) v.elementAt(i);
+		    REMatch match = re.getMatch(pattern);
 		    if (match != null)
 		    {
-			String replace = (String) vv.elementAt (i);
+			String replace = (String) vv.elementAt(i);
 			try
 			{
-			    replace = match.substituteInto (replace);
-			    process ("tagattr replaced \"" + pattern + "\" with \"" + replace + "\"\n");
-			    tag.put (name, replace);
+			    replace = match.substituteInto(replace);
+			    report(request, "tagattr replaced \"" + pattern + "\" with \"" + replace + "\"");
+			    tag.put(name, replace);
 			}
 			catch (REException e)
 			{
-			    System.out.println ("REException " + e);
+			    System.out.println("REException " + e);
 			}
 		    }
 		}
@@ -320,362 +323,367 @@ public class NoThanks implements FilterFactory
 	return false;
     }
 
-    void save ()
+    void save()
     {
-	manager.save (this);
+	manager.save(this);
     }
 
-    RE createRE (Vector v) throws Exception
+    RE createRE(Vector v) throws Exception
     {
-	StringBuffer buf = new StringBuffer ();
-	buf.append ("(");
-	for (int i = 0; i < v.size (); i++)
+	StringBuffer buf = new StringBuffer();
+	buf.append("(");
+	for (int i = 0; i < v.size(); i++)
 	{
-	    buf.append (v.elementAt (i));
-	    if (i != v.size () - 1)
+	    buf.append(v.elementAt(i));
+	    if (i != v.size() - 1)
 	    {
-		buf.append ("|");
+		buf.append("|");
 	    }
 	}
-	buf.append (")");
-	return new RE (buf.toString ());
+	buf.append(")");
+	return new RE(buf.toString());
     }
 
-    void load ()
+    void load()
     {
-	String filename = prefs.getUserFile (prefs.getString ("NoThanks.killfile"));
+	String filename = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
 	try
 	{
-	    //System.out.println ("NoThanks loading " + filename);
-	    load (new FileReader (new File (filename)));
+	    //System.out.println("NoThanks loading " + filename);
+	    load(new FileReader(new File(filename)));
 	}
 	catch (Exception e)
 	{
 	}
     }
 
-    void load (Reader reader)
+    void load(Reader reader)
     {
-	strip = new Hashtable (33);
-	redirectPatterns = new Vector ();
-	redirectLocations = new Vector ();
-	replace = new Hashtable (33);
-	tagattrTags = new Hashtable (33);
-	tagattrStrip = new Hashtable (33);
-	tagattrRemove = new Hashtable (33);
-	tagattrReplace = new Hashtable (33);
-	tagattrReplaceValue = new Hashtable (33);
-	killBuffer = new StringBuffer ();
-	commentBuffer = new StringBuffer ();
-	contentBuffer = new StringBuffer ();
+	strip = new Hashtable(33);
+	redirectPatterns = new Vector();
+	redirectLocations = new Vector();
+	replace = new Hashtable(33);
+	tagattrTags = new Hashtable(33);
+	tagattrStrip = new Hashtable(33);
+	tagattrRemove = new Hashtable(33);
+	tagattrReplace = new Hashtable(33);
+	tagattrReplaceValue = new Hashtable(33);
+	killBuffer = new StringBuffer();
+	commentBuffer = new StringBuffer();
+	contentBuffer = new StringBuffer();
 
-	include (reader);
+	include(reader);
 	
 	try
 	{
-	    kill = (killBuffer.length () > 0) ? new RE ("(" + killBuffer.toString () + ")") : null;
-	    comment = (commentBuffer.length () > 0) ? new RE ("(" + commentBuffer.toString () + ")") : null;
-	    content = (contentBuffer.length () > 0) ? new RE ("(" + contentBuffer.toString () + ")") : null;
+	    kill = (killBuffer.length() > 0) ? new RE("(" + killBuffer.toString() + ")") : null;
+	    comment = (commentBuffer.length() > 0) ? new RE("(" + commentBuffer.toString() + ")") : null;
+	    content = (contentBuffer.length() > 0) ? new RE("(" + contentBuffer.toString() + ")") : null;
 
 	    /* Build regular expressions for tagattr */
-	    Enumeration e = tagattrStrip.keys ();
-	    while (e.hasMoreElements ())
+	    Enumeration e = tagattrStrip.keys();
+	    while (e.hasMoreElements())
 	    {
-		String key = (String) e.nextElement ();
-		tagattrStrip.put (key, createRE ((Vector) tagattrStrip.get (key)));
+		String key = (String) e.nextElement();
+		tagattrStrip.put(key, createRE((Vector) tagattrStrip.get(key)));
 	    }
-	    e = tagattrRemove.keys ();
-	    while (e.hasMoreElements ())
+	    e = tagattrRemove.keys();
+	    while (e.hasMoreElements())
 	    {
-		String key = (String) e.nextElement ();
-		tagattrRemove.put (key, createRE ((Vector) tagattrRemove.get (key)));
+		String key = (String) e.nextElement();
+		tagattrRemove.put(key, createRE((Vector) tagattrRemove.get(key)));
 	    }
 	}
 	catch (REException e)
 	{
-	    System.out.println ("NoThanks REException: " + e.getMessage ());
+	    System.out.println("NoThanks REException: " + e.getMessage());
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    void include (Reader reader)
+    void include(Reader reader)
     {
 	try
 	{
 	    String s;
 	    int token;
-	    BufferedReader in = new BufferedReader (reader);
-	    while ((s = in.readLine ()) != null)
+	    BufferedReader in = new BufferedReader(reader);
+	    while ((s = in.readLine()) != null)
 	    {
-		StreamTokenizer st = new StreamTokenizer (new StringReader (s));
-		st.resetSyntax ();
-		st.whitespaceChars (0, 32);
-		st.wordChars (33, 126);
-		st.quoteChar ('"');
-		st.eolIsSignificant (true);
+		StreamTokenizer st = new StreamTokenizer(new StringReader(s));
+		st.resetSyntax();
+		st.whitespaceChars(0, 32);
+		st.wordChars(33, 126);
+		st.quoteChar('"');
+		st.eolIsSignificant(true);
 
-		token = st.nextToken ();
+		token = st.nextToken();
 		if (token != StreamTokenizer.TT_WORD)
 		{
 		    continue;
 		}
 
-		if (st.sval.startsWith ("#"))
+		if (st.sval.startsWith("#"))
 		{
-		    if (st.sval.equals ("#include"))
+		    if (st.sval.equals("#include"))
 		    {
-			token = st.nextToken ();
+			token = st.nextToken();
 			if (token != StreamTokenizer.TT_WORD && token != '"')
 			{
 			    break;
 			}
-			String filename = prefs.getUserFile (st.sval);
-			include (new FileReader (new File (filename)));
+			String filename = prefs.getUserFile(st.sval);
+			include(new FileReader(new File(filename)));
 		    }
 		    continue;
 		}
 		
-		if (st.sval.equals ("kill"))
+		if (st.sval.equals("kill"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    if (killBuffer.length () > 0)
+		    if (killBuffer.length() > 0)
 		    {
-			killBuffer.append ("|");
+			killBuffer.append("|");
 		    }
-		    killBuffer.append (st.sval);
+		    killBuffer.append(st.sval);
 		}
-		else if (st.sval.equals ("comment"))
+		else if (st.sval.equals("comment"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    if (commentBuffer.length () > 0)
+		    if (commentBuffer.length() > 0)
 		    {
-			commentBuffer.append ("|");
+			commentBuffer.append("|");
 		    }
-		    commentBuffer.append (st.sval);
+		    commentBuffer.append(st.sval);
 		}
-		else if (st.sval.equals ("strip"))
+		else if (st.sval.equals("strip"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    String start = new String (st.sval);
+		    String start = new String(st.sval);
 		    String end = "";
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token == StreamTokenizer.TT_WORD || token == '"')
 		    {
-			end = new String (st.sval);
+			end = new String(st.sval);
 		    }
-		    strip.put (start.toLowerCase (), end.toLowerCase ());
+		    strip.put(start.toLowerCase(), end.toLowerCase());
 		}
-		else if (st.sval.equals ("content"))
+		else if (st.sval.equals("content"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    if (contentBuffer.length () > 0)
+		    if (contentBuffer.length() > 0)
 		    {
-			contentBuffer.append ("|");
+			contentBuffer.append("|");
 		    }
-		    contentBuffer.append (st.sval); 		
+		    contentBuffer.append(st.sval); 		
 		}
-		else if (st.sval.equals ("redirect"))
+		else if (st.sval.equals("redirect"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    String pattern = new String (st.sval);
+		    String pattern = new String(st.sval);
 		    String location = "";
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token == StreamTokenizer.TT_WORD || token == '"')
 		    {
-			location = new String (st.sval);
+			location = new String(st.sval);
 		    }
 		    try
 		    {
-			RE re = new RE (pattern);
-			redirectPatterns.addElement (re);
-			redirectLocations.addElement (location);
+			RE re = new RE(pattern);
+			redirectPatterns.addElement(re);
+			redirectLocations.addElement(location);
 		    }
 		    catch (REException e)
 		    {
-			System.out.println (pattern + " " + e.getMessage ());
+			System.out.println(pattern + " " + e.getMessage());
 		    }
 		}
-		else if (st.sval.equals ("replace"))
+		else if (st.sval.equals("replace"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    String oldtag = new String (st.sval);
-		    token = st.nextToken ();
+		    String oldtag = new String(st.sval);
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    String newtag = new String (st.sval);
+		    String newtag = new String(st.sval);
 		    String name = null;
 		    String data = null;
-		    int i = newtag.indexOf (" \t");
+		    int i = newtag.indexOf(" \t");
 		    if (i == -1)
 		    {
 			name = newtag;
 		    }
 		    else
 		    {
-			name = newtag.substring (i);
-			data = newtag.substring (i+1);
+			name = newtag.substring(i);
+			data = newtag.substring(i+1);
 		    }
-		    Tag tag = new Tag (name, data);
-		    replace.put (oldtag.toLowerCase (), tag);
+		    Tag tag = new Tag(name, data);
+		    replace.put(oldtag.toLowerCase(), tag);
 		}
-		else if (st.sval.equals ("tagattr"))
+		else if (st.sval.equals("tagattr"))
 		{
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    int i = st.sval.indexOf ('.');
+		    int i = st.sval.indexOf('.');
 		    if (i == -1)
 		    {
 			break;
 		    }
-		    String tag = st.sval.substring (0, i);
-		    tag = tag.toLowerCase ();
-		    String attr = st.sval.substring (i+1);
-		    attr = attr.toLowerCase ();
+		    String tag = st.sval.substring(0, i);
+		    tag = tag.toLowerCase();
+		    String attr = st.sval.substring(i+1);
+		    attr = attr.toLowerCase();
 		    String key = tag + "." + attr;
 		    
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			break;
 		    }
-		    String command = new String (st.sval);
+		    String command = new String(st.sval);
 
-		    Vector list = (Vector) tagattrTags.get (tag);
+		    Vector list = (Vector) tagattrTags.get(tag);
 		    if (list == null)
 		    {
-			list = new Vector ();
-			tagattrTags.put (tag, list);
+			list = new Vector();
+			tagattrTags.put(tag, list);
 		    }
-		    list.addElement (attr);
+		    list.addElement(attr);
 
 		    String pattern;
-		    token = st.nextToken ();
+		    token = st.nextToken();
 		    if (token != StreamTokenizer.TT_WORD && token != '"')
 		    {
 			pattern = ".*";
 		    }
 		    else
 		    {
-			pattern = new String (st.sval);
+			pattern = new String(st.sval);
 		    }
 
-		    RE re = new RE (pattern);
+		    RE re = new RE(pattern);
 		
-		    if (command.equals ("strip"))
+		    if (command.equals("strip"))
 		    {
 			/* Build a vector of Strings */
 			Vector v;
-			if (tagattrStrip.containsKey (key))
+			if (tagattrStrip.containsKey(key))
 			{
-			    v = (Vector) tagattrStrip.get (key);
+			    v = (Vector) tagattrStrip.get(key);
 			}
 			else
 			{
-			    v = new Vector ();
-			    tagattrStrip.put (key, v);
+			    v = new Vector();
+			    tagattrStrip.put(key, v);
 			}
-			v.addElement (pattern);
+			v.addElement(pattern);
 		    }
-		    else if (command.equals ("remove"))
+		    else if (command.equals("remove"))
 		    {
 			/* Build a vector of Strings */
 			Vector v;
-			if (tagattrRemove.containsKey (key))
+			if (tagattrRemove.containsKey(key))
 			{
-			    v = (Vector) tagattrRemove.get (key);
+			    v = (Vector) tagattrRemove.get(key);
 			}
 			else
 			{
-			    v = new Vector ();
-			    tagattrRemove.put (key, v);
+			    v = new Vector();
+			    tagattrRemove.put(key, v);
 			}
-			v.addElement (pattern);
+			v.addElement(pattern);
 		    }
-		    else if (command.equals ("replace"))
+		    else if (command.equals("replace"))
 		    {
-			token = st.nextToken ();
+			token = st.nextToken();
 			if (token != StreamTokenizer.TT_WORD && token != '"')
 			{
-			    System.out.println ("tagattr replace missing value");
+			    System.out.println("tagattr replace missing value");
 			    break;
 			}
-			String value = new String (st.sval);
+			String value = new String(st.sval);
 
 			/* Build a vector of REs and replacement Strings */
 			Vector v;
 			Vector vv;
-			if (tagattrReplace.containsKey (key))
+			if (tagattrReplace.containsKey(key))
 			{
-			    v = (Vector) tagattrReplace.get (key);
-			    vv = (Vector) tagattrReplaceValue.get (key);
+			    v = (Vector) tagattrReplace.get(key);
+			    vv = (Vector) tagattrReplaceValue.get(key);
 			}
 			else
 			{
-			    v = new Vector ();
-			    vv = new Vector ();
-			    tagattrReplace.put (key, v);
-			    tagattrReplaceValue.put (key, vv);
+			    v = new Vector();
+			    vv = new Vector();
+			    tagattrReplace.put(key, v);
+			    tagattrReplaceValue.put(key, vv);
 			}
-			v.addElement (re);
-			vv.addElement (value);
+			v.addElement(re);
+			vv.addElement(value);
 		    }
 		    else
 		    {
-			System.out.println ("tagattr " + command + " unknown command");
+			System.out.println("tagattr " + command + " unknown command");
 		    }
 		}
 		else
 		{
-		    System.out.println ("NoThanks: " + st.sval + " unknown command");
+		    System.out.println("NoThanks: " + st.sval + " unknown command");
 		}
 	    }
- 	    in.close ();
+ 	    in.close();
 	}
 	catch (REException e)
 	{
-	    System.out.println ("NoThanks REException: " + e.getMessage ());
+	    System.out.println("NoThanks REException: " + e.getMessage());
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    void process (String s)
+    void report(Request request, String message)
     {
-	messages.append (s);
+	report("[" + request.getRequest() + "] " + message);
+    }
+
+    void report(String message)
+    {
+	messages.append(message + "\n");
     }
 }
 

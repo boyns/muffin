@@ -1,4 +1,4 @@
-/* $Id: SourceObjectStream.java,v 1.2 1998/08/13 06:00:47 boyns Exp $ */
+/* $Id: SourceObjectStream.java,v 1.3 1998/12/19 21:24:13 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -30,22 +30,22 @@ public class SourceObjectStream extends OutputObjectStream implements Runnable
     InputStream src;
     int sourceLength = 0;
 
-    public SourceObjectStream (InputObjectStream in) throws IOException
+    public SourceObjectStream(InputObjectStream in) throws IOException
     {
-	super (in);
+	super(in);
     }
     
-    public void setSourceInputStream (InputStream src)
+    public void setSourceInputStream(InputStream src)
     {
 	this.src = src;
     }
 
-    public void setSourceLength (int length)
+    public void setSourceLength(int length)
     {
 	sourceLength = length;
     }
 
-    public void run ()
+    public void run()
     {
 	try
 	{
@@ -54,14 +54,14 @@ public class SourceObjectStream extends OutputObjectStream implements Runnable
 
 	    do
 	    {
-		n = (sourceLength > 0) ? Math.min (sourceLength, maxLength) : maxLength;
-		ByteArray array = new ByteArray (n);
-		n = src.read (array.bytes);
+		n = (sourceLength > 0) ? Math.min(sourceLength, maxLength) : maxLength;
+		ByteArray array = new ByteArray(n);
+		n = src.read(array.bytes);
 		
 		if (n > 0)
 		{
 		    array.offset = n;
-		    write (array);
+		    write(array);
 		    if (sourceLength > 0)
 		    {
 			sourceLength -= n;
@@ -76,12 +76,12 @@ public class SourceObjectStream extends OutputObjectStream implements Runnable
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
 
 	try
 	{
-	    close ();
+	    close();
 	}
 	catch (IOException e)
 	{

@@ -1,4 +1,4 @@
-/* $Id: ColorSample.java,v 1.2 1998/08/13 06:03:08 boyns Exp $ */
+/* $Id: ColorSample.java,v 1.3 1998/12/19 21:24:21 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -33,18 +33,18 @@ public class ColorSample extends Canvas
     final int width = 60;
     final int height = 20;
     
-    public ColorSample (String color)
+    public ColorSample(String color)
     {
-	setColor (color);
+	setColor(color);
     }
 
-    public void setColor (String newColor)
+    public void setColor(String newColor)
     {
 	Color c;
 	
 	try
 	{
-	    c = Color.decode (newColor);
+	    c = Color.decode(newColor);
 	}
 	catch (Exception e)
 	{
@@ -53,32 +53,32 @@ public class ColorSample extends Canvas
 
 	this.color = c;
 
-	repaint ();
+	repaint();
     }
 
-    public void paint (Graphics g)
+    public void paint(Graphics g)
     {
-	g.setColor (color);
-	g.fill3DRect (0, 0, width, height, true);
+	g.setColor(color);
+	g.fill3DRect(0, 0, width, height, true);
     }
 
-    public Dimension getPreferredSize ()
+    public Dimension getPreferredSize()
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 
-    public Dimension getPreferredSize (int rows)
+    public Dimension getPreferredSize(int rows)
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 
-    public Dimension getMinimumSize ()
+    public Dimension getMinimumSize()
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 
-    public Dimension getMinimumSize (int rows)
+    public Dimension getMinimumSize(int rows)
     {
-	return new Dimension (width, height);
+	return new Dimension(width, height);
     }
 }

@@ -1,4 +1,4 @@
-/* $Id: StopProxyFilter.java,v 1.2 1998/08/13 06:03:03 boyns Exp $ */
+/* $Id: StopProxyFilter.java,v 1.3 1998/12/19 21:24:20 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
@@ -43,89 +43,89 @@ public class StopProxyFilter implements ContentFilter
     // Request request = null;
     Reply reply = null;
 
-    StopProxyFilter (StopProxy factory)
+    StopProxyFilter(StopProxy factory)
     {
 	this.factory = factory;
     }
     
-    public void setPrefs (Prefs prefs)
+    public void setPrefs(Prefs prefs)
     {
 	this.prefs = prefs;
     }
 
-    public boolean needsFiltration (Request request, Reply reply)
+    public boolean needsFiltration(Request request, Reply reply)
     {
 	// this.request = request;
 	this.reply = reply;
-	String s = reply.getContentType ();
-	return s != null && s.startsWith ("text/html");
+	String s = reply.getContentType();
+	return s != null && s.startsWith("text/html");
     }
     
-    public void setInputObjectStream (InputObjectStream in)
+    public void setInputObjectStream(InputObjectStream in)
     {
 	this.in = in;
     }
 
-    public void setOutputObjectStream (OutputObjectStream out)
+    public void setOutputObjectStream(OutputObjectStream out)
     {
 	this.out = out;
     }
     
-    public void run ()
+    public void run()
     {
-	Thread.currentThread ().setName ("StopProxy");
+	Thread.currentThread().setName("StopProxy");
 
 	try
 	{
 	    Tag tag;
 	    int inTitle = 0;          // Are we in the title here?
 	    boolean output = true;    // Innocent until proved guilty!
-	    String pageTitle = prefs.getString ("StopProxy.PageTitle");
-	    Vector saveTokens = new Vector ();
+	    String pageTitle = prefs.getString("StopProxy.PageTitle");
+	    Vector saveTokens = new Vector();
 
 	    Object obj;
-            while ((obj = in.read ()) != null)
+            while ((obj = in.read()) != null)
             {
 		Token token = (Token) obj;
-		if ((inTitle >= 0) && (token.getType () == Token.TT_TAG))
+		if ((inTitle >= 0) && (token.getType() == Token.TT_TAG))
 		{
-		    tag = token.createTag ();
+		    tag = token.createTag();
 
 		    /* <title> */
-		    if (tag.is ("title"))
+		    if (tag.is("title"))
 		    {
 			inTitle = 1; // In the title now
 		    }
 		    /* </title> - in case the title is empty! */
 		    /* </body>  - in case no title at all!    */
-		    else if (tag.is ("/title") || tag.is ("/head"))
+		    else if (tag.is("/title") || tag.is("/head"))
 		    {
-			dumpTokens (saveTokens);
+			dumpTokens(saveTokens);
 			saveTokens = null;
 			inTitle = -1; // Don't bother checking now
 		    }
 		    if (saveTokens != null)
 		    {
-			saveTokens.addElement (token);
+			saveTokens.addElement(token);
 		    } else if (output) {
-			out.write (token);
+			out.write(token);
 		    }
 		}
-		else if ((inTitle > 0) && (token.getType () == Token.TT_TEXT))
+		else if ((inTitle > 0) && (token.getType() == Token.TT_TEXT))
 		{
-		    String title = token.toString ();
+		    String title = token.toString();
 		    // Should check against value in preferences when I get that far
-		    if (title.startsWith (pageTitle))
+		    if (title.startsWith(pageTitle))
 		    {
-			reply.setStatusLine (noPage);
-			reply.removeHeaderField ("Content-length");
-			factory.process ("Page rejected - title: \"" + title + "\"\n");
-			output = false; // No (body) output
+			reply.setStatusLine(noPage);
+			reply.removeHeaderField("Content-length");
+			factory.process("Page rejected - title: \"" + title + "\"\n");
+			output = false; // No(body) output
 			/* break;    // No need to read any more */
 		    } else {
-			dumpTokens (saveTokens);
+			dumpTokens(saveTokens);
 		    }
-		    out.write (token);
+		    out.write(token);
 		    saveTokens = null;  // We do not need this any more
 		    inTitle = -1;   // Don't bother checking now
 		}
@@ -133,29 +133,29 @@ public class StopProxyFilter implements ContentFilter
 		{
 		    if (saveTokens != null)
 		    {
-			saveTokens.addElement (token);
+			saveTokens.addElement(token);
 		    } else if (output) {
-			out.write (token);
+			out.write(token);
 		    }
 		}
 	    }
 	    
-	    out.flush ();
-	    out.close ();
+	    out.flush();
+	    out.close();
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace ();
+	    e.printStackTrace();
 	}
     }
 
-    private void dumpTokens (Vector saveTokens) throws IOException
+    private void dumpTokens(Vector saveTokens) throws IOException
     {
-	Enumeration e = saveTokens.elements ();
-	while (e.hasMoreElements ())
+	Enumeration e = saveTokens.elements();
+	while (e.hasMoreElements())
 	{
-	    Token token = (Token) e.nextElement ();
-	    out.write (token);
+	    Token token = (Token) e.nextElement();
+	    out.write(token);
 	}
     }
 }
