@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.9 2000/01/26 03:53:20 boyns Exp $ */
+/* $Id: Configuration.java,v 1.10 2000/02/11 02:33:58 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -123,7 +123,6 @@ class Configuration extends Prefs
 	}
 	System.out.println("Creating new configuration: " + name);
 	UserPrefs prefs = new UserPrefs(name);
-	prefs.setUserDirectory(getUserDirectory());
 	put(name, prefs);
 	updateConfigurationListeners();
     }
@@ -232,7 +231,7 @@ class Configuration extends Prefs
 	File file = new File(getAutoConfigFile());
 	if (!file.exists())
 	{
-	    System.out.println(file.getAbsolutePath() + " does not exist");
+	    //System.out.println(file.getAbsolutePath() + " does not exist");
 	    return;
 	}
 
@@ -274,7 +273,6 @@ class Configuration extends Prefs
 	for (int i = 0; i < list.length; i++)
 	{
 	    UserPrefs prefs = new UserPrefs(list[i]);
-	    prefs.setUserDirectory(getUserDirectory());
 	    put(list[i], prefs);
 	}
     }
