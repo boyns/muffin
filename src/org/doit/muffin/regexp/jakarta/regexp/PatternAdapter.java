@@ -4,6 +4,7 @@ package org.doit.muffin.regexp.jakarta.regexp;
 import org.apache.regexp.RESyntaxException;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
+import org.doit.muffin.regexp.AbstractPatternAdapter;
 
 import org.apache.regexp.RE;
 
@@ -11,19 +12,14 @@ import org.apache.regexp.RE;
  * @author bw@xmlizer.biz
  *
  */
-public class PatternAdapter implements Pattern {
-
+public class PatternAdapter extends AbstractPatternAdapter {
 	
 	public PatternAdapter(String pattern){
-		this(pattern, false);
+		super(pattern);
 	}
 	
 	public PatternAdapter(String pattern, boolean ignoreCase){
-		if (ignoreCase){
-			makePatternIgnoreCase(pattern);
-		} else {
-			makePattern(pattern);
-		}
+		super(pattern, ignoreCase);
 	}
 
 	/**
@@ -57,7 +53,7 @@ public class PatternAdapter implements Pattern {
 		return fPattern.subst(input, replace);
 	}
 	
-	private void makePattern(String pattern){
+	protected void doMakePattern(String pattern){
 		try {
 			fPattern = new org.apache.regexp.RE(pattern);
 		} catch (RESyntaxException e) {
@@ -65,7 +61,7 @@ public class PatternAdapter implements Pattern {
 		}
 	}
 	
-	private void makePatternIgnoreCase(String pattern){
+	protected void doMakePatternIgnoreCase(String pattern){
 		try {
 			fPattern = new org.apache.regexp.RE(pattern, org.apache.regexp.RE.MATCH_CASEINDEPENDENT);
 		} catch (RESyntaxException e) {

@@ -4,6 +4,7 @@ import gnu.regexp.REException;
 
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
+import org.doit.muffin.regexp.AbstractPatternAdapter;
 //import gnu.regexp.Pattern;
 //import gnu.regexp.Matcher;
 
@@ -11,22 +12,14 @@ import org.doit.muffin.regexp.Matcher;
  * @author bw@xmlizer.biz
  *
  */
-public class PatternAdapter implements Pattern {
+public class PatternAdapter extends AbstractPatternAdapter {
 	
 	public PatternAdapter(String pattern){
-		this(pattern, false);
+		super(pattern);
 	}
 	
 	public PatternAdapter(String pattern, boolean ignoreCase){
-		if (ignoreCase){
-			makePatternIgnoreCase(pattern);
-		} else {
-			makePattern(pattern);
-		}
-	}
-	
-	public PatternAdapter(gnu.regexp.RE re){
-		this.fPattern = re;
+		super(pattern, ignoreCase);
 	}
 	
 	public boolean matches(String input){
@@ -56,7 +49,7 @@ public class PatternAdapter implements Pattern {
 		return fPattern.toString();
 	}
 	
-	private void makePattern(String pattern){
+	protected void doMakePattern(String pattern){
 		try {
 			this.fPattern = new gnu.regexp.RE(pattern);
 		} catch (REException e) {
@@ -64,7 +57,7 @@ public class PatternAdapter implements Pattern {
 		}
 	}
 	
-	private void makePatternIgnoreCase(String pattern){
+	protected void doMakePatternIgnoreCase(String pattern){
 		try {
 			this.fPattern = new gnu.regexp.RE(pattern, gnu.regexp.RE.REG_ICASE);
 		} catch (REException e) {
