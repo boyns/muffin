@@ -1,10 +1,10 @@
 package org.doit.muffin.regexp.jakarta.regexp;
 
-//import java.util.regex.Pattern;
 import org.apache.regexp.RESyntaxException;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractPatternAdapter;
+import org.doit.muffin.regexp.Factory;
 
 import org.apache.regexp.RE;
 
@@ -70,5 +70,12 @@ public class PatternAdapter extends AbstractPatternAdapter {
 	}
 
 	private RE fPattern;
-
+	
+	// Announce this implementation to the Factory.
+	// It would work in C++ where static code gets executed at any rate.
+	// Not so in Java.
+//	
+//	static {
+//		Factory.instance().addImplementation(PatternAdapter.class);
+//	}
 }

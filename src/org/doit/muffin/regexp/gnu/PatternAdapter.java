@@ -1,12 +1,13 @@
 package org.doit.muffin.regexp.gnu;
 
+//import gnu.regexp.Pattern;
+//import gnu.regexp.Matcher;
 import gnu.regexp.REException;
 
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractPatternAdapter;
-//import gnu.regexp.Pattern;
-//import gnu.regexp.Matcher;
+import org.doit.muffin.regexp.Factory;;
 
 /**
  * @author bw@xmlizer.biz
@@ -66,5 +67,13 @@ public class PatternAdapter extends AbstractPatternAdapter {
 	}
 	
 	private gnu.regexp.RE fPattern;
+	
+	// Announce this implementation to the Factory.
+	// It would work in C++ where static code gets executed at any rate.
+	// Not so in Java.
+//	
+//	static {
+//		Factory.instance().addImplementation(PatternAdapter.class);
+//	}
 	
 }
