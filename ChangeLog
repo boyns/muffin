@@ -1,3 +1,8 @@
+1999-03-20  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/filter/ImageKill.java: new version of
+ 	ImageKill from Heinrich Opgenoorth.
+
 1999-03-18  Mark R. Boyns  <boyns@doit.org>
 
 	* Muffin 0.8.1 released.

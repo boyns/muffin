@@ -1,24 +1,31 @@
-ImageKill removes images which match certain size criteria. The
-idea is that many advertisement banners have a certain
-width/height ratio by which they can be recognized. This makes it
-possible to remove ads which don't give themselves away by their
-name.
+ImageKill removes images that match certain size criteria.
+The idea is that many advertisement banners have a certain
+width/height ratio by which they can be recognized. This makes
+it possible to remove ads which don't give themselves away by
+their name.
 
 The filter works by examining the source URL for the image,
 looking for "width" and "height" attributes. This means that
-loading an image can only be avoided if its source URL contains
-those attributes (which is often the case). The advantage on the
-other hand is that we don't have to load the image just to find
-out its size.
+loading an image can only be avoided if its source URL
+contains those attributes (which is often the case). The
+advantage on the other hand is that we don't have to load the
+image just to find out its size.
 
-To avoid removing navigation bars and other images that you want
-to see, even if they match the evil width/height ratio, ImageKill
-can prevent images from being removed in two cases:
+To avoid removing navigation bars and other images that you do
+want to see, even if they match the evil width/height ratio,
+ImageKill can prevent images from being removed in two cases:
 
 * The image source tag contains a specified string/regexp;
 
-* The source tag contains the "usemap" attribute, i. e. it's an
-  image map.
+* The source tag contains the "usemap" attribute, i. e. it's
+  an image map.
+
+Instead of completely removing the offending images, you can
+also specify an URL to use as a replacement. I use a simple,
+1x1 pixel blue gif image for this purpose (Netscape scales
+this to the size given in the width/height attributes). This
+way, the page layout stays the same; good for those pages that
+rely on the geometry of their images for layout purposes.
 
 This filter has the following configurable preferences:
 
@@ -44,3 +51,24 @@ This filter has the following configurable preferences:
 
   Don't remove images that contain the "usemap" attribute in
   their source URL (image maps).
+
+* ImageKill.rmSizes
+
+  A list of fixed sizes; you can use this instead of (or in
+  addition to) the w/h ratio based removal of images: just
+  specify some geometries commonly used for ads, like 468x60.
+  Note that the format is somewhat rigid (comma separated
+  list, no spaces allowed, geometries must be in the format
+  WidthxHeight).
+
+* ImageKill.replace
+
+  This toggles the way offending images are handled: normally,
+  they are completely removed, but if ImageKill.replace is
+  true, they are replace with the given URL instead.
+
+* ImageKill.replaceURL
+
+  The replacement URL that is used if ImageKill.replace is
+  set. Use your favorite "Ad removed!" image, or just an empty
+  1x1 gif.
