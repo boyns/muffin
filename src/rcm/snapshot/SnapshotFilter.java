@@ -21,13 +21,14 @@ public class SnapshotFilter implements RequestFilter, ReplyFilter, HttpFilter {
 
     public void filter (Request request) {
         this.request = request;
-        isCacheHit = 
-            prefs.getBoolean ("Snapshot.replaying")
-            && map.get (request.getURL ()) != null;
+        isCacheHit = prefs.getBoolean ("Snapshot.replaying") 
+                     && map.get (request.getURL ()) != null;
     }
 
     public void filter (Reply reply) {
-        if (!isCacheHit) {
+        if (!isCacheHit 
+            && !DefaultHttpd.sendme(request)) // don't snapshot muffin web administration 
+        {
             String url = request.getURL ();
             File cacheFile = map.put (url);
 
@@ -51,7 +52,7 @@ public class SnapshotFilter implements RequestFilter, ReplyFilter, HttpFilter {
     }
 
     public boolean wantRequest (Request request) {
-        return isCacheHit;
+        return isCacheHit && !DefaultHttpd.sendme(request); // don't snapshot muffin web administration
     }
 
     public void sendRequest (Request request) {

@@ -2,6 +2,7 @@ package rcm.snapshot;
 
 import org.doit.muffin.*;
 import java.io.File;
+import java.util.Map;
 
 public class Snapshot implements FilterFactory {
     FilterManager manager;
@@ -82,4 +83,8 @@ public class Snapshot implements FilterFactory {
         }
     }
 
+	public Map getMap()
+	{
+		return map.getMap();	
+	}
 }
