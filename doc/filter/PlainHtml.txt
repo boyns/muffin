@@ -1,0 +1,8 @@
+PlainHtml is an html firewall with a default "deny all" rule. All executable 
+tags should be filtered.
+
+The PlainHtml filter removes comments and all html tags except the 
+basics. Also filters text between style and javascript tags.
+
+As a side effect it filters most web designer gingerbread, so pages may 
+render better. No more microscopic fonts!

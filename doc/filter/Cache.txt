@@ -1,0 +1,3 @@
+The Cache filter is a simple web cache. It has fewer features than Apache's mod_cache, but on the
+other hand it actually caches. If other filters appear before it in list of enabled filters, it
+can only cache the filtered versions of pages.

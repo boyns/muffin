@@ -1,0 +1,4 @@
+Junkbuster filters junk such as ads from your web
+experience. It uses the same blocklist as the
+popular standalone Junkbuster proxy.
+
