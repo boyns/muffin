@@ -30,21 +30,21 @@ import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.regexp.*;
 
-import org.doit.muffin.filter.Glossary;
+import org.doit.muffin.filter.EmptyFont;
 
 /**
  * @author Bernhard Wagner <bw@xmlizer.biz>
  * 
- * TestCase testing the Glossary.
+ * TestCase testing the EmptyFont.
  *
  */
-public class GlossaryTest extends TestCase {
+public class EmptyFontTest extends TestCase {
 
 	/**
-	 * Constructor for GlossaryTest.
+	 * Constructor for EmptyFontTest.
 	 * @param arg0
 	 */
-	public GlossaryTest(String arg0) {
+	public EmptyFontTest(String arg0) {
 		super(arg0);
 //		System.out.println("-----");
 //		System.out.println(IMPLS);
@@ -53,61 +53,55 @@ public class GlossaryTest extends TestCase {
 	
 	
 	public void setUp() {
-		fGlossary = new Glossary();
-		fGlossary.loadFromStream(Utils.makeBufferedReaderFromString(SAMPLE_GLOSSARY));
-		fGlossaryFilter = (ContentFilter)fGlossary.createFilter();
+		fEmptyFont = new EmptyFont();
+		fEmptyFontFilter = (ContentFilter)fEmptyFont.createFilter();
 	}
 	
-	public void testGlossaryFilterPresence() throws IOException {
-		assertNotNull(fGlossaryFilter);
+	public void testEmptyFontFilterPresence() throws IOException {
+		assertNotNull(fEmptyFontFilter);
 		
 		Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
 		assertNotNull(reply);
 		
-		assertTrue(fGlossaryFilter.needsFiltration(null, reply));
+		assertTrue(fEmptyFontFilter.needsFiltration(null, reply));
 	}
 	
 	public void testReplacing(){
 		Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
 		OutputStream os = new ByteArrayOutputStream();
-		Utils.filter(fGlossaryFilter, reply.getContent(), os, 200, reply);
+		Utils.filter(fEmptyFontFilter, reply.getContent(), os, 200, reply);
 		String result = os.toString();
 		
-		Pattern pat = org.doit.muffin.regexp.Factory.instance().getPattern("java");
-		String expected = pat.substituteAll(SAMPLE_PAGE, "<a href=\"http://java.sun.com/\">java</a>");
-		pat = org.doit.muffin.regexp.Factory.instance().getPattern("muffin");
-		expected = pat.substituteAll(expected, "<a href=\"http://muffin.doit.org/\">muffin</a>");
+		Pattern pat = org.doit.muffin.regexp.Factory.instance().getPattern("<font>([ \t]*)</font>", true);
+		String expected = pat.substituteAll(SAMPLE_PAGE, "$1");
 		
 		assertEquals(expected, result);
 	}
 	
-	private InputStream makeInputStream(){
-		return Utils.makeInputStreamFromString(SAMPLE_RESPONSE);
-	}
 
 	private static final String SAMPLE_PAGE = ""
 		+ "<head><title>Test Page</title></head>\n"
-		+ "<body><h1>Test Page</h1>\n"
-		+ "muffin is a funky java project.\n"
+		+ "<body><h1><font>\t</font>Test Page</h1>\n"
+		+ "muffin<font></font> is<font> </font> a <font>funky</font> java project.\n"
 		+ "</body>\n"
 		+ "";
 
 	private static final String SAMPLE_RESPONSE = "HTTP/1.0 302 Found\n"
 		+ "Content-Type: text/html\n"
-		+ "Location: http://chewie.somewhere.com:8080/index.html\n"
+		+ "Location: http://xmlizer.biz:8080/index.html\n"
 		+ "Content-Length: 176\n"
 		+ "Servlet-Engine: Tomcat Web Server/3.2 beta 3 (JSP 1.1; Servlet 2.2; Java 1.2.2; Linux 2.2.24-7.0.3smp i386; java.vendor=Blackdown Java-Linux Team)\n"
 		+ "\n"
 		+ SAMPLE_PAGE
 		+ "";
 			
-	private static final String SAMPLE_GLOSSARY = ""
+	private static final String SAMPLE_EmptyFont = ""
 		+ "muffin http://muffin.doit.org/\n"
 		+ "java http://java.sun.com/\n"
 		+ "";
 	
-	private Glossary fGlossary;
-	private ContentFilter fGlossaryFilter;
+	private EmptyFont fEmptyFont;
+	private ContentFilter fEmptyFontFilter;
 	private Reply fReply;
 
 }
