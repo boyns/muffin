@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.9 2000/01/25 06:11:59 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.10 2000/01/25 06:14:25 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -369,10 +369,17 @@ public class NoThanks implements FilterFactory
 
     void processHeaders(Request request, Message m)
     {
+	// try to optimize for the case where there are no
+	// header rules
+	if (headerStrip.size() == 0 && headerReplace.size() == 0)
+	{
+	    return;
+	}
+	
 	String name, value;
 	RE re;
 	REMatch match;
-	
+
 	for (Enumeration e = m.getHeaders(); e.hasMoreElements(); )
 	{
 	    name = ((String) e.nextElement()).toLowerCase();
