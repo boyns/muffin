@@ -33,6 +33,24 @@ NoThanks Command Set:
 
 ([xxx] denotes an optional value)
 
+* options name
+
+  Set the value of an options.  Supported options are:
+
+     * reg-case - make all regular expression case sensitive
+                  (this is the default setting)
+
+     * reg-icase - make all regular expression case insensitive.
+
+  Note that the reg-case and reg-icase setting should only be used once
+  within the killfile.  A future version may support this setting on
+  a per-regex basis.
+
+  Examples:
+
+     options reg-case
+     options reg-icase
+
 * strip tag [endtag]
 
   Remove tag and possibly everything up-to and including its end tag.
