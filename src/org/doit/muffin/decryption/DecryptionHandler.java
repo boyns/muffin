@@ -77,8 +77,6 @@ class DecryptionHandler extends Handler
         throws IOException
     {
         HttpRelay http;
-        System.out.println("DECRYPTION - DecryptionHandler request:");
-        System.out.println(request.toString());
         //System.out.println(
         //    "host=" + request.getHost() + " port=" + request.getPort());
         if (DefaultHttpd.sendme(request))
