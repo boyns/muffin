@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.9 2000/03/08 15:21:25 boyns Exp $ */
+/* $Id: OptionsFrame.java,v 1.10 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -72,8 +72,8 @@ class OptionsFrame extends MuffinFrame
 
 // 	this.configs = configs;
 
-	setResizable(false);
-	
+	//setResizable(false);
+
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
 	panel.setLayout(layout);
@@ -105,7 +105,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	httpProxyPort = new TextField(10);
 	httpProxyPort.setText(options.getString("muffin.httpProxyPort"));
 	c = new GridBagConstraints();
@@ -129,7 +129,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	httpsProxyPort = new TextField(10);
 	httpsProxyPort.setText(options.getString("muffin.httpsProxyPort"));
 	c = new GridBagConstraints();
@@ -142,7 +142,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	hostsAllowList = new TextField(50);
 	hostsAllowList.setText(options.getString("muffin.hostsAllow"));
 	c = new GridBagConstraints();
@@ -154,19 +154,19 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	hostsDenyList = new TextField(50);
 	hostsDenyList.setText(options.getString("muffin.hostsDeny"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(hostsDenyList, c);
 	panel.add(hostsDenyList);
-	
+
 	l = new Label("AdminAllow:", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminAllowList = new TextField(50);
 	adminAllowList.setText(options.getString("muffin.adminAllow"));
 	c = new GridBagConstraints();
@@ -178,7 +178,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminDenyList = new TextField(50);
 	adminDenyList.setText(options.getString("muffin.adminDeny"));
 	c = new GridBagConstraints();
@@ -190,7 +190,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminUser = new TextField(8);
 	adminUser.setText(options.getString("muffin.adminUser"));
 	c = new GridBagConstraints();
@@ -202,7 +202,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	adminPassword = new TextField(8);
 	adminPassword.setText(options.getString("muffin.adminPassword"));
 	c = new GridBagConstraints();
@@ -215,7 +215,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	geometry = new TextField(16);
 	geometry.setText(options.getString("muffin.geometry"));
                           //MuffinFrame.getFrame("Muffin").getGeometry());
@@ -226,7 +226,7 @@ class OptionsFrame extends MuffinFrame
 	panel.add(geometry);
 
 	Panel colorPanel = new Panel();
-	
+
 	l = new Label("Foreground:", Label.RIGHT);
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
@@ -277,7 +277,7 @@ class OptionsFrame extends MuffinFrame
 	c = new GridBagConstraints();
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	nameservers = new TextField(50);
 	nameservers.setText(options.getString("muffin.nameservers"));
 	c = new GridBagConstraints();
@@ -323,10 +323,10 @@ class OptionsFrame extends MuffinFrame
 // 	configs.addConfigurationListener(currentLabel);
 // 	configs.addConfigurationListener(this);
 
-	pack();
 	setSize(getPreferredSize());
+	pack();
     }
-    
+
     void hideshow()
     {
 	if (isShowing())
@@ -408,28 +408,28 @@ class OptionsFrame extends MuffinFrame
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

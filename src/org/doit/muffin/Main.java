@@ -1,7 +1,7 @@
-/* $Id: Main.java,v 1.23 2001/07/02 05:02:08 boyns Exp $ */
+/* $Id: Main.java,v 1.24 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -68,18 +68,19 @@ public class Main
     Monitor monitor;
     Label infoLabel;
     Panel controlPanel;
-    
+    MuffinFrame frame;
+
     /**
      * Create Main.
      */
     public Main()
     {
-	super("Muffin");
+	pool = new ThreadPool("Muffin Threads");
 
 	infoString = new String("Muffin " + Main.getMuffinVersion() +
 				 " running on " + Main.getMuffinHost() +
 				 " port " + options.getString("muffin.port"));
-	
+
 	manager = new FilterManager(options, configs);
 
 	if (options.getBoolean("muffin.noWindow"))
@@ -89,7 +90,7 @@ public class Main
 	}
 	else
 	{
-	    MuffinFrame frame = new MuffinFrame("Muffin");
+	    frame = new MuffinFrame("Muffin");
 	    monitor = new CanvasMonitor(this);
 	    gui();
 	}
@@ -103,8 +104,6 @@ public class Main
 	getThread().setRunnable(j);
 
 	System.out.println(infoString);
-
-	//server.run();
     }
 
     public static String getMuffinUrl()
@@ -192,25 +191,25 @@ public class Main
 	item.addActionListener(this);
 	menu.add(item);
 	menuBar.setHelpMenu(menu);
-	
-	setMenuBar(menuBar);
+
+	frame.setMenuBar(menuBar);
 
 	if (monitor instanceof Canvas)
 	{
 	    Canvas canvas = (Canvas) monitor;
-	    add("Center", canvas);
+	    frame.add("Center", canvas);
 	}
 
 	infoLabel = new Label(infoString);
 	infoLabel.setFont(options.getFont("muffin.smallfont"));
-	add("South", infoLabel);
+	frame.add("South", infoLabel);
 
-	addWindowListener(this);
+	frame.addWindowListener(this);
 	configs.addConfigurationListener(this);
 
-	updateGeometry(options.getString("muffin.geometry"));
+	frame.updateGeometry(options.getString("muffin.geometry"));
 
-	show();
+	frame.show();
     }
 
     public void configurationChanged(String name)
@@ -226,7 +225,7 @@ public class Main
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doQuit".equals(arg))
 	{
 	    closeApplication();
@@ -309,55 +308,55 @@ public class Main
 	{
  	    infoLabel.setVisible(false);
  	    //controlPanel.setVisible(false);
-	    remove(menuBar);
+	    frame.remove(menuBar);
  	    monitor.minimize(true);
 	}
 	else
 	{
  	    infoLabel.setVisible(true);
  	    //controlPanel.setVisible(true);
- 	    setMenuBar(menuBar);
+ 	    frame.setMenuBar(menuBar);
 	    monitor.minimize(false);
 	}
 
 	if (options.exists("muffin.geometry"))
 	{
-	    updateGeometry(options.getString("muffin.geometry"));
+	    frame.updateGeometry(options.getString("muffin.geometry"));
 	}
 	else
 	{
-	    hide();
-	    setSize(getPreferredSize());
-	    pack();
-	    show();
+	    frame.hide();
+	    frame.setSize(frame.getPreferredSize());
+	    frame.pack();
+	    frame.show();
 	}
     }
 
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	closeApplication();
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }
@@ -404,7 +403,7 @@ public class Main
     {
 	StringBuffer buf = new StringBuffer();
 	buf.append("Muffin version " + version +
-		   ", Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>\n");
+		   ", Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>\n");
 	buf.append("Muffin comes with ABSOLUTELY NO WARRANTY; for details see Help/License.\n");
 	buf.append("This is free software, and you are welcome to redistribute it\n");
 	buf.append("under certain conditions; see Help/License for details.\n");
@@ -429,36 +428,39 @@ public class Main
     public static void stopMuffin(Main theMuffin)
     {
 	theMuffin.manager.disableAll();
-	theMuffin.setVisible(false);
+	if (theMuffin.frame != null)
+	{
+	    theMuffin.frame.setVisible(false);
+	}
     }
-    
+
     public static Main startMuffin(String[] argv)
     {
 	try
-	{ 
-	    processArgs(argv); 
-	    final Main theMuffin = new Main(); 
+	{
+	    processArgs(argv);
+	    final Main theMuffin = new Main();
 	    Thread t = new Thread()
-	    { 
+	    {
 		public void run ()
-		{ 
+		{
 		    try
-		    { 
-			theMuffin.server.run(); 
+		    {
+			theMuffin.server.run();
 		    }
 		    catch (Throwable e)
-		    { 
-			System.out.println("Unexpected exception " + e); 
-		    } 
-		} 
-	    }; 
-	    t.start(); 
-	    return theMuffin; 
+		    {
+			System.out.println("Unexpected exception " + e);
+		    }
+		}
+	    };
+	    t.start();
+	    return theMuffin;
 	}
 	catch (Throwable exc)
-	{ 
-	    return null; 
-	} 
+	{
+	    return null;
+	}
     }
 
     public static void processArgs(String[] argv)
@@ -496,7 +498,7 @@ public class Main
 		break;
 
 	    case 'p': /* --port */
-		try 
+		try
 		{
 		    args.putInteger("port", Integer.parseInt(g.getOptarg()));
 		}
@@ -514,7 +516,7 @@ public class Main
 	    case 'c': /* --conf */
 		args.putString("conf", g.getOptarg());
 		break;
-		
+
 	    case 'd': /* --dir */
 		args.putString("dir", g.getOptarg());
 		break;
@@ -522,7 +524,7 @@ public class Main
 	    case 2: /* httpProxyHost */
 		args.putString("httpProxyHost", g.getOptarg());
 		break;
-		
+
 	    case 3: /* httpProxyPort */
 		try
 		{
@@ -554,11 +556,11 @@ public class Main
 	    case 6: /* --nw */
 		args.putBoolean("noWindow", true);
 		break;
-		
+
 	    case 'v': /* --version */
 		systemInfo();
 		throw new ThreadDeath();
-		
+
 	    case 7: /* --font */
 		args.putString("font", g.getOptarg());
 		break;
@@ -566,7 +568,7 @@ public class Main
 	    case 8: /* --smallfont */
 		args.putString("smallfont", g.getOptarg());
 		break;
-		
+
 	    case 9: /* --bigfont */
 		args.putString("bigfont", g.getOptarg());
 		break;
@@ -600,7 +602,7 @@ public class Main
 
 	    case '?':
 		throw new RuntimeException("Unknown option");
-		
+
 	    default:
 		break;
 	    }
@@ -641,7 +643,7 @@ public class Main
 	{
 	    host = "127.0.0.1";
 	}
-	
+
 	if (args.exists("port"))
 	{
 	    options.putInteger("muffin.port", args.getInteger("port"));
@@ -701,27 +703,27 @@ public class Main
 
 	configs.setAutoConfigFile(options.getString("muffin.autoconfig"));
 	configs.load();
-
-	pool = new ThreadPool("Muffin Threads");
-	//new Main();
     }
 
-    public static void main(String[] argv) 
-    { 
-        System.out.println(copyleft()); 
+    public static void main(String[] argv)
+    {
+        System.out.println(copyleft());
         try
-	{ 
-	    processArgs(argv); 
-	    Main m = new Main(); 
-	    m.server.run(); 
+	{
+	    processArgs(argv);
+	    Main m = new Main();
+	    m.server.run();
         }
-	catch (ThreadDeath exc)
-	{ 
-	    System.exit(0); 
+	catch (ThreadDeath e)
+	{
+            e.printStackTrace();
+	    System.exit(0);
         }
-	catch (Throwable exc)
-	{ 
-	    System.exit(1); 
-        } 
-    } 
+	catch (Throwable e)
+	{
+            e.printStackTrace();
+	    System.exit(1);
+        }
+	System.out.println("done");
+    }
 }

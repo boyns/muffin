@@ -1,4 +1,4 @@
-/* $Id: HelpFrame.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: HelpFrame.java,v 1.6 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -74,15 +74,15 @@ public class HelpFrame extends MuffinFrame implements ActionListener, WindowList
 
 	addWindowListener(this);
 
-	pack();
 	setSize(getPreferredSize());
+	pack();
 	show();
     }
-    
+
     public void actionPerformed(ActionEvent event)
     {
 	String arg = event.getActionCommand();
-	
+
 	if ("doClose".equals(arg))
 	{
 	    setVisible(false);
@@ -92,28 +92,28 @@ public class HelpFrame extends MuffinFrame implements ActionListener, WindowList
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.7 2000/03/08 15:17:36 boyns Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.8 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -72,8 +72,8 @@ class FilterManagerFrame
 
 	this.manager = manager;
 
-	setResizable(false);
-	
+	//setResizable(false);
+
 	supportedFiltersList = new BigList(10, false);
 	enabledFiltersList = new BigList(10, false);
 
@@ -119,7 +119,7 @@ class FilterManagerFrame
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(b, c);
 	panel.add(b);
-	
+
 	b = new Button("New...");
 	b.setActionCommand("doNewFilter");
 	b.addActionListener(this);
@@ -128,7 +128,7 @@ class FilterManagerFrame
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(b, c);
 	panel.add(b);
-	
+
 	b = new Button("Delete");
 	b.setActionCommand("doDelete");
 	b.addActionListener(this);
@@ -168,7 +168,7 @@ class FilterManagerFrame
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(b, c);
 	panel.add(b);
-	
+
 	b = new Button("Move Up");
 	b.setActionCommand("doUp");
 	b.addActionListener(this);
@@ -197,7 +197,7 @@ class FilterManagerFrame
 	panel.add(b);
 
 	add("Center", panel);
-	
+
 	Panel buttonPanel = new Panel();
 	b = new Button("Save");
 	b.setActionCommand("doSave");
@@ -210,12 +210,12 @@ class FilterManagerFrame
 	add("South", buttonPanel);
 
 	addWindowListener(this);
-	
+
 	updateSupportedFiltersList();
 	updateEnabledFiltersList();
 
- 	pack();
  	setSize(getPreferredSize());
+ 	pack();
     }
 
     public void configurationChanged(String name)
@@ -258,7 +258,7 @@ class FilterManagerFrame
 	    String s = (String) e.nextElement();
 	    supportedFiltersList.addItem(s); // DEPRECATION: use add()
 	}
-    }	
+    }
 
     /**
      * Update the list of enabled filters on the screen.
@@ -432,29 +432,29 @@ class FilterManagerFrame
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }
-}    
+}

@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.11 2000/03/30 06:34:28 boyns Exp $ */
+/* $Id: MuffinFrame.java,v 1.12 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -50,7 +50,7 @@ public class MuffinFrame extends Frame
 	    setIcon();
 	    configColors(this);
 	}
-	
+
 	frames.addElement(this);
     }
 
@@ -140,10 +140,10 @@ public class MuffinFrame extends Frame
 	{
 	    return;
 	}
-	
+
 	Dimension loc = null;
 	Point pos = null;
-	
+
 	try
 	{
 	    RE re = new RE("([0-9]+x[0-9]+)?([\\+\\-][0-9]+[\\+\\-][0-9]+)?");
@@ -183,7 +183,7 @@ public class MuffinFrame extends Frame
 			x = screenSize.width + x;
 		    if (y < 0)
 			y = screenSize.height + y;
-		    
+
 		    pos = new Point(x, y);
 		}
 	    }
@@ -194,8 +194,8 @@ public class MuffinFrame extends Frame
 	}
 
 	hide();
-	pack();
 	setSize(loc != null ? loc : getPreferredSize());
+	pack();
 	if (pos != null)
 	{
 	    setLocation(pos);

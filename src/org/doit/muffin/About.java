@@ -1,4 +1,4 @@
-/* $Id: About.java,v 1.6 2000/01/24 04:02:12 boyns Exp $ */
+/* $Id: About.java,v 1.7 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -77,7 +77,7 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 	    layout.setConstraints(l, c);
 	    panel.add(l);
 	}
-	
+
 	ImageCanvas logo = new ImageCanvas("/images/muffin.jpg", null, false);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
@@ -90,19 +90,19 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 // 	l = new Label("More information is available at:");
 // 	c = new GridBagConstraints();
 // 	c.gridwidth = GridBagConstraints.REMAINDER;
 // 	layout.setConstraints(l, c);
 // 	panel.add(l);
-	
+
 	l = new Label(Main.getMuffinUrl());
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(l, c);
 	panel.add(l);
-	
+
 	add("Center", panel);
 
 	Button b = new Button("OK");
@@ -111,8 +111,8 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 
 	addWindowListener(this);
 
-	pack();
 	setSize(getPreferredSize());
+	pack();
 	show();
     }
 
@@ -129,28 +129,28 @@ class About extends MuffinFrame implements ActionListener, WindowListener
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

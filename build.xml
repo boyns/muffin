@@ -1,53 +1,44 @@
 <!-- ANT build for Muffin -->
 
 <project name="Muffin" default="compile" basedir=".">
+
   <target name="init">
     <tstamp/>
     <property name="srcdir" value="src"/>
     <property name="classes" value="classes"/>
-    <property name="dist" value="dist"/>
-    <property name="build.compiler" value="jikes"/>
+    <property name="build.compiler" value="classic"/>
   </target>
 
-  <target name="compile" depends="init, compile.core"/>
+  <target name="compile" depends="init, muffin.compile"/>
 
-  <target name="compile.core" depends="init">
+  <target name="muffin.compile" depends="init">
     <mkdir dir="${classes}" />
     <javac srcdir="${srcdir}"
            destdir="${classes}"
-           includes="UK/co/demon/asmodeus/util/*.java,
-		     gnu/**/*.java,
-		     haui/gif/*.java,
-		     org/doit/**/*.java,
-		     org/xbill/**/*.java,
-		     rcm/snapshot/*.java,
-		     sdsu/*/*.java"
-           classpath="${classpath}">
-    </javac>
+	   includes="**/*.java"
+           classpath="${classpath}"/>
+    <copy todir="${classes}">
+      <fileset dir="${srcdir}">
+        <include name="**/*.properties"/>
+        <include name="**/*.jpg"/>
+      </fileset>
+      <fileset dir="doc/filter">
+        <include name="**/*.txt"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="clean" depends="init">
-    <deltree dir="${classes}" />
-    <deltree dir="${dist}" />
+    <delete dir="${classes}"/>
   </target>
 
   <target name="muffin" depends="muffin.jar"/>
-    
+
   <target name="muffin.jar" depends="compile">
     <delete file="muffin.jar"/>
-    <copydir src="images" dest="classes/images/"/>
-    <copydir src="doc/filter" dest="classes/doc/"/>
-
     <jar jarfile="muffin.jar" basedir="${classes}"
          manifest="src/MANIFEST.MF"
-         compress="true"
-         includes="UK/co/demon/asmodeus/util/*.class,
-		   gnu/**/*.class,
-		   haui/gif/*.class,
-		   org/doit/**/*.class,
-		   org/xbill/**/*.class,
-		   rcm/snapshot/*.class,
-		   sdsu/*/*.class,
-		   doc/*, images/*.jpg"/>
+         compress="true"/>
   </target>
+
 </project>

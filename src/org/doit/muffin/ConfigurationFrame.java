@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.7 2000/03/27 04:25:56 boyns Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.8 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -42,14 +42,14 @@ class ConfigurationFrame extends MuffinFrame
     BigList configNamesList = null;
     Configuration configs = null;
     TextArea text = null;
-    
+
     ConfigurationFrame(Configuration configs)
     {
 	super("Muffin: Configurations");
 
 	this.configs = configs;
 
-	setResizable(false);
+	//setResizable(false);
 
 	configNamesList = new BigList(10, false);
 
@@ -89,7 +89,7 @@ class ConfigurationFrame extends MuffinFrame
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(b, c);
 	panel.add(b);
-	
+
 	b = new Button("Select");
 	b.setActionCommand("doSelect");
 	b.addActionListener(this);
@@ -140,7 +140,7 @@ class ConfigurationFrame extends MuffinFrame
 	panel.add(text);
 
 	add("Center", panel);
-	
+
 	Panel buttonPanel = new Panel();
 	b = new Button("Apply");
 	b.setActionCommand("doApply");
@@ -166,9 +166,9 @@ class ConfigurationFrame extends MuffinFrame
 
 	configs.addConfigurationListener(currentLabel);
 	configs.addConfigurationListener(this);
-	
- 	pack();
+
  	setSize(getPreferredSize());
+ 	pack();
     }
 
     public void configurationChanged(String name)
@@ -179,9 +179,9 @@ class ConfigurationFrame extends MuffinFrame
     void loadAutoConfigFile()
     {
 	text.setText("");
-	
+
 	UserFile file = configs.getAutoConfigFile();
-	
+
 	try
 	{
 	    BufferedReader in = new BufferedReader
@@ -322,28 +322,28 @@ class ConfigurationFrame extends MuffinFrame
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

@@ -1,4 +1,4 @@
-/* $Id: ThreadsFrame.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: ThreadsFrame.java,v 1.7 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -72,8 +72,8 @@ class ThreadsFrame
 
 	addWindowListener(this);
 
-	pack();
 	setSize(getPreferredSize());
+	pack();
 	show();
 	update();
     }
@@ -82,11 +82,11 @@ class ThreadsFrame
     {
 	text.append(s);
     }
-    
+
     void appendString(String s, int size)
     {
 	StringBuffer buf = new StringBuffer();
-	    
+
 	if (s.length() > size)
 	{
 	    buf.append(s.substring(0, size));
@@ -103,11 +103,11 @@ class ThreadsFrame
 	}
 	text.append(buf.toString());
     }
-    
+
     synchronized void update()
     {
 	StringBuffer buf = new StringBuffer();
-	
+
 	text.setText("");
 
 	Thread list[] = new Thread[1024];
@@ -145,28 +145,28 @@ class ThreadsFrame
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }

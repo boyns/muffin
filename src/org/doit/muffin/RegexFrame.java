@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: RegexFrame.java,v 1.6 2003/01/03 23:06:30 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -58,7 +58,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 	GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 	GridBagConstraints c;
-	
+
 	Label l = new Label("Regular Expression:", Label.RIGHT);
 	panel.add(l);
 
@@ -74,7 +74,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 	panel.add(b);
 
 	add("North", panel);
-	
+
 	text = new TextArea();
 	text.setEditable(true);
 	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
@@ -95,8 +95,8 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 
 	addWindowListener(this);
 
-	pack();
 	setSize(getPreferredSize());
+	pack();
 	show();
     }
 
@@ -127,7 +127,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 		{
 		    match = re.getMatch(text.getText());
 		}
-		
+
 		if (match != null)
 		{
 		    text.select(match.getStartIndex(), match.getEndIndex());
@@ -143,28 +143,28 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
     public void windowActivated(WindowEvent e)
     {
     }
-  
+
     public void windowDeactivated(WindowEvent e)
     {
     }
-  
+
     public void windowClosing(WindowEvent e)
     {
 	setVisible(false);
     }
-  
+
     public void windowClosed(WindowEvent e)
     {
     }
-  
+
     public void windowIconified(WindowEvent e)
     {
     }
-  
+
     public void windowDeiconified(WindowEvent e)
     {
     }
-  
+
     public void windowOpened(WindowEvent e)
     {
     }
