@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.15 2000/01/24 04:00:52 boyns Exp $ */
+/* $Id: Main.java,v 1.16 2000/01/25 06:56:18 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -619,6 +619,10 @@ public class Main extends MuffinFrame
 	{
 	    configs.setUserDirectory(args.getString("dir"));
 	}
+
+	/* Create Muffin dir if it doesn't exist */
+	configs.checkUserDirectory();
+	
 	configs.load();
 	configs.scan();
 	String defaultConfig = "default.conf";
