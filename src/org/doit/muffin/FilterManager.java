@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.15 2003/05/25 02:51:51 cmallwitz Exp $ */
+/* $Id: FilterManager.java,v 1.16 2003/06/04 21:07:53 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -217,7 +217,7 @@ public class FilterManager implements ConfigurationListener
         }
     }
 
-    void enable(String config, String clazz)
+    public void enable(String config, String clazz)
     {
         clazz = shortName(clazz);
 
@@ -285,7 +285,7 @@ public class FilterManager implements ConfigurationListener
         disable(configs.getCurrent(), i);
     }
 
-    void disable(String config, int i)
+    public void disable(String config, int i)
     {
         Vector enabled = getEnabledFilters(config);
         disable(enabled, i);

@@ -67,7 +67,7 @@ public abstract class HttpErrorFactory
     }
     public abstract HttpError createError(int code, String message);
 
-    public abstract HttpError createError(int code, Exception e);
+    public abstract HttpError createError(int code, Throwable e);
 
     public static class Default extends HttpErrorFactory
     {
@@ -76,7 +76,7 @@ public abstract class HttpErrorFactory
             return new DefaultHttpError(code, message);
         }
 
-        public HttpError createError(int code, Exception e)
+        public HttpError createError(int code, Throwable e)
         {
             return new DefaultHttpError(code, e.toString());
         }

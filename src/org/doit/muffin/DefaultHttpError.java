@@ -31,7 +31,7 @@ public class DefaultHttpError extends AbstractHttpError
      * @param code
      * @param e
      */
-    public DefaultHttpError(int code, Exception e)
+    public DefaultHttpError(int code, Throwable e)
     {
         super(code, e);
     }

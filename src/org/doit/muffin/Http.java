@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.12 2003/05/20 21:11:28 flefloch Exp $ */
+/* $Id: Http.java,v 1.13 2003/06/04 21:07:53 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -32,7 +32,7 @@ import java.util.Vector;
  */
 public class Http extends HttpConnection
 {
-    static final boolean DEBUG = true; /* enable lots of debug output */
+    static final boolean DEBUG = false; /* enable lots of debug output */
 
     /* XXX - more than 1 should work now. */
     static final int MAX_PENDING_REQUESTS = 1;
@@ -204,7 +204,6 @@ public class Http extends HttpConnection
             head.append(" ");
             head.append("HTTP/1.0");
             request.statusLine = head.toString();
-			if (DEBUG) System.out.println("____Request again="+request);
             request.write(getOutputStream());
 
             /* flush? */

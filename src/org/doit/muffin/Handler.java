@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.20 2003/05/24 17:46:44 cmallwitz Exp $ */
+/* $Id: Handler.java,v 1.21 2003/06/04 21:07:53 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -49,7 +49,7 @@ import org.doit.util.ReusableThread;
  */
 public class Handler implements Runnable
 {
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
 
     Monitor monitor = null;
     FilterManager manager = null;
@@ -521,7 +521,6 @@ public class Handler implements Runnable
 
                 if ((filter != null) && filter.wantRequest(request))
                 {
-                    if (DEBUG) System.out.println("___filter___" + filter.toString());
                     return filter;
                 }
             }

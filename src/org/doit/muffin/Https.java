@@ -1,4 +1,4 @@
-/* $Id: Https.java,v 1.8 2003/05/10 12:23:17 flefloch Exp $ */
+/* $Id: Https.java,v 1.9 2003/06/04 21:07:53 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,42 +34,41 @@ public class Https extends HttpConnection implements HttpsConnection
     
     Https(String host, int port) throws IOException
     {
-	super(host, port);
-	//System.out.println("HTTPS - port = "+port);
+        super(host, port);
     }
 
     public Https(String host, int port, boolean isProxy) throws IOException
     {
-	this(host, port);
-	proxy = isProxy;
+        this(host, port);
+        proxy = isProxy;
     }
 
     public void sendRequest(Request request)
-	throws java.io.IOException, RetryRequestException
+        throws java.io.IOException, RetryRequestException
     {
-	if (proxy)
-	{
-	    super.sendRequest(request);
-	}
-	else
-	{
-	    /* nothing */
-	}
+        if (proxy)
+        {
+            super.sendRequest(request);
+        }
+        else
+        {
+            /* nothing */
+        }
     }
     
     public Reply recvReply(Request request)
-	throws java.io.IOException, RetryRequestException
+        throws java.io.IOException, RetryRequestException
     {
-	Reply reply = new Reply(getInputStream());
-	if (proxy)
-	{
-	    reply.read();
-	}
-	else
-	{
-	    reply.statusLine = "HTTP/1.0 200 Connection established";
-	    reply.setHeaderField("Proxy-agent", "Muffin");
-	}
+        Reply reply = new Reply(getInputStream());
+        if (proxy)
+        {
+            reply.read();
+        }
+        else
+        {
+            reply.statusLine = "HTTP/1.0 200 Connection established";
+            reply.setHeaderField("Proxy-agent", "Muffin");
+        }
         return reply;
     }
 }
