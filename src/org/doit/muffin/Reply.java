@@ -1,4 +1,4 @@
-/* $Id: Reply.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Reply.java,v 1.6 2000/03/08 15:23:53 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -118,13 +118,6 @@ public class Reply extends Message
 	    }
 	    break;
 	}
-    }
-
-    void write(OutputStream out) throws IOException
-    {
-	String s = toString();
-	out.write(s.getBytes(), 0, s.length());
-	out.flush();
     }
 
     public boolean hasContent()
