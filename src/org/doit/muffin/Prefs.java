@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.9 2000/03/27 04:28:01 boyns Exp $ */
+/* $Id: Prefs.java,v 1.10 2000/04/03 05:05:43 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -46,6 +46,7 @@ public class Prefs extends Hashtable
 	if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
 	{
 	    userHomeProperty = "user.dir";
+	    userDirectory = "";
 	}
 	else
 	{
@@ -77,13 +78,17 @@ public class Prefs extends Hashtable
 	{
 	    return userDirectory;
 	}
+
 	/* Use user.home */
-	else
+	StringBuffer sb = new StringBuffer();
+	sb.append(System.getProperty(userHomeProperty));
+	if (userDirectory != null && userDirectory.length() > 0)
 	{
-	    return System.getProperty(userHomeProperty) +
-		System.getProperty("file.separator") +
-		userDirectory;
+	    sb.append(System.getProperty("file.separator"));
+	    sb.append(userDirectory);
 	}
+
+	return sb.toString();
     }
 
     public void checkDirectory(String name)
