@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.32 2003/05/24 21:22:16 cmallwitz Exp $ */
+/* $Id: Main.java,v 1.33 2003/06/01 19:39:25 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -85,12 +85,16 @@ public class Main
     {
         pool = new ThreadPool("Muffin Threads");
 
+        String host = options.getString("muffin.bindaddress") == null
+            ? getMuffinHost().toString()
+            : options.getString("muffin.bindaddress");
+
         infoString =
             Strings.getString(
                 "muffin.status",
                 new Object[] {
                     getMuffinVersion(),
-                    getMuffinHost(),
+                    host,
                     options.getString("muffin.port")});
 
         manager = new FilterManager(options, configs);
