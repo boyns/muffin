@@ -1,7 +1,7 @@
-/* $Id: AnimationKillerFrame.java,v 1.4 1999/03/12 15:47:41 boyns Exp $ */
+/* $Id: AnimationKillerFrame.java,v 1.5 2000/01/24 04:02:19 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

@@ -1,7 +1,7 @@
-/* $Id: Copy.java,v 1.5 1999/03/17 05:38:48 boyns Exp $ */
+/* $Id: Copy.java,v 1.6 2000/01/24 04:02:13 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

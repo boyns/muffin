@@ -1,7 +1,7 @@
 /* $Id */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

@@ -1,7 +1,7 @@
-/* $Id: Request.java,v 1.7 2000/01/17 06:23:46 boyns Exp $ */
+/* $Id: Request.java,v 1.8 2000/01/24 04:02:14 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

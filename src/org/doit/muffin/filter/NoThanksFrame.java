@@ -1,7 +1,7 @@
-/* $Id: NoThanksFrame.java,v 1.5 1999/11/09 04:03:06 boyns Exp $ */
+/* $Id: NoThanksFrame.java,v 1.6 2000/01/24 04:02:20 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

@@ -1,7 +1,7 @@
-/* $Id: Message.java,v 1.8 1999/11/06 23:23:02 boyns Exp $ */
+/* $Id: Message.java,v 1.9 2000/01/24 04:02:14 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

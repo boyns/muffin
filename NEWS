@@ -1,5 +1,9 @@
 Muffin NEWS - user-visible changes
 
+Changes since 0.9.1:
+
+* Fix for URLs with user@host: from Kai Engert.
+
 Changes since 0.9:
 
 * NoThanks frame resizes better.
@@ -219,4 +223,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.12 1999/11/09 04:30:57 boyns Exp $
+$Id: NEWS,v 1.13 2000/01/24 04:01:37 boyns Exp $

@@ -1,9 +1,9 @@
-/* $Id: NoCodeFilter.java,v 1.3 1999/05/29 17:34:24 boyns Exp $ */
+/* $Id: NoCodeFilter.java,v 1.4 2000/01/24 04:02:20 boyns Exp $ */
 
 /* Based upon DecafFilter by Mark R. Boyns so here is his copyright notice: */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

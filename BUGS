@@ -5,4 +5,28 @@ Muffin BUGS - Known bugs
 
 * Glossary reads entire document into memory before processing.
 
-$Id: BUGS,v 1.4 1999/03/12 15:47:27 boyns Exp $
+$Id: BUGS,v 1.5 2000/01/24 04:01:37 boyns Exp $
+
+
+From: Patrick Koppen <koppen@unix-ag.uni-kl.de> 
+Subject: bug in muffin->NoThanks 
+To: boyns@doit.org 
+Date: Tue, 23 Nov 1999 22:58:08 +0100 
+ 
+Hi, 
+ 
+I'm trying to remove a tagattr with no value with the NoThanks-fiter in muffin. 
+ 
+For example <frame noresize .....> 
+ 
+My killfile looks like this: 
+  tagattr frame.noresize remove 
+or 
+  tagattr frame.noresize remove .* 
+with should be the same. 
+ 
+But "noresize" is not removed!! 
+ 
+The problem is in compare in org/doit/muffin/filter/NoThanks.java . 
+ 
+Because noresize has no value pattern is null. But re.getMatch(pattern) 

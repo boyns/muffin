@@ -1,3 +1,8 @@
+2000-01-16  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/Request.java: added user@host: patch from
+ 	Kai Engert.
+
 1999-11-08  Mark R. Boyns  <boyns@doit.org>
 
 	* Muffin 0.9.1 released

@@ -1,7 +1,7 @@
-/* $Id: About.java,v 1.5 1999/05/27 06:09:59 boyns Exp $ */
+/* $Id: About.java,v 1.6 2000/01/24 04:02:12 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -59,12 +59,12 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 	panel.setLayout(layout);
 	panel.setBackground(Color.white);
 
- 	l = new Label("Muffin");
- 	l.setFont(Main.getOptions().getFont("muffin.bigfont"));
- 	c = new GridBagConstraints();
- 	c.gridwidth = GridBagConstraints.REMAINDER;
- 	layout.setConstraints(l, c);
- 	panel.add(l);
+//  	l = new Label("Muffin");
+//  	l.setFont(Main.getOptions().getFont("muffin.bigfont"));
+//  	c = new GridBagConstraints();
+//  	c.gridwidth = GridBagConstraints.REMAINDER;
+//  	layout.setConstraints(l, c);
+//  	panel.add(l);
 
 	StringTokenizer st = new StringTokenizer(Main.copyleft(), "\n");
 	while (st.hasMoreTokens())
@@ -73,6 +73,7 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 	    l.setFont(Main.getOptions().getFont("muffin.smallfont"));
 	    c = new GridBagConstraints();
 	    c.gridwidth = GridBagConstraints.REMAINDER;
+	    c.insets = new Insets(1, 1, 1, 1);
 	    layout.setConstraints(l, c);
 	    panel.add(l);
 	}
@@ -83,18 +84,18 @@ class About extends MuffinFrame implements ActionListener, WindowListener
 	layout.setConstraints(logo, c);
 	panel.add(logo);
 
-	l = new Label("Muffin logo by Rebecca Smith");
+	l = new Label("Muffin logo by Tilo Lier");
 	l.setFont(Main.getOptions().getFont("muffin.smallfont"));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(l, c);
 	panel.add(l);
 	
-	l = new Label("More information is available at:");
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(l, c);
-	panel.add(l);
+// 	l = new Label("More information is available at:");
+// 	c = new GridBagConstraints();
+// 	c.gridwidth = GridBagConstraints.REMAINDER;
+// 	layout.setConstraints(l, c);
+// 	panel.add(l);
 	
 	l = new Label(Main.getMuffinUrl());
 	c = new GridBagConstraints();

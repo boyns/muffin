@@ -1,7 +1,7 @@
-/* $Id: MuffinResolver.java,v 1.1 1999/05/27 06:11:41 boyns Exp $ */
+/* $Id: MuffinResolver.java,v 1.2 2000/01/24 04:02:14 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

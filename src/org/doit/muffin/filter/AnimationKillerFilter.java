@@ -1,7 +1,7 @@
-/* $Id: AnimationKillerFilter.java,v 1.6 1999/05/29 17:34:23 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.7 2000/01/24 04:02:19 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *

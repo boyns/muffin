@@ -1,7 +1,7 @@
-/* $Id: HistoryData.java,v 1.3 1999/03/12 15:47:43 boyns Exp $ */
+/* $Id: HistoryData.java,v 1.4 2000/01/24 04:02:20 boyns Exp $ */
 
 /*
- * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
