@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.24 2003/06/26 11:51:24 flefloch Exp $ */
+/* $Id: Handler.java,v 1.25 2003/07/04 21:25:15 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -705,7 +705,7 @@ public class Handler implements Runnable
             srcObjects = new SourceObjectStream(inputObjects);
         }
 
-        
+
         for (int i = 0; i < filterList.length; i++)
         {
             if (filterList[i] instanceof ContentFilter)
@@ -749,7 +749,7 @@ public class Handler implements Runnable
         catch (Exception e)
         {
             // if outputstream is not responding anymore, we shall close
-            // the inputStream that 
+            // the inputStream that
             // would wait to be copied forever otherwise.
             // Remark: exception could be more generally catched in out.write() of copy().
             // I am being conservative here.
@@ -790,36 +790,31 @@ public class Handler implements Runnable
      */
     private void uncompressContent(Reply reply) throws IOException
     {
-        String type = reply.getHeaderField("Content-type");
-        if (type != null && type.toLowerCase().startsWith("text/html"))
+        String encoding = reply.getHeaderField("Content-Encoding");
+        if (encoding != null && encoding.toLowerCase().indexOf("gzip") != -1)
         {
-            String encoding = reply.getHeaderField("Content-Encoding");
-            if (encoding != null
-                && encoding.toLowerCase().indexOf("gzip") != -1)
+            // System.out.println ("gzipped: " + reply.getRequest ().getURL ()); //DEBUG
+
+            reply.removeHeaderField("Content-Encoding");
+
+            InputStream gzipIn = new GZIPInputStream(reply.getContent());
+
+            /* fix the Content-length */
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            copy(gzipIn, buffer, -1, false);
+            // remember the old content length
+            String oldContentLength =
+                reply.getHeaderField("Content-length");
+            if (oldContentLength != null)
             {
-                // System.out.println ("gzipped: " + reply.getRequest ().getURL ()); //DEBUG
-
-                reply.removeHeaderField("Content-Encoding");
-
-                InputStream gzipIn = new GZIPInputStream(reply.getContent());
-
-                /* fix the Content-length */
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                copy(gzipIn, buffer, -1, false);
-                // remember the old content length
-                String oldContentLength =
-                    reply.getHeaderField("Content-length");
-                if (oldContentLength != null)
-                {
-                    reply.setHeaderField(
-                        Reply.GzipContentLengthAttribute,
-                        oldContentLength);
-                }
-                reply.setHeaderField("Content-length", buffer.size());
-                gzipIn = new ByteArrayInputStream(buffer.toByteArray());
-
-                reply.setContent(gzipIn);
+                reply.setHeaderField(
+                    Reply.GzipContentLengthAttribute,
+                    oldContentLength);
             }
+            reply.setHeaderField("Content-length", buffer.size());
+            gzipIn = new ByteArrayInputStream(buffer.toByteArray());
+
+            reply.setContent(gzipIn);
         }
     }
 
@@ -916,11 +911,11 @@ public class Handler implements Runnable
                 }
             }
 
-            // avoids lockups, but may not work with old buggy servers
-            if (contentLength > 0 && currentLength >= contentLength)
-            {
-                break;
-            }
+            // // avoids lockups, but may not work with old buggy servers
+            // if (contentLength > 0 && currentLength >= contentLength)
+            // {
+            //     break;
+            // }
 
             then = now;
         }
@@ -995,11 +990,11 @@ public class Handler implements Runnable
                 }
             }
 
-            // avoids lockups, but may not work with old buggy servers
-            if (contentLength > 0 && currentLength >= contentLength)
-            {
-                break;
-            }
+            // // avoids lockups, but may not work with old buggy servers
+            // if (contentLength > 0 && currentLength >= contentLength)
+            // {
+            //     break;
+            // }
         }
         out.flush();
 
@@ -1076,11 +1071,11 @@ public class Handler implements Runnable
                 out.flush();
             }
 
-            // avoids lockups, but may not work with old buggy servers
-            if (contentLength > 0 && currentLength >= contentLength)
-            {
-                break;
-            }
+            // // avoids lockups, but may not work with old buggy servers
+            // if (contentLength > 0 && currentLength >= contentLength)
+            // {
+            //     break;
+            // }
 
             then = now;
         }
