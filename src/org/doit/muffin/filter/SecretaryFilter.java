@@ -1,4 +1,4 @@
-/* SecretaryFilter.java */
+/* $Id: SecretaryFilter.java,v 1.2 1998/08/13 06:02:54 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>

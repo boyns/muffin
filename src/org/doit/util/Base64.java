@@ -1,4 +1,4 @@
-/* Base64.java */
+/* $Id: Base64.java,v 1.2 1998/08/13 06:03:07 boyns Exp $ */
 
 /* Base64 is a trimmed version of Codecs.java written by Ronald
    Tschalaer.  Base64 was created to suit the needs of Muffin. */

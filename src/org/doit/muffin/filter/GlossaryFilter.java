@@ -1,4 +1,4 @@
-/* Glossary.java */
+/* $Id: GlossaryFilter.java,v 1.2 1998/08/13 06:02:16 boyns Exp $ */
 
 package org.doit.muffin.filter;
 

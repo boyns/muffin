@@ -1,4 +1,4 @@
-/* AutoSaveable.java */
+/* $Id: AutoSaveable.java,v 1.2 1998/08/13 06:00:54 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
