@@ -1,3 +1,20 @@
+1998-09-23  Mark R. Boyns  <boyns@doit.org>
+
+	* Muffin 0.7.2 released.
+
+	* src/org/doit/muffin/filter/ImageKillFilter.java: updated filter.
+
+	* src/org/doit/muffin/filter/AnimationKillerFilter.java: fixed GIF
+ 	header generation bug.
+
+1998-08-23  Mark R. Boyns  <boyns@doit.org>
+
+	* src/Makefile.in: use objlist for jar build.
+
+1998-08-22  Mark R. Boyns  <boyns@doit.org>
+
+	* configure.in: use jikes when available.
+
 1998-07-08  Mark R. Boyns  <boyns@sdsu.edu>
 
 	* src/org/doit/muffin/filter/ImageKill.java: new filter written by

@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.3 1998/08/23 06:15:07 boyns Exp $
+$Id: INSTALL,v 1.4 1998/09/24 03:03:53 boyns Exp $
 
 Muffin INSTALL - installation instructions
 
@@ -10,8 +10,11 @@ UNIX INSTALLATION:
 
 * `cd' to the top-level muffin directory and execute `./configure'.
 
-* OPTIONAL: Compile muffin using `make'.  (requires GNU make)
-  This will compile all the .java source files and create `muffin.jar'.
+* [optional] Compile muffin using `make'.  (requires GNU make)
+  This will compile all the java source files and create `muffin.jar'.
+  If your java compiler can't find system classes, try:
+
+      CLASSPATH=/usr/lib/jdk1.1/lib/classes.zip make
 
 * Type `make install' to install `muffin.jar' and `muffin'.
   By default a `muffin' shell script is installed in /usr/local/bin
