@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.16 2003/05/25 19:58:15 cmallwitz Exp $ */
+/* $Id: NoThanks.java,v 1.17 2003/06/07 10:38:13 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,7 +23,10 @@
  */
 package org.doit.muffin.filter;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -37,12 +40,10 @@ import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.util.LRUHashtable;
 
-public class NoThanks implements FilterFactory
+public class NoThanks extends AbstractFilterFactory
 {
-    FilterManager manager;
-    Prefs prefs;
-    NoThanksFrame frame = null;
-    MessageArea messages = null;
+    
+    final static String KILLFILE = "killfile";
 
     private Pattern kill = null;
     private Pattern comment = null;
@@ -66,111 +67,36 @@ public class NoThanks implements FilterFactory
     private Hashtable headerReplace = new Hashtable();
     private Hashtable headerReplaceValue = null;
 
-    private HashMap hyperTags = null;
-    private HashMap hyperAttrs = null;
-    private HashMap hyperEnd = null;
-    private HashMap requiredTags = null;
-
     private static LRUHashtable kill_cache = new LRUHashtable(10000);
     private static int kill_cache_hits   = 0;
     private static int kill_cache_cnt = 0;
 
-    public NoThanks()
+    public NoThanks() {}
+
+    /**     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()     */
+    public void doSetDefaultPrefs()
     {
-        /* tags and attributes based on HTML 4.0 spec */
-
-        hyperTags = new HashMap();
-        hyperTags.put("a", "");
-        hyperTags.put("img", "");
-        hyperTags.put("body", "");
-        hyperTags.put("form", "");
-        hyperTags.put("iframe", "");
-        hyperTags.put("frame", "");
-        hyperTags.put("layer", "");
-        hyperTags.put("object", "");
-        hyperTags.put("applet", "");
-        hyperTags.put("area", "");
-        hyperTags.put("link", "");
-        hyperTags.put("base", "");
-        hyperTags.put("head", "");
-        hyperTags.put("script", "");
-        hyperTags.put("input", "");
-
-        hyperAttrs = new HashMap();
-        hyperAttrs.put("action", "");
-        hyperAttrs.put("archive", "");
-        hyperAttrs.put("background", "");
-        hyperAttrs.put("base", "");
-        hyperAttrs.put("cite", "");
-        hyperAttrs.put("classdid", "");
-        hyperAttrs.put("codebase", "");
-        hyperAttrs.put("data", "");
-        hyperAttrs.put("href", "");
-        hyperAttrs.put("longdesc", "");
-        hyperAttrs.put("profile", "");
-        hyperAttrs.put("src", "");
-
-        hyperEnd = new HashMap();
-        hyperEnd.put("a", "");
-        hyperEnd.put("body", "");
-        hyperEnd.put("form", "");
-        hyperEnd.put("iframe", "");
-        hyperEnd.put("layer", "");
-        hyperEnd.put("object", "");
-        hyperEnd.put("applet", "");
-        hyperEnd.put("head", "");
-        hyperEnd.put("script", "");
-
-        requiredTags = new HashMap();
-        hyperEnd.put("body", "");
-        hyperEnd.put("head", "");
-        hyperEnd.put("frame", ""); // added
+        putPrefsString(KILLFILE, "killfile");
     }
 
-    public void setManager(FilterManager manager)
+    /**     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()     */
+    protected AbstractFrame doMakeFrame()
     {
-        this.manager = manager;
+        return new NoThanksFrame(this);
     }
 
-    public void setPrefs(Prefs prefs)
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName()
     {
-        this.prefs = prefs;
-        boolean o = prefs.getOverride();
-        prefs.setOverride(false);
-        String filename = "killfile";
-        prefs.putString("NoThanks.killfile", filename);
-        prefs.setOverride(o);
-        messages = new MessageArea();
-        load();
+        return "NoThanks";
     }
 
-    public Prefs getPrefs()
+    protected Filter doMakeFilter()
     {
-        return prefs;
-    }
-
-    public void viewPrefs()
-    {
-        if (frame == null)
-        {
-            frame = new NoThanksFrame(prefs, this);
-        }
-        frame.setVisible(true);
-    }
-
-    public Filter createFilter()
-    {
-        Filter f = new NoThanksFilter(this);
-        f.setPrefs(prefs);
-        return f;
-    }
-
-    public void shutdown()
-    {
-        if (frame != null)
-        {
-            frame.dispose();
-        }
+        return new NoThanksFilter(this);
     }
 
     boolean isKilled(String pattern)
@@ -289,22 +215,22 @@ public class NoThanks implements FilterFactory
 
     boolean checkTag(String pattern)
     {
-        return hyperTags.containsKey(pattern);
+        return hyperTags.contains(pattern);
     }
 
     boolean checkAttr(String pattern)
     {
-        return hyperAttrs.containsKey(pattern);
+        return hyperAttrs.contains(pattern);
     }
 
     boolean hasEnd(String pattern)
     {
-        return hyperEnd.containsKey(pattern);
+        return hyperEnd.contains(pattern);
     }
 
     boolean isRequired(String pattern)
     {
-        return requiredTags.containsKey(pattern);
+        return requiredTags.contains(pattern);
     }
 
     boolean compare(String pattern, Pattern re)
@@ -463,10 +389,6 @@ public class NoThanks implements FilterFactory
         }
     }
 
-    void save() {
-        manager.save(this);
-    }
-
     Pattern createRE(Vector v) {
         StringBuffer buf = new StringBuffer();
         buf.append("(");
@@ -480,12 +402,12 @@ public class NoThanks implements FilterFactory
         return Factory.instance().getPattern(buf.toString(), fIgnoreCase);
     }
 
-    void load() {
+    protected void doLoad() {
         InputStream in = null;
 
         try {
             UserFile file =
-                prefs.getUserFile(prefs.getString("NoThanks.killfile"));
+                getPrefs().getUserFile(getPrefsString(KILLFILE));
             in = file.getInputStream();
             load(new InputStreamReader(in));
         } catch (FileNotFoundException e) {
@@ -501,7 +423,7 @@ public class NoThanks implements FilterFactory
         }
     }
 
-    void load(Reader reader)
+    public void load(Reader reader)
     {
         kill_cache = new LRUHashtable(10000);
         kill_cache_hits   = 0;
@@ -598,7 +520,7 @@ public class NoThanks implements FilterFactory
 
                         InputStream inc = null;
                         try {
-                            UserFile file = prefs.getUserFile(st.sval);
+                            UserFile file = getPrefs().getUserFile(getPrefsString(st.sval));
                             inc = file.getInputStream();
                             include(new InputStreamReader(inc));
                         } catch (IOException e) {
@@ -900,12 +822,66 @@ public class NoThanks implements FilterFactory
         }
     }
 
-    void report(Request request, String message)
-    {
-        request.addLogEntry("NoThanks", message);
-        messages.append(message + "\n");
-    }
-
     private boolean fIgnoreCase;
+
+    private static Set hyperTags = null;
+    private static Set hyperAttrs = null;
+    private static Set hyperEnd = null;
+    private static Set requiredTags = null;
+    
+    static {
+            /* tags and attributes based on HTML 4.0 spec */
+
+        hyperTags = new HashSet();
+        hyperTags.add("a");
+        hyperTags.add("img");
+        hyperTags.add("body");
+        hyperTags.add("form");
+        hyperTags.add("iframe");
+        hyperTags.add("frame");
+        hyperTags.add("layer");
+        hyperTags.add("object");
+        hyperTags.add("applet");
+        hyperTags.add("area");
+        hyperTags.add("link");
+        hyperTags.add("base");
+        hyperTags.add("head");
+        hyperTags.add("script");
+        hyperTags.add("input");
+
+
+        hyperAttrs = new HashSet();
+        hyperAttrs.add("action");
+        hyperAttrs.add("archive");
+        hyperAttrs.add("background");
+        hyperAttrs.add("base");
+        hyperAttrs.add("cite");
+        hyperAttrs.add("classdid");
+        hyperAttrs.add("codebase");
+        hyperAttrs.add("data");
+        hyperAttrs.add("href");
+        hyperAttrs.add("longdesc");
+        hyperAttrs.add("profile");
+        hyperAttrs.add("src");
+
+
+        hyperEnd = new HashSet();
+        hyperEnd.add("a");
+        hyperEnd.add("body");
+        hyperEnd.add("form");
+        hyperEnd.add("iframe");
+        hyperEnd.add("layer");
+        hyperEnd.add("object");
+        hyperEnd.add("applet");
+        hyperEnd.add("head");
+        hyperEnd.add("script");
+
+
+        requiredTags = new HashSet();
+        requiredTags.add("body");
+        requiredTags.add("head");
+        requiredTags.add("frame"); // added
+
+        }
 }
 
