@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.11 2003/05/10 12:23:17 flefloch Exp $ */
+/* $Id: Http.java,v 1.12 2003/05/20 21:11:28 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -367,7 +367,7 @@ public class Http extends HttpConnection
         return open(factory, host, port, false);
     }
 
-    static Enumeration enumerate()
+    public static Enumeration enumerate()
     {
         Vector list = new Vector();
         Enumeration e = cache.keys();

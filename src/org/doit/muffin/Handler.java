@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.18 2003/05/10 12:23:17 flefloch Exp $ */
+/* $Id: Handler.java,v 1.19 2003/05/20 21:11:27 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -486,9 +486,9 @@ public class Handler implements Runnable
     {
         HttpRelay http;
 
-        if (Httpd.sendme(request))
+        if (HttpdFactory.sendme(request))
         {
-            http = new Httpd(socket);
+            http = HttpdFactory.getFactory().createHttpd(socket);
         }
         else if (options.useHttpProxy())
         {
@@ -808,7 +808,7 @@ public class Handler implements Runnable
                 + "</a>\r\n");
         buf.append("<p>\r\nThe following error was encountered:\r\n<p>\r\n");
         buf.append("<ul><li>" + e.toString() + "</ul>\r\n");
-        String s = new HttpError(options, 400, buf.toString()).toString();
+        String s = HttpErrorFactory.getFactory().createError(400, buf.toString()).toString();
         try
         {
             out.write(s.getBytes(), 0, s.length());

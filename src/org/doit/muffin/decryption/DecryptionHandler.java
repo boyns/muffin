@@ -25,11 +25,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 import org.doit.muffin.Client;
+import org.doit.muffin.DefaultHttpd;
 import org.doit.muffin.FilterManager;
 import org.doit.muffin.Handler;
 import org.doit.muffin.Http;
 import org.doit.muffin.HttpRelay;
-import org.doit.muffin.Httpd;
+import org.doit.muffin.HttpdFactory;
 import org.doit.muffin.Monitor;
 import org.doit.muffin.Options;
 import org.doit.muffin.Request;
@@ -80,9 +81,9 @@ class DecryptionHandler extends Handler
         System.out.println(request.toString());
         //System.out.println(
         //    "host=" + request.getHost() + " port=" + request.getPort());
-        if (Httpd.sendme(request))
+        if (DefaultHttpd.sendme(request))
         {
-            http = new Httpd(socket);
+            http = HttpdFactory.getFactory().createHttpd(socket);
         }
         else
         {

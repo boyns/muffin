@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.29 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: Main.java,v 1.30 2003/05/20 21:11:29 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -22,15 +22,26 @@
  */
 package org.doit.muffin;
 
-import gnu.getopt.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
+import java.awt.Button;
+import java.awt.Canvas;
+import java.awt.Label;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ResourceBundle;
 
-import org.doit.muffin.decryption.*;
-import org.doit.util.*;
+import org.doit.util.ReusableThread;
+import org.doit.util.Strings;
+import org.doit.util.ThreadPool;
 
 /**
  * Startup interface to Muffin.  Parses command line options, loads user
@@ -104,8 +115,9 @@ public class Main
                 manager,
                 options);
         /* Initialize internal Httpd */
-        Httpd.init(options, manager, monitor);
-
+        
+        HttpdFactory.init(options, manager, monitor);
+        HttpErrorFactory.init(options);
         /* Startup the Janitor */
         Janitor j = new Janitor();
         j.add(pool);
@@ -460,6 +472,7 @@ public class Main
         }
         catch (Throwable exc)
         {
+        	exc.printStackTrace();
             return null;
         }
     }

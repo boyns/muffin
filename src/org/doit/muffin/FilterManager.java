@@ -1,4 +1,4 @@
-/* $Id: FilterManager.java,v 1.13 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: FilterManager.java,v 1.14 2003/05/20 21:11:27 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,36 +36,36 @@ import org.doit.util.*;
 public class FilterManager implements ConfigurationListener
 {
     final String defaultSupportedList[] =
-    {
-	"AnimationKiller",
-	"Cache",
-	"CookieMonster",
-	"Decaf",
-	"org.doit.muffin.decryption.Decryption",
-	"DocumentInfo",
-	"EmptyFont",
-	"ForwardedFor",
-	"Glossary",
-	"History",
-	"ImageKill",
-	"Junkbuster",
-	"HostnameExpander",
-	"NoCode",
-	"Obscure",
-	"Painter",
-	"PlainHtml",
-	"Preview",
-	"Rewrite",
-	"NoThanks",
-	"Referer",
-	"Secretary",
-	"SecretAgent",
-	"SecretServer",
-	"rcm.snapshot.Snapshot",
-	"Snoop",
-	"Stats",
-	"Translate",
-    };
+        {
+            "AnimationKiller",
+            "Cache",
+            "CookieMonster",
+            "Decaf",
+            "org.doit.muffin.decryption.Decryption",
+            "DocumentInfo",
+            "EmptyFont",
+            "ForwardedFor",
+            "Glossary",
+            "History",
+            "ImageKill",
+            "Junkbuster",
+            "HostnameExpander",
+            "NoCode",
+            "Obscure",
+            "Painter",
+            "PlainHtml",
+            "Preview",
+            "Rewrite",
+            "NoThanks",
+            "Referer",
+            "Secretary",
+            "SecretAgent",
+            "SecretServer",
+            "rcm.snapshot.Snapshot",
+            "Snoop",
+            "Stats",
+            "Translate",
+            };
 
     Options options = null;
     Configuration configs = null;
@@ -83,67 +83,69 @@ public class FilterManager implements ConfigurationListener
      */
     FilterManager(Options options, Configuration configs)
     {
-	this.options = options;
-	this.configs = configs;
+        this.options = options;
+        this.configs = configs;
 
-	supportedFiltersCache = new Hashtable();
-	enabledFiltersCache = new Hashtable();
+        supportedFiltersCache = new Hashtable();
+        enabledFiltersCache = new Hashtable();
 
-	configs.addConfigurationListener(this);
+        configs.addConfigurationListener(this);
     }
 
     public void configurationChanged(String name)
     {
-	userPrefs = configs.getUserPrefs();
-	supportedFilters = getSupportedFilters(name);
-	enabledFilters = getEnabledFilters(name);
+        userPrefs = configs.getUserPrefs();
+        supportedFilters = getSupportedFilters(name);
+        enabledFilters = getEnabledFilters(name);
     }
 
-    Vector getSupportedFilters(String config)
+    public Vector getSupportedFilters(String config)
     {
-	if (! supportedFiltersCache.containsKey(config))
-	{
-	    Vector supported = new Vector(32);
-	    supportedFiltersCache.put(config, supported);
-	    UserPrefs uprefs = configs.getUserPrefs(config);
-	    String list[] = uprefs.getStringList("FilterManager.supportedFilters");
-	    if (list.length == 0)
-	    {
-		list = defaultSupportedList;
-	    }
-	    for (int i = 0; i < list.length; i++)
-	    {
-		supported.addElement(list[i]);
-	    }
-	}
-	return (Vector) supportedFiltersCache.get(config);
+        if (!supportedFiltersCache.containsKey(config))
+        {
+            Vector supported = new Vector(32);
+            supportedFiltersCache.put(config, supported);
+            UserPrefs uprefs = configs.getUserPrefs(config);
+            String list[] =
+                uprefs.getStringList("FilterManager.supportedFilters");
+            if (list.length == 0)
+            {
+                list = defaultSupportedList;
+            }
+            for (int i = 0; i < list.length; i++)
+            {
+                supported.addElement(list[i]);
+            }
+        }
+        return (Vector) supportedFiltersCache.get(config);
     }
 
-    Vector getEnabledFilters(String config)
+    public Vector getEnabledFilters(String config)
     {
-	if (! enabledFiltersCache.containsKey(config))
-	{
-	    Vector enabled = new Vector(32);
-	    enabledFiltersCache.put(config, enabled);
-	    UserPrefs uprefs = configs.getUserPrefs(config);
-	    String list[] = uprefs.getStringList("FilterManager.enabledFilters");
-	    for (int i = 0; i < list.length; i++)
-	    {
-		enable(config, list[i]);
-	    }
-	}
-	return (Vector) enabledFiltersCache.get(config);
+        if (!enabledFiltersCache.containsKey(config))
+        {
+            Vector enabled = new Vector(32);
+            enabledFiltersCache.put(config, enabled);
+            UserPrefs uprefs = configs.getUserPrefs(config);
+            String list[] =
+                uprefs.getStringList("FilterManager.enabledFilters");
+            for (int i = 0; i < list.length; i++)
+            {
+                enable(config, list[i]);
+            }
+        }
+        return (Vector) enabledFiltersCache.get(config);
     }
 
-//     void checkAutoConfig(String pattern)
-//     {
-// 	String name = configs.autoConfig(pattern);
-// 	if (!name.equals(configs.getCurrent()))
-// 	{
-// 	    System.out.println("Automatic change to " + name);
-// 	    configs.setCurrent(name);
-// 	}
-//     }
+    //     void checkAutoConfig(String pattern)
+    //     {
+    // 	String name = configs.autoConfig(pattern);
+    // 	if (!name.equals(configs.getCurrent()))
+    // 	{
+    // 	    System.out.println("Automatic change to " + name);
+    // 	    configs.setCurrent(name);
+    // 	}
+    //     }
 
     /**
      * Return a list of filters created by each filter's
@@ -153,90 +155,92 @@ public class FilterManager implements ConfigurationListener
      */
     synchronized Filter[] createFilters(String pattern)
     {
-	String name = configs.autoConfig(pattern);
-	if (!name.equals(configs.getCurrent()))
-	{
-	    System.out.println("Automatic change to " + name);
-	    configs.setCurrent(name);
-	}
+        String name = configs.autoConfig(pattern);
+        if (!name.equals(configs.getCurrent()))
+        {
+            System.out.println("Automatic change to " + name);
+            configs.setCurrent(name);
+        }
 
-	FilterFactory ff;
-	Filter[] list = new Filter[enabledFilters.size()];
-	for (int i = 0; i < list.length; i++)
-	{
-	    ff = (FilterFactory) enabledFilters.elementAt(i);
-	    list[i] = ff.createFilter();
-	}
-	return list;
+        FilterFactory ff;
+        Filter[] list = new Filter[enabledFilters.size()];
+        for (int i = 0; i < list.length; i++)
+        {
+            ff = (FilterFactory) enabledFilters.elementAt(i);
+            list[i] = ff.createFilter();
+        }
+        return list;
     }
 
     void createFrame()
     {
-	if (frame == null)
-	{
-	    frame = new FilterManagerFrame(this);
-	}
-	frame.hideshow();
+        if (frame == null)
+        {
+            frame = new FilterManagerFrame(this);
+        }
+        frame.hideshow();
     }
 
-    String shortName(String clazz)
+    public String shortName(String clazz)
     {
-	if (clazz.startsWith("muffin.filter.")
-	    || clazz.startsWith("org.doit.muffin.filter."))
-	{
-	    return clazz.substring(clazz.lastIndexOf('.') + 1);
-	}
-	return clazz;
+        if (clazz.startsWith("muffin.filter.")
+            || clazz.startsWith("org.doit.muffin.filter."))
+        {
+            return clazz.substring(clazz.lastIndexOf('.') + 1);
+        }
+        return clazz;
     }
 
     void append(String clazz)
     {
-	supportedFilters.addElement(clazz);
-	if (frame != null)
-	{
-	    frame.updateSupportedFiltersList();
-	}
+        supportedFilters.addElement(clazz);
+        if (frame != null)
+        {
+            frame.updateSupportedFiltersList();
+        }
     }
 
     void remove(String clazz)
     {
-	for (int i = 0; i < supportedFilters.size(); i++)
-	{
-	    String name = (String) supportedFilters.elementAt(i);
-	    if (name.equals(clazz))
-	    {
-		supportedFilters.removeElementAt(i);
-	    }
-	}
-	if (frame != null)
-	{
-	    frame.updateSupportedFiltersList();
-	}
+        for (int i = 0; i < supportedFilters.size(); i++)
+        {
+            String name = (String) supportedFilters.elementAt(i);
+            if (name.equals(clazz))
+            {
+                supportedFilters.removeElementAt(i);
+            }
+        }
+        if (frame != null)
+        {
+            frame.updateSupportedFiltersList();
+        }
     }
 
     void enable(String config, String clazz)
     {
-	clazz = shortName(clazz);
+        clazz = shortName(clazz);
 
-	if (clazz.indexOf('.') == -1)
-	{
-	    clazz = "org.doit.muffin.filter." + clazz;
-	}
+        if (clazz.indexOf('.') == -1)
+        {
+            clazz = "org.doit.muffin.filter." + clazz;
+        }
 
-	try
-	{
-	    //System.out.println("Enabling " + shortName(clazz) + " in " + config);
-	    FilterFactory ff = (FilterFactory) (Class.forName(clazz)).newInstance();
-	    UserPrefs uprefs = configs.getUserPrefs(config);
-	    Vector enabled = getEnabledFilters(config);
-	    Prefs prefs = uprefs.extract(clazz.substring(clazz.lastIndexOf('.') + 1));
-	    ff.setPrefs(prefs);
-	    ff.setManager(this);
-	    enabled.addElement(ff);
-	    if (frame != null)
-	    {
-		frame.updateEnabledFiltersList();
-	    }
+        try
+        {
+            //System.out.println("Enabling " + shortName(clazz) + " in " + config);
+            FilterFactory ff =
+                (FilterFactory) (Class.forName(clazz)).newInstance();
+            UserPrefs uprefs = configs.getUserPrefs(config);
+            Vector enabled = getEnabledFilters(config);
+            Prefs prefs =
+                uprefs.extract(clazz.substring(clazz.lastIndexOf('.') + 1));
+            ff.setPrefs(prefs);
+            ff.setManager(this);
+            enabled.addElement(ff);
+            if (frame != null)
+            {
+                frame.updateEnabledFiltersList();
+            }
 
             try
             {
@@ -245,87 +249,88 @@ public class FilterManager implements ConfigurationListener
             catch (MissingResourceException e)
             {
             }
-	}
-	catch (Exception e)
-	{
-	    System.out.println("");
-	    System.out.println("WARNING: Can't load " + clazz + ": ");
-	    System.out.println("");
-	    System.out.println("         " + e);
-	    System.out.println("");
-	    System.out.println("         You may need to restart muffin with a different CLASSPATH.");
-	    System.out.println("");
-	}
+        }
+        catch (Exception e)
+        {
+            System.out.println("");
+            System.out.println("WARNING: Can't load " + clazz + ": ");
+            System.out.println("");
+            System.out.println("         " + e);
+            System.out.println("");
+            System.out.println(
+                "         You may need to restart muffin with a different CLASSPATH.");
+            System.out.println("");
+        }
     }
 
     void enable(String clazz)
     {
-	enable(configs.getCurrent(), clazz);
+        enable(configs.getCurrent(), clazz);
     }
 
     void disable(Vector enabled, int i)
     {
-	FilterFactory ff = (FilterFactory) enabled.elementAt(i);
-	ff.shutdown();
-	enabled.removeElementAt(i);
-	if (frame != null)
-	{
-	    frame.updateEnabledFiltersList();
-	}
+        FilterFactory ff = (FilterFactory) enabled.elementAt(i);
+        ff.shutdown();
+        enabled.removeElementAt(i);
+        if (frame != null)
+        {
+            frame.updateEnabledFiltersList();
+        }
     }
 
     void disable(int i)
     {
-	disable(configs.getCurrent(), i);
+        disable(configs.getCurrent(), i);
     }
 
     void disable(String config, int i)
     {
-	Vector enabled = getEnabledFilters(config);
-	disable(enabled, i);
+        Vector enabled = getEnabledFilters(config);
+        disable(enabled, i);
     }
 
     void disableAll()
     {
-	Enumeration e = configs.keys();
-	while (e.hasMoreElements())
-	{
-	    String config = (String) e.nextElement();
-	    Vector enabled = getEnabledFilters(config);
-	    for (int i = enabled.size() - 1; i >= 0; i--)
-	    {
-		disable(enabled, i);
-	    }
-	}
+        Enumeration e = configs.keys();
+        while (e.hasMoreElements())
+        {
+            String config = (String) e.nextElement();
+            Vector enabled = getEnabledFilters(config);
+            for (int i = enabled.size() - 1; i >= 0; i--)
+            {
+                disable(enabled, i);
+            }
+        }
     }
 
     void save(String config)
     {
-	Vector enabled = getEnabledFilters(config);
-	String list[] = new String[enabled.size()];
-	for (int i = 0; i < list.length; i++)
-	{
-	    FilterFactory ff = (FilterFactory) enabled.elementAt(i);
-	    list[i] = shortName((ff.getClass()).getName());
-	}
-	UserPrefs uprefs = configs.getUserPrefs(config);
-	uprefs.putStringList("FilterManager.enabledFilters", list);
-	uprefs.save();
+        Vector enabled = getEnabledFilters(config);
+        String list[] = new String[enabled.size()];
+        for (int i = 0; i < list.length; i++)
+        {
+            FilterFactory ff = (FilterFactory) enabled.elementAt(i);
+            list[i] = shortName((ff.getClass()).getName());
+        }
+        UserPrefs uprefs = configs.getUserPrefs(config);
+        uprefs.putStringList("FilterManager.enabledFilters", list);
+        uprefs.save();
     }
 
     void save()
     {
-	save(configs.getCurrent());
+        save(configs.getCurrent());
     }
 
     void saveAll()
     {
-	Enumeration e = configs.keys();
-	while (e.hasMoreElements())
-	{
-	    String config = (String) e.nextElement();
-	    save(config);
-	}
+        Enumeration e = configs.keys();
+        while (e.hasMoreElements())
+        {
+            String config = (String) e.nextElement();
+            save(config);
+        }
     }
 
     /**
@@ -335,7 +340,12 @@ public class FilterManager implements ConfigurationListener
      */
     public void save(FilterFactory ff)
     {
-	userPrefs.merge(ff.getPrefs());
-	userPrefs.save();
+        userPrefs.merge(ff.getPrefs());
+        userPrefs.save();
     }
+
+	public Configuration getConfigs()
+	{
+		return configs;
+	}
 }
