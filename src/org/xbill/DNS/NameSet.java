@@ -8,7 +8,9 @@ import org.xbill.DNS.utils.*;
 
 /**
  * The shared superclass of Zone and Cache.  All names are stored in a
- * hashtable.  Each name contains a hashtable indexed on type and class.
+ * hashtable.  Each name contains a hashtable indexed on type and class. 
+ *
+ * @author Brian Wellington
  */
 
 class NameSet {
@@ -40,7 +42,7 @@ findSets(Name name, short type, short dclass) {
 			Enumeration e = nameInfo.elements();
 			while (e.hasMoreElements())
 				array[i++] = e.nextElement();
-			}
+		}
 		return array;
 	}
 	o = nameInfo.get(new TypeClass(type, dclass));
@@ -117,6 +119,14 @@ removeSet(Name name, short type, short dclass, Object set) {
 		if (nameInfo.isEmpty())
 			data.remove(name);
 	}
+}
+
+/**
+ * Removes all data associated with the given name.
+ */
+protected void
+removeName(Name name) {
+	data.remove(name);
 }
 
 /** Converts the NameSet to a String */

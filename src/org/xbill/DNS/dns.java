@@ -16,6 +16,8 @@ import java.net.*;
  * by FindServer, which allows lookups of unqualified names.
  * @see Resolver
  * @see FindServer
+ *
+ * @author Brian Wellington
  */
 
 public final class dns {
@@ -28,6 +30,23 @@ private static boolean searchPathSet;
 /* Otherwise the class could be instantiated */
 private
 dns() {}
+
+synchronized private static void
+initialize() {
+	if (res == null) {
+		try {
+			setResolver(new ExtendedResolver());
+		}
+		catch (UnknownHostException uhe) {
+			System.out.println("Failed to initialize resolver");
+			System.exit(-1);
+		}
+	}
+	if (!searchPathSet)
+		searchPath = FindServer.searchPath();
+	if (cache == null)
+		cache = new Cache();
+}
 
 static boolean
 matchType(short type1, short type2) {
@@ -72,9 +91,18 @@ inaddrString(String s) {
 /**
  * Sets the Resolver to be used by functions in the dns class
  */
-public static void
+public static synchronized void
 setResolver(Resolver _res) {
 	res = _res;
+}
+
+/**
+ * Obtains the Resolver used by functions in the dns class.  This can be used
+ * to set Resolver properties.
+ */
+public static synchronized Resolver
+getResolver() {
+	return res;
 }
 
 /**
@@ -82,7 +110,7 @@ setResolver(Resolver _res) {
  * beginning the lookup process.  If this is not set, FindServer will be used.
  * @see FindServer
  */
-public static void
+public static synchronized void
 setSearchPath(String [] domains) {
 	if (domains == null || domains.length == 0)
 		searchPath = null;
@@ -92,6 +120,15 @@ setSearchPath(String [] domains) {
 			searchPath[i] = new Name(domains[i]);
 	}
 	searchPathSet = true;
+}
+
+/**
+ * Obtains the Cache used by functions in the dns class.  This can be used
+ * to perform more specific queries and/or remove elements.
+ */
+public static synchronized Cache
+getCache() {
+	return cache;
 }
 
 private static Record []
@@ -160,8 +197,6 @@ lookup(Name name, short type, short dclass, byte cred) {
 		}
 	}
 
-
-
 	return answers;
 }
 
@@ -183,20 +218,7 @@ getRecords(String namestr, short type, short dclass, byte cred) {
 	if (!Type.isRR(type) && type != Type.ANY)
 		return null;
 
-	if (res == null) {
-		try {
-			setResolver(new ExtendedResolver());
-		}
-		catch (UnknownHostException uhe) {
-			System.out.println("Failed to initialize resolver");
-			System.exit(-1);
-		}
-	}
-	if (!searchPathSet)
-		searchPath = FindServer.searchPath();
-	if (cache == null)
-		cache = new Cache();
-
+	initialize();
 	if (searchPath == null || name.isQualified())
 		answers = lookup(name, type, dclass, cred);
 	else {

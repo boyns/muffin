@@ -10,6 +10,8 @@ import org.xbill.DNS.utils.*;
 
 /**
  * The base class that all records are derived from.
+ *
+ * @author Brian Wellington
  */
 
 abstract public class Record {
@@ -153,6 +155,15 @@ throws IOException
 		throw new IOException("Invalid record length");
 	rec.wireLength = in.getPos() - start;
 	return rec;
+}
+
+/**
+ * Builds a Record from DNS uncompressed wire format.
+ */
+public static Record
+fromWire(byte [] b, int section) throws IOException {
+	DataByteInputStream in = new DataByteInputStream(b);
+	return fromWire(in, section, null);
 }
 
 void

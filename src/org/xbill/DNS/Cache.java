@@ -15,6 +15,8 @@ import org.xbill.DNS.utils.*;
  * and lookups can specify the minimum credibility of data they are requesting.
  * @see RRset
  * @see Credibility
+ *
+ * @author Brian Wellington
  */
 
 public class Cache extends NameSet {
@@ -59,6 +61,11 @@ private class Element {
 		timeIn = System.currentTimeMillis();
 		if (ttl < 0)
 			ttl = r.getTTL();
+	}
+
+	public void
+	deleteRecord(Record r) {
+		rrset.deleteRR(r);
 	}
 
 	public boolean
@@ -298,7 +305,7 @@ addMessage(Message in) {
 	short queryClass = in.getQuestion().getDClass();
 	byte cred;
 	short rcode = in.getHeader().getRcode();
-	short ancount = in.getHeader().getCount(Section.ANSWER);
+	int ancount = in.getHeader().getCount(Section.ANSWER);
 
 	if (rcode != Rcode.NOERROR && rcode != Rcode.NXDOMAIN)
 		return;
@@ -366,6 +373,31 @@ addMessage(Message in) {
 			cred = Credibility.NONAUTH_ADDITIONAL;
 		addRecord(r, cred, in);
 	}
+}
+
+/**
+ * Flushes an RRset from the cache
+ * @param name The name of the records to be flushed
+ * @param type The type of the records to be flushed
+ * @param dclass The class of the records to be flushed
+ * @see RRset
+ */
+void
+flushSet(Name name, short type, short dclass) {
+	Element element = (Element) findExactSet(name, type, dclass);
+	if (element == null || element.rrset == null)
+		return;
+	removeSet(name, type, dclass, element);
+}
+
+/**
+ * Flushes all RRsets with a given name from the cache
+ * @param name The name of the records to be flushed
+ * @see RRset
+ */
+void
+flushName(Name name) {
+	removeName(name);
 }
 
 }

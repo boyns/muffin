@@ -8,6 +8,8 @@ import java.util.*;
 /**
  * An extension of a Thread that uses threads from a pool, rather than
  * allocating a new thread for each assigned task.
+ *
+ * @author Brian Wellington
  */
 
 public class WorkerThread extends Thread {
@@ -17,11 +19,32 @@ private String name;
 
 private static int nactive = 0;
 private static Vector list = new Vector();
-private static final int max = 10;
-private static final long lifetime = 900 * 1000;
+private static int max = 10;
+private static long lifetime = 900 * 1000; /* 15 minute default */
 
+private
 WorkerThread() {
 	setDaemon(true);
+}
+
+/**
+ * Sets the lifetime of an idle WorkerThread (in ms).  A WorkerThread
+ * will remain on the idle list for this much time before exiting.  This
+ * does not affect WorkerThreads currently idling.
+ */
+synchronized static void
+setLifetime(long time) {
+	lifetime = time;
+}
+
+/**
+ * Sets the maximum number of WorkerThreads that can exist at any given
+ * time.  If this value is decreased below the current number of
+ * WorkerThreads, this will not take effect immediately.
+ */
+synchronized static void
+setMaxThreads(int maxThreads) {
+	max = maxThreads;
 }
 
 /**
@@ -39,7 +62,7 @@ getThread() {
 			t = (WorkerThread) list.firstElement();
 			list.removeElement(t);
 		}
-		else if (nactive == max) {
+		else if (nactive >= max) {
 			while (true) {
 				try {
 					list.wait();
@@ -67,42 +90,51 @@ getThread() {
  */
 public static void
 assignThread(Runnable task, String name) {
-	WorkerThread t = getThread();
-	t.task = task;
-	t.name = name;
-	synchronized (t) {
-		if (!t.isAlive())
-			t.start();
-		else
-			t.notify();
+	while (true) {
+		try {
+			WorkerThread t = getThread();
+			synchronized (t) {
+				t.task = task;
+				t.name = name;
+				if (!t.isAlive())
+					t.start();
+				else
+					t.notify();
+			}
+			return;
+		}
+		catch (IllegalThreadStateException e) {
+		}
 	}
 }
 
 /** Performs the task */
-public void
+synchronized public void
 run() {
 	while (true) {
-		
 		setName(name);
-		task.run();
+		try {
+			task.run();
+		}
+		catch (Throwable t) {
+			System.err.println(t);
+		}
 		setName("idle thread");
 		synchronized (list) {
 			list.addElement(this);
-			if (nactive == max)
+			if (nactive >= max)
 				list.notify();
 			nactive--;
 		}
 		task = null;
-		synchronized (this) {
-			try {
-				wait(lifetime);
-			}
-			catch (InterruptedException e) {
-			}
-			if (task == null) {
-				list.removeElement(this);
-				return;
-			}
+		try {
+			wait(lifetime);
+		}
+		catch (InterruptedException e) {
+		}
+		if (task == null) {
+			list.removeElement(this);
+			return;
 		}
 	}
 }

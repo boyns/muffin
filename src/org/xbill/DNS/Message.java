@@ -14,6 +14,8 @@ import org.xbill.DNS.utils.*;
  * @see Resolver
  * @see Header
  * @see Section
+ *
+ * @author Brian Wellington
  */
 
 public class Message implements Cloneable {
@@ -48,6 +50,20 @@ newQuery(Record r) {
 	m.header.setOpcode(Opcode.QUERY);
 	m.header.setFlag(Flags.RD);
 	m.addRecord(r, Section.QUESTION);
+	return m;
+}
+
+/**
+ * Creates a new Message to contain a dynamic update.  A random Message ID
+ * the zone are filled in.
+ * @param zone The zone to be updated
+ */
+public static Message
+newUpdate(Name zone) {
+	Message m = new Message();
+	m.header.setOpcode(Opcode.UPDATE);
+	Record soa = Record.newRecord(zone, Type.SOA, DClass.IN);
+	m.addRecord(soa, Section.QUESTION);
 	return m;
 }
 

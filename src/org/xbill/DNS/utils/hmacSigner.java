@@ -7,6 +7,8 @@ import java.io.*;
 
 /**
  * A pure java implementation of the HMAC-MD5 secure hash algorithm
+ *
+ * @author Brian Wellington
  */
 
 public class hmacSigner {
@@ -62,7 +64,7 @@ hmacSigner(byte [] key) {
  */
 public void
 addData(byte [] b, int offset, int length) {
-	if (length < offset || offset >= b.length || length >= b.length)
+	if (length <= 0 || offset + length >= b.length)
 		return;
 /*	printByteString("partial add", b, offset, length);*/
 	bytes.write(b, offset, length);

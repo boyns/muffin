@@ -12,6 +12,8 @@ import org.xbill.DNS.utils.*;
  * Transaction signature handling.  This class generates and verifies
  * TSIG records on messages, which provide transaction security,
  * @see TSIGRecord
+ *
+ * @author Brian Wellington
  */
 
 public class TSIG {
@@ -224,6 +226,9 @@ verifyAXFR(Message m, byte [] b, TSIGRecord old,
 	}
 
 	h.clear();
+	DataByteOutputStream dbs = new DataByteOutputStream();
+	dbs.writeShort((short)old.getSignature().length);
+	h.addData(dbs.toByteArray());
 	h.addData(tsig.getSignature());
 
 	return true;

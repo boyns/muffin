@@ -12,7 +12,10 @@ import java.util.*;
  * appropriate properties are set, or the OS has a unix-like /etc/resolv.conf.
  * There is no reason for these routines to be called directly except
  * curiosity.
+ *
+ * @author Brian Wellington
  */
+
 public class FindServer {
 
 private static String [] server = null;
@@ -111,6 +114,7 @@ findUnix() {
 				}
 			}
 		}
+		br.close();
 	}
 	catch (IOException e) {
 	}
@@ -126,16 +130,23 @@ findUnix() {
 	}
 }
 
-private static void
+synchronized private static void
 probe() {
 	if (probed)
 		return;
 	probed = true;
 	findProperty();
-	if (server != null && search != null)
-		return;
-	findUnix();
-	return;
+	if (server == null || search == null)
+		findUnix();
+
+	if (search == null)
+		search = new Name[1];
+	else {
+		Name [] oldsearch = search;
+		search = new Name[oldsearch.length + 1];
+		System.arraycopy(oldsearch, 0, search, 0, oldsearch.length);
+	}
+	search[search.length - 1] = Name.root;
 }
 
 /** Returns all located servers */

@@ -11,6 +11,8 @@ import org.xbill.DNS.utils.*;
  * Certificate Record  - Stores a certificate associated with a name.  The
  * certificate might also be associated with a KEYRecord.
  * @see KEYRecord
+ *
+ * @author Brian Wellington
  */
 
 public class CERTRecord extends Record {
@@ -79,7 +81,7 @@ throws IOException
 	certType = (short) Integer.parseInt(st.nextToken());
 	keyTag = (short) Integer.parseInt(st.nextToken());
 	alg = (byte) Integer.parseInt(st.nextToken());
-	cert = base64.fromString(st.nextToken());
+	cert = base64.fromString(st.remainingTokens());
 }
 
 /**

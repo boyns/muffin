@@ -7,15 +7,26 @@ import java.util.*;
 import java.io.*;
 import org.xbill.DNS.utils.*;
 
+/**
+ * A DNS master file parser.  This incrementally parses the file, returning
+ * one record at a time.  When directives are seen, they are added to the
+ * state and used when parsing future records.
+ *
+ * @author Brian Wellington
+ */
+
 public class Master {
 
-private Name origin = null;
+private Name origin;
 private BufferedReader br;
+private File file;
 private Record last = null;
+private int defaultTTL = 3600;
+private Master included = null;
 
-public
-Master(String file) throws IOException {
+Master(File _file, Name defaultOrigin) throws IOException {
 	FileInputStream fis;
+	file = _file;
 	try {
 		fis = new FileInputStream(file);
 	}
@@ -23,13 +34,27 @@ Master(String file) throws IOException {
 		throw new IOException(e.toString());
 	}
 	br = new BufferedReader(new InputStreamReader(fis));
+	origin = defaultOrigin;
 }
 
+/** Begins parsing the specified file */
+public
+Master(String filename) throws IOException {
+	this(new File(filename), null);
+}
+
+/** Returns the next record in the master file */
 public Record
 nextRecord() throws IOException {
 	String line;
 	MyStringTokenizer st;
 
+	if (included != null) {
+		Record rec = included.nextRecord();
+		if (rec != null)
+			return rec;
+		included = null;
+	}
 	while (true) {
 		line = readExtendedLine(br);
 		if (line == null)
@@ -45,6 +70,20 @@ nextRecord() throws IOException {
 			origin = parseOrigin(st);
 			continue;
 		}
+		if (s.equals("$TTL")) {
+			defaultTTL = parseTTL(st);
+			continue;
+		}
+		if (s.equals("$INCLUDE")) {
+			parseInclude(st);
+			/*
+			 * If we continued, we wouldn't be looking in
+			 * the new file.  Recursing works better.
+			 */
+			return nextRecord();
+		}
+		else if (s.charAt(0) == '$')
+			throw new IOException("Invalid directive: " + s);
 		st.putBackToken(s);
 		return (last = parseRR(st, space, last, origin));
 	}
@@ -52,7 +91,32 @@ nextRecord() throws IOException {
 
 private Name
 parseOrigin(MyStringTokenizer st) throws IOException {
+	if (!st.hasMoreTokens())
+		throw new IOException ("Missing ORIGIN");
 	return new Name(st.nextToken());
+}
+
+private int
+parseTTL(MyStringTokenizer st) throws IOException {
+	if (!st.hasMoreTokens())
+		throw new IOException ("Missing TTL");
+	return Integer.parseInt(st.nextToken());
+}
+
+private void
+parseInclude(MyStringTokenizer st) throws IOException {
+	if (!st.hasMoreTokens())
+		throw new IOException ("Missing file to include");
+	File newfile;
+	String filename = st.nextToken();
+	if (file.getParent() == null)
+		newfile = new File(filename);
+	else
+		newfile = new File(file.getParent(), filename);
+	if (st.hasMoreTokens())
+		included = new Master(newfile, new Name(st.nextToken()));
+	else
+		included = new Master(newfile, origin);
 }
 
 private Record
@@ -76,7 +140,7 @@ throws IOException
 	}
 	catch (NumberFormatException e) {
 		if (!useLast || last == null)
-			ttl = 3600;
+			ttl = defaultTTL;
 		else
 			ttl = last.getTTL();
 	}
@@ -125,9 +189,10 @@ readExtendedLine(BufferedReader br) throws IOException {
 		return s;
 	StringBuffer sb = new StringBuffer(s.substring(0, s.length() - 1));
 	while (true) {
-		s = stripTrailing(br.readLine());
+		s = stripTrailing(br.readLine().trim());
 		if (s == null)
 			return sb.toString();
+		sb.append(" ");
 		if (s.endsWith(")")) {
 			sb.append(s.substring(0, s.length() - 1));
 			break;
