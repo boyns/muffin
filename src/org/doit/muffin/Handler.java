@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.23 2003/06/20 21:43:43 flefloch Exp $ */
+/* $Id: Handler.java,v 1.24 2003/06/26 11:51:24 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -406,6 +406,9 @@ public class Handler implements Runnable
                                 client.getInputStream(),
                                 https.getOutputStream());
                         ReusableThread thread = Main.getThread();
+                        thread.setName(
+                            "Copy("+https.toString()+", "+
+                            client.toString()+")");
                         thread.setRunnable(cp);
                         flushCopy(
                             https.getInputStream(),
@@ -745,7 +748,8 @@ public class Handler implements Runnable
         }
         catch (Exception e)
         {
-            // if outputstream is not responding anymore, we shall close the inputStream that 
+            // if outputstream is not responding anymore, we shall close
+            // the inputStream that 
             // would wait to be copied forever otherwise.
             // Remark: exception could be more generally catched in out.write() of copy().
             // I am being conservative here.
@@ -756,6 +760,10 @@ public class Handler implements Runnable
                 {
                     ios.done();
                 }
+            }
+            if (srcObjects != null)
+            {
+                srcObjects.close();
             }
             throw new IOException("IO error while copying stream");
         }
