@@ -104,10 +104,10 @@
 	 <exclude name="${velocity.dir}/webmacro/**/*.java" unless="webmacro.present"/>
     </javac>
     <copy todir="${classes}">
-      <fileset dir="${srcdir}" includes="${webadmin.dir}/**/*.vm,${webadmin.dir}/**/*.wm,${webadmin.dir}/**/*.properties"/>
+      <fileset dir="${srcdir}" includes="${webadmin.dir}/**/*.vm,${webadmin.dir}/**/*.wm,${webadmin.dir}/**/*.css,${webadmin.dir}/**/*.properties"/>
       <fileset dir=".">
         <include name="vm/**/*.vm"/>
-        <include name="wm/**/*.wm"/>
+        <include name="wm/**/*.*"/>
       </fileset>
     </copy>
   </target>
