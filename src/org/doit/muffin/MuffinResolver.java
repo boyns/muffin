@@ -1,4 +1,4 @@
-/* $Id: MuffinResolver.java,v 1.3 2003/05/08 17:00:28 flefloch Exp $ */
+/* $Id: MuffinResolver.java,v 1.4 2003/05/18 16:13:35 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,9 +23,15 @@
  */
 package org.doit.muffin;
 
-import org.xbill.DNS.*;
-import java.util.*;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.StringTokenizer;
+
+import org.doit.util.InetAddressHelper;
+import org.xbill.DNS.Address;
+import org.xbill.DNS.ExtendedResolver;
+import org.xbill.DNS.Resolver;
+import org.xbill.DNS.dns;
 
 /**
  * @author Mark R. Boyns
@@ -78,6 +84,8 @@ public class MuffinResolver
         return addr;
     }
 
+
+	
     // check if the given address is double-word decimal
     // or hexadecimal
     // unfortunately JDK 1.4- are not interpreting "obscure" ips.
@@ -114,7 +122,8 @@ public class MuffinResolver
                     //                        + b[1]
                     //                        + "."
                     //                        + b[0]);
-                    addr = InetAddress.getByAddress(b);
+                    // JDK 1.4
+                    addr = InetAddressHelper.getByAddress(b);
                 }
                 else if (segmentsNumber == 4)
                 {
@@ -132,7 +141,7 @@ public class MuffinResolver
                     //                        + b[1]
                     //                        + "."
                     //                        + b[0]);
-                    addr = InetAddress.getByAddress(b);
+                    addr = InetAddressHelper.getByAddress(b);
                 }
             }
             catch (NumberFormatException nfe)
