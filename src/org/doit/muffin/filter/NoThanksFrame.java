@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.4 1999/03/12 15:47:45 boyns Exp $ */
+/* $Id: NoThanksFrame.java,v 1.5 1999/11/09 04:03:06 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -46,45 +46,44 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	this.prefs = prefs;
 	this.parent = parent;
 
-	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
-        panel.setLayout(layout);
+        setLayout(layout);
 	GridBagConstraints c;
+	Label l;
 	
-	panel.add(new Label("Kill File:", Label.RIGHT));
+	add(new Label("Kill File:", Label.RIGHT));
 
 	input = new TextField(40);
 	input.setText(prefs.getString("NoThanks.killfile"));
-	panel.add(input);
+	c = new GridBagConstraints();
+	c.anchor = GridBagConstraints.NORTHWEST;
+	c.gridwidth = 2;
+	layout.setConstraints(input, c);
+	add(input);
 
 	Button browse = new Button("Browse...");
 	browse.setActionCommand("doBrowse");
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
+	c.gridwidth = 1;//GridBagConstraints.RELATIVE;
 	layout.setConstraints(browse, c);
-	panel.add(browse);
+	add(browse);
 
-	add("North", panel);
-
-	panel = new Panel();
-	layout = new GridBagLayout();
-        panel.setLayout(layout);
-
-	Label l = new Label("Kill File");
-	c = new GridBagConstraints();
-	c.insets = new Insets(0, 10, 5, 10);
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(l, c);
-	panel.add(l);
 	
 	text = new TextArea();
 	c = new GridBagConstraints();
-	c.gridheight = 3;
+	c.anchor = GridBagConstraints.NORTHWEST;
+	c.fill = GridBagConstraints.BOTH;
+	c.gridx = 0;
+	c.gridy = 1;
+	c.gridwidth = 4;
+	c.gridheight = 4;
+	c.weightx = 1.0;
+	c.weighty = 1.0;
 	c.insets = new Insets(0, 10, 5, 10);
 	layout.setConstraints(text, c);
-	panel.add(text);
+	add(text);
 
 	Button b;
 	b = new Button("Apply");
@@ -93,8 +92,9 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
+	c.gridy = 1;
 	layout.setConstraints(b, c);
-	panel.add(b);
+	add(b);
 
 	b = new Button("Load");
 	b.setActionCommand("doLoad");
@@ -103,7 +103,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(b, c);
-	panel.add(b);
+	add(b);
 
 	b = new Button("Save");
 	b.setActionCommand("doSave");
@@ -112,25 +112,29 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(b, c);
-	panel.add(b);
+	add(b);
 
 	l = new Label("Message Log");
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
+	c.gridx = 0;
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
-	panel.add(l);
+	add(l);
 	
 	c = new GridBagConstraints();
 	c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
+	c.fill = GridBagConstraints.BOTH;
+	c.gridwidth = 4;
+	c.gridheight = 4;
+	c.weightx = 1.0;
+	c.weighty = 1.0;
 	layout.setConstraints(parent.messages, c);
 	parent.messages.setEditable(false);
-	panel.add(parent.messages);
-
-	add("Center", panel);
+	add(parent.messages);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
@@ -146,7 +150,14 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	add("South", buttonPanel);
+
+	c = new GridBagConstraints();
+	c.insets = new Insets(0, 10, 5, 10);
+	c.gridx = 0;
+	c.gridwidth = 5;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	layout.setConstraints(buttonPanel, c);
+	add(buttonPanel);
 
 	addWindowListener(this);
 	
