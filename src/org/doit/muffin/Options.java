@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.10 2000/03/08 15:12:44 boyns Exp $ */
+/* $Id: Options.java,v 1.11 2000/03/27 04:24:41 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -90,6 +90,8 @@ public class Options extends UserPrefs
 
 	/* Default log file */
  	putString("muffin.logfile", "muffin.log");
+ 	putString("muffin.maxLogFileSize", "1048576");
+ 	putString("muffin.maxLogFileHistory", "10");
  	putString("muffin.autoconfig", "autoconfig");
 
 	/* Other defaults */
