@@ -65,10 +65,14 @@ public class MatcherAdapter extends AbstractMatcherAdapter {
 		return fPattern.getParenEnd(sub);
 	}
 
+	/**
+	 * 	 * @see org.doit.muffin.regexp.AbstractMatcherAdapter#doGetSubCount()	 */
 	protected int doGetSubCount(){
 		return fPattern.getParenCount();
 	}
 	
+	/**
+	 * 	 * @see org.doit.muffin.regexp.AbstractMatcherAdapter#doGetNthSub(int)	 */
 	protected String doGetNthSub(int n){
 		return fPattern.getParen(n);
 	}

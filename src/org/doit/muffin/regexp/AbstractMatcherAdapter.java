@@ -43,9 +43,6 @@ public abstract class AbstractMatcherAdapter implements Matcher {
      * 
      * I turned it into a Template Method.
      * 
-     * FIXME: since this is close to identical to the corresponding method in
-     * org.doit.muffin.regexp.jdk14, the common code should be factored out.
-     * 
      * @param input A string consisting of literals and <code>$<i>n</i></code> tokens.
      */
 	public String substituteInto(String replace) {
