@@ -1,4 +1,4 @@
-/* $Id: Prefs.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Prefs.java,v 1.7 2000/02/11 02:32:31 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,7 +36,8 @@ import sdsu.util.SortedList;
  */
 public class Prefs extends Hashtable
 {
-    String userDirectory = "Muffin";
+    private static String userDirectory = "Muffin";
+    private static String userHomeProperty = "user.home";
     
     boolean allowOverride = true;
     
@@ -48,6 +49,11 @@ public class Prefs extends Hashtable
     public Prefs()
     {
 	super();
+    }
+
+    protected void setUserHomeProperty(String p)
+    {
+	userHomeProperty = p;
     }
 
     public void setUserDirectory(String dir)
@@ -65,7 +71,7 @@ public class Prefs extends Hashtable
 	/* Use user.home */
 	else
 	{
-	    return System.getProperty("user.home") +
+	    return System.getProperty(userHomeProperty) +
 		System.getProperty("file.separator") +
 		userDirectory;
 	}
