@@ -1,4 +1,4 @@
-/* $Id: SecretaryFilter.java,v 1.5 1999/03/12 15:47:46 boyns Exp $ */
+/* $Id: SecretaryFilter.java,v 1.6 1999/05/29 17:34:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -26,6 +26,7 @@ import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
 import java.util.Enumeration;
+import java.io.*;
 
 public class SecretaryFilter implements ContentFilter
 {
@@ -132,12 +133,21 @@ public class SecretaryFilter implements ContentFilter
 		}
 		out.write(token);
 	    }
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

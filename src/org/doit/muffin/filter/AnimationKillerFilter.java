@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.5 1999/03/12 15:47:41 boyns Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.6 1999/05/29 17:34:23 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -196,11 +196,21 @@ public class AnimationKillerFilter implements RequestFilter, ReplyFilter, Conten
 
 	    gifOutput.flush();
 	    gifOutput.close();
- 	    out.flush();
- 	    out.close();
 	}
-	catch (IOException e)
+	catch (IOException ioe)
 	{
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

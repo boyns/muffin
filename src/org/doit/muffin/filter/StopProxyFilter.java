@@ -1,4 +1,4 @@
-/* $Id: StopProxyFilter.java,v 1.4 1999/03/12 15:47:46 boyns Exp $ */
+/* $Id: StopProxyFilter.java,v 1.5 1999/05/29 17:34:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -139,13 +139,21 @@ public class StopProxyFilter implements ContentFilter
 		    }
 		}
 	    }
-	    
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 

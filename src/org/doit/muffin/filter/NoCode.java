@@ -1,4 +1,4 @@
-/* $Id: NoCode.java,v 1.1 1999/03/12 15:47:44 boyns Exp $ */
+/* $Id: NoCode.java,v 1.2 1999/05/29 17:34:24 boyns Exp $ */
 
 /* Based upon Decaf by Mark R. Boyns so here is his copyright notice: */
 
@@ -54,7 +54,7 @@ public class NoCode implements FilterFactory
 	    javaScriptTags = new RE("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
 	    javaScriptAttrs = new RE("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
 	}
-	catch (Exception e)
+	catch (REException e)
 	{
 	    e.printStackTrace();
 	}

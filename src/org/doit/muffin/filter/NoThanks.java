@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.4 1999/03/12 15:47:44 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.5 1999/05/29 17:34:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -73,7 +73,7 @@ public class NoThanks implements FilterFactory
 	    hyperEnd = new RE("^(a|body|form|iframe|layer|object|applet|head|script)$");
 	    requiredTags = new RE("^(body|head)$");
 	}
-	catch (Exception e)
+	catch (REException e)
 	{
 	    e.printStackTrace();
 	}

@@ -1,4 +1,4 @@
-/* $Id: PreviewFilter.java,v 1.5 1999/05/27 06:10:11 boyns Exp $ */
+/* $Id: PreviewFilter.java,v 1.6 1999/05/29 17:34:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -163,13 +163,21 @@ public class PreviewFilter implements ContentFilter
 		    out.write(b);
 		}
 	    }
-
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

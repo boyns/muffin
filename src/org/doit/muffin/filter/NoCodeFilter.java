@@ -1,4 +1,4 @@
-/* $Id: NoCodeFilter.java,v 1.2 1999/05/27 06:10:11 boyns Exp $ */
+/* $Id: NoCodeFilter.java,v 1.3 1999/05/29 17:34:24 boyns Exp $ */
 
 /* Based upon DecafFilter by Mark R. Boyns so here is his copyright notice: */
 
@@ -288,35 +288,52 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 		}
 		else if (!eatingJavaScript && !eatingJava)
 		{
-			if (inScript && noEvalInScript) {
+		    if (inScript && noEvalInScript)
+		    {
 				// Change any code that allows dynamically generating code into something
 				// that does not generate code thus denying the use of self modifying 
 				// code to obscure the intent of code.
 				// Since displaying the string avoids executing it and also helps 
 				// us work out what the code is doing, this is an OK substitution.
-				String substFunction = inVBScript ? "MsgBox" : "alert";
-				String outScript = token.toString();
+			try
+			{
+			    String substFunction = inVBScript ? "MsgBox" : "alert";
+			    String outScript = token.toString();
 				// eval is available both in javascript and VBScript 5.0
-				RE expression = new RE("eval",RE.REG_ICASE);
-				outScript = expression.substituteAll(outScript, substFunction);
+			    RE expression = new RE("eval",RE.REG_ICASE);
+			    outScript = expression.substituteAll(outScript, substFunction);
 				// executeglobal is available in VBScript 5.0
-				expression = new RE("executeglobal",RE.REG_ICASE);
-				outScript = expression.substituteAll(outScript, substFunction);
+			    expression = new RE("executeglobal",RE.REG_ICASE);
+			    outScript = expression.substituteAll(outScript, substFunction);
 				// execute is available in VBScript 5.0
-				expression = new RE("execute",RE.REG_ICASE);
-				outScript = expression.substituteAll(outScript, substFunction);
-				token.erase();
-				token.append(outScript);
+			    expression = new RE("execute",RE.REG_ICASE);
+			    outScript = expression.substituteAll(outScript, substFunction);
+			    token.erase();
+			    token.append(outScript);
 			}
-			out.write(token);
+			catch (REException ree)
+			{
+			    ree.printStackTrace();
+			}
+		    }
+		    out.write(token);
 		} 
 		}
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

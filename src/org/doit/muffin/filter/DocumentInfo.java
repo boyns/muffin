@@ -1,4 +1,4 @@
-/* $Id: DocumentInfo.java,v 1.4 1999/03/12 15:47:42 boyns Exp $ */
+/* $Id: DocumentInfo.java,v 1.5 1999/05/29 17:34:23 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
+import java.io.*;
 
 public class DocumentInfo implements FilterFactory, ContentFilter
 {
@@ -299,12 +300,21 @@ public class DocumentInfo implements FilterFactory, ContentFilter
 	    {
 		out.write(generateBottom());
 	    }
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

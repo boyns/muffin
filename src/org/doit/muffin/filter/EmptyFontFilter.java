@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFilter.java,v 1.4 1999/03/12 15:47:42 boyns Exp $ */
+/* $Id: EmptyFontFilter.java,v 1.5 1999/05/29 17:34:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -25,6 +25,7 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
+import java.io.*;
 
 public class EmptyFontFilter implements ContentFilter
 {
@@ -142,13 +143,21 @@ public class EmptyFontFilter implements ContentFilter
 		    out.write(token);
 		}
 	    }
-	    
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

@@ -1,16 +1,11 @@
-/* $Id: GlossaryFilter.java,v 1.3 1998/12/19 21:24:18 boyns Exp $ */
+/* $Id: GlossaryFilter.java,v 1.4 1999/05/29 17:34:24 boyns Exp $ */
 
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
 import org.doit.io.*;
 import java.util.Enumeration;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import UK.co.demon.asmodeus.util.*;
 
 public class GlossaryFilter implements ContentFilter
@@ -102,12 +97,21 @@ public class GlossaryFilter implements ContentFilter
 	    buffer.writeTo(htmlOutput);
 	    htmlOutput.flush();
 	    htmlOutput.close();
-	    out.flush();
-	    out.close();
 	} 
-	catch (Exception e) 
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

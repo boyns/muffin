@@ -1,4 +1,4 @@
-/* $Id: PainterFilter.java,v 1.4 1999/03/12 15:47:45 boyns Exp $ */
+/* $Id: PainterFilter.java,v 1.5 1999/05/29 17:34:24 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -26,9 +26,26 @@ import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
 import gnu.regexp.*;
+import java.io.*;
 
 public class PainterFilter implements ContentFilter
 {
+    private static RE pattern1;
+    private static RE pattern2;
+
+    static
+    {
+	try
+	{
+	    pattern1 = new RE("^(body|td|table)$");
+	    pattern2 = new RE("^(tr|th)$");
+	}
+	catch (REException ree)
+	{
+	    ree.printStackTrace();
+	}
+    }
+    
     Painter factory;
     Prefs prefs;
     InputObjectStream in = null;
@@ -70,8 +87,6 @@ public class PainterFilter implements ContentFilter
 	{
 	    Tag tag;
 	    Object obj;
-	    RE pattern1 = new RE("^(body|td|table)$");
-	    RE pattern2 = new RE("^(tr|th)$");
 
             while ((obj = in.read()) != null)
             {
@@ -208,13 +223,21 @@ public class PainterFilter implements ContentFilter
 		    out.write(token);
 		}
 	    }
-	    
-	    out.flush();
-	    out.close();
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace();
+	    ioe.printStackTrace();
+	}
+	finally
+	{
+	    try
+	    {
+		out.flush();
+		out.close();
+	    }
+	    catch (IOException ioe)
+	    {
+	    }
 	}
     }
 }

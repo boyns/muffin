@@ -134,9 +134,9 @@ public class ImageKillFilter implements ContentFilter
 		out.write (token);
 	    }
 	}
-	catch (Exception e)
+	catch (IOException ioe)
 	{
-	    e.printStackTrace ();
+	    ioe.printStackTrace();
 	}
 	finally
 	{
@@ -151,6 +151,5 @@ public class ImageKillFilter implements ContentFilter
 	    }
 	}
     }
-
 }
 
