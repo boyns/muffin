@@ -1,0 +1,89 @@
+Muffin INSTALL - installation instructions
+
+This file explains how to install Muffin on Unix, Win32, and MacOS.
+Also included are running and browser configuration instructions.
+
+
+UNIX INSTALLATION:
+
+* `cd' to the top-level muffin directory and execute `./configure'.
+
+* OPTIONAL: Compile muffin using `make'.  (requires GNU make)
+  This will compile all the .java source files and create `muffin.jar'.
+
+* Type `make install' to install `muffin.jar' and `muffin'.
+  By default a `muffin' shell script is installed in /usr/local/bin
+  and `muffin.jar' is installed in /usr/local/lib.
+
+* Start Muffin using the new `muffin' command.
+
+
+WINDOWS INSTALLATION:
+
+* None yet; see RUNNING below.
+
+
+MACINTOSH INSTALLATION:
+
+ You need Macintosh Runtime for Java (MRJ) 2.0 or better.  It comes with 
+ Mac OS 8.1, or it can be had from: 
+
+	 <http://developer.apple.com/java/text/download.html> 
+
+ In addition, you'll need the MRJ SDK 2.01.  I got 2.01 ER4 from: 
+
+	 <http://gemma.apple.com/java/text/prerelease.html> 
+
+ Once you have these and the muffin.jar file, drag muffin.jar onto the 
+ JBindery application.  Enter "org.doit.muffin.Main" in the class name 
+ field, and check the classpath sectin to make sure that the muffin.jar
+ file is in the classpath.  Save it as an applet and you're done! 
+
+ Now double-click the applet when you want to use Muffin. 
+
+RUNNING:
+
+There are a few different ways to run Muffin.  
+
+* Using the shell script:
+
+  unix$ muffin
+
+* From within the source tree:
+
+  unix$ cd muffin-x.x/src
+  unix$ java Muffin
+
+  win32> cd \muffin-x.x\src
+  win32> \jdk1.1.4\bin\java Muffin
+
+* Using the jar file and CLASSPATH:
+
+  unix$ CLASSPATH=/path/muffin.jar java Muffin
+
+* Using jre
+
+  unix$ jre -cp /path/muffin.jar Muffin
+
+  win32> \jdk1.1.4\bin\jre -cp \path\muffin.jar Muffin
+
+
+BROWSER CONFIGURATION:
+
+Web browsers need to be configured to use Muffin as a HTTP proxy
+server.  Proxy configuration is usually found within network
+preferences.  Set the HTTP proxy host to the name (or IP) of the host
+Muffin is running on and set HTTP proxy port to 51966.
+
+If your browser is already configured to use a proxy, setup the
+browser to use Muffin as a proxy and setup Muffin to use the original
+proxy.  (See the Muffin "Options..." window to configure Muffin to use
+a proxy)
+
+Check the Muffin "Options..." window to see if Muffin allows access to
+your web browser.  "HostsAllow" and "HostsDeny" are comma separated
+lists of IP addresses that are allowed and denied.  Partial IP address
+can be specified and "ALL" matches all IP addresses.  An example
+partial IP address would be 130.191.13. which is the same as all hosts
+in the range 130.191.13.1 to 130.191.13.255.
+

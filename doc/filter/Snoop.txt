@@ -1,0 +1,6 @@
+Snoop can display headers of all HTTP requests and replies.  This
+filter is ideal for many types for web application development where
+the ability to see such information can make debugging much easier.
+Snoop is also useful for debugging many HTTP problems.
+
+No preferences.

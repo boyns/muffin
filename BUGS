@@ -1,0 +1,7 @@
+Muffin BUGS - Known bugs
+
+* Fast Snoop scrolling may hang the Motif AWT screen updates under X11.
+  This was noticed in beta versions of JDK 1.1.
+
+* Glossary reads entire document into memory before processing.
+

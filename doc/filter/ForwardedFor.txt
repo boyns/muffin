@@ -1,0 +1,5 @@
+Insert X-Forwarded-For headers into HTTP requests.  These headers are
+used to propagate the actual IP address of the web browser to the
+destination web server.
+
+No configurable preferences.

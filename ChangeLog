@@ -1,0 +1,681 @@
+1998-07-08  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/ImageKill.java: new filter written by
+ 	Heinrich Opgenoorth.
+
+	* src/org/doit/muffin/FilterManagerFrame.java: added help button.
+
+1998-06-25  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* INSTALL (MACINTOSH INSTALLATION): added mac install notes from
+ 	Dave Caplinger.
+
+	* src/org/doit/html/Tag.java: bug fix reported by Stainless Steel
+ 	Rat.
+
+	* src/Makefile.in: fixes from Warren Jones.
+
+1998-06-17  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* Muffin 0.7.1 released.
+
+	* src/org/doit/muffin/filter/PainterFilter.java: handle td.background.
+	Suggested by Stainless Steel Rat.
+
+	* src/org/doit/muffin/filter/NoThanks.java: fixed tagattr remove
+ 	bug reported by Stainless Steel Rat.
+
+1998-06-12  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* Muffin 0.7 released.
+
+1998-06-08  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* configure.in: added --with-tya configure option used in `muffin'
+ 	script.
+
+1998-06-01  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* gnu.regexp version 1.01.
+
+	* removed bin and lib dirs; use src instead.
+	
+	* src/Makefile.in: new Makefile and compilation changes.
+
+1998-05-20  Mark R. Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/SnoopFilter.java: use System
+ 	line.separator for display.
+
+	* src/org/doit/muffin/Request.java: added setCommand and
+ 	setProtocol.  Suggested by Scott McLoughlin.
+
+1998-05-11  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/html/HtmlTokenizer.java: fixed parsing problem
+ 	reported by Arnd Kohrs.  (www.palm.com)
+
+1998-05-07  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/Rewrite.java: new filter for URL
+ 	rewriting using regular expressions.
+
+1998-05-06  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Main.java: added Help/License menu.
+
+	* src/org/doit/muffin/filter/NoThanks.java: tagattr replace now supports
+	gnu.regexp $0..$9 substitution.  Suggested by Chris Dale.
+
+	* src/org/doit/html/HtmlTokenizer.java: fixed javascript comment parsing
+	bug reported by Vik Varma.
+
+1998-05-05  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Main.java: use gnu.getopt.
+
+	* src/org/doit/muffin/filter/NoThanks.java: work better without a
+ 	killfile.
+
+	* src/org/doit/muffin/Http.java: disable pipelining, for now.
+
+	* src/gnu/regexp: added gnu.regexp package and removed the older
+ 	RegExp package.  Converted all regexp code to use gnu.regexp.
+
+1998-04-28  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/Referer.java: added allowSameDomain
+ 	preference.
+
+	* src/org/doit/muffin/filter/HostnameExpander.java: added prefix
+ 	and suffix preferences.
+
+1998-04-22  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/NoThanks.java: tagattr strip and
+ 	remove now build upon any existing entry.  This means that
+ 	multiple "tagattr a.href strip xxx" entries can exist and the
+ 	resulting "xxx" patterns will be built as "(xxx|xxx|xxx)".
+
+	* src/org/doit/muffin/doc: updated filter documentation.
+
+	* src/org/doit/muffin/Httpd.java: added basic authentication for
+ 	remote admin support.  Suggested by James T. Hsiao.
+
+	* src/org/doit/muffin/Options.java: added adminUser and
+ 	adminPassword attributes.
+
+	* src/org/doit/util/Base64.java: new class for base64 decoding
+ 	based on HTTPClient.Codecs.java written by Ronald Tschalaer.
+
+1998-04-08  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/NoThanks.java: new requiredTags body
+ 	and head.  These tags will never be stripped.  Instead offending
+ 	attributed will be removed.
+
+	* src/org/doit/muffin/filter/NoThanksFilter.java: try all commands.
+
+	* src/org/doit/muffin/filter/NoThanks.java: remove frame from hyperEnd.
+
+1998-04-06  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/MuffinFrame.java: -nw fix.
+
+	* src/org/doit/muffin/filter/NoThanks.java: better endtag matching.
+
+1998-04-05  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Options.java: added muffin.font,
+ 	muffin.smallfont, and muffin.bigfont preferences.
+
+	* src/org/doit/muffin/filter/NoThanks.java: updated hypertext tag
+	and attribute list from HTML 4.0.
+
+	* src/org/doit/muffin/filter/Decaf.java: updated javascript tag
+	and attribute list from HTML 4.0.
+
+1998-03-18  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/AutoSaveable.java: new filter interface to
+ 	allow filters to have data automatically saved at certain
+ 	intervals.
+
+	* src/org/doit/muffin/filter/History.java: new filter which uses
+ 	HttpFilter.
+
+	* src/org/doit/muffin/HttpFilter.java: new filter interface.
+
+1998-03-10  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Httpd.java: fg/bg colors are now display in
+ 	remote admin and html error pages.
+
+	* src/org/doit/muffin/MuffinFrame.java: all frames are now
+ 	MuffinFrames.  There's now an icon, but we need a better one.
+
+1998-03-09  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Options.java: new options muffin.fg and
+ 	muffin.bg which change the fg and bg of most things.
+
+1998-03-05  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/NoThanksFilter.java: tag content
+ 	stripping fix from Andrew Paterson.
+
+	* src/org/doit/muffin/filter/EmptyFont.java: new filter by Andrew
+ 	Paterson.
+
+	* src/org/doit/html/Token.java: new constructor and importTag fix
+ 	from Andrew Paterson.
+
+	* src/org/doit/html/Tag.java: tag parsing marked tag as modified
+ 	fix from Andrew Paterson.
+
+	* src/org/doit/html/HtmlTokenizer.java: allow tags inside of
+ 	quoted strings patch from Andrew Paterson.
+
+1998-03-04  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/html/HtmlTokenizer.java (getToken): don't parse
+ 	<script>...</script> tag contents.  Return entire script as a
+ 	TT_SCRIPT token.
+
+	* src/org/doit/html/Token.java: new token type TT_SCRIPT.
+
+1998-03-03  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Janitor.java: close idle keep-alive client
+ 	connections after 5 minutes of idle time.
+
+1998-03-02  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Handler.java: guess text/html content-type
+ 	for HTTP/0.9 replies.  Suggested by Collin Forbes.
+
+	* src/org/doit/muffin/Reply.java: look for HTTP/0.9.
+
+	* src/org/doit/muffin/Message.java: header parsing fix from lantz
+ 	moore.
+	Support multi-value headers, suggested by lantz moore.
+	(get|set|append)HeaderField methods have been changed to accept
+	an optional value index.
+
+1998-02-26  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Http.java: support multiple persistent
+ 	connections to a single web server.  See MAX_PENDING_REQUESTS.
+
+1998-02-25  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/Janitor.java: new class to cleanup idle
+ 	persistent connections.  (connection collection)
+
+	* src/org/doit/html/HtmlTokenizer.java: fixed small bug in bad
+ 	html detection.
+
+1998-02-24  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/io/FixedBufferedInputStream.java: new class for
+ 	fixed size buffered html input.
+
+	* src/org/doit/muffin/FilterManager.java: removed muffin package
+ 	prefix from builtin filter list.  "muffin.filter.CookieMonster" is
+ 	now "CookieMonster" which internally is
+ 	"org.doit.muffin.filter.CookieMonster".  Short name versions are
+ 	saved and old "muffin.filter.*" version are automatically
+ 	converted.
+
+1998-02-23  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/org/doit/muffin/filter/DocumentInfo.java (ContentFilter):
+ 	display info even when body tag isn't found.
+
+	* src/org/doit: new source directory structure.
+	muffin.* -> org.doit.muffin.*
+	muffin.filter.* -> org.doit.muffin.filter.*
+	muffin.html.* -> org.doit.html.*
+	muffin.io.* -> org.doit.io.*
+	some classes moved to org.doit.util.*
+
+1998-02-19  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Handler.java: Support HTTP/1.1 "chunked"
+ 	Transfer-Encoding.
+
+	* src/muffin/Http.java: Support HTTP/1.1 persistent server
+ 	connections and pipelining.
+
+	* src/muffin/CanvasMonitor.java (paint): use off-screen image
+ 	double buffer.
+
+1998-02-12  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Reply.java: Handle empty replies better.  Suggested
+ 	by Mike Halderman.
+
+1998-02-11  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/html/Tag.java: Fix HTML parsing bug which considered
+ 	`ATTR=""' the same as `ATTR'.  Reported by Collin Forbes.
+
+1998-02-06  Mark Boyns  <boyns@sdsu.edu>
+
+	* Noted JDK 1.2 deprecations with DEPRECATION.
+
+	* src/muffin/filter/DocumentInfo.java: added htmlBefore and
+ 	htmlAfter for custom display.
+
+	* src/muffin/HelpFrame.java: new class to display muffin help
+ 	text.  Help buttons are now available in the filter windows.
+
+1998-02-05  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/HostnameExpander.java: added defaultDomain.
+
+1998-02-04  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Options.java: httpsProxyHost and httpsProxyPort.
+
+	* src/muffin/CanvasMonitor.java (draw): Handle SSL.
+
+	* src/muffin/Handler.java (run): Handle SSL.
+
+	* src/muffin/Https.java: SSL proxy relay.
+
+1998-02-02  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/DocumentInfoFrame.java: new preferences frame.
+
+1998-01-31  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Httpd.java: remote admin now access all configurations.
+
+1998-01-25  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/SecretAgentFrame.java: added NONE.
+
+	* src/muffin/Options.java: Also include 127.0.0.1 by default.
+
+	* src/muffin/filter/DocumentInfo.java: New preferences location,
+ 	align, and info.
+
+1998-01-20  Mark Boyns  <boyns@sdsu.edu>
+
+	* Version 0.6 released
+
+1998-01-14  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/DocumentInfo.java: removed information
+
+1998-01-10  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/ForwardedFor.java: new filter to add
+ 	x-forwarded-for.
+
+1998-01-09  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Handler.java: removed x-forwarded-for support.
+
+	* src/muffin/filter/HostnameExpander.java: new filter which
+	uses RedirectFilter to expand hostnames.
+
+	* src/muffin/Handler.java: removed hostname expansion support.
+
+	* src/muffin/RedirectFilter.java: new filter interface for HTTP
+ 	redirection.
+
+	* src/muffin/CanvasMonitor.java (draw): fixed request/reply race condition
+
+1998-01-07  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Reply.java: new methods getProcotol and
+ 	getStatusCode.
+	(read): Ignore message-bodies in 204 and 304 replies.  Problem
+ 	reported by Chris Dale.
+
+1998-01-06  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/LoggerFilter.java (filter): display client address.
+
+	* src/muffin/Connection.java: added getInetAddress and getPort which
+	are now also available to Request.
+
+	* Added Request.getClient patch from Mike Halderman.
+
+1998-01-05  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/html/Tag.java (toString): Don't always output tag
+ 	attributes surrounded by double quotes.  Use single quotes if
+ 	necessary.
+
+1998-01-04  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/SecretServerFilter.java (ReplyFilter): A server
+	of "NONE" will remove the Server header.
+
+	* src/muffin/filter/SecretAgentFilter.java (filter): An agent
+	of "NONE" will remove the User-Agent header.
+
+	* src/muffin/filter/RefererFilter.java (filter): A referer of
+ 	"NONE" will remove the Referer header.
+
+	* src/muffin/Main.java (closeApplication): disable enabled filters
+ 	before exiting.  Suggested by Neil W. Van Dyke.
+
+1997-12-19  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/Glossary.java (load): glossary defalut to
+	Muffin directory.
+
+	* src/muffin/filter/Secretary.java (load): formfile default to
+ 	Muffin directory.
+
+	* src/muffin/filter/NoThanks.java (load): NoThanks.killfile
+ 	without path separator should default to the Muffin directory.
+  	Suggested by Mikael Willberg.
+
+	* src/muffin/Httpd.java (getDateString): force US locale for
+ 	dates.  Fix by Lauri Siponen.
+
+1997-12-18  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/NoThanks.java: added iframe and layer.
+  	Suggested by Alan McCartney.
+
+1997-12-17  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/NoThanksFrame.java: killfile is now editable
+	in the preferences frame.
+
+1997-12-08  Mark Boyns  <boyns@sdsu.edu>
+
+	* configure.in: --with-guavac and --with-kaffe configure options.
+  	guavac 1.0 dependency problems cause a lot of compilation errors.
+
+1997-12-04  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Request.java: Allow multiple reads on POST content.
+
+Tue Dec  2 13:29:40 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* Makefile.in: Support building in different srcdir.
+
+Sat Nov 29 17:31:27 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/PreviewFilter.java: Works again.
+
+Wed Nov 26 22:55:17 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/NoThanks.java: Added #include support.
+
+Tue Nov 25 15:40:06 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/RegexFrame.java: New frame to help build and test
+	regular expressions.
+
+	* src/muffin/ThreadsFrame.java: New frame to view all Muffin
+ 	threads.
+
+Mon Nov 24 09:50:05 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Server.java: Fixed suspend, resume, stop bug.
+
+	* doc/filter/NoThanks.txt: Documented `tagattr'.
+
+	* src/muffin/filter/AnimationKillerFilter.java: commented
+	out server push killing.
+
+	* bin/muffin.in: Use `java' instead of `jre'.
+
+Sun Nov 23 12:28:05 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Prefs.java: Non-unix pathname fix.
+
+	* src/muffin/filter/NoThanks.java: Added `tagattr' command.
+
+Fri Nov 21 15:03:20 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/ConfigurationListener.java: Interface to notify
+	objects of configuration changes.
+
+	* src/muffin/ConfigurationFrame.java: New frame for configuring
+ 	configurations and autoconfig.
+
+Wed Nov 19 10:19:38 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Server.java: Stop button really works now.  Suspend
+ 	and Resume buttons now suspend and resume the current muffin
+ 	transactions.
+
+Mon Nov 17 20:30:15 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Configuration.java: New class for multiple
+	configurations.  Default config file is "default.conf".
+
+Tue Nov  4 09:30:41 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/ContentFilter.java: Changed setInputStream and
+ 	setOutputStream to setInputObjectStream and setOutputObjectStream.
+
+	* src/muffin/Handler.java (filter): Use ObjectStreams.
+
+	* src/muffin/filter: Converted all filters to use ObjectStreams.
+
+	* src/muffin/io: New package muffin.io which includes ObjectStream
+ 	classes.  The idea to use ObjectStreams was suggested by Roger
+ 	Whitney.
+
+	* src/muffin/ConnectionsFrame.java: New class to display list of
+ 	current connections.
+
+Thu Oct 30 09:50:25 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/FilterManager.java (save): Fixed save enabledFilters
+ 	bug.
+
+Tue Oct 28 06:50:37 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Handler.java (flush): new method.
+
+	* src/muffin/Server.java: stop button will now flush before
+ 	closing.  Suggest by Klaus Mueller.
+
+Tue Oct 21 16:51:57 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Handler.java: support X-Forwarded-For.  Suggested by
+ 	lantz moore.  muffin.forwardedFor can be "on", "off", or some
+ 	other value which is sent as-is.
+
+Tue Oct 14 11:01:42 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/FilterFactory.java (shutdown): new interface method
+ 	called before a filter is disabled.
+
+	* Added patches from lantz moore with a few modifications.
+
+Sat Oct 11 14:52:55 1997  lantz moore  <lantz_moore@contigo.com>
+
+	* src/muffin/Handler.java: Added a feature that allows NonFQDN to
+ 	be "smartly" resolved into FQDNs.
+
+	* src/muffin/Message.java: Added public method to set the status
+	line.
+
+	* src/muffin/Options.java: Added support for the expanding
+ 	hostnames feature.
+
+	* src/muffin/OptionsFrame.java: Added a checkbox in support of the
+	expanding hostnames feature.
+
+Sat Oct 11 14:08:23 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Handler.java: Support proxy connection Keep-Alive.
+
+	* src/muffin/filter/NoThanks.java: added `replace'.
+	Suggested by Collin Forbes.
+
+Thu Oct  9 11:17:07 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* Filter windows with TextAreas resize better.
+
+	* src/muffin/MessageArea.java: new class extends TextArea to allow
+ 	maximum number of lines.  Fixes infinitely growing TextAreas.
+
+Fri Oct  3 14:12:09 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/DecafFilter.java: Reject application/x-javascript.
+
+Thu Oct  2 16:08:57 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* Version 0.5 released.
+
+Wed Oct  1 10:02:19 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/html/HtmlTokenizer.java: Attempt to deal with missing
+ 	quotes in HTML tags.
+
+Tue Sep 30 10:18:21 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/CanvasMonitor.java: display more document info in the
+ 	progress bar.
+
+Fri Sep 26 11:25:51 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/NewFilterFrame.java: new class for loading
+	user filters.
+
+Thu Sep 25 17:26:33 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/html/Tag.java: didn't like `=' in values.
+
+	* src/muffin/Handler.java: passthru didn't send reply
+	headers.
+
+Wed Sep 24 10:07:22 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Cookie.java: new class to parse HTTP cookies.
+
+Tue Sep 23 10:38:12 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/GlossaryFilter.java: Should work now.
+
+Mon Sep 22 10:16:31 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/html/Tag.java: parser fixes.
+
+Wed Sep 17 09:26:11 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Request.java: Read Content-length bytes of POST data
+ 	instead of one line.
+
+	* src/muffin/images: Use JPEG instead of GIF.
+
+Tue Sep 16 11:18:23 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* doc/filter: Lots of Filter documentation.
+
+Mon Sep 15 15:49:00 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Options.java: New options muffin.adminAllow and
+ 	muffin.adminDeny used to allow/deny remote administration.
+
+	* src/muffin/Main.java: New -dir option to specify alternate
+ 	muffin prefs directory.
+
+	* src/muffin/Prefs.java: Preferences are now stored in a user.home
+ 	`Muffin' directory.  (~/Muffin/preferences)
+
+	* src/muffin/html/Tag.java: New tag parsing code using
+ 	sdsu.util.SimpleTokenizer and sdsu.util.LabeledData instead of
+ 	StreamTokenizer.
+
+	* src/muffin/html/HtmlTokenizer.java: Fixed quoted string parsing.
+
+Mon Sep  8 18:00:38 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Httpd.java: Added remote administration support.
+
+Fri Sep  5 09:01:26 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/sdsu: Included parts of the SDSU java library.
+
+	* src/muffin/UserPrefs.java: Saved preferences are now sorted.
+
+	* src/muffin/Icon.java: Pressing muffin icon now enables pass thru
+ 	mechanism to disable filtering.
+
+Thu Aug 21 17:03:20 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/Httpd.java: new class.  Muffin is now capable of
+ 	serving HTTP request for muffin icons.
+
+	* src/muffin/filter/Painter.java: new filter
+
+Wed Aug 20 11:03:37 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/html/HtmlTokenizer.java: Don't parse quoted strings
+
+	* src/muffin/filter/AnimationKillerFilter.java: Kill server push
+
+Thu Aug 14 23:42:58 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/FilterException.java: new class
+
+Wed Aug 13 12:43:17 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/Preview.java: new filter
+
+Tue Aug 12 17:17:39 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter/NoThanks.java: new filter
+
+	* src/muffin/html/Tag.java: performance improvements
+
+	* src/muffin/html/HtmlTokenizer.java: performance improvements
+
+	* src/muffin/filter/Glossary.java: new filter
+
+Thu Aug  7 09:45:10 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* src/muffin/filter: renamed filters to filter.  Users need
+	to change their muffin preferences.
+
+	* src: new directory structure
+
+Tue Aug  5 10:06:54 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* muffin/filters/StatsFrame.java: unique server list
+	from Klaus Mueller.
+
+	* muffin/filters/Secretary.java: new filter
+
+Wed Jul 30 13:10:09 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* muffin/filters/DocumentInfo.java: new filter
+
+	* muffin/filters/Decaf.java: new filter
+
+Mon Jul 28 11:24:10 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* use setActionCommand.  Suggested by Klaus Mueller.
+
+	* added WindowListener support to all frames.
+	Suggested by Klaus Mueller.
+
+Thu Jul 24 23:10:42 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* muffin/html/HtmlTokenizer.java: New method getTag and TT_COMMENT.
+
+	* muffin/html/Tag.java: New class extends Hashtable.
+
+Wed Jul 23 16:18:18 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* muffin/filters/AnimationKillerFilter.java: Check for null Content-type.
+
+Tue Jul 22 14:21:43 1997  Mark Boyns  <boyns@sdsu.edu>
+
+	* muffin/filters/AnimationKillerFilter.java: Didn't kill some animations.
+	
+	* version 0.4 released

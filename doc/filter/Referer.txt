@@ -1,0 +1,21 @@
+Referer remove HTTP referer information before it's sent to the web
+server.  Referer information tells web servers the web page you were
+at right before you accessed the current page.  In many case this can
+be a useful feature but under some circumstances it might reveal
+private information that users may not wish to disclose.
+
+This filter can change the Referer to any string or remove the Referer
+header entirely.  For fun it you might want to set the Referer to
+http://www.webpagesthatsuck.com/.
+
+This filter has the following configurable preferences:
+
+* Referer.referer
+
+  Referer value to sent.  A value of NONE will cause the Referer
+  header to be removed.
+
+* Referer.allowSameDomain
+
+  Allow unmodified referer information if both the requesting URL
+  and HTTP Referer are in the same domain.

@@ -1,0 +1,4 @@
+Maintain various stats about your HTTP session.  This can be used to
+calculate the exact size (in bytes) of a web page.
+
+No preferences.

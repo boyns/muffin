@@ -1,0 +1,30 @@
+What is a Cookie?  The best answer to this question can be found in
+the WWW Security FAQ by Lincoln D. Stein located at:
+
+    http://www.w3.org/Security/Faq/
+
+There are serious privacy issues regarding cookies that are very well
+convered in the above FAQ.  Basically it is possible for web sites to
+build user profiles based on the web sites a particular user has
+visited.  This is commonly referred to as "user tracking".
+
+Concerned?  If so, use the CookieMonster.
+
+The CookieMonster monitors all HTTP requests and replies for HTTP
+cookies.  When found, the CookieMonster monster can be configured to
+eat cookies in requests, replies, or both.  "Eat" in this case means
+that the corresponding HTTP header will be removed before being sent
+to the browser or server.  Servers send cookies using the Set-Cookie
+header while browsers use Cookie.
+
+This filter has the following configurable preferences:
+
+* CookieMonster.eatReplyCookies
+
+  Eat cookies sent by the server.  This will remove all Set-Cookie
+  headers.
+
+* CookieMonster.eatRequestCookies
+
+  Eat cookies sent by the browser.  This will remove all Cookie
+  headers.

@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+use File::Basename;
+
+foreach $file (@ARGV)
+{
+    ($name, $path, $ext) = fileparse ($file, ".txt");
+    print "Creating $name.html\n";
+    
+    open (HTML, ">$name.html") or die "$name.html: $!";
+    print HTML "<title>Muffin $name Filter</title>\n";
+    print HTML "<body bgcolor=#c0c0c0 text=#000000>\n";
+    print HTML "<center><h1>Muffin $name Filter</h1></center>\n";
+    print HTML "<hr>\n";
+    print HTML "<pre>\n";
+    open (FILE, "$file") or die "$file: $!";
+    while (<FILE>)
+    {
+	s/</\&lt;/g;
+	s/>/\&gt;/g;
+        print HTML;
+    }
+    close FILE; 
+    print HTML "</pre>\n";
+    print HTML "<hr>\n";
+    print HTML "<p><a href=http://muffin.doit.org>MUFFIN.DOIT.ORG</a>\n";
+    print HTML "</body>\n";
+    close HTML;
+}

@@ -1,0 +1,13 @@
+Preview can be used to view content before it's sent to the browser.
+Content can be accepted or rejected.  Image content such as image/gif
+and image/jpeg is displayed in a pop-up window.  Text (HTML) content
+is displayed in a text window which allows the text to be modified
+before it's sent to the browser.  This can be very useful to edit HTML
+on-the-fly.
+
+This filter has the following configurable preferences:
+
+* Preview.contentTypes
+
+  List of content types to preview.  Partial content types can
+  be specified.  "text" will match "text/plain" and "text/html".

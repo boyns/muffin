@@ -1,0 +1,38 @@
+Painter can remove and/or modify colors and background images found in
+HTML documents.  This is done by checking the following tags and
+attributes:
+
+    Tags - body, font, table, tr, th, td
+
+    Attributes - bgcolor, background, text, link, alink, vlink, color
+
+Colors are specified in the form "#RRGGBB" where RR, GG, BB are red,
+green, and blue hexadecimal color values.  The special color "None" is
+used to remove any color for that attribute which will revert to the
+browser default colors.  bgcolor has precedence over background.
+
+This filter has the following configurable preferences:
+
+* Painter.alink
+
+  Accessed link color.
+
+* Painter.background
+
+  Background image.
+
+* Painter.bgcolor
+
+  Background color.
+
+* Painter.link
+
+  Link color.
+
+* Painter.text
+
+  Text color.
+
+* Painter.vlink
+
+  Visited link color.

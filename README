@@ -1,0 +1,52 @@
+Muffin 0.7 README
+Copyright (C) 1996-98 Mark R. Boyns <boyns@doit.org>
+
+Muffin - a filtering proxy server for the World Wide Web.
+
+Features:
+
+* Written entirely in Java.  Requires JDK 1.1
+  Runs on Unix, Windows 95/NT, and Macintosh.
+
+* Freely available under the GNU General Public License.
+
+* Support for HTTP/0.9, HTTP/1.0, HTTP/1.1, and SSL (https).
+
+* Graphical user interface and command-line interface.
+
+* Remote admin interface using HTML forms.
+
+* Includes several filters which can remove cookies, kill GIF
+  animations, remove advertisements, add/remove/modify arbitrary
+  HTML tags (like blink), remove Java applets and Javascript,
+  user-agent spoofing, rewrite URLs, and much more.
+
+* View all HTTP headers to aid in CGI development and debugging.
+
+* Users can write their own filters in Java using the provided
+  filter interfaces.
+
+Also included in this distribution:
+
+* glossary - Jigsaw Glossary filter
+  by Joel Crisp <joelc@bristol.st.com> and the W3C & Jigsaw teams
+  http://www.asmodeus.demon.co.uk/glossary.htm
+  http://www.w3.org/
+
+* Parts of the SDSU java library
+  by Roger Whitney <whitney@cs.sdsu.edu>
+  http://www.eli.sdsu.edu/java-SDSU/
+
+* Parts of HTTPClient.Codecs.java (org.doit.util.Base64.java)
+  by Ronald Tschalaer <ronald@innovation.ch>
+  http://www.innovation.ch/java/HTTPClient/
+
+* gnu.regexp - Regular Expressions For Java
+  by Wes Biggs <wes@cacas.org>
+  http://www.cacas.org/~wes/java/
+
+* gnu.getopt - GNU Getopt in Java
+  by Aaron M. Renn <arenn@urbanophile.com>
+  http://www.urbanophile.com/arenn/hacking/download.html
+
+Send suggestions and bug reports to <boyns@doit.org>

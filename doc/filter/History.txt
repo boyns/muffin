@@ -1,0 +1,10 @@
+Experimental filter which keeps track of all accessed URLs and can
+display them sorted by access count using the following (imaginary)
+URL:
+
+    http://org.doit.muffin.filter.History/
+
+History information is saved across sessions in the ~/Muffin/history
+file.
+
+This filter is incomplete.

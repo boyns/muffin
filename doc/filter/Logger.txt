@@ -1,0 +1,4 @@
+Maintain a log of accessed URLs in a window.
+
+No preferences.
+

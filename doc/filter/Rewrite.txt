@@ -1,0 +1,15 @@
+This filter can rewrite URLs using regular expressions and back
+substititions.  Rewrite rules are stored in a text file with one rule
+per line.  Each line consists of a regular expression, whitespace, and
+a rewrite substitution pattern.  Example rules:
+
+    (^http://)www.hosta.com(/.*)	$1www.hostb.com$2
+    /\?(http://.*)$			$1
+    redir\?(http://.*)$			$1
+    xfer\?url=(http://.*)$		$1
+
+User preferences:
+
+* Rewrite.rules
+
+  Location of the rewrite rules file.  The default is ~/Muffin/rewrite.

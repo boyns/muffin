@@ -1,0 +1,46 @@
+DocumentInfo can add additional information to HTML documents.  One
+use for this filter is to include the Last-Modification date is in the
+header or footer of HTML documents.  Any HTTP header information can
+be displayed as well as some builtin attributes.  The resulting
+information can be displayed at the top or botton of the document and
+can be aligned to either the left or right side of the page.
+
+Information to be displayed is specified using a key.  For HTTP
+headers, the key is the HTTP header name.  Other builtin keys
+are:
+
+    URL - URL of the HTML document
+    Client -  client IP address and hostname
+    Date - current date
+    LastModified - Last modifcation date in localtime
+
+Some useful HTTP headers to include are:
+
+    Server - server software version
+    Content-length - number of bytes in document
+    Referer - referring document
+
+This filter has the following configurable preferences:
+
+* DocumentInfo.info
+
+  Comma separated list of information to display.
+  Example: "URL,Server,Client,LastModified,Date"
+
+* DocumentInfo.location
+
+  Place the information at the "top" or "bottom" of the page.
+
+* DocumentInfo.align
+
+  Align information on "left" or "right" side of the page.
+
+* DocumentInfo.htmlAfter
+
+  HTML to insert before the inforation
+
+* DocumentInfo.htmlBefore
+
+  HTML to insert before the inforation
+
+

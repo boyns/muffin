@@ -1,0 +1,17 @@
+Markup glossary words in an HTML document.  Glossary is configured
+using a glossary file which is typically located in the Muffin
+preferences directory.  This glossary file contains a list of glossary
+words followed by URLs.  Example glossary file:
+
+muffin http://muffin.doit.org/
+java http://java.sun.com/
+
+Using this example file, Glossary will markup every occurance of
+muffin with <a href="http://muffin.doit.org">muffin</a> and java with
+<a href="http://java.sun.com/">java</a>.
+
+Preferences:
+
+* Glossary.glossaryfile
+
+  Location of the glossary file.

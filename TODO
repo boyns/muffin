@@ -1,0 +1,33 @@
+Muffin TODO
+
+General:
+
+* More documenation.
+
+* Maybe implement a disk cache.
+
+* Save filter messages to files.
+
+Ideas from Junkbuster
+
+* logfile - log of killed URLs
+
+* jarfile - log of cookies
+
+Possible filters:
+
+* text/plain -> text/html converter
+
+* Filter multipart content separately.
+
+* Create html index of zip archives.
+
+* Shrink images.
+
+* Cookies - modify, replace, etc.
+
+* PICS support - http://www.w3.org/PICS/
+
+* Basic authentication
+
+

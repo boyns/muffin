@@ -1,0 +1,151 @@
+Muffin NEWS - user-visible changes
+
+Changes since 0.7:
+
+* New filter ImageKill written by Heinrich Opgenoorth.
+
+* Mac install instructions from Dave Caplinger.
+
+* Bug fixes.
+
+Changes since 0.6:
+
+* DocumentInfo can be located top/bottom, aligned left/right, and
+  has a preferences window.  Custom HTML can be include before and
+  after the info.
+
+* Remote admin (http://muffinhost:51966/) now can access all muffin
+  configurations.
+
+* Muffin can now proxy SSL (https) and connect to another SSL proxy.
+
+* Filter help text available in filter windows and remote admin.
+
+* Fixed HTML parsing bug which converted ALT="" to ALT.
+
+* HTTP/1.1 persistent server connections, pipelining, and "chunked"
+  Transfer-Encoding support.
+
+* Some support for HTTP/0.9.
+
+* Better handling of <script> tags.
+
+* New filter EmptyFont.
+
+* Configurable foreground and background colors.
+
+* New HttpFilter interface.  This allows a filter to act like an
+  HTTP server.  These filters can generate HTTP replies as well
+  as content and can intercept any HTTP request.
+
+* New filter History.  Currently maintains a persistent history of all
+  HTTP requests.  This history can be displayed with:
+      http://org.doit.muffin.filter.History/
+  This filter is functional but incomplete.
+
+* Remote admin basic authentication support.
+
+* Improved (faster) regular expression support using gnu.regexp.
+
+* Improved option parsing support using gnu.getopt.
+
+* Referer.allowSameDomain option.
+
+* HostnameExpander prefix and suffix options.
+
+* tagattr replace command supports $0..$9 substitution.
+
+* New filter Rewrite which rewrites URLs using regular expressions.
+
+Changes since 0.5:
+
+* New filters: HostnameExpander and ForwardedFor.
+
+* Proxy Keep-Alive support.
+
+* View menu.
+
+* Connections view.
+
+* Content filters use ObjectStreams.  HTML and other content
+  filtering should be much faster.
+
+* Multiple configurations.  Rename your old "preferences" file
+  to "default.conf", the name of the default configuration.
+
+* Automatic configuration switching based on URL patterns.
+  Setup with the "autoconfig" file which contains regex and
+  config name pairs.  When a match isn't found the default
+  config will be used.
+
+* -conf command-line option to select a different default config.
+
+* Configuration window for configuring configurations.  Autoconfig
+  file can also be modified here.  Press the "Example" button for
+  a real life autoconfig example.
+
+* NoThanks `tagattr' command.  See doc/filters/NoThanks.txt.
+
+* Threads frame.
+
+* Regular expression tester frame.
+
+* NoThanks killfiles can include other killfiles using `#include filename'.
+
+* Killfile is now editable in the NoThanks preferences window.
+
+* API: added Request.getClient method.
+
+* RFC: Fixed "unknown response from server" netscape error dialogs caused
+  by non-compliant http servers.
+
+* API: RedirectFilter interface for handling HTTP redirects in filters.
+
+Changes since 0.4:
+
+* New filters: Decaf, DocumentInfo, NoThanks, Secretary, Glossary,
+  Preview, and Painter.
+
+* Muffin classes and images can be contained in a single jar file.
+
+* More source documentation.
+
+* New source directory structure.
+
+* GNU autoconf for Unix systems.
+
+* Pass thru mechanism to disable all filtering.  Press the Muffin
+  icon to toggle pass thru.
+
+* Remote administration.  Connect directly to Muffin using
+  `http://muffinHost:muffinPort'.  Access is restricted
+  using muffin.adminAllow and muffin.adminDeny.
+
+* Preferences stored in user.home `Muffin' directory.  Also
+  includes -dir option to specify alternate directory.
+
+* Improved HTML parsing.
+
+* Filter documentation in doc/filter directory.
+
+* Display more information in the progress bars.
+
+* Added --with-tya configure option.
+
+Changes since 0.3:
+
+* New Filter API.
+
+* Content filtering via the ContentFilter interface.
+
+* A real proxy server is not required.  In fact, Muffin can
+  actually use another Muffin as a proxy.
+
+* A window system is no longer required.
+
+* Muffin and filter options can be saved across sessions.
+
+* See muffin.html.HtmlTokenizer and the Test filter for
+  work done so far on HTML filtering.
+
+* New web site http://muffin.doit.org/

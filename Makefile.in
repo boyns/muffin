@@ -1,0 +1,39 @@
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = $(exec_prefix)/bin
+libdir = $(exec_prefix)/lib
+
+JAVAC = @JAVAC@
+JAVACFLAGS = @JAVACFLAGS@
+JAVADOC = @JAVADOC@
+JAR = @JAR@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+MKINSTALLDIRS= @srcdir@/mkinstalldirs
+
+all:
+	(cd src; $(MAKE) $(MFLAGS) all)
+
+install:
+	$(MKINSTALLDIRS) $(libdir) $(bindir)
+	$(INSTALL_DATA) src/muffin.jar $(libdir)/muffin.jar
+	$(INSTALL_PROGRAM) src/muffin $(bindir)/muffin
+
+docs:
+	$(RM) doc/api/*
+	(cd src; $(JAVADOC) -author -d ../doc/api org.doit.muffin org.doit.muffin.filter org.doit.html org.doit.io org.doit.util sdsu.compare sdsu.util gnu.regexp gnu.getopt)
+	(cd doc/filter; perl doit *.txt)
+
+clean:
+	(cd src; $(MAKE) $(MFLAGS) clean)
+	$(RM) Makefile config.status config.cache config.log
+
+distclean: clean
+
+release: all docs clean

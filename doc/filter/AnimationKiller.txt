@@ -1,0 +1,31 @@
+AnimationKiller can detect, modify, and eliminate GIF89a animations.
+This is done by examining/modifying GIF images as they pass through
+Muffin.  GIF animations are typically implemented by using a special
+application extension.  When found, AnimationKiller can do one of two
+things:
+
+* Modify the number of animation loops to something more desirable.
+  Most animations loop forever and waste CPU resources.  Changing
+  the number of loops to specific number limit the loop count
+  to that number and then the animation will stop.
+
+* Convert animations into broken images.  This is desirable if you
+  don't want to see or download any animations.  In most cases
+  the web browser will receive a truncated image file and display
+  a broken image icon.
+
+This filter has the following configurable preferences:
+
+* AnimationKiller.maxLoops
+
+  Modify the number of loops in the animation.
+  Value of:
+      -1   Display image and stop animation as soon as possible.
+       0   Loop forever.
+       1   Loop once.
+       2   Loop twice, and so on.
+
+* AnimationKiller.break
+
+  Convert GIF animations into broken/truncated images.
+

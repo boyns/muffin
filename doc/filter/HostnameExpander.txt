@@ -1,0 +1,21 @@
+Attempt to expand non-local hostnames without dots to valid
+www.HOSTNAME.{com,edu,net,org} hosts.  For example, a request of
+"http://yahoo/" will search DNS and find www.yahoo.com.  The resulting
+URL would then be "http://www.yahoo.com/".
+
+This filter has the following preferences:
+
+* HostnameExpander.defaultDomain
+
+  The name of your local domain which can be used for hosts which
+  don't include a domain.
+
+* HostnameExpander.prefix
+
+  Comma separated list of host prefixes to try during expansion.
+  The default is: www.,home.,web.,http.
+
+* HostnameExpander.suffix
+
+  Comma separated list of host prefixes to try during expansion.
+  The default is: .com,.edu,.net,.org

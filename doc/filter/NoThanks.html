@@ -1,0 +1,199 @@
+<title>Muffin NoThanks Filter</title>
+<body bgcolor=#c0c0c0 text=#000000>
+<center><h1>Muffin NoThanks Filter</h1></center>
+<hr>
+<pre>
+NoThanks is filter which can disable HTTP access to web sites and
+remove/modify undesirable HTML content.  This is all done by
+monitoring all HTTP requests and HTML content as it's passed through
+Muffin.
+
+NoThanks is configured using a killfile which is typically located in
+the Muffin preferences directory.  This killfile supports a small
+control language comprised of the "strip", "kill", "redirect",
+"content", "replace", and "tagattr" commands.  "#include filename" can
+be used include other killfiles.
+
+The syntax used in the killfile may seem complex at first but really
+all that's required is understanding of HTML and basic regular
+expression (regex) syntax.  Here are some examples:
+
+    Want to match                  Regular Expression
+
+    "foo"                          foo
+    "foo" or "bar"                 foo|bar
+    any letter                     [a-zA-Z]
+    any number                     [0-9]
+    not a number                   [^0-9]
+    "a" followed by a number       a[0-9]
+    "a" not followed by a number   a[^0-9]
+    starts with "http"             ^http
+    ends with "thend"              theend$
+    one "a"                        a
+    one or more "a"                a+
+    zero or more "a"               a*
+    "muffin" in any case           [Mm][Uu][Ff][Ff][Ii][Nn]
+
+NoThanks Command Set:
+
+([xxx] denotes an optional value)
+
+* strip tag [endtag]
+
+  Remove tag and possibly everything up-to and including its end tag.
+  Examples:
+
+  Remove the bgsound tag:
+
+      strip bgsound
+
+  Remove the marquee tag and all its contents:
+
+      strip marquee /marquee
+
+  Remove the blink start tag but not its contents:
+
+      strip blink
+
+  Remove the end blink tag.
+
+      strip /blink
+
+* kill regex
+
+  Remove tags end their contents that refer to URLs that match
+  the regular expression.  All kill entries are merged into
+  one expression.  Requests that match killed URLs are denied.
+  Examples:
+
+  Don't access anything from doubleclick.net or linkexchange.net:
+
+      kill doubleclick.net
+      kill linkexchange.net
+
+  Don't access URLs that contains these:
+
+      kill AdID=
+      kill SpaceID=
+      kill sponsor
+      kill D=yahoo
+      kill /advertise
+
+  Kill /ad/, /adv/, and /ads/ in any case:
+
+      kill /[Aa][Dd]/
+      kill /[Aa][Dd][Vv]/
+      kill /[Aa][Dd][Ss]/
+
+* redirect regex URL
+
+  Any requested URL that matches regular expression is instead
+  sent to the specified URL.
+  Example:
+
+  Send any playboy requests to the whitehouse:
+
+      redirect playboy http://www.whitehouse.gov/
+
+* content regex
+
+  Any requested content-type that matches the regular expression
+  is rejected.
+
+* replace some-tag another-tag
+
+  Replace a tag with another tag.
+  Examples:
+
+  Replace &lt;tr&gt; with &lt;br&gt;
+
+      replace tr br
+
+  Replace &lt;hr&gt; with &lt;hr border=5 noshade&gt;
+
+      replace hr "hr border=5 noshade"
+
+* tagattr tag.attr command [regex] [args ...]
+
+  Operate on tag attributes.
+  Supported commands:
+
+      * strip [regex] - Strip tag if regex matches attribute value.
+
+      * remove [regex] - Remove attribute if regex matches attribute value.
+
+      * replace regex new-value - Replace attribute if regex matches attribute value.
+                                  $0..$9 substitution is performed on new-value.
+
+  The regex ".*" (match everything) is used when a regex is not supplied.
+
+  Examples:
+
+  Remove &lt;a&gt; if it contains the onmouseover attribute
+
+      tagattr a.onmouseover strip
+
+  Remove &lt;applet&gt; if code attribute matches MakeMoneyFast.class
+
+      tagattr applet.code strip MakeMoneyFast.class
+
+  Remove bgcolor attribute from &lt;body&gt;
+
+      tagattr body.bgcolor remove
+
+  Remove href from &lt;a&gt; if the URL matches doubleclick.net
+
+      tagattr a.href remove doubleclick.net
+
+  Replace all &lt;img&gt; src values
+
+      tagattr img.src replace .* http://mysite/image.jpg
+
+  Replace &lt;img&gt; src value if it contains /sponsors
+
+      tagattr img.src replace /sponsors http://mysite/image.jpg
+
+  Replace $0..$9 substitution:
+
+      tagattr a.href replace /(one)/(two)/(three).html /$1/$2/$3.html
+
+  Replace all image URLs from www.hosta.com to www.hostb.com:
+
+      tagattr img.src replace (http://)www.hosta.com(/.*) $1www.hostb.com$2
+
+
+Complete example:
+
+strip bgsound
+strip marquee /marquee
+strip blink
+strip /blink
+kill doubleclick.net
+kill linkexchange.com
+kill AdID=
+kill SpaceID=
+kill sponsor
+kill D=yahoo
+kill gtplacer
+kill /[Aa][Dd]/
+kill /[Aa][Dd][Vv]/
+kill /[Aa][Dd][Ss]/
+kill /advertise
+kill try-it
+redirect playboy http://www.whitehouse.gov/
+redirect microsoft http://www.yahoo.com/
+tagattr a.onmouseover strip
+tagattr applet.code strip MakeMoneyFast.class
+tagattr body.bgcolor remove
+tagattr a.href remove adserver.com
+tagattr img.src replace /adserver http://mysite/image.jpg
+
+This filter has the following configurable preferences:
+
+* NoThanks.killfile
+
+  Location of NoThanks killfile.
+</pre>
+<hr>
+<p><a href=http://muffin.doit.org>MUFFIN.DOIT.ORG</a>
+</body>
