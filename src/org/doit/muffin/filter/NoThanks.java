@@ -1,7 +1,8 @@
-/* $Id: NoThanks.java,v 1.15 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: NoThanks.java,v 1.16 2003/05/25 19:58:15 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Christian Mallwitz <christian@mallwitz.com>
  *
  * This file is part of Muffin.
  *
@@ -22,15 +23,19 @@
  */
 package org.doit.muffin.filter;
 
-import org.doit.muffin.*;
-import org.doit.html.*;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
+
 import java.io.*;
-import org.doit.muffin.regexp.Pattern;
-import org.doit.muffin.regexp.Matcher;
+
+import org.doit.html.*;
+import org.doit.muffin.*;
 import org.doit.muffin.regexp.Factory;
+import org.doit.muffin.regexp.Matcher;
+import org.doit.muffin.regexp.Pattern;
+import org.doit.util.LRUHashtable;
 
 public class NoThanks implements FilterFactory
 {
@@ -61,788 +66,846 @@ public class NoThanks implements FilterFactory
     private Hashtable headerReplace = new Hashtable();
     private Hashtable headerReplaceValue = null;
 
-    private Pattern hyperTags = null;
-    private Pattern hyperAttrs = null;
-    private Pattern hyperEnd = null;
-    private Pattern requiredTags = null;
+    private HashMap hyperTags = null;
+    private HashMap hyperAttrs = null;
+    private HashMap hyperEnd = null;
+    private HashMap requiredTags = null;
 
-	public NoThanks() {
-		/* tags and attributes based on HTML 4.0 spec */
-		hyperTags =
-			Factory.instance().getPattern(
-				"^(a|img|body|form|iframe|frame|layer|object|applet|area|link|base|head|script|input)$");
-		hyperAttrs =
-			Factory.instance().getPattern(
-				"^(action|archive|background|base|cite|classdid|codebase|data|href|longdesc|profile|src)$");
-		hyperEnd =
-			Factory.instance().getPattern(
-				"^(a|body|form|iframe|layer|object|applet|head|script)$");
-		requiredTags = Factory.instance().getPattern("^(body|head)$");
-	}
+    private static LRUHashtable kill_cache = new LRUHashtable(10000);
+    private static int kill_cache_hits   = 0;
+    private static int kill_cache_cnt = 0;
+
+    public NoThanks()
+    {
+        /* tags and attributes based on HTML 4.0 spec */
+
+        hyperTags = new HashMap();
+        hyperTags.put("a", "");
+        hyperTags.put("img", "");
+        hyperTags.put("body", "");
+        hyperTags.put("form", "");
+        hyperTags.put("iframe", "");
+        hyperTags.put("frame", "");
+        hyperTags.put("layer", "");
+        hyperTags.put("object", "");
+        hyperTags.put("applet", "");
+        hyperTags.put("area", "");
+        hyperTags.put("link", "");
+        hyperTags.put("base", "");
+        hyperTags.put("head", "");
+        hyperTags.put("script", "");
+        hyperTags.put("input", "");
+
+        hyperAttrs = new HashMap();
+        hyperAttrs.put("action", "");
+        hyperAttrs.put("archive", "");
+        hyperAttrs.put("background", "");
+        hyperAttrs.put("base", "");
+        hyperAttrs.put("cite", "");
+        hyperAttrs.put("classdid", "");
+        hyperAttrs.put("codebase", "");
+        hyperAttrs.put("data", "");
+        hyperAttrs.put("href", "");
+        hyperAttrs.put("longdesc", "");
+        hyperAttrs.put("profile", "");
+        hyperAttrs.put("src", "");
+
+        hyperEnd = new HashMap();
+        hyperEnd.put("a", "");
+        hyperEnd.put("body", "");
+        hyperEnd.put("form", "");
+        hyperEnd.put("iframe", "");
+        hyperEnd.put("layer", "");
+        hyperEnd.put("object", "");
+        hyperEnd.put("applet", "");
+        hyperEnd.put("head", "");
+        hyperEnd.put("script", "");
+
+        requiredTags = new HashMap();
+        hyperEnd.put("body", "");
+        hyperEnd.put("head", "");
+        hyperEnd.put("frame", ""); // added
+    }
 
     public void setManager(FilterManager manager)
     {
-	this.manager = manager;
+        this.manager = manager;
     }
-    
+
     public void setPrefs(Prefs prefs)
     {
-	this.prefs = prefs;
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	String filename = "killfile";
-	prefs.putString("NoThanks.killfile", filename);
-	prefs.setOverride(o);
-	messages = new MessageArea();
-	load();
+        this.prefs = prefs;
+        boolean o = prefs.getOverride();
+        prefs.setOverride(false);
+        String filename = "killfile";
+        prefs.putString("NoThanks.killfile", filename);
+        prefs.setOverride(o);
+        messages = new MessageArea();
+        load();
     }
 
     public Prefs getPrefs()
     {
-	return prefs;
+        return prefs;
     }
 
     public void viewPrefs()
     {
-	if (frame == null)
-	{
-	    frame = new NoThanksFrame(prefs, this);
-	}
-	frame.setVisible(true);
+        if (frame == null)
+        {
+            frame = new NoThanksFrame(prefs, this);
+        }
+        frame.setVisible(true);
     }
-    
+
     public Filter createFilter()
     {
-	Filter f = new NoThanksFilter(this);
-	f.setPrefs(prefs);
-	return f;
+        Filter f = new NoThanksFilter(this);
+        f.setPrefs(prefs);
+        return f;
     }
 
     public void shutdown()
     {
-	if (frame != null)
-	{
-	    frame.dispose();
-	}
+        if (frame != null)
+        {
+            frame.dispose();
+        }
     }
 
     boolean isKilled(String pattern)
     {
-	if (kill == null)
-	{
-	    return false;
-	}
+        if (kill == null)
+        {
+            return false;
+        }
 
-	return kill.matches(pattern);
+        ++kill_cache_cnt;
+
+        Boolean b = (Boolean) kill_cache.get(pattern);
+
+        if (b == null)
+        {
+            b = new Boolean(kill.matches(pattern));
+            kill_cache.put(pattern, b);
+        }
+        else
+        {
+            ++kill_cache_hits;
+        }
+
+        if (kill_cache_cnt >= 5000)
+        {
+            synchronized (kill_cache) // this is not super-safe but good enough for logging purposes
+            {
+                if (kill_cache_cnt >= 5000)
+                {
+                    System.out.println("kill cache hit ratio " + ((int) (100.0*kill_cache_hits/kill_cache_cnt)) +
+                                       "% - total # of entries " + kill_cache.size());
+
+                    kill_cache_hits   = 0;
+                    kill_cache_cnt    = 0;
+                }
+            }
+        }
+
+        return b.booleanValue();
     }
 
     boolean killComment(String pattern)
     {
-	if (comment == null)
-	{
-	    return false;
-	}
+        if (comment == null)
+        {
+            return false;
+        }
 
-	return comment.matches(pattern);
+        return comment.matches(pattern);
     }
 
     boolean killContent(String pattern)
     {
-	if (content == null)
-	{
-	    return false;
-	}
+        if (content == null)
+        {
+            return false;
+        }
 
-	return content.matches(pattern);
+        return content.matches(pattern);
     }
 
     boolean stripTag(String pattern)
     {
-	if (strip == null)
-	{
-	    return false;
-	}
-	
-	return strip.containsKey(pattern);
+        if (strip == null)
+        {
+            return false;
+        }
+
+        return strip.containsKey(pattern);
     }
 
     String stripUntil(String pattern)
     {
-	if (strip == null)
-	{
-	    return null;
-	}
+        if (strip == null)
+        {
+            return null;
+        }
 
-	String s = (String) strip.get(pattern);
-	return(s.length() == 0) ? null : s;
+        String s = (String) strip.get(pattern);
+        return(s.length() == 0) ? null : s;
     }
 
     boolean replaceTag(String pattern)
     {
-	if (replace == null)
-	{
-	    return false;
-	}
-	
-	return replace.containsKey(pattern);
+        if (replace == null)
+        {
+            return false;
+        }
+
+        return replace.containsKey(pattern);
     }
 
     Tag replaceTagWith(String pattern)
     {
-	if (replace == null)
-	{
-	    return null;
-	}
+        if (replace == null)
+        {
+            return null;
+        }
 
-	return(Tag) replace.get(pattern);
+        return(Tag) replace.get(pattern);
     }
-    
-	String redirect(String pattern) {
-		if (redirectPatterns == null) {
-			return null;
-		}
 
-		for (int i = 0; i < redirectPatterns.size(); i++) {
-			Pattern re = (Pattern) redirectPatterns.elementAt(i);
-			if (re.matches(pattern)) {
-				return (String) redirectLocations.elementAt(i);
-			}
-		}
-		return null;
-	}
+    String redirect(String pattern) {
+        if (redirectPatterns == null) {
+            return null;
+        }
+
+        for (int i = 0; i < redirectPatterns.size(); i++) {
+            Pattern re = (Pattern) redirectPatterns.elementAt(i);
+            if (re.matches(pattern)) {
+                return (String) redirectLocations.elementAt(i);
+            }
+        }
+        return null;
+    }
 
     boolean checkTag(String pattern)
     {
-	return hyperTags.matches(pattern);
+        return hyperTags.containsKey(pattern);
     }
 
     boolean checkAttr(String pattern)
     {
-	return hyperAttrs.matches(pattern);
+        return hyperAttrs.containsKey(pattern);
     }
 
     boolean hasEnd(String pattern)
     {
-	return hyperEnd.matches(pattern);
+        return hyperEnd.containsKey(pattern);
     }
 
     boolean isRequired(String pattern)
     {
-	return requiredTags.matches(pattern);
+        return requiredTags.containsKey(pattern);
     }
-    
-	boolean compare(String pattern, Pattern re) {
-		if (pattern == null) {
-			//XXXXXXXXX
-			pattern = "";
-			//return true;
-		}
 
-		//System.out.println("re="+re+", pattern="+pattern+", match="+re.getMatch(pattern));
+    boolean compare(String pattern, Pattern re)
+    {
+        if (pattern == null)
+        {
+            //XXXXXXXXX
+            pattern = "";
+            //return true;
+        }
 
-		return re.matches(pattern);
-	}
+        //System.out.println("re="+re+", pattern="+pattern+", match="+re.getMatch(pattern));
 
-	boolean checkTagAttributes(Tag tag) {
-		if (tagattrTags == null) {
-			return false;
-		}
+        return re.matches(pattern);
+    }
 
-		return tagattrTags.containsKey(tag.name());
-	}
-    
-	boolean processTagAttributes(Request request, Tag tag) {
-		Enumeration attrs = tag.enumerate();
-		if (attrs == null) {
-			return false;
-		}
+    boolean checkTagAttributes(Tag tag) {
+        if (tagattrTags == null) {
+            return false;
+        }
 
-		while (attrs.hasMoreElements()) {
-			String name = (String) attrs.nextElement();
-			String key = tag.name() + "." + name;
-			if (tagattrStrip.containsKey(key)) {
-				if (compare(tag.get(name), (Pattern) tagattrStrip.get(key))) {
-					if (isRequired(tag.name())) {
-						report(
-							request,
-							"tagattr removed* " + name + " from " + tag.name());
-						tag.remove(name);
-					} else {
-						report(request, "tagattr stripped " + tag.toString());
-						return true;
-					}
-				}
-			}
-			if (tagattrRemove.containsKey(key)) {
-				if (compare(tag.get(name), (Pattern) tagattrRemove.get(key))) {
-					report(
-						request,
-						"tagattr removed " + name + " from " + tag.name());
-					tag.remove(name);
-				}
-			}
-			if (tagattrReplace.containsKey(key) && tag.get(name) != null) {
-				String pattern = tag.get(name);
-				Vector v = (Vector) tagattrReplace.get(key);
-				Vector vv = (Vector) tagattrReplaceValue.get(key);
-				for (int i = 0; i < v.size(); i++) {
-					Pattern re = (Pattern) v.elementAt(i);
-					Matcher match = re.getMatch(pattern);
-					if (match != null) {
-						String replace = (String) vv.elementAt(i);
-						replace = match.substituteInto(replace);
-						report(
-							request,
-							"tagattr replaced \""
-								+ pattern
-								+ "\" with \""
-								+ replace
-								+ "\"");
-						tag.put(name, replace);
-					}
-				}
-			}
-		}
-		return false;
-	}
+        return tagattrTags.containsKey(tag.name());
+    }
 
-	Token processScript(Request request, Token token) {
-		Pattern re;
-		String replace;
-		String script;
-		int size;
+    boolean processTagAttributes(Request request, Tag tag) {
+        Enumeration attrs = tag.enumerate();
+        if (attrs == null) {
+            return false;
+        }
 
-		script = token.toString();
+        while (attrs.hasMoreElements()) {
+            String name = (String) attrs.nextElement();
+            String key = tag.name() + "." + name;
+            if (tagattrStrip.containsKey(key)) {
+                if (compare(tag.get(name), (Pattern) tagattrStrip.get(key))) {
+                    if (isRequired(tag.name())) {
+                        report(request, "tagattr removed* " + name + " from " + tag.name());
+                        tag.remove(name);
+                    } else {
+                        report(request, "tagattr stripped " + tag.toString());
+                        return true;
+                    }
+                }
+            }
+            if (tagattrRemove.containsKey(key)) {
+                if (compare(tag.get(name), (Pattern) tagattrRemove.get(key))) {
+                    report(request, "tagattr removed " + name + " from " + tag.name());
+                    tag.remove(name);
+                }
+            }
+            if (tagattrReplace.containsKey(key) && tag.get(name) != null) {
+                String pattern = tag.get(name);
+                Vector v = (Vector) tagattrReplace.get(key);
+                Vector vv = (Vector) tagattrReplaceValue.get(key);
+                for (int i = 0; i < v.size(); i++) {
+                    Pattern re = (Pattern) v.elementAt(i);
+                    Matcher match = re.getMatch(pattern);
+                    if (match != null) {
+                        String replace = (String) vv.elementAt(i);
+                        replace = match.substituteInto(replace);
+                        report(request, "tagattr replaced \"" + pattern + "\" with \"" + replace + "\"");
+                        tag.put(name, replace);
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-		//
-		// See if any of the scriptStrip patterns match.
-		//
-		if (scriptStrip.size() > 0) {
-			for (Enumeration e = scriptStrip.elements();
-				e.hasMoreElements();
-				) {
-				re = (Pattern) e.nextElement();
-				if (re.matches(script)) {
-					// strip this script
-					report(request, "script stripped " + re.toString());
-					return null;
-				}
-			}
-		}
+    Token processScript(Request request, Token token) {
+        Pattern re;
+        String replace;
+        String script;
+        int size;
 
-		//
-		// Perform regexp-based script substitution.
-		//
-		if ((size = scriptPatterns.size()) > 0) {
-			for (int i = 0; i < size; i++) {
-				re = (Pattern) scriptPatterns.elementAt(i);
-				replace = (String) scriptReplace.elementAt(i);
-				script = re.substituteAll(script, replace);
-			}
+        script = token.toString();
 
-			token = new Token(token.getType());
-			token.append(script);
-		}
+        //
+        // See if any of the scriptStrip patterns match.
+        //
+        if (scriptStrip.size() > 0) {
+            for (Enumeration e = scriptStrip.elements();
+                 e.hasMoreElements();
+                ) {
+                re = (Pattern) e.nextElement();
+                if (re.matches(script)) {
+                    // strip this script
+                    report(request, "script stripped " + re.toString());
+                    return null;
+                }
+            }
+        }
 
-		return token;
-	}
+        //
+        // Perform regexp-based script substitution.
+        //
+        if ((size = scriptPatterns.size()) > 0) {
+            for (int i = 0; i < size; i++) {
+                re = (Pattern) scriptPatterns.elementAt(i);
+                replace = (String) scriptReplace.elementAt(i);
+                script = re.substituteAll(script, replace);
+            }
 
-	void processHeaders(Request request, Message m) {
-		// try to optimize for the case where there are no
-		// header rules
-		if (headerStrip.size() == 0 && headerReplace.size() == 0) {
-			return;
-		}
+            token = new Token(token.getType());
+            token.append(script);
+        }
 
-		String name, value;
-		Pattern re;
-		Matcher match;
+        return token;
+    }
 
-		for (Enumeration e = m.getHeaders(); e.hasMoreElements();) {
-			name = ((String) e.nextElement()).toLowerCase();
+    void processHeaders(Request request, Message m) {
+        // try to optimize for the case where there are no
+        // header rules
+        if (headerStrip.size() == 0 && headerReplace.size() == 0) {
+            return;
+        }
 
-			if (headerStrip.containsKey(name)) {
-				re = (Pattern) headerStrip.get(name);
-				for (int i = 0, n = m.getHeaderValueCount(name); i < n; i++) {
-					value = m.getHeaderField(name, i);
-					if (compare(value, re)) {
-						report(
-							request,
-							"header " + name + "=" + value + " stripped");
-						m.removeHeaderField(name);
-						break;
-					}
-				}
-			}
-			if (headerReplace.containsKey(name)) {
-				Vector v = (Vector) headerReplace.get(name);
-				Vector vv = (Vector) headerReplaceValue.get(name);
-				for (int index = 0; index < v.size(); index++) {
-					re = (Pattern) v.elementAt(index);
+        String name, value;
+        Pattern re;
+        Matcher match;
 
-					for (int i = 0, n = m.getHeaderValueCount(name);
-						i < n;
-						i++) {
-						value = m.getHeaderField(name, i);
-						match = re.getMatch(value);
-						if (match != null) {
-							String replace = (String) vv.elementAt(index);
-							replace = match.substituteInto(replace);
-							report(
-								request,
-								"header "
-									+ name
-									+ " replaced \""
-									+ value
-									+ "\" with \""
-									+ replace
-									+ "\"");
-							m.setHeaderField(name, replace, i);
-						}
-					}
-				}
-			}
-		}
-	}
+        for (Enumeration e = m.getHeaders(); e.hasMoreElements();) {
+            name = ((String) e.nextElement()).toLowerCase();
 
-	void save() {
-		manager.save(this);
-	}
+            if (headerStrip.containsKey(name)) {
+                re = (Pattern) headerStrip.get(name);
+                for (int i = 0, n = m.getHeaderValueCount(name); i < n; i++) {
+                    value = m.getHeaderField(name, i);
+                    if (compare(value, re)) {
+                        report(request, "header " + name + "=" + value + " stripped");
+                        m.removeHeaderField(name);
+                        break;
+                    }
+                }
+            }
+            if (headerReplace.containsKey(name)) {
+                Vector v = (Vector) headerReplace.get(name);
+                Vector vv = (Vector) headerReplaceValue.get(name);
+                for (int index = 0; index < v.size(); index++) {
+                    re = (Pattern) v.elementAt(index);
 
-	Pattern createRE(Vector v) {
-		StringBuffer buf = new StringBuffer();
-		buf.append("(");
-		for (int i = 0; i < v.size(); i++) {
-			buf.append(v.elementAt(i));
-			if (i != v.size() - 1) {
-				buf.append("|");
-			}
-		}
-		buf.append(")");
-		return Factory.instance().getPattern(buf.toString(), fIgnoreCase);
-	}
+                    for (int i = 0, n = m.getHeaderValueCount(name);
+                         i < n;
+                         i++) {
+                        value = m.getHeaderField(name, i);
+                        match = re.getMatch(value);
+                        if (match != null) {
+                            String replace = (String) vv.elementAt(index);
+                            replace = match.substituteInto(replace);
+                            report(request, "header " + name + " replaced \"" + value + "\" with \"" + replace + "\"");
+                            m.setHeaderField(name, replace, i);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	void load() {
-		InputStream in = null;
+    void save() {
+        manager.save(this);
+    }
 
-		try {
-			UserFile file =
-				prefs.getUserFile(prefs.getString("NoThanks.killfile"));
-			in = file.getInputStream();
-			load(new InputStreamReader(in));
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-			System.out.println(e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-	}
+    Pattern createRE(Vector v) {
+        StringBuffer buf = new StringBuffer();
+        buf.append("(");
+        for (int i = 0; i < v.size(); i++) {
+            buf.append(v.elementAt(i));
+            if (i != v.size() - 1) {
+                buf.append("|");
+            }
+        }
+        buf.append(")");
+        return Factory.instance().getPattern(buf.toString(), fIgnoreCase);
+    }
 
-	void load(Reader reader) {
+    void load() {
+        InputStream in = null;
 
-		strip = new Hashtable(33);
-		redirectPatterns = new Vector();
-		redirectLocations = new Vector();
-		replace = new Hashtable(33);
-		tagattrTags = new Hashtable(33);
-		tagattrStrip = new Hashtable(33);
-		tagattrRemove = new Hashtable(33);
-		tagattrReplace = new Hashtable(33);
-		tagattrReplaceValue = new Hashtable(33);
-		killBuffer = new StringBuffer();
-		commentBuffer = new StringBuffer();
-		contentBuffer = new StringBuffer();
-		scriptPatterns = new Vector();
-		scriptReplace = new Vector();
-		scriptStrip = new Vector();
-		headerStrip = new Hashtable();
-		headerReplace = new Hashtable();
-		headerReplaceValue = new Hashtable();
+        try {
+            UserFile file =
+                prefs.getUserFile(prefs.getString("NoThanks.killfile"));
+            in = file.getInputStream();
+            load(new InputStreamReader(in));
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+            System.out.println(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
 
-		include(reader);
+    void load(Reader reader)
+    {
+        kill_cache = new LRUHashtable(10000);
+        kill_cache_hits   = 0;
+        kill_cache_cnt    = 0;
 
-		try {
-			kill =
-				(killBuffer.length() > 0)
-					? Factory.instance().getPattern("(" + killBuffer.toString() + ")")
-					: null;
-			comment =
-				(commentBuffer.length() > 0)
-					? Factory.instance().getPattern(
-						"(" + commentBuffer.toString() + ")")
-					: null;
-			content =
-				(contentBuffer.length() > 0)
-					? Factory.instance().getPattern(
-						"(" + contentBuffer.toString() + ")")
-					: null;
+        strip = new Hashtable(33);
+        redirectPatterns = new Vector();
+        redirectLocations = new Vector();
+        replace = new Hashtable(33);
+        tagattrTags = new Hashtable(33);
+        tagattrStrip = new Hashtable(33);
+        tagattrRemove = new Hashtable(33);
+        tagattrReplace = new Hashtable(33);
+        tagattrReplaceValue = new Hashtable(33);
+        killBuffer = new StringBuffer();
+        commentBuffer = new StringBuffer();
+        contentBuffer = new StringBuffer();
+        scriptPatterns = new Vector();
+        scriptReplace = new Vector();
+        scriptStrip = new Vector();
+        headerStrip = new Hashtable();
+        headerReplace = new Hashtable();
+        headerReplaceValue = new Hashtable();
 
-			/* Build regular expressions for tagattr */
-			Enumeration e = tagattrStrip.keys();
-			while (e.hasMoreElements()) {
-				String key = (String) e.nextElement();
-				tagattrStrip.put(key, createRE((Vector) tagattrStrip.get(key)));
-			}
-			e = tagattrRemove.keys();
-			while (e.hasMoreElements()) {
-				String key = (String) e.nextElement();
-				tagattrRemove.put(
-					key,
-					createRE((Vector) tagattrRemove.get(key)));
-			}
+        include(reader);
 
-			/* Build regular expressions for header */
-			e = headerStrip.keys();
-			while (e.hasMoreElements()) {
-				String key = (String) e.nextElement();
-				headerStrip.put(key, createRE((Vector) headerStrip.get(key)));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            kill =
+                (killBuffer.length() > 0)
+                ? Factory.instance().getPattern("(" + killBuffer.toString() + ")")
+                : null;
+            comment =
+                (commentBuffer.length() > 0)
+                ? Factory.instance().getPattern(
+                    "(" + commentBuffer.toString() + ")")
+                : null;
+            content =
+                (contentBuffer.length() > 0)
+                ? Factory.instance().getPattern(
+                    "(" + contentBuffer.toString() + ")")
+                : null;
 
-	//FIXME: this method needs some serious refactoring to make it more manageable.
-	//       It is too big.
-	void include(Reader reader) {
-		try {
-			String s;
-			int token;
-			BufferedReader in = new BufferedReader(reader);
-			while ((s = in.readLine()) != null) {
-				StreamTokenizer st = new StreamTokenizer(new StringReader(s));
-				st.resetSyntax();
-				st.whitespaceChars(0, 32);
-				st.wordChars(33, 126);
-				st.quoteChar('"');
-				st.eolIsSignificant(true);
+            /* Build regular expressions for tagattr */
+            Enumeration e = tagattrStrip.keys();
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                tagattrStrip.put(key, createRE((Vector) tagattrStrip.get(key)));
+            }
+            e = tagattrRemove.keys();
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                tagattrRemove.put(
+                    key,
+                    createRE((Vector) tagattrRemove.get(key)));
+            }
 
-				token = st.nextToken();
-				if (token != StreamTokenizer.TT_WORD) {
-					continue;
-				}
+            /* Build regular expressions for header */
+            e = headerStrip.keys();
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                headerStrip.put(key, createRE((Vector) headerStrip.get(key)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-				if (st.sval.startsWith("#")) {
-					if (st.sval.equals("#include")) {
-						token = st.nextToken();
-						if (token != StreamTokenizer.TT_WORD && token != '"') {
-							break;
-						}
+    //FIXME: this method needs some serious refactoring to make it more manageable.
+    //       It is too big.
+    void include(Reader reader) {
+        try {
+            String s;
+            int token;
+            BufferedReader in = new BufferedReader(reader);
+            while ((s = in.readLine()) != null) {
+                StreamTokenizer st = new StreamTokenizer(new StringReader(s));
+                st.resetSyntax();
+                st.whitespaceChars(0, 32);
+                st.wordChars(33, 126);
+                st.quoteChar('"');
+                st.eolIsSignificant(true);
 
-						InputStream inc = null;
-						try {
-							UserFile file = prefs.getUserFile(st.sval);
-							inc = file.getInputStream();
-							include(new InputStreamReader(inc));
-						} catch (IOException e) {
-							System.out.println(e);
-						} finally {
-							if (inc != null) {
-								try {
-									inc.close();
-								} catch (IOException e) {
-								}
-							}
-						}
-					}
-					continue;
-				}
+                token = st.nextToken();
+                if (token != StreamTokenizer.TT_WORD) {
+                    continue;
+                }
 
-				if (st.sval.equals("kill")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					if (killBuffer.length() > 0) {
-						killBuffer.append("|");
-					}
-					killBuffer.append(st.sval);
-				} else if (st.sval.equals("comment")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					if (commentBuffer.length() > 0) {
-						commentBuffer.append("|");
-					}
-					commentBuffer.append(st.sval);
-				} else if (st.sval.equals("strip")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String start = new String(st.sval);
-					String end = "";
-					token = st.nextToken();
-					if (token == StreamTokenizer.TT_WORD || token == '"') {
-						end = new String(st.sval);
-					}
-					strip.put(start.toLowerCase(), end.toLowerCase());
-				} else if (st.sval.equals("content")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					if (contentBuffer.length() > 0) {
-						contentBuffer.append("|");
-					}
-					contentBuffer.append(st.sval);
-				} else if (st.sval.equals("redirect")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String pattern = new String(st.sval);
-					String location = "";
-					token = st.nextToken();
-					if (token == StreamTokenizer.TT_WORD || token == '"') {
-						location = new String(st.sval);
-					}
-					Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
-					redirectPatterns.addElement(re);
-					redirectLocations.addElement(location);
-				} else if (st.sval.equals("replace")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String oldtag = new String(st.sval);
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String newtag = new String(st.sval);
-					String name = null;
-					String data = null;
-					int i = newtag.indexOf(" \t");
-					if (i == -1) {
-						name = newtag;
-					} else {
-						name = newtag.substring(i);
-						data = newtag.substring(i + 1);
-					}
-					Tag tag = new Tag(name, data);
-					replace.put(oldtag.toLowerCase(), tag);
-				} else if (st.sval.equals("tagattr")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					int i = st.sval.indexOf('.');
-					if (i == -1) {
-						break;
-					}
-					String tag = st.sval.substring(0, i);
-					tag = tag.toLowerCase();
-					String attr = st.sval.substring(i + 1);
-					attr = attr.toLowerCase();
-					String key = tag + "." + attr;
+                if (st.sval.startsWith("#")) {
+                    if (st.sval.equals("#include")) {
+                        token = st.nextToken();
+                        if (token != StreamTokenizer.TT_WORD && token != '"') {
+                            break;
+                        }
 
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String command = new String(st.sval);
+                        InputStream inc = null;
+                        try {
+                            UserFile file = prefs.getUserFile(st.sval);
+                            inc = file.getInputStream();
+                            include(new InputStreamReader(inc));
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        } finally {
+                            if (inc != null) {
+                                try {
+                                    inc.close();
+                                } catch (IOException e) {
+                                }
+                            }
+                        }
+                    }
+                    continue;
+                }
 
-					Vector list = (Vector) tagattrTags.get(tag);
-					if (list == null) {
-						list = new Vector();
-						tagattrTags.put(tag, list);
-					}
-					list.addElement(attr);
+                if (st.sval.equals("kill")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    if (killBuffer.length() > 0) {
+                        killBuffer.append("|");
+                    }
+                    killBuffer.append(st.sval);
+                } else if (st.sval.equals("comment")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    if (commentBuffer.length() > 0) {
+                        commentBuffer.append("|");
+                    }
+                    commentBuffer.append(st.sval);
+                } else if (st.sval.equals("strip")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String start = new String(st.sval);
+                    String end = "";
+                    token = st.nextToken();
+                    if (token == StreamTokenizer.TT_WORD || token == '"') {
+                        end = new String(st.sval);
+                    }
+                    strip.put(start.toLowerCase(), end.toLowerCase());
+                } else if (st.sval.equals("content")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    if (contentBuffer.length() > 0) {
+                        contentBuffer.append("|");
+                    }
+                    contentBuffer.append(st.sval);
+                } else if (st.sval.equals("redirect")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String pattern = new String(st.sval);
+                    String location = "";
+                    token = st.nextToken();
+                    if (token == StreamTokenizer.TT_WORD || token == '"') {
+                        location = new String(st.sval);
+                    }
+                    Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
+                    redirectPatterns.addElement(re);
+                    redirectLocations.addElement(location);
+                } else if (st.sval.equals("replace")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String oldtag = new String(st.sval);
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String newtag = new String(st.sval);
+                    String name = null;
+                    String data = null;
+                    int i = newtag.indexOf(" \t");
+                    if (i == -1) {
+                        name = newtag;
+                    } else {
+                        name = newtag.substring(i);
+                        data = newtag.substring(i + 1);
+                    }
+                    Tag tag = new Tag(name, data);
+                    replace.put(oldtag.toLowerCase(), tag);
+                } else if (st.sval.equals("tagattr")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    int i = st.sval.indexOf('.');
+                    if (i == -1) {
+                        break;
+                    }
+                    String tag = st.sval.substring(0, i);
+                    tag = tag.toLowerCase();
+                    String attr = st.sval.substring(i + 1);
+                    attr = attr.toLowerCase();
+                    String key = tag + "." + attr;
 
-					String pattern;
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						pattern = ".*";
-					} else {
-						pattern = new String(st.sval);
-					}
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String command = new String(st.sval);
 
-					Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
+                    Vector list = (Vector) tagattrTags.get(tag);
+                    if (list == null) {
+                        list = new Vector();
+                        tagattrTags.put(tag, list);
+                    }
+                    list.addElement(attr);
 
-					if (command.equals("strip")) {
-						/* Build a vector of Strings */
-						Vector v;
-						if (tagattrStrip.containsKey(key)) {
-							v = (Vector) tagattrStrip.get(key);
-						} else {
-							v = new Vector();
-							tagattrStrip.put(key, v);
-						}
-						v.addElement(pattern);
-					} else if (command.equals("remove")) {
-						/* Build a vector of Strings */
-						Vector v;
-						if (tagattrRemove.containsKey(key)) {
-							v = (Vector) tagattrRemove.get(key);
-						} else {
-							v = new Vector();
-							tagattrRemove.put(key, v);
-						}
-						v.addElement(pattern);
-					} else if (command.equals("replace")) {
-						token = st.nextToken();
-						if (token != StreamTokenizer.TT_WORD && token != '"') {
-							System.out.println("tagattr replace missing value");
-							break;
-						}
-						String value = new String(st.sval);
+                    String pattern;
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        pattern = ".*";
+                    } else {
+                        pattern = new String(st.sval);
+                    }
 
-						/* Build a vector of REs and replacement Strings */
-						Vector v;
-						Vector vv;
-						if (tagattrReplace.containsKey(key)) {
-							v = (Vector) tagattrReplace.get(key);
-							vv = (Vector) tagattrReplaceValue.get(key);
-						} else {
-							v = new Vector();
-							vv = new Vector();
-							tagattrReplace.put(key, v);
-							tagattrReplaceValue.put(key, vv);
-						}
-						v.addElement(re);
-						vv.addElement(value);
-					} else {
-						System.out.println(
-							"tagattr " + command + " unknown command");
-					}
-				} else if (st.sval.equals("options")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
+                    Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
 
-					if ("reg-case".equals(st.sval)) {
-						fIgnoreCase = false;
-					} else if ("reg-icase".equals(st.sval)) {
-						fIgnoreCase = true;
-					}
-				} else if (st.sval.equals("script")) {
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
+                    if (command.equals("strip")) {
+                        /* Build a vector of Strings */
+                        Vector v;
+                        if (tagattrStrip.containsKey(key)) {
+                            v = (Vector) tagattrStrip.get(key);
+                        } else {
+                            v = new Vector();
+                            tagattrStrip.put(key, v);
+                        }
+                        v.addElement(pattern);
+                    } else if (command.equals("remove")) {
+                        /* Build a vector of Strings */
+                        Vector v;
+                        if (tagattrRemove.containsKey(key)) {
+                            v = (Vector) tagattrRemove.get(key);
+                        } else {
+                            v = new Vector();
+                            tagattrRemove.put(key, v);
+                        }
+                        v.addElement(pattern);
+                    } else if (command.equals("replace")) {
+                        token = st.nextToken();
+                        if (token != StreamTokenizer.TT_WORD && token != '"') {
+                            System.out.println("tagattr replace missing value");
+                            break;
+                        }
+                        String value = new String(st.sval);
 
-					if ("replace".equals(st.sval)) {
-						String pattern;
+                        /* Build a vector of REs and replacement Strings */
+                        Vector v;
+                        Vector vv;
+                        if (tagattrReplace.containsKey(key)) {
+                            v = (Vector) tagattrReplace.get(key);
+                            vv = (Vector) tagattrReplaceValue.get(key);
+                        } else {
+                            v = new Vector();
+                            vv = new Vector();
+                            tagattrReplace.put(key, v);
+                            tagattrReplaceValue.put(key, vv);
+                        }
+                        v.addElement(re);
+                        vv.addElement(value);
+                    } else {
+                        System.out.println(
+                            "tagattr " + command + " unknown command");
+                    }
+                } else if (st.sval.equals("options")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
 
-						token = st.nextToken();
-						if (token != StreamTokenizer.TT_WORD && token != '"') {
-							pattern = ".*";
-						} else {
-							pattern = new String(st.sval);
-						}
+                    if ("reg-case".equals(st.sval)) {
+                        fIgnoreCase = false;
+                    } else if ("reg-icase".equals(st.sval)) {
+                        fIgnoreCase = true;
+                    }
+                } else if (st.sval.equals("script")) {
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
 
-						Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
-						scriptPatterns.addElement(re);
+                    if ("replace".equals(st.sval)) {
+                        String pattern;
 
-						token = st.nextToken();
-						if (token != StreamTokenizer.TT_WORD && token != '"') {
-							System.out.println(
-								"script replace missing replacement");
-						} else {
-							scriptReplace.addElement(st.sval);
-						}
-					} else if ("strip".equals(st.sval)) {
-						String pattern;
+                        token = st.nextToken();
+                        if (token != StreamTokenizer.TT_WORD && token != '"') {
+                            pattern = ".*";
+                        } else {
+                            pattern = new String(st.sval);
+                        }
 
-						token = st.nextToken();
-						if (token != StreamTokenizer.TT_WORD && token != '"') {
-							pattern = ".*";
-						} else {
-							pattern = new String(st.sval);
-						}
+                        Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
+                        scriptPatterns.addElement(re);
 
-						Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
-						scriptStrip.addElement(re);
-					} else {
-						System.out.println(
-							"script " + st.sval + " unknown command");
-					}
-				} else if (st.sval.equals("header")) {
-					// header
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String key = st.sval.toLowerCase();
+                        token = st.nextToken();
+                        if (token != StreamTokenizer.TT_WORD && token != '"') {
+                            System.out.println(
+                                "script replace missing replacement");
+                        } else {
+                            scriptReplace.addElement(st.sval);
+                        }
+                    } else if ("strip".equals(st.sval)) {
+                        String pattern;
 
-					// command
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						break;
-					}
-					String command = new String(st.sval);
+                        token = st.nextToken();
+                        if (token != StreamTokenizer.TT_WORD && token != '"') {
+                            pattern = ".*";
+                        } else {
+                            pattern = new String(st.sval);
+                        }
 
-					// value pattern
-					String pattern;
-					token = st.nextToken();
-					if (token != StreamTokenizer.TT_WORD && token != '"') {
-						pattern = ".*";
-					} else {
-						pattern = new String(st.sval);
-					}
+                        Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
+                        scriptStrip.addElement(re);
+                    } else {
+                        System.out.println(
+                            "script " + st.sval + " unknown command");
+                    }
+                } else if (st.sval.equals("header")) {
+                    // header
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String key = st.sval.toLowerCase();
 
-					Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
+                    // command
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        break;
+                    }
+                    String command = new String(st.sval);
 
-					if (command.equals("strip")) {
-						/* Build a vector of Strings */
-						Vector v;
-						if (headerStrip.containsKey(key)) {
-							v = (Vector) headerStrip.get(key);
-						} else {
-							v = new Vector();
-							headerStrip.put(key, v);
-						}
-						v.addElement(pattern);
-					} else if (command.equals("replace")) {
-						token = st.nextToken();
-						if (token != StreamTokenizer.TT_WORD && token != '"') {
-							System.out.println("header replace missing value");
-							break;
-						}
-						String value = new String(st.sval);
+                    // value pattern
+                    String pattern;
+                    token = st.nextToken();
+                    if (token != StreamTokenizer.TT_WORD && token != '"') {
+                        pattern = ".*";
+                    } else {
+                        pattern = new String(st.sval);
+                    }
 
-						/* Build a vector of REs and replacement Strings */
-						Vector v;
-						Vector vv;
-						if (headerReplace.containsKey(key)) {
-							v = (Vector) headerReplace.get(key);
-							vv = (Vector) headerReplaceValue.get(key);
-						} else {
-							v = new Vector();
-							vv = new Vector();
-							headerReplace.put(key, v);
-							headerReplaceValue.put(key, vv);
-						}
-						v.addElement(re);
-						vv.addElement(value);
-					} else {
-						System.out.println(
-							"header " + command + " unknown command");
-					}
-				} else {
-					System.out.println(
-						"NoThanks: " + st.sval + " unknown command");
-				}
-			}
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+                    Pattern re = Factory.instance().getPattern(pattern, fIgnoreCase);
 
-	void report(Request request, String message) {
-		request.addLogEntry("NoThanks", message);
-		messages.append(message + "\n");
-	}
-	
-	private boolean fIgnoreCase;
+                    if (command.equals("strip")) {
+                        /* Build a vector of Strings */
+                        Vector v;
+                        if (headerStrip.containsKey(key)) {
+                            v = (Vector) headerStrip.get(key);
+                        } else {
+                            v = new Vector();
+                            headerStrip.put(key, v);
+                        }
+                        v.addElement(pattern);
+                    } else if (command.equals("replace")) {
+                        token = st.nextToken();
+                        if (token != StreamTokenizer.TT_WORD && token != '"') {
+                            System.out.println("header replace missing value");
+                            break;
+                        }
+                        String value = new String(st.sval);
+
+                        /* Build a vector of REs and replacement Strings */
+                        Vector v;
+                        Vector vv;
+                        if (headerReplace.containsKey(key)) {
+                            v = (Vector) headerReplace.get(key);
+                            vv = (Vector) headerReplaceValue.get(key);
+                        } else {
+                            v = new Vector();
+                            vv = new Vector();
+                            headerReplace.put(key, v);
+                            headerReplaceValue.put(key, vv);
+                        }
+                        v.addElement(re);
+                        vv.addElement(value);
+                    } else {
+                        System.out.println(
+                            "header " + command + " unknown command");
+                    }
+                } else {
+                    System.out.println(
+                        "NoThanks: " + st.sval + " unknown command");
+                }
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void report(Request request, String message)
+    {
+        request.addLogEntry("NoThanks", message);
+        messages.append(message + "\n");
+    }
+
+    private boolean fIgnoreCase;
 }
 
