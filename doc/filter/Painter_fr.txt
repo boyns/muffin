@@ -1,0 +1,40 @@
+Painter peut enlever et/ou modifier les couleurs ainsi que l'image
+de fond trouvé dans les document HTML. c'est en regardant/changeant
+les attribut des balises:
+
+Tags - body, font, table, tr, th, td
+
+Attribut - bgcolor, background, text, link, alink, vlink, color
+
+les couleurs sont spécifiées sous la forme "#RRGGBB" ou RR, GG, BB sont
+respectivement rouge, vert, bleu dans une valeur hexadécimal.
+la couleur spéciale "None" est utilisé pour enlever n'importe quel couleur
+puis sélectionner la couleur par défaut du navigateur. bgcolor a priorité sur
+background
+
+Ce filtre à les préférences configurables suivantes:
+
+* Painter.alink
+
+  couleur des liens accédés
+
+* Painter.background
+
+  image de fond.
+
+* Painter.bgcolor
+
+  Couleur de fond.
+
+* Painter.link
+
+  couleur de lien.
+
+* Painter.text
+
+  couleur du text.
+
+* Painter.vlink
+
+  couleur des lien visités.
+

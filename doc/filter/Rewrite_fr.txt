@@ -1,0 +1,17 @@
+Ce filtre peut reécrire des URL en utilisant une expression régulières
+et une substitution. Les règles sont sauvées dans un fichier text
+avec une règle par ligne. Chaque ligne consiste en une expression
+régulière, espace, et règle de substitution. ex:
+
+
+    (^http://)www.hosta.com(/.*)	$1www.hostb.com$2
+    /\?(http://.*)$		         	$1
+    redir\?(http://.*)$			$1
+    xfer\?url=(http://.*)$		$1
+
+Préférence configurable:
+
+* Rewrite.rules
+
+  localisation du fichier contenant les règles.  par défaut ~/Muffin/rewrite.
+

@@ -1,0 +1,45 @@
+NoCode peut enlever les Scripts et/ou Java des document HTML.
+C'est en modifiant le code HTML passant a travers Muffin que 
+c'est possible. Il est basé sur le filtre Decaf mais est plus 
+sélectif. La motivation de NoCode est de faire un filtre
+générique pour les scripts douteux.
+
+Options disponible :
+	* Java
+	* JavaScript 
+	* VBScript
+	* Autre language script comme Python ou Perl
+	* Les scripts encodés 
+
+il peut aussi enlever quelque code qui modifie le statuts. JavaScript
+possède une instruction "eval" qui permet d'exécuter du code sauver
+comme une chaîne de caractères. ex:
+
+eval(b('`mdsu)#ncrbtsd#('));
+
+Ce filtre à les préférences configurables suivantes:
+
+* NoCode.noJavaScript
+
+  enlève JavaScript des documents HTML.
+
+* NoCode.noVBScript
+
+  enlève VBScript des documents HTML.
+
+* NoCode.noOtherScript
+
+  Enlève les autres langages de scripts comme Python ou Perl.
+
+* NoCode.noEncodedScript
+
+  enlève les script encodés des documents html.
+
+* NoCode.noEvalInScript
+
+  enlève le code qui modifie l'environnement.
+
+* NoCode.noJava
+
+  enlève Java des documents HTML
+

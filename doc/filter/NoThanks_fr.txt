@@ -1,0 +1,256 @@
+NoThanks est le filtre qui peut supprimer les accès HTTP des
+sites web et enlever/modifier les contenu HTML non désirés.
+Il agit en surveillant tout les requêtes HTTP ainsi que le
+contenu des pages HTML qui passent à travers Muffin.
+
+NoThanks est configurer pour utiliser un fichier 'killfile' qui est 
+typiquement localisé dans le répertoire Muffin. Ce fichier peut
+comprendre un petit langage de contrôle, "strip", "kill", "redirect",
+"content", "replace", "tagattr", "header", et "script".
+"#include nomdufichier" peut être utiliser pour inclure d'autre
+fichier killfiles. Vous pouvez utiliser une adresse http comme
+emplacement de fichier. http://lesite.fr/fichier.txt
+
+La syntax utilisée dans le fichier killfile peut sembler difficile
+à première vue! mais en réalité tout ce que cela demande c'est un peu 
+de compréhension de l'HTML et quelque expression régulières. 
+ainsi que de la rigueur.
+
+quelque exemple:
+
+    ce que l'on veut               Expression nothank (killfile)
+
+    "pied"                                   pied
+    "pied" ou "main"                    pied|main
+    N'importe quelle lettre            [a-zA-Z]
+    n'importe quelle chiffre           [0-9]
+    pas un nombre                      [^0-9]
+    "a" suivi par un nombre          a[0-9]
+    "a" pas suivi par un nombre    a[^0-9]
+    commence avec "http"           ^http
+    fini avec ".com"                    .com$
+    un "a"                                   a
+    un "a" ou plus                        a+
+    zero "a" ou plus                     a*
+    "muffin" dans n'importe quelle casse     [Mm][Uu][Ff][Ff][Ii][Nn]
+
+Outils de commande de NoThanks:
+
+([xxx] montre une valeur en options)
+
+* options 
+
+  défini la valeur par options.  options disponible sont:
+
+     * reg-case - toute les expressions sont vrai
+                  (valeur par défaut)
+
+     * reg-icase - toute les expressions sont fausses
+
+ Ces options ne sont définis qu'une seul fois dans un fichier killfile
+ 
+  Exemples:
+
+     options reg-case
+     options reg-icase
+
+* strip tag [endtag]
+
+  enlève la balise et aussi tout ce qui est inclue dedans.
+  Exemples:
+
+  enlève la balise bgsound:
+
+      strip bgsound
+
+  enlève la balise 'marquee' et tout son contenu:
+
+      strip marquee /marquee
+
+  enlève la balise blink mais pas son contenu:
+
+      strip blink
+
+  enlève la balise finale blink.
+
+      strip /blink
+
+* kill
+ 
+ enléve les balises et leur contenu qui font références à l'URL qui 
+ se trouve dans l'expression régulières. Toute les demandes d'URL
+ qui contiennent l'expression killer sont interdit. Si le lien
+ contenant l'expression est contenu dans une page il sera supprimé
+
+  Pas d'accès a doubleclick.net ou linkexchange.net:
+
+      kill doubleclick.net
+      kill linkexchange.net
+
+  pas d'accès aux URL qui contiennent:
+
+      kill AdID=
+      kill SpaceID=
+      kill sponsor
+      kill D=yahoo
+      kill /advertise
+
+  Kill /ad/, /adv/, and /ads/ dans n'importe quelle casse:
+
+      kill /[Aa][Dd]/
+      kill /[Aa][Dd][Vv]/
+      kill /[Aa][Dd][Ss]/
+
+* redirect
+
+ 
+  N'importe quel URL qui contient l'expression est redirigé vers
+  l'url spécifié
+  envoyer n'importe quel demande de playboy vers la maison blanche:
+
+      redirect playboy http://www.whitehouse.gov/
+
+* content
+
+  n'importe quel type de contenu qui correspond à l'expression
+  est rejeté
+
+* replace une balise par un autre balise
+
+  Examples:
+
+  Remplace <tr> avec <br>
+
+      replace tr br
+
+  Remplace <hr> avec <hr border=5 noshade>
+
+      replace hr "hr border=5 noshade"
+
+* tagattr tag.attr command [regex] [args ...]
+
+  Agit sur les attribut des tag.
+  Commande supporté:
+
+      * strip [regex] - Strip tag enleve la balise si l'expression correspond.
+
+      * remove [regex] - enleve les attribut.
+
+      * replace regex new-value - remplace les attribut.
+                                  
+
+  l'expression ".*" (tout) est utilisé quand une expression n'est pas
+  supportée.
+  Exemples:
+
+  Enlève <a> si il contient l'attribut onmouseover
+
+      tagattr a.onmouseover strip
+
+  enlève <applet> si le code contient MakeMoneyFast.class
+
+      tagattr applet.code strip MakeMoneyFast.class
+
+  enlève l'attribut bgcolor de <body>
+
+      tagattr body.bgcolor remove
+
+  enlève href de <a> si l'URL contient doubleclick.net
+
+      tagattr a.href remove doubleclick.net
+
+  Remplace toute les valeur <img> src 
+     
+  tagattr img.src replace .* http://mysite/image.jpg
+
+  Remplace <img> src si il contient /sponsors
+
+      tagattr img.src replace /sponsors http://mysite/image.jpg
+
+  Remplace $0..$9 par substitution:
+
+      tagattr a.href replace /(one)/(two)/(three).html /$1/$2/$3.html
+
+  Remplace toute les images de www.hosta.com par www.hostb.com:
+
+      tagattr img.src replace (http://)www.hosta.com(/.*) $1www.hostb.com$2
+
+* script [command]
+
+  remplace ou enléve les scripts contenant une expression régulière
+  commande supportée:
+
+      * strip regex - enleve entièrement le script si l'expression est vu.
+
+      * replace regexp substitution - remplace lesexpression
+        par substitution. les valeurs $0..$9 servent àla substitution
+
+  Exemples:
+  
+  enlève tout les script contenant window.open
+
+      script strip window.open
+
+  Remplace la chaîne "x = window.open(url, ...)" avec "location=url;return"
+
+      script replace \S+\s*=\s*window.open\s*\(([^,]+),[^\)]+\) 
+location=$1;return
+
+* header header-name command [regex]
+
+  Agi sur les en-têtes HTTP en réponse et en demande
+  Commande supportée:
+
+      * strip [regex] - enleve le header si expression rencontré.
+
+      * replace regex new-value - Remplace si le header a l'expression par 
+substitution.
+                                  
+
+  
+  la valeur ".*" (tout) est utilisé quand une expression n'est pas complète
+  Exemples:
+
+  dans le User-Agent changez Mozilla en Muffzilla et change linux en Debian 
+GNU/Linux (ou mandrake en debian :-):
+
+      header user-agent replace (.*)Mozilla(.*) $1Muffzilla$2
+      header User-Agent replace (.*)Linux(.*) $1Debian GNU/Linux$2
+
+  enlève tout les encodages compressé:
+
+      header Accept-Encoding strip (zip|compress)
+
+exemple complet:
+
+strip bgsound
+strip marquee /marquee
+strip blink
+strip /blink
+kill doubleclick.net
+kill linkexchange.com
+kill AdID=
+kill SpaceID=
+kill sponsor
+kill D=yahoo
+kill gtplacer
+kill /[Aa][Dd]/
+kill /[Aa][Dd][Vv]/
+kill /[Aa][Dd][Ss]/
+kill /advertise
+kill try-it
+redirect playboy http://www.whitehouse.gov/
+redirect microsoft http://www.yahoo.com/
+tagattr a.onmouseover strip
+tagattr applet.code strip MakeMoneyFast.class
+tagattr body.bgcolor remove
+tagattr a.href remove adserver.com
+tagattr img.src replace /adserver http://mysite/image.jpg
+
+Ce filtre à les préférences configurables suivantes:
+
+* NoThanks.killfile
+
+  localisation du fichier killfile, cela peut etre une url.
+
+

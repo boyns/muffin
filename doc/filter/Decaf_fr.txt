@@ -1,0 +1,36 @@
+Decaf peut enlever JavaScript et/ou Java des documents HTML.
+C'est possible en modifiant le code HTML passant à travers Muffin.
+Pourquoi faire cela? La meilleurs raison peut être trouvé dans
+la FAQ de Lincoln D. Stein a:
+
+  http://www.w3.org/Security/Faq/
+
+quelques problèmes de sécurités de JavaScript:
+
+* peut intercepter l'e-mail de l'utilisateur.
+
+* peut intercepter des fichiers sur la machine de l'utilisateur
+
+quelques problèmes de Java
+
+* vulnérable aux attaque DOS
+
+* peut créer une communication réseaux avec un serveur
+
+JavaScript est enlevé des documents HTML en enlevant les tags <script>
+et leurs contenus, et enlevant aussi tout les attributs JavaScript du
+document HTML. Les tags et les attributs sont basés sur la spécification
+HTML 4.0
+
+Java est enlevé des documents HTML en enlevant le tag <applet> et son
+contenu.
+
+Ce filtre a les préférence configurables suivantes:
+* Decaf.noJavaScript
+
+  Enlève JavaScript des documents HTML
+
+* Decaf.noJava
+
+  Enlève Java des documents HTML
+

@@ -1,0 +1,7 @@
+Le filtre Cache est un simple cache pour les pages html du web. 
+Il a quelques fonctionnalitées comme le module mod_cache de Apache,
+mais son but principal est de faire un cache. 
+
+Si d'autres filtres se retrouvent devant lui dans la liste des filtres
+actifs, il ne mettra dans le tampon que la version filtrée des pages.
+

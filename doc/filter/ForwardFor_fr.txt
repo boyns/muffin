@@ -1,0 +1,5 @@
+Insert un header X-Forwarded-For dans les requetes HTTP. Cette header
+est utilisé pour propagé l'adresse IP du navigateur vers le serveur.
+
+pas de préférences
+

@@ -1,0 +1,43 @@
+DocumentInfo peut ajouter des informations additionnelles à un
+document HTML. Un usage de ce filtres est d'inclure la date de
+dernière modification de la page sur la page. N'importe quel entête
+ peut être afficher comme des attributs inclus sur la page.
+Le résultat peut soit être affiché en haut, ou en bas, puis
+ à droite ou à gauche de la page.
+
+les informations à afficher sont spécifiés grâce à un mot clé.
+pour les en tête HTTP, le mots clé est le nom du header. Les autres
+mots clé sont:
+
+    URL - URL du document HTML
+    Client -  adresse IP et nom de domaine
+    Date - la date
+    LastModified - la date de dernière modification
+
+Quelques entêtes HTTP utile inclus sont :
+    Server - version du logiciel du serveur
+    Content-length - la taille du document
+    Referer - document de provenance
+
+Ce filtre à les préférences configurables suivantes:
+* DocumentInfo.info
+
+  liste des information à afficher, séparées par une virgule
+  Exemple: "URL,Server,Client,LastModified,Date"
+
+* DocumentInfo.location
+
+  place l'information en haut ou en bas de la page.
+
+* DocumentInfo.align
+
+  aligne l'information a droite ou a gauche de la page.
+
+* DocumentInfo.htmlAfter
+
+  HTML à insérer avant l'information
+
+* DocumentInfo.htmlBefore
+
+  HTML à insérer après l'information
+

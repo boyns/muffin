@@ -1,0 +1,21 @@
+Crée un lien pour chaques mots du glossaire contenu dans un document HTML.
+Glossaire est configuré pour utiliser un fichier qui est situé
+dans le répertoire Muffin. Ce fichiers contiens une liste de mots
+suivi par  une URL. exemple:
+
+Muffin http://muffin.doit.org/
+java http://java.sun.com/
+
+
+avec cette exemple chaque mot du document HTML sera remplacé
+automatiquement avec ceci:
+<a href="http://muffin.doit.org/">muffin</a>
+ et java avec
+<a href="http://java.sun.com/">java</a>.
+
+Préférences:
+
+* Glossary.glossaryfile
+
+  position du fichier glossaire.
+

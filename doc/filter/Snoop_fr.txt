@@ -1,0 +1,8 @@
+Snoop peut afficher les headers de tout les demandes HTTP et leurs réponses.
+Ce filtre est ideal pour le developpement web, pour
+voir les d'information qui permettent de debugger plus facilement.
+Snoop est utile pour debuguer beaucoup de problemes HTTP.
+
+pas de  preferences
+
+

@@ -1,0 +1,30 @@
+Qu'est-ce qu'un cookie? la meilleur réponse à cette question peut
+être trouvée à la FAQ de Lincoln D. Stein située:
+
+    http://www.w3.org/Security/Faq/
+
+Il y a de sérieuses questions de vie privée au sujet de cookie
+qui sont très bien expliquées dans la FAQ. Basiquement il est possible
+pour des sites web de construire un profile en fonction des cookies
+des sites que vous avez déjà visités.
+
+concerné?? si oui, utilisez CookieMonster.
+
+CookieMonster regarde toute les requêtes HTTP et les réponses HTTP
+pour les cookies. Quand Muffin en trouve,  CookieMonster peut être
+configuré pour manger les cookies en demande ou en réponses, voir
+les deux. "manger" dans ce cas signifie que l'entête HTTP 
+correspondant sera enlevé avant d'être envoyé au serveur ou au
+navigateur. 
+
+Ce filtre à les préférences configurables suivante:
+* CookieMonster.eatReplyCookies
+
+  mange les cookies envoyés par le serveur. Cela enlève tout les
+  headers Set-Cookie
+
+* CookieMonster.eatRequestCookies
+
+  mange les cookies envoyés par le navigateur. Cela enlève
+  tous les  Cookie headers.
+

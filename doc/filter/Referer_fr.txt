@@ -1,0 +1,17 @@
+Referer enlève le 'Referer information' avant de l'envoyer au serveur
+web. les informations Referer permette de savoir quelle
+page vous avez visualisé avant d'arriver sur un autre site. dans certaine 
+circonstance cela viol la vie privée.
+
+
+Ce filtre à les préférences configurables suivantes:
+
+* Referer.referer
+
+  valeur Referer a envoyer. Une valeur a NONE effacera le header.
+
+* Referer.allowSameDomain
+
+  Autorise des information referer non modifier, si la demande provient
+  de la meme URL ainsi que du meme domaine.
+

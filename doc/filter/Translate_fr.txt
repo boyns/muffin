@@ -1,0 +1,15 @@
+Ce filtre peut être utilisé comme un 'reverse proxy' un peu comme les 
+directives ProxyPass et  ProxyPassReverse du serveur apache.
+les regles sont stockées dans un fichier avec une regle par ligne.
+chaque ligne contient un nom de regle, une espace, une expression 
+regulière, une espace, et le masque de substitution. exemple:
+ 
+    PASS ^http://proxyservername:51966/(.*) http://www.foo.com/$1 
+    REVERSE ^http://www.foo.com/(.*) http://proxyservername:51966/$1
+
+préférences:
+
+* Translate.rules
+
+  emplacement du fichier de regle, par défaut: ~/Muffin/translate.
+

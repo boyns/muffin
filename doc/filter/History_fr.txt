@@ -1,0 +1,7 @@
+filtre expérimental qui garde la trace de tout les accès au URL et peut
+être affiché grâce a cette URL:
+
+    http://org.doit.muffin.filter.History/
+
+ce filtre n'est pas fini.
+

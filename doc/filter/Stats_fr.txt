@@ -1,0 +1,7 @@
+Maintient de différentes statistiques sur votre session HTTP. il peut être
+utilisé pour connaître la taille exact d'une page HTML.
+
+cliquer sur rafraîchir pour afficher les stats, de la session en cours.
+
+pas de préférences
+

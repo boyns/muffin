@@ -1,0 +1,14 @@
+Preview peut être utilisé pour voir le contenu d'un document HTML
+avant de l'envoyer au navigateur. le contenu sera accepter ou refuser.
+les images GIF et jpeg sont affiché dans une fenêtre. Le code
+html est affiché dans une fenêtre texte et peut être modifié avant
+l'envoi au navigateur. c'est vraiment très pratique pour modifier
+le HTML au vol. Ne pas hesiter à redimmensioner la fenetre pour les images.
+
+Ce filtre à les préférences configurables suivantes:
+
+* Preview.contentTypes
+
+  Liste des contenus à prévisualiser. On peut spécifier un
+  type partielle.  "text" inclu  "text/plain" et "text/html".
+

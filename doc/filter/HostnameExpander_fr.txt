@@ -1,0 +1,22 @@
+Essaye de résoudre un nom de domaine sans point en un valide
+www.domaine.{com,edu,net,org}. Par exemple, une requête de
+"http://yahoo/" sera recherché puis trouvera www.yahoo.com.
+Le résultat final sera "http://www.yahoo.com/".
+
+Ce filtre à les préférences configurables suivante:
+
+* HostnameExpander.defaultDomain
+
+  votre nom de domaine qui peut être utilisé pour les connexions
+  qui n'inclut pas de domaine
+
+* HostnameExpander.prefix
+
+  une liste de prefixe séparée par une virgule.
+  par défaut: www.,home.,web.,http.
+
+* HostnameExpander.suffix
+
+  une liste de suffixe séparée par une virgule.
+  par défaut: .com,.edu,.net,.org
+

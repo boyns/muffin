@@ -1,0 +1,34 @@
+AnimationKiller peut détecter, modifier, et éliminer les animations
+GIF89a. C'est possible en examinant/modifiant les images GIF
+lorsqu'elles passent à travers Muffin. Les animations GIF sont typiquement 
+implentées en utilisant une extension spécial. Quand elle est trouvée,
+AnimationKiller peut faire une ou deux choses:
+
+* Modifier le nombre de boucle d'animations pour quelque chose de plus
+  supportable. La plupart des animations bouclent toujours et
+  consomment des ressources CPU. Changer le nombre de boucle pour
+  un nombre, cela limite à cette valeur le nombre total de boucle,
+  aprés l'animation cessera.  
+
+* Convertir les animations en une image "non trouvée". Ceci est 
+  préférable si vous ne voulez pas voir ou télécharger une 
+  quelconque animation. Dans la plupart des cas votre navigateur
+  recevra une image incomplète et affichera l'icone d'une image
+  non reçu.
+
+Ce filtre à les préférences configurables suivantes:
+
+* Boucles maximums
+
+  Modifie le nombre de boucle de l'animation.
+  Avec comme valeur: 
+  
+    -1   Affiche l'image et arrête l'animation aussitôt que possible
+     0   Laisse l'animation
+     1   Boucle une fois
+     2   Boucle deux fois et arrête l'animation
+
+* Stop les Animations
+
+  Converti les animations GIF en image non chargée/trouvée.
+

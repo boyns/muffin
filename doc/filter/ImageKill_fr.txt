@@ -1,0 +1,67 @@
+ImageKill enlève les images suivant un certain critère de
+taille. L'idée est que beaucoup de publicité possède  un
+certain ratio largeur/hauteur grâce auxquelles nous pouvons
+les reconnaître. Il est possible d'enlever les publicités
+qui ne s'auto-identifie pas.
+
+Ce filtre marche en examinant l'URL source de l'image,
+regarde les attributs "width" et "height" (largeur,hauteur).
+Seul les images contenant ces attribut seront autorisé
+d'affichage(ces souvent le cas). L'avantage est qu'il n'est
+pas nécessaire de télécharger l'image, juste regarder sa taille
+pour autoriser ou non le chargement.
+
+Pour ne pas enlever des images que vous voulez voir, même
+si il ont un ratio 'publicité' ImageKill peut éviter de les 
+enlever dans deux cas:
+
+* l'image source contient une balise spécifié;
+
+* l'image source contient le "usemap" attribut.
+
+A la place de supprimer les images, vous pouvez aussi spécifier
+une URL d'une image en remplacement. L'auteur utilise simplement
+une image gif de 1x1 pixel de couleur bleu. Les navigateurs 
+adapte la taille automatiquement. C'est une bonne solution pour garder
+la mise en page du document HTML.
+
+Ce filtre à les préférences configurables suivantes:
+
+* ImageKill.minheight
+
+  seulement enlever les images qui ont n pixel de hauteur.
+
+* ImageKill.minwidth
+
+  seulement enlever les images qui ont n pixel de largeur.
+
+* ImageKill.ratio
+
+  Enlève les images qui ont plus de n fois la largeur de la hauteur
+  (et doivent avoir la taille minimum donné précédemment)
+
+* ImageKill.exclude
+
+  Ne pas enlever les images qui contiennent une expression donnée.
+
+* ImageKill.keepmaps
+
+  Ne pas enlever les images contenant l'attribut "usemap" dans
+  leur source.
+
+* ImageKill.rmSizes
+  
+  Une liste de taille fixe; Vous pouvez l'utiliser à la place
+  ou en addition du ration l/h; seulement spécifier les taille
+  sous la forme lxh séparé par une virgule, sans espace.
+  640x400 par exemple
+
+* ImageKill.replace
+
+  à la place d'enlever l'image si cette case est cochée, 
+  l'image sera remplacé par celle donnée.
+
+* ImageKill.replaceURL
+
+  l'URL de remplacement d'image. ce peut être un fichier.
+
