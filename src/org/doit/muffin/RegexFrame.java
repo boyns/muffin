@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.7 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: RegexFrame.java,v 1.8 2003/05/11 23:04:40 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -52,93 +52,97 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 
     RegexFrame()
     {
-	super(Strings.getString("regex.title"));
+        super(Strings.getString("regex.title"));
 
-	Button b;
-	Panel panel = new Panel();
-	GridBagLayout layout = new GridBagLayout();
+        Button b;
+        Panel panel = new Panel();
+        GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
-	GridBagConstraints c;
+        GridBagConstraints c;
 
-	Label l = new Label(Strings.getString("regex.label")+":", Label.RIGHT);
-	panel.add(l);
+        Label l = new Label(Strings.getString("regex.label")+":", Label.RIGHT);
+        panel.add(l);
 
-	pattern = new TextField(32);
-	panel.add(pattern);
+        pattern = new TextField(32);
+        panel.add(pattern);
 
-	b = new Button(Strings.getString("regex.match"));
-	b.setActionCommand("doMatch");
-	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(b, c);
-	panel.add(b);
+        b = new Button(Strings.getString("regex.match"));
+        b.setActionCommand("doMatch");
+        b.addActionListener(this);
+        c = new GridBagConstraints();
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        layout.setConstraints(b, c);
+        panel.add(b);
 
-	add("North", panel);
+        add("North", panel);
 
-	text = new TextArea();
-	text.setEditable(true);
-	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
-	text.setText(Strings.getString("regex.text"));
-	add("Center", text);
+        text = new TextArea();
+        text.setEditable(true);
+        //text.setFont(new Font("Fixed", Font.PLAIN, 12));
+        text.setText(Strings.getString("regex.text"));
+        add("Center", text);
 
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 2));
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	add("South", buttonPanel);
+        Panel buttonPanel = new Panel();
+        buttonPanel.setLayout(new GridLayout(1, 2));
+        b = new Button(Strings.getString("clear"));
+        b.setActionCommand("doClear");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("close"));
+        b.setActionCommand("doClose");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        add("South", buttonPanel);
 
-	addWindowListener(this);
+        addWindowListener(this);
 
-	setSize(getPreferredSize());
-	pack();
-	show();
+        setSize(getPreferredSize());
+        pack();
+        show();
     }
 
     public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand();
+        String arg = event.getActionCommand();
 
-	if ("doClose".equals(arg))
-	{
-	    setVisible(false);
-	}
-	else if ("doClear".equals(arg))
-	{
-	    text.setText("");
-	}
-	else if ("doMatch".equals(arg))
-	{
-	    try
-	    {
-		RE re = new RE(pattern.getText());
+        if ("doClose".equals(arg))
+        {
+            setVisible(false);
+        }
+        else if ("doClear".equals(arg))
+        {
+            text.setText("");
+        }
+        else if ("doMatch".equals(arg))
+        {
+            try
+            {
+                RE re = new RE(pattern.getText());
 
-		if (match != null)
-		{
-		    match = re.getMatch(text.getText(), match.getEndIndex(), text.getText().length());
+                if (match != null)
+                {
+                    match = re.getMatch(text.getText(), match.getEndIndex(), text.getText().length());
 
-		}
-		else
-		{
-		    match = re.getMatch(text.getText());
-		}
+                }
+                else
+                {
+                    match = re.getMatch(text.getText());
+                }
 
-		if (match != null)
-		{
-		    text.select(match.getStartIndex(), match.getEndIndex());
-		}
-	    }
-	    catch (REException e)
-	    {
-		System.out.println(e);
-	    }
-	}
+                if (match != null)
+                {
+                    text.select(match.getStartIndex(), match.getEndIndex());
+                }
+                else
+                {
+                    text.select(0, 0); // un-select
+                }
+            }
+            catch (REException e)
+            {
+                System.out.println(e);
+            }
+        }
     }
 
     public void windowActivated(WindowEvent e)
@@ -151,7 +155,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 
     public void windowClosing(WindowEvent e)
     {
-	setVisible(false);
+        setVisible(false);
     }
 
     public void windowClosed(WindowEvent e)
