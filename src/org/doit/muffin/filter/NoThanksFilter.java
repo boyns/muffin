@@ -1,4 +1,4 @@
-/* $Id: NoThanksFilter.java,v 1.10 2000/10/10 05:15:03 boyns Exp $ */
+/* $Id: NoThanksFilter.java,v 1.11 2003/06/07 10:41:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,25 +29,17 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.*;
 
-public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
+public class NoThanksFilter extends AbstractContentFilter implements RequestFilter, ReplyFilter
 {
-    NoThanks factory;
-    Prefs prefs;
-    InputObjectStream in = null;
-    OutputObjectStream out = null;
-    Request request = null;
-    Reply reply = null;
+    private Request request = null;
+    private Reply fReply = null;
 
     public NoThanksFilter(NoThanks factory)
     {
-	this.factory = factory;
+	super(factory);
+    fFactory = factory;
     }
     
-    public void setPrefs(Prefs prefs)
-    {
-	this.prefs = prefs;
-    }
-
     public void filter(Request request) throws FilterException
     {
 	this.request = request;
@@ -55,64 +47,53 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	String url = request.getURL();
 
 	/* Check for redirect */
-	String location = factory.redirect(url);
+	String location = fFactory.redirect(url);
 	if (location != null)
 	{
-	    factory.report(request, "redirect to " + location);
+	    fFactory.report(request, "redirect to " + location);
 	    request.setURL(location);
 	    return;
 	}
 
 	/* Check for killed URL */
-	if (factory.isKilled(url))
+	if (fFactory.isKilled(url))
 	{
-	    factory.report(request, "rejected " + url);
+	    fFactory.report(request, "rejected " + url);
 	    throw new FilterException("NoThanks URL " + url + " rejected");
 	}
 
-	factory.processHeaders(request, request);
+	fFactory.processHeaders(request, request);
     }
 
     public void filter(Reply reply) throws FilterException
     {
-	this.reply = reply;
+    this.fReply = reply;
 
-	String content = reply.getContentType();
-	if (content != null && factory.killContent(content))
-	{
-	    factory.report(request, "rejected " + content);
-	    throw new FilterException("NoThanks content-type " + content + " rejected");
-	}
+    String content = reply.getContentType();
+    if (content != null && fFactory.killContent(content))
+    {
+        fFactory.report(request, "rejected " + content);
+        throw new FilterException("NoThanks content-type " + content + " rejected");
+    }
 
-	factory.processHeaders(request, reply);
+    fFactory.processHeaders(request, reply);
     }
     
-    public boolean needsFiltration(Request request, Reply reply)
-    {
-	this.request = request;
-	this.reply = reply;
-	String s = reply.getContentType();
-	return s != null
-	    && (s.startsWith("text/html") || s.startsWith("application/x-javascript"));
+    /**     * @see org.doit.muffin.filter.AbstractContentFilter#doNeedsFiltration(String)     */
+    protected boolean doNeedsFiltration(String contentType){
+        return contentType != null
+            && (contentType.startsWith("text/html") || contentType.startsWith("application/x-javascript"));
     }
     
-    public void setInputObjectStream(InputObjectStream in)
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doRun(ObjectStreamToInputStream, ObjectStreamToOutputStream)
+     */
+    protected void doRun(
+        ObjectStreamToInputStream ostis,
+        ObjectStreamToOutputStream ostos)
+        throws IOException
     {
-	this.in = in;
-    }
-
-    public void setOutputObjectStream(OutputObjectStream out)
-    {
-	this.out = out;
-    }
-
-    public void run()
-    {	
-	Thread.currentThread().setName("NoThanks");
-
-	try
-	{
-	    if ("application/x-javascript".equals(reply.getContentType()))
+	    if ("application/x-javascript".equals(fReply.getContentType()))
 	    {
 		filterJavascript();
 	    }
@@ -121,22 +102,6 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 		filterHtml();
 	    }
 	}
-	catch (IOException ioe)
-	{
-	    ioe.printStackTrace();
-	}
-	finally
-	{
-	    try
-	    {
-		out.flush();
-		out.close();
-	    }
-	    catch (IOException ioe)
-	    {
-	    }
-	}
-    }
     
     private void filterJavascript()
 	throws IOException
@@ -146,15 +111,15 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 
 	// read the javascript code into one token
 	// so it can be filtered 
-	while ((obj = in.read()) != null)
+	while ((obj = getInputObjectStream().read()) != null)
 	{
 	    script.append(((ByteArray)obj));
 	}
 
-	script = factory.processScript(request, script);
+	script = fFactory.processScript(request, script);
 	if (script != null)
 	{
-	    out.write(script);
+	    getOutputObjectStream().write(script);
 	}
     }
 
@@ -165,7 +130,7 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	boolean killingComment = false;
 
 	Object obj;
-	while ((obj = in.read()) != null)
+	while ((obj = getInputObjectStream().read()) != null)
 	{
 	    Token token = (Token) obj;
 	    if (killingComment && token.getType() != Token.TT_COMMENT)
@@ -177,23 +142,23 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 	    {
 	    case Token.TT_COMMENT:
 		String s = token.toString();
-		killingComment = factory.killComment(s);
+		killingComment = fFactory.killComment(s);
 		if (killingComment)
 		{
-		    factory.report(request, "removed comment " + s);
+		    fFactory.report(request, "removed comment " + s);
 		}
 		// AJP modification: Ignore everything up to endTag, if set
 		else if (endTag == null)
 		{
-		    out.write(token);
+		    getOutputObjectStream().write(token);
 		}
 		break;
 
 	    case Token.TT_SCRIPT:
-		token = factory.processScript(request, token);
+		token = fFactory.processScript(request, token);
 		if (token != null)
 		{
-		    out.write(token);
+		    getOutputObjectStream().write(token);
 		}
 		break;
 		    
@@ -211,58 +176,58 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 		    continue;
 		}
 		    
-		if (factory.stripTag(tag.name()))
+		if (fFactory.stripTag(tag.name()))
 		{
-		    factory.report(request, "stripped " + tag.name());
-		    endTag = factory.stripUntil(tag.name());
+		    fFactory.report(request, "stripped " + tag.name());
+		    endTag = fFactory.stripUntil(tag.name());
 		    output = false;
 		}
-		if (output && factory.replaceTag(tag.name()))
+		if (output && fFactory.replaceTag(tag.name()))
 		{
-		    Tag newTag = factory.replaceTagWith(tag.name());
-		    factory.report(request, "replaced " + tag.name()
+		    Tag newTag = fFactory.replaceTagWith(tag.name());
+		    fFactory.report(request, "replaced " + tag.name()
 				   + " with " + newTag.name());
 		    tag = newTag;
 		}
-		if (output && factory.checkTagAttributes(tag))
+		if (output && fFactory.checkTagAttributes(tag))
 		{
-		    if (factory.processTagAttributes(request, tag))
+		    if (fFactory.processTagAttributes(request, tag))
 		    {
 			output = false;
-			if (factory.hasEnd(tag.name()))
+			if (fFactory.hasEnd(tag.name()))
 			{
 			    endTag = "/" + tag.name();
 			}
 		    }
 		}
-		if (output && factory.checkTag(tag.name()) && tag.attributeCount() > 0)
+		if (output && fFactory.checkTag(tag.name()) && tag.attributeCount() > 0)
 		{
 		    Enumeration e = tag.enumerate();
 		    while (e.hasMoreElements())
 		    {
 			String attr = (String) e.nextElement();
-			if (factory.checkAttr(attr))
+			if (fFactory.checkAttr(attr))
 			{
 			    String link = tag.get(attr);
-			    if (link != null && factory.isKilled(link))
+			    if (link != null && fFactory.isKilled(link))
 			    {
 				/* Can't kill tags like body and head.  Instead
 				   remove the offending attribute. */
-				if (factory.isRequired(tag.name()))
+				if (fFactory.isRequired(tag.name()))
 				{
-				    factory.report(request, "removed "
+				    fFactory.report(request, "removed "
 						   + attr + "=" + link);
 				    tag.remove(attr);
 				}
 				/* Kill the tag completely. */
 				else
 				{
-				    factory.report(request, "killed "
+				    fFactory.report(request, "killed "
 						   + tag.name()
 						   + " with "
 						   + attr + "=" + link);
 				    output = false;
-				    if (factory.hasEnd(tag.name()))
+				    if (fFactory.hasEnd(tag.name()))
 				    {
 					endTag = "/" + tag.name();
 				    }
@@ -275,18 +240,20 @@ public class NoThanksFilter implements ContentFilter, RequestFilter, ReplyFilter
 		if (output)
 		{
 		    token.importTag(tag);
-		    out.write(token);
+		    getOutputObjectStream().write(token);
 		}
 		break;
 		    
 	    default:
 		if (endTag == null)
 		{
-		    out.write(token);
+		    getOutputObjectStream().write(token);
 		}
 		break;
 	    }
 	}
     }
+    
+    private NoThanks fFactory;
 }
 
