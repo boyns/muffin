@@ -3,24 +3,21 @@ package org.doit.muffin.regexp.jdk14;
 //import java.util.regex.Pattern;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
+import org.doit.muffin.regexp.AbstractPatternAdapter;
 
 /**
  * @author bw@xmlizer.biz
  *
  */
-public class PatternAdapter implements Pattern {
+public class PatternAdapter extends AbstractPatternAdapter {
 
 	
 	public PatternAdapter(String pattern){
-		this(pattern, false);
+		super(pattern);
 	}
 	
 	public PatternAdapter(String pattern, boolean ignoreCase){
-		if (ignoreCase){
-			makePatternIgnoreCase(pattern);
-		} else {
-			makePattern(pattern);
-		}
+		super(pattern, ignoreCase);
 	}
 
 	/**
@@ -58,12 +55,17 @@ public class PatternAdapter implements Pattern {
 	public String substituteAll(String input, String replace) {
 		return fPattern.matcher(input).replaceAll(replace);
 	}
-	
-	private void makePattern(String pattern){
+
+	/**
+	 * @see org.doit.muffin.regexp.AbstractPatternAdapter#doMakePattern(java.lang.String)
+	 */
+	protected void doMakePattern(String pattern) {
 		this.fPattern = java.util.regex.Pattern.compile(pattern);
 	}
-	
-	private void makePatternIgnoreCase(String pattern){
+	/**
+	 * @see org.doit.muffin.regexp.AbstractPatternAdapter#doMakePatternIgnoreCase(java.lang.String)
+	 */
+	protected void doMakePatternIgnoreCase(String pattern) {
 		this.fPattern = java.util.regex.Pattern.compile(
 			pattern,
 			java.util.regex.Pattern.CASE_INSENSITIVE
