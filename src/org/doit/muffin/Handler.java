@@ -1,7 +1,7 @@
-/* $Id: Handler.java,v 1.14 2003/01/11 16:12:12 dougporter Exp $ */
+/* $Id: Handler.java,v 1.15 2003/05/03 09:40:04 flefloch Exp $ */
 
 /*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
  *
  * This file is part of Muffin.
  *
@@ -22,12 +22,23 @@
  */
 package org.doit.muffin;
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.net.URL;
-import org.doit.io.*;
-import org.doit.util.*;
+import java.util.zip.GZIPInputStream;
+
+import javax.net.SocketFactory;
+
+import org.doit.io.ByteArray;
+import org.doit.io.HtmlObjectStream;
+import org.doit.io.InputObjectStream;
+import org.doit.io.OutputObjectStream;
+import org.doit.io.SourceObjectStream;
+import org.doit.util.ReusableThread;
 
 /**
  * HTTP transaction handler.  A handler is created by muffin.Server for
@@ -36,11 +47,12 @@ import org.doit.util.*;
  *
  * @see muffin.Server
  * @author Mark Boyns
+ * @author Fabien Le Floc'h (decryption server option)
  */
-class Handler implements Runnable
+public class Handler implements Runnable
 {
-    static final boolean DEBUG = false;
-    
+    static final boolean DEBUG = true;
+
     Monitor monitor = null;
     FilterManager manager = null;
     Options options = null;
@@ -58,12 +70,16 @@ class Handler implements Runnable
     /**
      * Create a Handler.
      */
-    Handler(Monitor m, FilterManager manager, Options options, Socket socket)
+    protected Handler(
+        Monitor m,
+        FilterManager manager,
+        Options options,
+        Socket socket)
     {
-	this.monitor = m;
-	this.manager = manager;
-	this.options = options;
-	this.socket = socket;
+        this.monitor = m;
+        this.manager = manager;
+        this.options = options;
+        this.socket = socket;
     }
 
     /**
@@ -71,16 +87,16 @@ class Handler implements Runnable
      */
     synchronized void close()
     {
-	if (client != null)
-	{
-	    client.close();
-	    client = null;
-	}
-	if (http != null)
-	{
-	    http.close();
-	    http = null;
-	}
+        if (client != null)
+        {
+            client.close();
+            client = null;
+        }
+        if (http != null)
+        {
+            http.close();
+            http = null;
+        }
     }
 
     /**
@@ -88,208 +104,233 @@ class Handler implements Runnable
      */
     void flush()
     {
-	if (client != null)
-	{
-	    try
-	    {
-		client.getOutputStream().flush();
-	    }
-	    catch (IOException e)
-	    {
-		e.printStackTrace();
-	    }
-	}
+        if (client != null)
+        {
+            try
+            {
+                client.getOutputStream().flush();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void run()
     {
-	boolean keepAlive = false;
-	Exception reason = null;
+        boolean keepAlive = false;
+        Exception reason = null;
 
-	Thread.currentThread().setName("Handler("
-					 + socket.getInetAddress().getHostAddress()
-					 + ")");
+        Thread.currentThread().setName(
+            "Handler(" + socket.getInetAddress().getHostAddress() + ")");
 
-	try
-	{
-	    client = new Client(socket);
-	    client.setTimeout(options.getInteger("muffin.readTimeout"));
-	}
-	catch (IOException e)
-	{
-	    e.printStackTrace();
-	    return;
-	}
+        try
+        {
+            client = createClient(socket);
+            client.setTimeout(options.getInteger("muffin.readTimeout"));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return;
+        }
 
-	try
-	{
-	    monitor.register(this);
+        try
+        {
+            monitor.register(this);
 
-	    do
-	    {
-		request = null;
-		reply = null;
-		filterList = null;
-		idle = System.currentTimeMillis();
-		monitor.update(this);
+            do
+            {
+                request = null;
+                reply = null;
+                filterList = null;
+                idle = System.currentTimeMillis();
+                monitor.update(this);
 
-		try
-		{
-		    request = client.read();
-		}
-		catch (IOException e)
-		{
-		    e.printStackTrace();
-		    break;
-		}
-
-		idle = 0;
-		monitor.update(this);
-
-		try
-		{
-		    keepAlive = processRequest();
-		}
-		catch (IOException ioe)
-		{
-		    reason = ioe;
-		    keepAlive = false;
-		}
-		catch (FilterException fe)
-		{
-		    reason = fe;
-		    keepAlive = false;
-		}
-
-		if (request != null && reply != null)
-		{
-		    // XXX insert the number of bytes read into the
-		    // reply content-length for logging.
-		    if (reply != null && currentLength > 0)
-		    {
-			reply.setHeaderField("Content-length", currentLength);
-		    }
-
-		    LogFile logFile = Main.getLogFile();
-		    if (logFile != null)
-		    {
-			logFile.log(request, reply);
-		    }
-		}
-	    }
-	    while (keepAlive);
-	}
-	finally
-	{
-	    monitor.unregister(this);
-	}
-
-	if (reason != null && 
-            reason.getMessage() != null && 
-            reason.getMessage().indexOf("Broken pipe") == -1)
-	{
-	    if (client != null && request != null)
-	    {
-		error(client.getOutputStream(), reason, request);
-	    }
-
-	    // don't print filter exceptions
-	    if (! (reason instanceof FilterException))
-	    {
-                if (request != null) {
-                    System.out.println ("Exception getting url: " + request.getURL());
+                try
+                {
+                    request = client.read();
                 }
-		reason.printStackTrace();
-	    }
-	}
-	
-	close();
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    break;
+                }
+
+                idle = 0;
+                monitor.update(this);
+
+                try
+                {
+                    keepAlive = processRequest();
+                }
+                catch (IOException ioe)
+                {
+                    reason = ioe;
+                    keepAlive = false;
+                }
+                catch (FilterException fe)
+                {
+                    reason = fe;
+                    keepAlive = false;
+                }
+
+                if (request != null && reply != null)
+                {
+                    // XXX insert the number of bytes read into the
+                    // reply content-length for logging.
+                    if (reply != null && currentLength > 0)
+                    {
+                        reply.setHeaderField("Content-length", currentLength);
+                    }
+
+                    LogFile logFile = Main.getLogFile();
+                    if (logFile != null)
+                    {
+                        logFile.log(request, reply);
+                    }
+                }
+            }
+            while (keepAlive);
+        }
+        finally
+        {
+            monitor.unregister(this);
+        }
+
+        if (reason != null
+            && reason.getMessage() != null
+            && reason.getMessage().indexOf("Broken pipe") == -1)
+        {
+            if (client != null && request != null)
+            {
+                error(client.getOutputStream(), reason, request);
+            }
+
+            // don't print filter exceptions
+            if (!(reason instanceof FilterException))
+            {
+                if (request != null)
+                {
+                    System.out.println(
+                        "Exception getting url: " + request.getURL());
+                }
+                reason.printStackTrace();
+            }
+        }
+
+        close();
+    }
+
+    protected boolean verifyUrlSyntax(Request request)
+    {
+        boolean syntaxOk = true;
+        String url = request.getURL();
+        if (url.startsWith("/"))
+        {
+            request.setURL(
+                "http://"
+                    + Main.getMuffinHost()
+                    + ":"
+                    + options.getString("muffin.port")
+                    + url);
+        }
+        else if (url.startsWith("https://"))
+        {
+            System.out.println("Netscape keep-alive bug: " + url);
+            syntaxOk = false;
+        }
+        else if (!url.startsWith("http://"))
+        {
+            System.out.println("Unknown URL: " + url);
+            syntaxOk = false;
+        }
+        return syntaxOk;
+    }
+
+    protected Client createClient(Socket socket) throws IOException
+    {
+        return new Client(socket);
     }
 
     boolean processRequest() throws IOException, FilterException
     {
-	boolean keepAlive = false;
-	
-	while (reply == null)
-	{
-	    boolean secure = false;
+        boolean keepAlive = false;
 
-	    filterList = manager.createFilters(request.getURL());
+        while (reply == null)
+        {
+            boolean secure = false;
 
-	    if (request.getCommand().equals("CONNECT"))
-	    {
-		secure = true;
-	    }
-	    else if (request.getURL().startsWith("/"))
-	    {
-		request.setURL("http://" + Main.getMuffinHost()
-				+ ":" + options.getString("muffin.port")
-				+ request.getURL());
-	    }
-	    else if (request.getURL().startsWith("https://"))
-	    {
-		System.out.println("Netscape keep-alive bug: " + request.getURL());
-		return false;
-	    }
-	    else if (! request.getURL().startsWith("http://"))
-	    {
-		System.out.println("Unknown URL: " + request.getURL());
-		return false;
-	    }
+            filterList = manager.createFilters(request.getURL());
 
-	    /* Client wants Keep-Alive */
-	    if (options.getBoolean("muffin.proxyKeepAlive"))
-	    {
-		keepAlive = (request.containsHeaderField("Proxy-Connection")
-			     && request.getHeaderField("Proxy-Connection").equals("Keep-Alive"));
-	    }
-
-	    /* Filter the request. */
-	    if (!options.getBoolean("muffin.passthru"))
-	    {
-		/* Redirect the request if necessary */
-		String location = redirect(request);
-		if (location != null)
-		{
-		    Reply r = Reply.createRedirect(location);
-		    client.write(r);
-		    return keepAlive;
-		}
-
-		filter(request);
-	    }
-
-	    /* First look for any HttpFilters */
-	    http = createHttpFilter(request);
-	    if (http == null)
-	    {
-		/* None found.  Use http or https relay. */
-		if (secure)
-		{
-		    http = createHttpsRelay();
-		}
-		else
-		{
-		    http = createHttpRelay();
-		}
-	    }
-
-	    try
-	    {
-		http.sendRequest(request);
-		if (http instanceof Http)
-		{
-		    ((Http)http).setTimeout(options.getInteger("muffin.readTimeout"));
-		}
-		reply = http.recvReply(request);
+            if (request.getCommand().equals("CONNECT"))
+            {
+                secure = true;
             }
-	    catch (RetryRequestException e)
-	    {
-		http.close();
-		http = null;
-	    }
-            
-            if (http != null) {
+
+            else if (!verifyUrlSyntax(request))
+            {
+                return false;
+            }
+
+            /* Client wants Keep-Alive */
+            if (options.getBoolean("muffin.proxyKeepAlive"))
+            {
+                keepAlive =
+                    (request.containsHeaderField("Proxy-Connection")
+                        && request.getHeaderField("Proxy-Connection").equals(
+                            "Keep-Alive"));
+            }
+
+            /* Filter the request. */
+            if (!options.getBoolean("muffin.passthru"))
+            {
+                /* Redirect the request if necessary */
+                String location = redirect(request);
+                if (location != null)
+                {
+                    Reply r = Reply.createRedirect(location);
+                    client.write(r);
+                    return keepAlive;
+                }
+
+                filter(request);
+            }
+
+            /* First look for any HttpFilters */
+            http = createHttpFilter(request);
+            if (http == null)
+            {
+                /* None found.  Use http or https relay. */
+                if (secure)
+                {
+                    http = createHttpsRelay();
+                }
+                else
+                {
+                    http = createHttpRelay(request, socket);
+                }
+            }
+
+            try
+            {
+                http.sendRequest(request);
+                if (http instanceof Http)
+                {
+                    ((Http) http).setTimeout(
+                        options.getInteger("muffin.readTimeout"));
+                }
+                reply = http.recvReply(request);
+            }
+            catch (RetryRequestException e)
+            {
+                http.close();
+                http = null;
+            }
+
+            if (http != null)
+            {
 
                 /* Guess content-type if there aren't any headers.
                    Probably an upgraded HTTP/0.9 reply. */
@@ -297,7 +338,8 @@ class Handler implements Runnable
                 {
                     String url = request.getURL();
                     if (url.endsWith("/")
-                        || url.endsWith(".html") || url.endsWith(".htm"))
+                        || url.endsWith(".html")
+                        || url.endsWith(".htm"))
                     {
                         reply.setHeaderField("Content-type", "text/html");
                     }
@@ -308,7 +350,8 @@ class Handler implements Runnable
 
                 if (!options.getBoolean("muffin.passthru"))
                 {
-                    if (!options.getBoolean("muffin.dontUncompress")) {
+                    if (!options.getBoolean("muffin.dontUncompress"))
+                    {
                         uncompressContent(reply);
                     }
                     /* Filter the reply. */
@@ -329,7 +372,9 @@ class Handler implements Runnable
                 contentLength = -1;
                 try
                 {
-                    contentLength = Integer.parseInt(reply.getHeaderField("Content-length"));
+                    contentLength =
+                        Integer.parseInt(
+                            reply.getHeaderField("Content-length"));
                 }
                 catch (NumberFormatException e)
                 {
@@ -350,10 +395,17 @@ class Handler implements Runnable
                         client.setTimeout(timeout);
                         https.setTimeout(timeout);
 
-                        Copy cp = new Copy(client.getInputStream(), https.getOutputStream());
+                        Copy cp =
+                            new Copy(
+                                client.getInputStream(),
+                                https.getOutputStream());
                         ReusableThread thread = Main.getThread();
                         thread.setRunnable(cp);
-                        flushCopy(https.getInputStream(), client.getOutputStream(), -1, true);
+                        flushCopy(
+                            https.getInputStream(),
+                            client.getOutputStream(),
+                            -1,
+                            true);
                         client.close();
                     }
                     catch (InterruptedIOException iioe)
@@ -371,7 +423,7 @@ class Handler implements Runnable
                     {
                         if (http instanceof Http)
                         {
-                            ((Http)http).reallyClose();
+                            ((Http) http).reallyClose();
                         }
                         else
                         {
@@ -392,7 +444,7 @@ class Handler implements Runnable
                         client.close();
                     }
 
-                    reply.getContent ().close ();
+                    reply.getContent().close();
                 }
                 else
                 {
@@ -401,138 +453,161 @@ class Handler implements Runnable
 
                 http.close();
             }
-	}
+        }
 
-	return keepAlive;
+        return keepAlive;
     }
 
     HttpRelay createHttpsRelay() throws IOException
     {
-	HttpRelay http;
+        HttpRelay http;
 
-	if (options.useHttpsProxy())
-	{
-	    http = new Https(options.getString("muffin.httpsProxyHost"),
-			      options.getInteger("muffin.httpsProxyPort"),
-			      true);
-	}
-	else
-	{
-	    http = new Https(request.getHost(), request.getPort());
-	}
+        if (options.useHttpsProxy())
+        {
+            http =
+                new Https(
+                    options.getString("muffin.httpsProxyHost"),
+                    options.getInteger("muffin.httpsProxyPort"),
+                    true);
+        }
+        else if (options.useDecryptionServer())
+        {
+            http = new Https("localhost",
+                //Main.getMuffinHost(),
+    options.getInteger("muffin.decryptionServer.port"), false);
+        }
+        else
+        {
+            http = new Https(request.getHost(), request.getPort());
+        }
 
-	return http;
+        return http;
     }
-    
-    HttpRelay createHttpRelay() throws IOException
-    {
-	HttpRelay http;
-	
-	if (Httpd.sendme(request))
-	{
-	    http = new Httpd(socket);
-	}
-	else if (options.useHttpProxy())
-	{
-	    http = Http.open(options.getString("muffin.httpProxyHost"),
-			      options.getInteger("muffin.httpProxyPort"),
-			      true);
-	}
-	else
-	{
-	    http = Http.open(request.getHost(), request.getPort());
-	}
 
-	return http;
+    protected HttpRelay createHttpRelay(Request request, Socket socket)
+        throws IOException
+    {
+        HttpRelay http;
+
+        if (Httpd.sendme(request))
+        {
+            http = new Httpd(socket);
+        }
+        else if (options.useHttpProxy())
+        {
+            http =
+                Http.open(
+                    SocketFactory.getDefault(),
+                    options.getString("muffin.httpProxyHost"),
+                    options.getInteger("muffin.httpProxyPort"),
+                    true);
+        }
+        else
+        {
+            http =
+                Http.open(
+                    SocketFactory.getDefault(),
+                    request.getHost(),
+                    request.getPort());
+        }
+
+        return http;
     }
 
     HttpRelay createHttpFilter(Request request)
     {
-	for (int i = 0; i < filterList.length; i++)
-	{
-	    if (filterList[i] instanceof HttpFilter)
-	    {
-		HttpFilter filter = (HttpFilter) filterList[i];
-		if (filter.wantRequest(request))
-		{
-		    return filter;
-		}
-	    }
-	}
+        for (int i = 0; i < filterList.length; i++)
+        {
+            if (filterList[i] instanceof HttpFilter)
+            {
+                HttpFilter filter = (HttpFilter) filterList[i];
+                if (filter.wantRequest(request))
+                {
+                    return filter;
+                }
+            }
+        }
 
-	return null;
+        return null;
     }
 
     InputStream readChunkedTransfer(InputStream in) throws IOException
     {
-	ByteArrayOutputStream chunks = new ByteArrayOutputStream(8192);
-	int size = 0;
+        ByteArrayOutputStream chunks = new ByteArrayOutputStream(8192);
+        int size = 0;
 
-	contentLength = 0;
-	while ((size = reply.getChunkSize(in)) > 0)
-	{
-	    contentLength += size;
-	    copy(in, chunks, size, true);
-	    reply.readLine(in);
-	}
-	reply.getChunkedFooter(in);
+        contentLength = 0;
+        while ((size = reply.getChunkSize(in)) > 0)
+        {
+            contentLength += size;
+            copy(in, chunks, size, true);
+            reply.readLine(in);
+        }
+        reply.getChunkedFooter(in);
 
-	reply.removeHeaderField("Transfer-Encoding");
-	reply.setHeaderField("Content-length", contentLength);
+        reply.removeHeaderField("Transfer-Encoding");
+        reply.setHeaderField("Content-length", contentLength);
 
-	return new ByteArrayInputStream(chunks.toByteArray());
+        return new ByteArrayInputStream(chunks.toByteArray());
     }
-    
+
     void processContent() throws IOException
     {
-	InputStream in;
-	boolean chunked = false;
-	
-	if (reply.containsHeaderField("Transfer-Encoding")
-	    && reply.getTransferEncoding().equals("chunked"))
-	{
-	    in = readChunkedTransfer(reply.getContent());
-	    chunked = true;
-	}
-	else
-	{
-	    in = reply.getContent();
-	}
+        InputStream in;
+        boolean chunked = false;
 
-	if (in == null)
-	{
-	    System.out.println("No inputstream");
-	    return;
-	}
+        if (reply.containsHeaderField("Transfer-Encoding")
+            && reply.getTransferEncoding().equals("chunked"))
+        {
+            in = readChunkedTransfer(reply.getContent());
+            chunked = true;
+        }
+        else
+        {
+            in = reply.getContent();
+        }
 
-	if (options.getBoolean("muffin.passthru"))
-	{
-	    client.write(reply);
-	    copy(in, client.getOutputStream(), contentLength, true);
-	}
-	else if (contentNeedsFiltration())
-	{
-	    if (options.getBoolean("muffin.proxyKeepAlive"))
-	    {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
-		filter(in, buffer, contentLength, !chunked);
-		reply.setHeaderField("Content-length", buffer.size());
-		client.write(reply);
-		copy(new ByteArrayInputStream(buffer.toByteArray()),
-		     client.getOutputStream(), buffer.size(), false);
-	    }
-	    else
-	    {
-		reply.removeHeaderField("Content-length");
-		client.write(reply);
-		filter(in, client.getOutputStream(), -1, chunked ? false : true);
-	    }
-	}
-	else
-	{
-	    client.write(reply);
-	    copy(in, client.getOutputStream(), contentLength, true);
-	}
+        if (in == null)
+        {
+            System.out.println("No inputstream");
+            return;
+        }
+
+        if (options.getBoolean("muffin.passthru"))
+        {
+            client.write(reply);
+            copy(in, client.getOutputStream(), contentLength, true);
+        }
+        else if (contentNeedsFiltration())
+        {
+            if (options.getBoolean("muffin.proxyKeepAlive"))
+            {
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
+                filter(in, buffer, contentLength, !chunked);
+                reply.setHeaderField("Content-length", buffer.size());
+                client.write(reply);
+                copy(
+                    new ByteArrayInputStream(buffer.toByteArray()),
+                    client.getOutputStream(),
+                    buffer.size(),
+                    false);
+            }
+            else
+            {
+                reply.removeHeaderField("Content-length");
+                client.write(reply);
+                filter(
+                    in,
+                    client.getOutputStream(),
+                    -1,
+                    chunked ? false : true);
+            }
+        }
+        else
+        {
+            client.write(reply);
+            copy(in, client.getOutputStream(), contentLength, true);
+        }
     }
 
     /**
@@ -542,21 +617,21 @@ class Handler implements Runnable
      */
     String redirect(Request r)
     {
-	for (int i = 0; i < filterList.length; i++)
-	{
-	    if (filterList[i] instanceof RedirectFilter)
-	    {
-		RedirectFilter rf = (RedirectFilter) filterList[i];
-		if (rf.needsRedirection(r))
-		{
-		    String location = rf.redirect(r);
-		    return location;
-		}
-	    }
-	}
-	return null;
+        for (int i = 0; i < filterList.length; i++)
+        {
+            if (filterList[i] instanceof RedirectFilter)
+            {
+                RedirectFilter rf = (RedirectFilter) filterList[i];
+                if (rf.needsRedirection(r))
+                {
+                    String location = rf.redirect(r);
+                    return location;
+                }
+            }
+        }
+        return null;
     }
-	    
+
     /**
      * Pass a reply through the filters.
      *
@@ -564,13 +639,13 @@ class Handler implements Runnable
      */
     void filter(Reply r) throws FilterException
     {
-	for (int i = 0; i < filterList.length; i++)
-	{
-	    if (filterList[i] instanceof ReplyFilter)
-	    {
-		((ReplyFilter)(filterList[i])).filter(r);
-	    }
-	}
+        for (int i = 0; i < filterList.length; i++)
+        {
+            if (filterList[i] instanceof ReplyFilter)
+            {
+                ((ReplyFilter) (filterList[i])).filter(r);
+            }
+        }
     }
 
     /**
@@ -580,81 +655,86 @@ class Handler implements Runnable
      */
     void filter(Request r) throws FilterException
     {
-	for (int i = 0; i < filterList.length; i++)
-	{
-	    if (filterList[i] instanceof RequestFilter)
-	    {
-		((RequestFilter)(filterList[i])).filter(r);
-	    }
-	}
+        for (int i = 0; i < filterList.length; i++)
+        {
+            if (filterList[i] instanceof RequestFilter)
+            {
+                ((RequestFilter) (filterList[i])).filter(r);
+            }
+        }
     }
 
     boolean contentNeedsFiltration()
     {
-	for (int i = 0; i < filterList.length; i++)
-	{
-	    if (filterList[i] instanceof ContentFilter)
-	    {
-		ContentFilter filter = (ContentFilter) filterList[i];
-		if (filter.needsFiltration(request, reply))
-		{
-		    return true;
-		}
-	    }
-	}
-	return false;
+        for (int i = 0; i < filterList.length; i++)
+        {
+            if (filterList[i] instanceof ContentFilter)
+            {
+                ContentFilter filter = (ContentFilter) filterList[i];
+                if (filter.needsFiltration(request, reply))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    void filter(InputStream in, OutputStream out, int length, boolean monitored)
-	throws IOException
+    void filter(
+        InputStream in,
+        OutputStream out,
+        int length,
+        boolean monitored)
+        throws IOException
     {
-	InputObjectStream inputObjects = new InputObjectStream();
-	SourceObjectStream srcObjects;
+        InputObjectStream inputObjects = new InputObjectStream();
+        SourceObjectStream srcObjects;
 
-	if (reply.containsHeaderField("Content-type") &&
-	    reply.getContentType().equals("text/html"))
-	{
-	    srcObjects = new HtmlObjectStream(inputObjects);
-	}
-	else
-	{
-	    srcObjects = new SourceObjectStream(inputObjects);
-	}
-	
-	for (int i = 0; i < filterList.length; i++)
-	{
-	    if (filterList[i] instanceof ContentFilter)
-	    {
-		ContentFilter filter = (ContentFilter) filterList[i];
-		if (filter.needsFiltration(request, reply))
-		{
-		    OutputObjectStream oo = new OutputObjectStream();
-		    InputObjectStream io = new InputObjectStream(oo);
+        if (reply.containsHeaderField("Content-type")
+            && reply.getContentType().equals("text/html"))
+        {
+            srcObjects = new HtmlObjectStream(inputObjects);
+        }
+        else
+        {
+            srcObjects = new SourceObjectStream(inputObjects);
+        }
 
-		    filter.setInputObjectStream(inputObjects);
-		    filter.setOutputObjectStream(oo);
+        for (int i = 0; i < filterList.length; i++)
+        {
+            if (filterList[i] instanceof ContentFilter)
+            {
+                ContentFilter filter = (ContentFilter) filterList[i];
+                if (filter.needsFiltration(request, reply))
+                {
+                    OutputObjectStream oo = new OutputObjectStream();
+                    InputObjectStream io = new InputObjectStream(oo);
 
-		    ReusableThread rt = Main.getThread();
-		    rt.setPriority(Thread.MIN_PRIORITY);
-		    rt.setRunnable(filter);
+                    filter.setInputObjectStream(inputObjects);
+                    filter.setOutputObjectStream(oo);
 
-		    inputObjects = io;
-		}
-	    }
-	}
+                    ReusableThread rt = Main.getThread();
+                    rt.setPriority(Thread.MIN_PRIORITY);
+                    rt.setRunnable(filter);
 
-	srcObjects.setSourceInputStream(in);
-	srcObjects.setSourceLength(length);
+                    inputObjects = io;
+                }
+            }
+        }
 
-	ReusableThread srcThread = Main.getThread();
-	srcThread.setName("ObjectStream Source("
-			   + socket.getInetAddress().getHostAddress()
-			   + ")");
-	srcThread.setPriority(Thread.MIN_PRIORITY);
-	srcThread.setRunnable(srcObjects);
-	    
-	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-	copy(inputObjects, out, monitored);
+        srcObjects.setSourceInputStream(in);
+        srcObjects.setSourceLength(length);
+
+        ReusableThread srcThread = Main.getThread();
+        srcThread.setName(
+            "ObjectStream Source("
+                + socket.getInetAddress().getHostAddress()
+                + ")");
+        srcThread.setPriority(Thread.MIN_PRIORITY);
+        srcThread.setRunnable(srcObjects);
+
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        copy(inputObjects, out, monitored);
     }
 
     /**
@@ -662,7 +742,7 @@ class Handler implements Runnable
      */
     int getTotalBytes()
     {
-	return contentLength > 0 ? contentLength : 0;
+        return contentLength > 0 ? contentLength : 0;
     }
 
     /**
@@ -670,35 +750,38 @@ class Handler implements Runnable
      */
     int getCurrentBytes()
     {
-	return currentLength > 0 ? currentLength : 0;
+        return currentLength > 0 ? currentLength : 0;
     }
-    
+
     /** 
      * Uncompress gzip encoded content.
      */
-    void uncompressContent (Reply reply)
-    throws IOException {
+    void uncompressContent(Reply reply) throws IOException
+    {
         String type = reply.getHeaderField("Content-type");
-        if (type != null && 
-            type.toLowerCase().startsWith("text/html"))
+        if (type != null && type.toLowerCase().startsWith("text/html"))
         {
             String encoding = reply.getHeaderField("Content-Encoding");
-            if (encoding != null && 
-                encoding.toLowerCase().indexOf("gzip") != -1)
+            if (encoding != null
+                && encoding.toLowerCase().indexOf("gzip") != -1)
             {
                 // System.out.println ("gzipped: " + reply.getRequest ().getURL ()); //DEBUG
 
                 reply.removeHeaderField("Content-Encoding");
 
-                InputStream gzipIn = new GZIPInputStream(reply.getContent ());
+                InputStream gzipIn = new GZIPInputStream(reply.getContent());
 
                 /* fix the Content-length */
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 copy(gzipIn, buffer, -1, false);
                 // remember the old content length
-                String oldContentLength = reply.getHeaderField("Content-length");
-                if (oldContentLength != null) {
-                    reply.setHeaderField(Reply.GzipContentLengthAttribute, oldContentLength);
+                String oldContentLength =
+                    reply.getHeaderField("Content-length");
+                if (oldContentLength != null)
+                {
+                    reply.setHeaderField(
+                        Reply.GzipContentLengthAttribute,
+                        oldContentLength);
                 }
                 reply.setHeaderField("Content-length", buffer.size());
                 gzipIn = new ByteArrayInputStream(buffer.toByteArray());
@@ -717,19 +800,24 @@ class Handler implements Runnable
      */
     void error(OutputStream out, Exception e, Request r)
     {
-	StringBuffer buf = new StringBuffer();
-	buf.append("While trying to retrieve the URL: <a href=\""+r.getURL()+"\">"+r.getURL()+"</a>\r\n");
-	buf.append("<p>\r\nThe following error was encountered:\r\n<p>\r\n");
-	buf.append("<ul><li>" + e.toString() + "</ul>\r\n");
-	String s = new HttpError(options, 400, buf.toString()).toString();
-	try
-	{
-	    out.write(s.getBytes(), 0, s.length());
-	    out.flush();
-	}
-	catch (Exception ex)
-	{
-	}
+        StringBuffer buf = new StringBuffer();
+        buf.append(
+            "While trying to retrieve the URL: <a href=\""
+                + r.getURL()
+                + "\">"
+                + r.getURL()
+                + "</a>\r\n");
+        buf.append("<p>\r\nThe following error was encountered:\r\n<p>\r\n");
+        buf.append("<ul><li>" + e.toString() + "</ul>\r\n");
+        String s = new HttpError(options, 400, buf.toString()).toString();
+        try
+        {
+            out.write(s.getBytes(), 0, s.length());
+            out.flush();
+        }
+        catch (Exception ex)
+        {
+        }
     }
 
     /**
@@ -740,78 +828,81 @@ class Handler implements Runnable
      * @param monitored Update the Monitor
      */
     void copy(InputStream in, OutputStream out, int length, boolean monitored)
-	throws IOException
+        throws IOException
     {
-	if (length == 0)
-	{
-	    return;
-	}
+        if (length == 0)
+        {
+            return;
+        }
 
-	int n;
-	byte buffer[] = new byte[8192];
-	long start = System.currentTimeMillis();
-	long now = 0, then = start;
-	
-	bytesPerSecond = 0;
+        int n;
+        byte buffer[] = new byte[8192];
+        long start = System.currentTimeMillis();
+        long now = 0, then = start;
 
-	if (monitored)
-	{
-	    currentLength = 0;
-	}
-	
-	for (;;)
-	{
-	    n = (length > 0) ? Math.min(length, buffer.length) : buffer.length;
-	    n = in.read(buffer, 0, n);
-	    if (n < 0)
-	    {
-		break;
-	    }
-	    
-	    out.write(buffer, 0, n);
+        bytesPerSecond = 0;
 
-	    if (monitored)
-	    {
-		currentLength += n;
-		monitor.update(this);
-	    }
+        if (monitored)
+        {
+            currentLength = 0;
+        }
 
-	    now = System.currentTimeMillis();
-	    bytesPerSecond = currentLength / ((now - start) / 1000.0);
-
-	    // flush after 1 second
-	    if (now - then > 1000)
-	    {
-		out.flush();
-	    }
-
-	    if (length != -1)
-	    {
-		length -= n;
-		if (length == 0)
-		{
-		    break;
-		}
-	    }
-            
-            // avoids lockups, but may not work with old buggy servers
-            if (contentLength > 0 &&
-                currentLength >= contentLength) {
+        for (;;)
+        {
+            n = (length > 0) ? Math.min(length, buffer.length) : buffer.length;
+            n = in.read(buffer, 0, n);
+            if (n < 0)
+            {
                 break;
             }
 
-	    then = now;
-	}
+            out.write(buffer, 0, n);
 
-	out.flush();
+            if (monitored)
+            {
+                currentLength += n;
+                monitor.update(this);
+            }
 
-	if (DEBUG)
-	{
-	    System.out.println(currentLength + " bytes processed in "
-			       + ((System.currentTimeMillis() - start)
-				  / 1000.0) + " seconds "
-				+ ((int)bytesPerSecond / 1024) + " kB/s");
-	}
+            now = System.currentTimeMillis();
+            bytesPerSecond = currentLength / ((now - start) / 1000.0);
+
+            // flush after 1 second
+            if (now - then > 1000)
+            {
+                out.flush();
+            }
+
+            if (length != -1)
+            {
+                length -= n;
+                if (length == 0)
+                {
+                    break;
+                }
+            }
+
+            // avoids lockups, but may not work with old buggy servers
+            if (contentLength > 0 && currentLength >= contentLength)
+            {
+                break;
+            }
+
+            then = now;
+        }
+
+        out.flush();
+
+        if (DEBUG)
+        {
+            System.out.println(
+                currentLength
+                    + " bytes processed in "
+                    + ((System.currentTimeMillis() - start) / 1000.0)
+                    + " seconds "
+                    + ((int) bytesPerSecond / 1024)
+                    + " kB/s");
+        }
     }
 
     /**
@@ -821,64 +912,73 @@ class Handler implements Runnable
      * @param out OutputStream
      * @param monitored Update the Monitor
      */
-    void flushCopy(InputStream in, OutputStream out, int length, boolean monitored)
-	throws IOException
+    void flushCopy(
+        InputStream in,
+        OutputStream out,
+        int length,
+        boolean monitored)
+        throws IOException
     {
-	if (length == 0)
-	{
-	    return;
-	}
+        if (length == 0)
+        {
+            return;
+        }
 
-	int n;
-	byte buffer[] = new byte[8192];
-	long start = System.currentTimeMillis();
-	bytesPerSecond = 0;
-	
-	if (monitored)
-	{
-	    currentLength = 0;
-	}
-	
-	for (;;)
-	{
-	    n = (length > 0) ? Math.min(length, buffer.length) : buffer.length;
-	    n = in.read(buffer, 0, n);
-	    if (n < 0)
-	    {
-		break;
-	    }
+        int n;
+        byte buffer[] = new byte[8192];
+        long start = System.currentTimeMillis();
+        bytesPerSecond = 0;
 
-	    out.write(buffer, 0, n);
-	    out.flush();
-	    if (monitored)
-	    {
-		currentLength += n;
-		monitor.update(this);
-	    }
-	    bytesPerSecond = currentLength / ((System.currentTimeMillis() - start) / 1000.0);
-	    if (length != -1)
-	    {
-		length -= n;
-		if (length == 0)
-		{
-		    break;
-		}
-	    }
-            
-            // avoids lockups, but may not work with old buggy servers
-            if (contentLength > 0 &&
-                currentLength >= contentLength) {
+        if (monitored)
+        {
+            currentLength = 0;
+        }
+
+        for (;;)
+        {
+            n = (length > 0) ? Math.min(length, buffer.length) : buffer.length;
+            n = in.read(buffer, 0, n);
+            if (n < 0)
+            {
                 break;
             }
-	}
-	out.flush();
 
-	if (DEBUG)
-	{
-	    System.out.println(currentLength + " bytes processed in "
-				+ ((System.currentTimeMillis() - start) / 1000.0) + " seconds "
-				+ ((int)bytesPerSecond / 1024) + " kB/s");
-	}
+            out.write(buffer, 0, n);
+            out.flush();
+            if (monitored)
+            {
+                currentLength += n;
+                monitor.update(this);
+            }
+            bytesPerSecond =
+                currentLength / ((System.currentTimeMillis() - start) / 1000.0);
+            if (length != -1)
+            {
+                length -= n;
+                if (length == 0)
+                {
+                    break;
+                }
+            }
+
+            // avoids lockups, but may not work with old buggy servers
+            if (contentLength > 0 && currentLength >= contentLength)
+            {
+                break;
+            }
+        }
+        out.flush();
+
+        if (DEBUG)
+        {
+            System.out.println(
+                currentLength
+                    + " bytes processed in "
+                    + ((System.currentTimeMillis() - start) / 1000.0)
+                    + " seconds "
+                    + ((int) bytesPerSecond / 1024)
+                    + " kB/s");
+        }
     }
 
     /**
@@ -889,75 +989,79 @@ class Handler implements Runnable
      * @param monitored Update the Monitor
      */
     void copy(InputObjectStream in, OutputStream out, boolean monitored)
-	throws IOException
+        throws IOException
     {
-	Object obj;
-	long start = System.currentTimeMillis();
-	long now = 0, then = start;
+        Object obj;
+        long start = System.currentTimeMillis();
+        long now = 0, then = start;
 
-	bytesPerSecond = 0;
+        bytesPerSecond = 0;
 
-	if (monitored)
-	{
-	    currentLength = 0;
-	}
-	
-	for (;;)
-	{
-	    obj = in.read();
-	    if (obj == null)
-	    {
-		break;
-	    }
-	    
-	    if (obj instanceof ByteArray)
-	    {
-		ByteArray bytes = (ByteArray) obj;
-		bytes.writeTo(out);
-		currentLength += bytes.length();
-	    }
-	    else if (obj instanceof Byte)
-	    {
-		Byte b = (Byte) obj;
-		out.write(b.byteValue());
-		currentLength++;
-	    }
-	    else
-	    {
-		System.out.println("Unknown object: " + obj.toString());
-	    }
+        if (monitored)
+        {
+            currentLength = 0;
+        }
 
-	    if (monitored)
-	    {
-		monitor.update(this);
-		Thread.currentThread().yield();
-	    }
-
-	    now = System.currentTimeMillis();
-	    bytesPerSecond = currentLength / ((now - start) / 1000.0);
-
-	    // flush after 1 second
-	    if (now - then > 1000)
-	    {
-		out.flush();
-	    }
-            
-            // avoids lockups, but may not work with old buggy servers
-            if (contentLength > 0 &&
-                currentLength >= contentLength) {
+        for (;;)
+        {
+            obj = in.read();
+            if (obj == null)
+            {
                 break;
             }
 
-	    then = now;
-	}
-	out.flush();
+            if (obj instanceof ByteArray)
+            {
+                ByteArray bytes = (ByteArray) obj;
+                bytes.writeTo(out);
+                currentLength += bytes.length();
+            }
+            else if (obj instanceof Byte)
+            {
+                Byte b = (Byte) obj;
+                out.write(b.byteValue());
+                currentLength++;
+            }
+            else
+            {
+                System.out.println("Unknown object: " + obj.toString());
+            }
 
-	if (DEBUG)
-	{
-	    System.out.println(currentLength + " bytes filtered in "
-				+ ((System.currentTimeMillis() - start) / 1000.0) + " seconds "
-				+ ((int)bytesPerSecond / 1024) + " kB/s");
-	}
+            if (monitored)
+            {
+                monitor.update(this);
+                Thread.currentThread().yield();
+            }
+
+            now = System.currentTimeMillis();
+            bytesPerSecond = currentLength / ((now - start) / 1000.0);
+
+            // flush after 1 second
+            if (now - then > 1000)
+            {
+                out.flush();
+            }
+
+            // avoids lockups, but may not work with old buggy servers
+            if (contentLength > 0 && currentLength >= contentLength)
+            {
+                break;
+            }
+
+            then = now;
+        }
+        out.flush();
+
+        if (DEBUG)
+        {
+            System.out.println(
+                currentLength
+                    + " bytes filtered in "
+                    + ((System.currentTimeMillis() - start) / 1000.0)
+                    + " seconds "
+                    + ((int) bytesPerSecond / 1024)
+                    + " kB/s");
+        }
     }
 
     /**
@@ -965,33 +1069,36 @@ class Handler implements Runnable
      */
     public String toString()
     {
-	StringBuffer str = new StringBuffer();
-	str.append("CLIENT ");
-	str.append(socket.getInetAddress().getHostAddress());
-	str.append(":");
-	str.append(socket.getPort());
-	str.append(" - ");
-	if (request == null)
-	{
-	    str.append("idle " + ((System.currentTimeMillis() - idle) / 1000.0) + " sec");
-	}
-	else
-	{
-	    if (reply != null && currentLength > 0)
-	    {
-		str.append("(");
-		str.append(currentLength);
-		if (contentLength > 0)
-		{
-		    str.append("/");
-		    str.append(contentLength);
-		}
-		str.append(" ");
-		str.append(((int)bytesPerSecond / 1024) + " kB/s");
-		str.append(") ");
-	    }
-	    str.append(request.getURL());
-	}
-	return str.toString();
+        StringBuffer str = new StringBuffer();
+        str.append("CLIENT ");
+        str.append(socket.getInetAddress().getHostAddress());
+        str.append(":");
+        str.append(socket.getPort());
+        str.append(" - ");
+        if (request == null)
+        {
+            str.append(
+                "idle "
+                    + ((System.currentTimeMillis() - idle) / 1000.0)
+                    + " sec");
+        }
+        else
+        {
+            if (reply != null && currentLength > 0)
+            {
+                str.append("(");
+                str.append(currentLength);
+                if (contentLength > 0)
+                {
+                    str.append("/");
+                    str.append(contentLength);
+                }
+                str.append(" ");
+                str.append(((int) bytesPerSecond / 1024) + " kB/s");
+                str.append(") ");
+            }
+            str.append(request.getURL());
+        }
+        return str.toString();
     }
 }

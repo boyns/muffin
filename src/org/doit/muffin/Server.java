@@ -1,7 +1,8 @@
-/* $Id: Server.java,v 1.9 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: Server.java,v 1.10 2003/05/03 09:40:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Fabien Le Floc'h <fabien@31416.org>
  *
  * This file is part of Muffin.
  *
@@ -31,107 +32,115 @@ import org.doit.util.*;
 
 /**
  * @author Mark Boyns
+ * @author Fabien Le Floc'h
  */
-class Server
+class Server implements Runnable
 {
     ServerSocket server = null;
     Monitor monitor = null;
     FilterManager manager = null;
     Options options = null;
     boolean running = false;
+    private ServerSocketCreator creator = null;
 
+    Server(
+        ServerSocketCreator creator,
+        int port,
+        Monitor m,
+        FilterManager manager,
+        Options options)
+    {
+        this.manager = manager;
+        this.options = options;
+        this.monitor = m;
+        this.creator = creator;
+        
+        try
+        {
+	        server = creator.createServerSocket(port, options);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+            throw new RuntimeException(e.toString());
+        }
+
+    }
+    
+    /**
+     * @deprecated
+     */
     Server(int port, Monitor m, FilterManager manager, Options options)
     {
-	this.manager = manager;
-	this.options = options;
-	this.monitor = m;
-	
-	try
-	{
-	    String bindaddr = options.getString("muffin.bindaddress");
-	    if (bindaddr != null && bindaddr.length() > 0)
-	    {
-		server = new ServerSocket(port, 512,
-					  InetAddress.getByName(bindaddr));
-	    }
-	    else
-	    {
-		server = new ServerSocket(port, 512);
-	    }
-	}
-	catch (IOException e)
-	{
-	    System.out.println(e);
-	    throw new RuntimeException(e.toString());
-	}
-
-	/* Initialize internal Httpd */
-	Httpd.init(options, manager, monitor, this);
+    	this(new DefaultServerSocketCreator(),port, m, manager, options);
     }
 
     synchronized void suspend()
     {
-	running = false;
+        running = false;
     }
 
     synchronized void resume()
     {
-	running = true;
+        running = true;
     }
 
-//     synchronized void stop()
-//     {
-//     }
-
-    void run()
+    //     synchronized void stop()
+    //     {
+    //     }
+	
+    public void run()
     {
-	Thread.currentThread().setName("Muffin Server");
-	running = true;
-	for (;;)
-	{
-	    Socket socket;
+        Thread.currentThread().setName("Muffin Server "+this.creator.getClass().getName());
+        running = true;
+        for (;;)
+        {
+            Socket socket;
 
-	    try
-	    {
-		socket = server.accept();
-	    }
-	    catch (IOException e)
-	    {
-		System.out.println(e);
-		continue;
-	    }
+            try
+            {
+                socket = server.accept();
+            }
+            catch (IOException e)
+            {
+                System.out.println(e);
+                continue;
+            }
 
-	    if (!options.hostAccess(socket.getInetAddress()))
-	    {
-		System.out.println(socket.getInetAddress().getHostAddress()
-				    + ": access denied");
-		error(socket, 403, "No muffins for you!");
-	    }
-	    else if (running)
-	    {
-		Handler h = new Handler(monitor, manager, options, socket);
-		ReusableThread rt = Main.getThread();
-		rt.setRunnable(h);
-	    }
-	    else
-	    {
-		error(socket, 503, "Muffin proxy service is suspended.");
-	    }
-	}
+            if (!options.hostAccess(socket.getInetAddress()))
+            {
+                System.out.println(
+                    socket.getInetAddress().getHostAddress()
+                        + ": access denied");
+                error(socket, 403, "No muffins for you!");
+            }
+            else if (running)
+            {
+                Handler h = creator.createHandler(monitor, manager, options, socket);
+                ReusableThread rt = Main.getThread();
+                rt.setRunnable(h);
+               
+            }
+            else
+            {
+                error(socket, 503, "Muffin proxy service is suspended.");
+            }
+        }
     }
 
     void error(Socket socket, int code, String message)
     {
-	try
-	{
-	    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-	    out.writeBytes((new HttpError(options, code, message)).toString());
-	    out.close();
-	    socket.close();
-	}
-	catch (IOException e)
-	{
-	    e.printStackTrace();
-	}
+        try
+        {
+            DataOutputStream out =
+                new DataOutputStream(socket.getOutputStream());
+            out.writeBytes((new HttpError(options, code, message)).toString());
+            out.close();
+            socket.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

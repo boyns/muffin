@@ -1,4 +1,4 @@
-/* $Id: Client.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: Client.java,v 1.6 2003/05/03 09:40:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -38,15 +38,18 @@ public class Client extends Connection
     /**
      * Create a Client from a Socket.
      */
-    Client(Socket s) throws IOException
+    protected Client(Socket s) throws IOException
     {
-	super(s);
-	in = new BufferedInputStream(in);
-	//out = new DebugOutputStream(new BufferedOutputStream(out));
-	out = new BufferedOutputStream(out);
+        super(s);
+        in = new BufferedInputStream(in);
+        //out = new DebugOutputStream(new BufferedOutputStream(out));
+        out = new BufferedOutputStream(out);
     }
 
-
+	protected Request createRequest()
+	{
+		return new Request(this, 80);
+	}
     /**
      * Read a Request.
      *
@@ -55,9 +58,9 @@ public class Client extends Connection
      */
     Request read() throws IOException
     {
-	Request request = new Request(this);
-	request.read(getInputStream());
-	return request;
+        Request request = createRequest();
+        request.read(getInputStream());
+        return request;
     }
 
     /**
@@ -67,6 +70,6 @@ public class Client extends Connection
      */
     void write(Reply reply) throws IOException
     {
-	reply.write(getOutputStream());
+        reply.write(getOutputStream());
     }
 }

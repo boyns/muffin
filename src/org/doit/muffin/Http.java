@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.8 2003/01/08 16:53:34 dougporter Exp $ */
+/* $Id: Http.java,v 1.9 2003/05/03 09:40:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -26,21 +26,21 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import org.doit.util.*;
+
+import javax.net.SocketFactory;
 
 /**
  * @author Mark Boyns
  */
-class Http extends HttpConnection
+public class Http extends HttpConnection
 {
-    static final boolean DEBUG = false; /* enable lots of debug output */
+    static final boolean DEBUG = true; /* enable lots of debug output */
 
     /* XXX - more than 1 should work now. */
     static final int MAX_PENDING_REQUESTS = 1;
-    
+
     static Hashtable cache = new Hashtable(33);
     private static Object httpLock = new Object();
-    
 
     String host;
     int port;
@@ -49,339 +49,367 @@ class Http extends HttpConnection
     boolean closed = false;
     long idle = 0;
     Vector queue = new Vector();
-
+	
+	Http(SocketFactory factory, String host, int port)
+		throws IOException
+	{
+		this(factory,host,port,false);	
+	}
+	
+	Http(SocketFactory factory, String host, int port, boolean isProxy)
+		throws IOException
+	{
+		super(factory.createSocket(MuffinResolver.getByName(host),port));
+		this.host = host;
+		this.port = port;
+		this.proxy = isProxy;	
+	}	
+	/**
+	 * @deprecated
+	 */
     Http(String host, int port) throws IOException
     {
-	this(host, port, false);
+        this(host, port, false);
     }
-    
+
+	/**
+	 * @deprecated
+	 */
     Http(String host, int port, boolean isProxy) throws IOException
     {
-	super(host, port);
-	this.host = host;
-	this.port = port;
-	this.proxy = isProxy;
+        this(SocketFactory.getDefault(),host, port, isProxy);
     }
 
     public synchronized void sendRequest(Request request)
-	throws IOException, RetryRequestException
+        throws IOException, RetryRequestException
     {
-	queue.addElement(request);
-	
-	try
-	{
-	    send(request);
-	}
-	catch (IOException e)
-	{
-	    if (persistent)
-	    {
-		persistent = false;
-		if (DEBUG) System.out.println("RETRY SEND " + request.getURL());
-		throw new RetryRequestException();
-	    }
-	    throw e;
-	}
+        queue.addElement(request);
+
+        try
+        {
+            send(request);
+        }
+        catch (IOException e)
+        {
+            if (persistent)
+            {
+                persistent = false;
+                if (DEBUG)
+                    System.out.println("RETRY SEND " + request.getURL());
+                throw new RetryRequestException();
+            }
+            throw e;
+        }
     }
 
     public synchronized Reply recvReply(Request request)
-	throws IOException, RetryRequestException
+        throws IOException, RetryRequestException
     {
         Reply reply = null;
-	while (queue.firstElement() != request)
-	{
-	    try
-	    {
-		wait();
-	    }
-	    catch (InterruptedException e)
-	    {
-	    }
-	}
+        while (queue.firstElement() != request)
+        {
+            try
+            {
+                wait();
+            }
+            catch (InterruptedException e)
+            {
+            }
+        }
 
-	if (closed)
-	{
-	    if (DEBUG) System.out.println("RETRY CLOSED " + request.getURL());
-	    throw new RetryRequestException();
-	}
+        if (closed)
+        {
+            if (DEBUG)
+                System.out.println("RETRY CLOSED " + request.getURL());
+            throw new RetryRequestException();
+        }
 
-	try
-	{
-	    reply = recv();
-            reply.setRequest (request);
-	}
-	catch (IOException e)
-	{                
-	    if (persistent)
-	    {
-		persistent = false;
-		if (DEBUG) System.out.println("RETRY RECV " + request.getURL());
-		throw new RetryRequestException();
-	    }
-	    throw e;
-	}
-        
+        try
+        {
+            reply = recv();
+            reply.setRequest(request);
+        }
+        catch (IOException e)
+        {
+            if (persistent)
+            {
+                persistent = false;
+                if (DEBUG)
+                    System.out.println("RETRY RECV " + request.getURL());
+                throw new RetryRequestException();
+            }
+            throw e;
+        }
+
         return reply;
     }
 
     public void reallyClose()
     {
-	persistent = false;
-	if (DEBUG)
-	    System.out.println("REALLY CLOSE " + this);
-	close();
+        persistent = false;
+        if (DEBUG)
+            System.out.println("REALLY CLOSE " + this);
+        close();
     }
 
     public synchronized void close()
     {
-	if (persistent)
-	{
-	    idle = System.currentTimeMillis();
-	}
-	else
-	{
-	    cacheRemove(host, port, this);
-	    super.close();
-	    closed = true;
-	}
+        if (persistent)
+        {
+            idle = System.currentTimeMillis();
+        }
+        else
+        {
+            cacheRemove(host, port, this);
+            super.close();
+            closed = true;
+        }
 
-	if (queue.size() > 0)
-	{
-	    queue.removeElementAt(0);
-	    if (DEBUG)
-	    {
-		if (persistent)
-		    System.out.println("DONE " + this);
-		else
-		    System.out.println("CLOSE " + this);
-	    }
-	    notify();
-	}
+        if (queue.size() > 0)
+        {
+            queue.removeElementAt(0);
+            if (DEBUG)
+            {
+                if (persistent)
+                    System.out.println("DONE " + this);
+                else
+                    System.out.println("CLOSE " + this);
+            }
+            notify();
+        }
     }
 
     private void send(Request request) throws IOException
     {
-	if (DEBUG) System.out.println("SEND " + request.getURL());
+        if (DEBUG)
+            System.out.println("SEND " + request.getURL());
 
-	/* Prepare HTTP/1.1 request */
-	request.removeHeaderField("Proxy-Connection");
-	request.setHeaderField("Connection", "open");
-	if (!request.containsHeaderField("Host"))
-	{
-	    request.setHeaderField("Host", request.getHost());
-	}
+        /* Prepare HTTP/1.1 request */
+        request.removeHeaderField("Proxy-Connection");
+        request.setHeaderField("Connection", "open");
+        if (!request.containsHeaderField("Host"))
+        {
+            request.setHeaderField("Host", request.getHost());
+        }
 
-	if (proxy)
-	{
-	    request.write(getOutputStream());
-	}
-	else
-	{
-	    String oldStatusLine = request.statusLine;
-	    StringBuffer head = new StringBuffer();
-	    head.append(request.getCommand());
-	    head.append(" ");
-	    head.append(request.getPath());
-	    head.append(" ");
-	    head.append("HTTP/1.0");
-	    request.statusLine = head.toString();
+        if (proxy)
+        {
+            request.write(getOutputStream());
+        }
+        else
+        {
+            String oldStatusLine = request.statusLine;
+            StringBuffer head = new StringBuffer();
+            head.append(request.getCommand());
+            head.append(" ");
+            head.append(request.getPath());
+            head.append(" ");
+            head.append("HTTP/1.0");
+            request.statusLine = head.toString();
 
-	    request.write(getOutputStream());
+            request.write(getOutputStream());
 
-	    /* flush? */
-	    
-	    request.statusLine = oldStatusLine;
-	}
+            /* flush? */
+
+            request.statusLine = oldStatusLine;
+        }
     }
 
     private Reply recv() throws IOException
     {
-	Reply reply = new Reply(getInputStream());
-	reply.read();
+        Reply reply = new Reply(getInputStream());
+        reply.read();
 
-	String conn = reply.getHeaderField("Connection");
+        String conn = reply.getHeaderField("Connection");
 
-	if (DEBUG) System.out.println("RECV " + reply.statusLine);
+        if (DEBUG)
+            System.out.println("RECV " + reply.statusLine);
 
-	if (reply.containsHeaderField("Connection")
-	    && reply.getHeaderField("Connection").equals("close"))
-	{
-	    persistent = false;
-	}
-	else if (reply.getProtocol().equals("HTTP/1.1"))
-	{
-	    persistent = true;
-	}
-	else
-	{
-	    persistent = false;
-	}
+        if (reply.containsHeaderField("Connection")
+            && reply.getHeaderField("Connection").equals("close"))
+        {
+            persistent = false;
+        }
+        else if (reply.getProtocol().equals("HTTP/1.1"))
+        {
+            persistent = true;
+        }
+        else
+        {
+            persistent = false;
+        }
 
-	/* Received HTTP/1.1 "Continue".  Read another Reply. */
-	if (reply.getStatusCode() == 100)
-	{
-	    reply = recv();
-	}
+        /* Received HTTP/1.1 "Continue".  Read another Reply. */
+        if (reply.getStatusCode() == 100)
+        {
+            reply = recv();
+        }
 
-	return reply;
+        return reply;
     }
 
     private boolean isBusy()
     {
-	return queue.size() >= MAX_PENDING_REQUESTS;
+        return queue.size() >= MAX_PENDING_REQUESTS;
     }
 
     private boolean isPersistent()
     {
-	return persistent;
+        return persistent;
     }
 
     private static String cacheKey(String host, int port)
     {
-	return host.toLowerCase() + ":" + port;
+        return host.toLowerCase() + ":" + port;
     }
 
     private static Vector cacheLookup(String host, int port)
     {
-	Vector v = (Vector) cache.get(cacheKey(host, port));
-	return v;
+        Vector v = (Vector) cache.get(cacheKey(host, port));
+        return v;
     }
 
     private static boolean cacheContains(Http http)
     {
-	Vector v = (Vector) cache.get(cacheKey(http.host, http.port));
-	return v != null ? v.contains(http) : false;
+        Vector v = (Vector) cache.get(cacheKey(http.host, http.port));
+        return v != null ? v.contains(http) : false;
     }
 
     private static void cacheInsert(String host, int port, Http http)
     {
-	String key = cacheKey(host, port);
-	Vector v = (Vector) cache.get(key);
-	if (v == null)
-	{
-	    v = new Vector();
-	}
-	v.addElement(http);
-	cache.put(key, v);
+        String key = cacheKey(host, port);
+        Vector v = (Vector) cache.get(key);
+        if (v == null)
+        {
+            v = new Vector();
+        }
+        v.addElement(http);
+        cache.put(key, v);
     }
 
     private static void cacheRemove(String host, int port, Http http)
     {
-	Vector v = (Vector) cache.get(cacheKey(host, port));
-	if (v != null)
-	{
-	    v.removeElement(http);
-	    if (v.isEmpty())
-	    {
-		cache.remove(cacheKey(host, port));
-	    }
-	}
+        Vector v = (Vector) cache.get(cacheKey(host, port));
+        if (v != null)
+        {
+            v.removeElement(http);
+            if (v.isEmpty())
+            {
+                cache.remove(cacheKey(host, port));
+            }
+        }
     }
 
     private static void cacheClean()
     {
-	long now = System.currentTimeMillis();
-	Enumeration e = cache.keys();
-	while (e.hasMoreElements())
-	{
-	    Vector v = (Vector) cache.get(e.nextElement());
-	    for (int i = 0; i < v.size(); i++)
-	    {
-		Http http = (Http) v.elementAt(i);
-		if (http.idle > 0 && now - http.idle > 30000) /* 30 seconds */
-		{
-		    if (DEBUG) System.out.println("IDLE " + http);
-		    http.persistent = false;
-		    http.close();
-		}
-	    }
-	}
+        long now = System.currentTimeMillis();
+        Enumeration e = cache.keys();
+        while (e.hasMoreElements())
+        {
+            Vector v = (Vector) cache.get(e.nextElement());
+            for (int i = 0; i < v.size(); i++)
+            {
+                Http http = (Http) v.elementAt(i);
+                if (http.idle > 0 && now - http.idle > 30000) /* 30 seconds */
+                {
+                    if (DEBUG)
+                        System.out.println("IDLE " + http);
+                    http.persistent = false;
+                    http.close();
+                }
+            }
+        }
     }
 
-    static Http open(String host, int port, boolean isProxy)
-	throws IOException
+    static Http open(SocketFactory factory, String host, int port, boolean isProxy) throws IOException
     {
-	Http http = null;
+        Http http = null;
 
-	synchronized (httpLock)
-	{
-	    Vector v = cacheLookup(host, port);
-	    if (v != null)
-	    {
-		for (int i = 0; i < v.size(); i++)
-		{
-		    Http pick = (Http) v.elementAt(i);
+        synchronized (httpLock)
+        {
+            Vector v = cacheLookup(host, port);
+            if (v != null)
+            {
+                for (int i = 0; i < v.size(); i++)
+                {
+                    Http pick = (Http) v.elementAt(i);
 
-		    /* find an http connection that isn't busy */
-		    if (pick.isPersistent() && !pick.isBusy())
-		    {
-			http = pick;
-			break;
-		    }
-		}
+                    /* find an http connection that isn't busy */
+                    if (pick.isPersistent() && !pick.isBusy())
+                    {
+                        http = pick;
+                        break;
+                    }
+                }
 
-		if (http != null)
-		{
-		    http.idle = 0;
-		    if (DEBUG) System.out.println("REUSE " + http);
-		}
-	    }
-	}
-	
-	if (http == null)
-	{
-	    if (DEBUG) System.out.println("OPENING " + host + ":" + port);
-	    http = new Http(host, port, isProxy);
-	    if (DEBUG) System.out.println("OPENED " + http);
- 	    cacheInsert(host, port, http);
-	}
-	
-	return http;
+                if (http != null)
+                {
+                    http.idle = 0;
+                    if (DEBUG)
+                        System.out.println("REUSE " + http);
+                }
+            }
+        }
+
+        if (http == null)
+        {
+            if (DEBUG)
+                System.out.println("OPENING " + host + ":" + port);
+            http = new Http(factory, host, port, isProxy);
+            if (DEBUG)
+                System.out.println("OPENED " + http);
+            cacheInsert(host, port, http);
+        }
+
+        return http;
     }
 
-    static Http open(String host, int port) throws IOException
+    public static Http open(SocketFactory factory, String host, int port) throws IOException
     {
-	return open(host, port, false);
+        return open(factory, host, port, false);
     }
 
     static Enumeration enumerate()
     {
-	Vector list = new Vector();
-	Enumeration e = cache.keys();
-	while (e.hasMoreElements())
-	{
-	    Vector v = (Vector) cache.get(e.nextElement());
-	    for (int i = 0; i < v.size(); i++)
-	    {
-		list.addElement(v.elementAt(i));
-	    }
-	}
-	return list.elements();
+        Vector list = new Vector();
+        Enumeration e = cache.keys();
+        while (e.hasMoreElements())
+        {
+            Vector v = (Vector) cache.get(e.nextElement());
+            for (int i = 0; i < v.size(); i++)
+            {
+                list.addElement(v.elementAt(i));
+            }
+        }
+        return list.elements();
     }
 
     static synchronized void clean()
     {
-	cacheClean();
+        cacheClean();
     }
 
     public String toString()
     {
-	StringBuffer buf = new StringBuffer();
-	buf.append("SERVER ");
-	buf.append(super.toString());
-	if (isPersistent())
-	{
-	    buf.append(" - ");
-	    if (queue.size() > 0)
-	    {
-		buf.append(queue.size());
-		buf.append(" pending");
-	    }
-	    else
-	    {
-		buf.append("idle " + ((System.currentTimeMillis() - idle) / 1000.0) + " sec");
-	    }
-	}
-	return buf.toString();
+        StringBuffer buf = new StringBuffer();
+        buf.append("SERVER ");
+        buf.append(super.toString());
+        if (isPersistent())
+        {
+            buf.append(" - ");
+            if (queue.size() > 0)
+            {
+                buf.append(queue.size());
+                buf.append(" pending");
+            }
+            else
+            {
+                buf.append(
+                    "idle "
+                        + ((System.currentTimeMillis() - idle) / 1000.0)
+                        + " sec");
+            }
+        }
+        return buf.toString();
     }
 }

@@ -1,8 +1,9 @@
-/* $Id: Options.java,v 1.11 2000/03/27 04:24:41 boyns Exp $ */
+/* $Id: Options.java,v 1.12 2003/05/03 09:40:05 flefloch Exp $ */
 
 /*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
- *
+ * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Fabien Le Floc'h <fabien@31416.org>
+ * 
  * This file is part of Muffin.
  *
  * Muffin is free software; you can redistribute it and/or modify
@@ -32,6 +33,7 @@ import java.awt.Color;
 
 /**
  * @author Mark Boyns
+ * @author Fabien Le Floc'h
  */
 public class Options extends UserPrefs
 {
@@ -99,6 +101,12 @@ public class Options extends UserPrefs
  	putInteger("muffin.readTimeout", 90000);
  	putString("muffin.nameservers", "");
 
+    /* Internal HTTPS decryption server defaults */
+	putInteger("muffin.decryptionServer.port", -1);
+	putString("muffin.decryptionServer.certificate","certs");
+	putString("muffin.decryptionServer.keystorePassword","serverkspw");
+	putString("muffin.decryptionServer.keyPassword","serverpw");
+	
 // 	include(configs.getUserPrefs());
 // 	configs.addConfigurationListener(this);
 
@@ -239,5 +247,10 @@ public class Options extends UserPrefs
     {
 	return((getString("muffin.httpsProxyHost")).length() > 0
 		&& getInteger("muffin.httpsProxyPort") > 0);
+    }
+    
+    boolean useDecryptionServer()
+    {
+    	return (getInteger("muffin.decryptionServer.port") > 0);	
     }
 }

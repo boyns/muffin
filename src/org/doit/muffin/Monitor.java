@@ -1,4 +1,4 @@
-/* $Id: Monitor.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Monitor.java,v 1.7 2003/05/03 09:40:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,7 +31,7 @@ import java.util.Enumeration;
  * @see muffin.TextMonitor
  * @author Mark Boyns
  */
-interface Monitor
+public interface Monitor
 {
     /**
      * Register a hander.

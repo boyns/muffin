@@ -1,8 +1,9 @@
-/* $Id: Request.java,v 1.10 2003/01/08 16:57:41 dougporter Exp $ */
+/* $Id: Request.java,v 1.11 2003/05/03 09:40:05 flefloch Exp $ */
 
 /*
- * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
- *
+ * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Fabien Le Floch <fabien@31416.org>
+ * 
  * This file is part of Muffin.
  *
  * Muffin is free software; you can redistribute it and/or modify
@@ -34,14 +35,18 @@ import org.doit.io.*;
 
 /** Http/https request.
  * @author Mark Boyns
+ * @author Fabien Le Floc'h
  */
 public class Request extends Message
 {
     private static RE httpRegex;
-    
-    private final String HttpPrefix = "http://";
-    private final int HttpPrefixLength = HttpPrefix.length ();
-        
+
+    private static final String HttpPrefix = "http://";
+    private static final String HttpsPrefix = "https://";
+    private static final int HttpPrefixLength = HttpPrefix.length();
+    private static final int HttpsPrefixLength = HttpsPrefix.length();
+
+    private int defaultPort = 80;
     private String command = null;
     private String url = null;
     private String protocol = null;
@@ -50,24 +55,30 @@ public class Request extends Message
     private Hashtable log;
     private Vector logHeaders;
 
-    static
-    {
-	try
-	{
-	    httpRegex = new RE("^(http|https):", RE.REG_ICASE);
-	}
-	catch (REException e)
-	{
-	    e.printStackTrace();
-	}
+    static {
+        try
+        {
+            httpRegex = new RE("^(http|https):", RE.REG_ICASE);
+        }
+        catch (REException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /** Creates an http/https request.
      * @param c The client making the request.
-     */    
+     * @deprecated
+     */
     Request(Client c)
     {
-	client = c;
+        client = c;
+    }
+
+    public Request(Client c, int defaultPort)
+    {
+        this.client = c;
+        this.defaultPort = defaultPort;
     }
 
     /** Read a request from an input stream.
@@ -76,55 +87,59 @@ public class Request extends Message
      * followed by the http header lines, finally followed by any data.
      * @param in The input stream.
      * @throws IOException Thrown if there is an error reading the request.
-     */    
+     */
     void read(InputStream in) throws IOException
     {
-	statusLine = readLine(in);
-	if (statusLine == null || statusLine.length() == 0)
-	{
-	    throw new IOException("Empty request");
-	}
+        statusLine = readLine(in);
+        if (statusLine == null || statusLine.length() == 0)
+        {
+            throw new IOException("Empty request");
+        }
 
-	StringTokenizer st = new StringTokenizer(statusLine);
-	command = (String) st.nextToken();
-	url = (String) st.nextToken();
-	protocol = (String) st.nextToken();
+        StringTokenizer st = new StringTokenizer(statusLine);
+        command = (String) st.nextToken();
+        url = (String) st.nextToken();
+        protocol = (String) st.nextToken();
 
-	if (!url.startsWith("http"))
-	{
-	    REMatch match = httpRegex.getMatch(url);
-	    if (match != null)
-	    {
-		url = url.substring(match.getStartIndex(),
-				    match.getEndIndex()).toLowerCase()
-		    + url.substring(match.getEndIndex());
-	    }
-	}
+        if (!url.startsWith("http"))
+        {
+            REMatch match = httpRegex.getMatch(url);
+            if (match != null)
+            {
+                url =
+                    url
+                        .substring(match.getStartIndex(), match.getEndIndex())
+                        .toLowerCase()
+                        + url.substring(match.getEndIndex());
+            }
+        }
 
-	readHeaders(in);
+        readHeaders(in);
 
-	if ("POST".equals(command) || "PUT".equals(command))
-	{
-	    try
-	    {
-		int n = Integer.parseInt(getHeaderField("Content-length"));
-		data = new byte[n];
-		int offset = 0;
-		while (offset < data.length)
-		{
-		    n = in.read(data, offset, data.length - offset);
-		    if (n < 0)
-		    {
-			throw new IOException("Not enough " + command + " data");
-		    }
-		    offset += n;
-		}
-	    }
-	    catch (NumberFormatException e)
-	    {
-		System.out.println("Malformed or missing " + command + " Content-length");
-	    }
-	}
+        if ("POST".equals(command) || "PUT".equals(command))
+        {
+            try
+            {
+                int n = Integer.parseInt(getHeaderField("Content-length"));
+                data = new byte[n];
+                int offset = 0;
+                while (offset < data.length)
+                {
+                    n = in.read(data, offset, data.length - offset);
+                    if (n < 0)
+                    {
+                        throw new IOException(
+                            "Not enough " + command + " data");
+                    }
+                    offset += n;
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(
+                    "Malformed or missing " + command + " Content-length");
+            }
+        }
     }
 
     /** Write request headers to an output stream.
@@ -132,16 +147,15 @@ public class Request extends Message
      * This data written does not include the protocol's status line or data.
      * @param out The output stream.
      * @throws IOException Thrown is there is an error reading the stream.
-     */    
-    public void write(OutputStream out)
-	throws IOException
+     */
+    public void write(OutputStream out) throws IOException
     {
-	super.write(out);
-	if (data != null)
-	{
-	    out.write(data);
-	    out.flush();
-	}
+        super.write(out);
+        if (data != null)
+        {
+            out.write(data);
+            out.flush();
+        }
     }
 
     /** Get the status line for the request.
@@ -149,129 +163,140 @@ public class Request extends Message
      * This line is from the raw http protocol, e.g. "GET http://org.doit.muffin/ HTTP".
      *
      * @return The status line.
-     */    
+     */
     public String getRequest()
     {
-	return statusLine;
+        return statusLine;
     }
 
     /** Get the command for the request, e.g. "GET", "HEAD", "POST", or "PUT".
      * @return The command.
-     */    
+     */
     public String getCommand()
     {
-	return command;
+        return command;
     }
-    
+
     /** Set the command for a request, e.g. "GET", "HEAD", "POST", or "PUT".
      * @param command The command.
-     */    
+     */
     public void setCommand(String command)
     {
-	this.command = command;
+        this.command = command;
     }
 
     /** Get the url.
      * @return Url.
-     */    
+     */
     public String getURL()
     {
-	return url;
+        return url;
     }
 
     /** Set the url.
      * @param url Url.
-     */    
+     */
     public void setURL(String url)
     {
-	this.url = url;
+        this.url = url;
     }
 
     /** Get the protocol, e.g. "HTTP" or "HTTPS".
      * @return Protocol.
-     */    
+     */
     public String getProtocol()
     {
-	return protocol;
+        return protocol;
     }
 
     /** Set the protocol.
      * @param protocol The protocol.
-     */    
+     */
     public void setProtocol(String protocol)
     {
-	this.protocol = protocol;
+        this.protocol = protocol;
     }
 
     /** Get the host to which the request should be sent.
      * @return The host.
-     */    
+     */
     public String getHost()
     {
-	String url = getURL();
-	String s;
+        String s = getHeaderField("Host");
+        if (s == null)
+        {
+            s = stripUrl(getURL());
+        }
+        int at = s.indexOf('@');
+        if (at != -1)
+        {
+            s = s.substring(at + 1);
+        }
 
-        // !!!!! what about https?
-	if (url.startsWith(HttpPrefix))
-	{
-	    s = url.substring(HttpPrefixLength, url.indexOf('/', HttpPrefixLength));
-	}
-	else
-	{
-	    s = url;
-	}
+        if (s.indexOf(':') != -1)
+        {
+            return s.substring(0, s.indexOf(':'));
+        }
 
-	int at = s.indexOf('@');
-	if (at != -1 )
-	{
-	    s = s.substring(at+1);
-	}
+        return s;
+    }
 
-	if (s.indexOf(':') != -1)
-	{
-	    return s.substring(0, s.indexOf(':'));
-	}
+    private static String stripUrl(String url)
+    {
+        String s = null;
+        if (url.startsWith(HttpPrefix))
+        {
+            s =
+                url.substring(
+                    HttpPrefixLength,
+                    url.indexOf('/', HttpPrefixLength));
+        }
+        else if (url.startsWith(HttpsPrefix))
+        {
+            s =
+                url.substring(
+                    HttpsPrefixLength,
+                    url.indexOf('/', HttpsPrefixLength));
 
-	return s;
+        }
+        else
+        {
+            s = url;
+        }
+        return s;
     }
 
     /** Get the port.
      * @return The port.
-     */    
+     */
     public int getPort()
     {
-	int port = 80;
-	String url = getURL();
-	String s;
+        int port = defaultPort;
+        String s = getHeaderField("Host");
+        if (s == null)
+        {
+            s = stripUrl(getURL());
+        }
+        int at = s.indexOf('@');
+        if (at != -1)
+        {
+            s = s.substring(at + 1);
+        }
 
-        // !!!!! what about https?
-	if (url.startsWith(HttpPrefix))
-	{
-	    s = url.substring(HttpPrefixLength, url.indexOf('/', HttpPrefixLength));
-	}
-	else
-	{
-	    s = url;
-	}
+        if (s.indexOf(':') != -1)
+        {
 
-	int at = s.indexOf('@');
-	if (at != -1 )
-	{
-	    s = s.substring(at+1);
-	}
-
-	if (s.indexOf(':') != -1)
-	{
-	    try
-	    {
-		port = Integer.parseInt(s.substring(s.indexOf(':') + 1));
-	    }
-	    catch (NumberFormatException e)
-	    {
-		System.out.println("Invalid port in " + url);
-	    }
-	}
-	return port;
+            s = s.substring(s.indexOf(':') + 1);
+            try
+            {
+                port = Integer.parseInt(s);
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Invalid port in " + s);
+            }
+        }
+        return port;
     }
 
     /** Get the data.
@@ -279,14 +304,14 @@ public class Request extends Message
      * Only POST and PUT requests will have data.
      *
      * @return The data.
-     */    
+     */
     public String getData()
     {
-	if (data == null)
-	{
-	    return null;
-	}
-	return new String(data);
+        if (data == null)
+        {
+            return null;
+        }
+        return new String(data);
     }
 
     /** Get the path.
@@ -294,100 +319,117 @@ public class Request extends Message
      * This is an http path, e.g. "/index.html".
      *
      * @return The path.
-     */    
+     */
     public String getPath()
     {
-	String str = getURL();
-	int pos = 0;
-	for (int i = 0; i < 3; i++)
-	{
-	    pos = str.indexOf('/', pos);
-	    pos++;
-	}
-	pos--;
-	return str.substring(pos);
+        String str = getURL();
+        int pos = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            pos = str.indexOf('/', pos);
+            pos++;
+        }
+        pos--;
+        return str.substring(pos);
     }
-    
+
     /** Get the document, i.e. the last component of the path, after any '/' characters.
      * @return The document.
-     */    
+     */
     public String getDocument()
     {
-	String path = getPath();
-	int n = path.lastIndexOf('/');
-	if (n == path.length() - 1)
-	{
-	    n = path.lastIndexOf('/', n - 1);
-	}
-	if (n < 0)
-	{
-	    return "/";
-	}
-	else
-	{
-	    return path.substring(n + 1);
-	}
+        String path = getPath();
+        int n = path.lastIndexOf('/');
+        if (n == path.length() - 1)
+        {
+            n = path.lastIndexOf('/', n - 1);
+        }
+        if (n < 0)
+        {
+            return "/";
+        }
+        else
+        {
+            return path.substring(n + 1);
+        }
     }
 
     /** Get the client connection.
      * @return The client.
-     */    
+     */
     public Client getClient()
     {
-	return client;
+        return client;
     }
 
     /** Get the query string, i.e. the part of the url after any '?'.
      * @return The query string.
-     */    
+     */
     public String getQueryString()
     {
-	String path = getPath();
-	int n = path.indexOf('?');
-	if (n < 0)
-	{
-	    return null;
-	}
-	return path.substring(n + 1);
+        String path = getPath();
+        int n = path.indexOf('?');
+        if (n < 0)
+        {
+            return null;
+        }
+        return path.substring(n + 1);
     }
 
     /** Add a log entry for this request.
      * @param header Header for the log entry.
      * @param message Log message.
-     */    
-    public synchronized void addLogEntry(String header,
-					 String message)
+     */
+    public synchronized void addLogEntry(String header, String message)
     {
-	if (log == null)
-	{
-	    log = new Hashtable();
-	    logHeaders = new Vector();
-	}
+        if (log == null)
+        {
+            log = new Hashtable();
+            logHeaders = new Vector();
+        }
 
-	Vector v = (Vector)log.get(header);
-	if (log.get(header) == null)
-	{
-	    v = new Vector();
-	    log.put(header, v);
-	    logHeaders.addElement(header);
-	}
-	v.addElement(message);
+        Vector v = (Vector) log.get(header);
+        if (log.get(header) == null)
+        {
+            v = new Vector();
+            log.put(header, v);
+            logHeaders.addElement(header);
+        }
+        v.addElement(message);
     }
 
     /** Get the log headers.
      * @return All headers for log entries.
-     */    
+     */
     public Enumeration getLogHeaders()
     {
-	return logHeaders != null ? logHeaders.elements() : null;
+        return logHeaders != null ? logHeaders.elements() : null;
     }
 
     /** Get the entries for a specified header.
      * @param  The header for which to get log entries.
      * @return The log entries for this header.
-     */    
+     */
     public Enumeration getLogEntries(String header)
     {
-	return log != null ? ((Vector)log.get(header)).elements() : null;
+        return log != null ? ((Vector) log.get(header)).elements() : null;
     }
+    /**
+     * Returns the defaultPort.
+     * @return int
+     */
+    public int getDefaultPort()
+    {
+        return defaultPort;
+    }
+
+    /**
+     * Sets the defaultPort.
+     * @param defaultPort The defaultPort to set
+     */
+    public void setDefaultPort(int defaultPort)
+    {
+        this.defaultPort = defaultPort;
+    }
+
 }

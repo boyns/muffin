@@ -1,4 +1,4 @@
-/* $Id: Httpd.java,v 1.8 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: Httpd.java,v 1.9 2003/05/03 09:40:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -38,16 +38,15 @@ import java.util.Vector;
 import java.net.Socket;
 import org.doit.util.*;
 
-class Httpd extends HttpConnection
+public class Httpd extends HttpConnection
 {
     static Options options = null;
     static FilterManager manager = null;
     static Monitor monitor = null;
-    static Server server = null;
 
     Request request = null;
 
-    Httpd(Socket socket) throws IOException
+    public Httpd(Socket socket) throws IOException
     {
 	super(socket);
     }
@@ -582,15 +581,14 @@ class Httpd extends HttpConnection
 	return reply;
     }
 
-    static void init(Options o, FilterManager m, Monitor mon, Server s)
+    static void init(Options o, FilterManager m, Monitor mon)
     {
 	options = o;
 	manager = m;
 	monitor = mon;
-	server = s;
     }
 
-    static boolean sendme(Request request)
+    public static boolean sendme(Request request)
     {
 	return request.getHost().equalsIgnoreCase(Main.getMuffinHost())
 	    && request.getPort() == options.getInteger("muffin.port");
