@@ -1,4 +1,4 @@
-/* $Id: PainterFrame.java,v 1.7 2003/06/28 15:03:58 forger77 Exp $ */
+/* $Id: PainterFrame.java,v 1.8 2003/06/29 16:17:33 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,30 +22,35 @@
  */
 package org.doit.muffin.filter;
 
-import java.awt.*;
+//import java.awt;
+import java.awt.Choice;
+import java.awt.Panel;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Label;
+import java.awt.TextField;
 import java.awt.event.*;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.HashMap;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
-public class PainterFrame extends AbstractFrame implements ItemListener
+public class PainterFrame extends AbstractFrame
 {
-    TextField bgcolor, link, alink, vlink, background, text;
-    ColorSample bgcolorSample, linkSample, alinkSample, vlinkSample, textSample;
-    Hashtable styleTable = null;
-    String styles[] = { getFactory().getString("none"),
-                        getFactory().getString("dark"),
-                        getFactory().getString("light"),
-                        getFactory().getString("xmas") };
 
     /**
      * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(AbstractFilterFactory)
      */
     public PainterFrame(AbstractFilterFactory parent)
     {
-        super(parent);
+        super(parent);        
     }
 
     /**
@@ -84,11 +89,25 @@ public class PainterFrame extends AbstractFrame implements ItemListener
     createStyleTable();
 
     Choice choice = new Choice();
-    choice.addItemListener(this);
-    for (int i = 0; i < styles.length; i++)
-    {
-        choice.addItem(styles[i]);
+    choice.addItemListener(new ItemListener(){
+        public void itemStateChanged(ItemEvent event)
+        {
+        java.util.List styleList = (java.util.List) fStyleTable.get(event.getItem().toString());
+        Iterator sli = styleList.iterator();
+        int i = 0;
+        while(sli.hasNext()){
+            Sample sample = (Sample)fSamples.get(SAMPLE_KEYS[i]);
+            sample.setText((String)sli.next());
+            i++;
+        }
+        }
+    });
+    
+    Iterator styleIt = fStyles.iterator();
+    while(styleIt.hasNext()){
+        choice.addItem((String)styleIt.next());
     }
+ 
     c = new GridBagConstraints();
     c.gridwidth = GridBagConstraints.REMAINDER;
     layout.setConstraints(choice, c);
@@ -99,128 +118,43 @@ public class PainterFrame extends AbstractFrame implements ItemListener
     layout.setConstraints(l, c);
     panel.add(l);
 
-    background = new TextField(32);
+    TextField background = new TextField(32);
     background.setText(getFactory().getPrefsString(Painter.BACKGRND));
     c = new GridBagConstraints();
     c.gridwidth = GridBagConstraints.REMAINDER;
     layout.setConstraints(background, c);
     panel.add(background);
-
-    l = new Label(getFactory().getString(Painter.BGCOLOR)+":", Label.RIGHT);
-    c = new GridBagConstraints();
-    layout.setConstraints(l, c);
-    panel.add(l);
-
-    bgcolor = new TextField(7);
-    bgcolor.setText(getFactory().getPrefsString(Painter.BGCOLOR));
-    bgcolor.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-            bgcolorSample.setColor(bgcolor.getText());
-        }
-    });
-    c = new GridBagConstraints();
-    layout.setConstraints(bgcolor, c);
-    panel.add(bgcolor);
-
-    bgcolorSample = new ColorSample(getFactory().getPrefsString(Painter.BGCOLOR));
-    c = new GridBagConstraints();
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    layout.setConstraints(bgcolorSample, c);
-    panel.add(bgcolorSample);
-
-
-    l = new Label(getFactory().getString(Painter.TEXT)+":", Label.RIGHT);
-    c = new GridBagConstraints();
-    layout.setConstraints(l, c);
-    panel.add(l);
-
-    text = new TextField(7);
-    text.setText(getFactory().getPrefsString(Painter.TEXT));
-    text.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-            textSample.setColor(text.getText());
-        }
-    });
-    c = new GridBagConstraints();
-    layout.setConstraints(text, c);
-    panel.add(text);
-
-    textSample = new ColorSample(getFactory().getPrefsString(Painter.TEXT));
-    c = new GridBagConstraints();
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    layout.setConstraints(textSample, c);
-    panel.add(textSample);
-
-
-    l = new Label(getFactory().getString(Painter.LINK)+":", Label.RIGHT);
-    c = new GridBagConstraints();
-    layout.setConstraints(l, c);
-    panel.add(l);
-
-    link = new TextField(7);
-    link.setText(getFactory().getPrefsString(Painter.LINK));
-    link.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-            linkSample.setColor(link.getText());
-        }
-    });
-    c = new GridBagConstraints();
-    layout.setConstraints(link, c);
-    panel.add(link);
-
-    linkSample = new ColorSample(getFactory().getPrefsString(Painter.LINK));
-    c = new GridBagConstraints();
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    layout.setConstraints(linkSample, c);
-    panel.add(linkSample);
-
-
-    l = new Label(getFactory().getString(Painter.VLINK)+":", Label.RIGHT);
-    c = new GridBagConstraints();
-    layout.setConstraints(l, c);
-    panel.add(l);
-
-    vlink = new TextField(7);
-    vlink.setText(getFactory().getPrefsString(Painter.VLINK));
-    vlink.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-            vlinkSample.setColor(vlink.getText());
-        }
-    });
-    c = new GridBagConstraints();
-    layout.setConstraints(vlink, c);
-    panel.add(vlink);
-
-    vlinkSample = new ColorSample(getFactory().getPrefsString(Painter.VLINK));
-    c = new GridBagConstraints();
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    layout.setConstraints(vlinkSample, c);
-    panel.add(vlinkSample);
-
-
-    l = new Label(getFactory().getString(Painter.ALINK)+":", Label.RIGHT);
-    c = new GridBagConstraints();
-    layout.setConstraints(l, c);
-    panel.add(l);
-
-    alink = new TextField(7);
-    alink.setText(getFactory().getPrefsString(Painter.ALINK));
-    alink.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-            alinkSample.setColor(alink.getText());
-        }
-    });
-    c = new GridBagConstraints();
-    layout.setConstraints(alink, c);
-    panel.add(alink);
-
-    alinkSample = new ColorSample(getFactory().getPrefsString(Painter.ALINK));
-    c = new GridBagConstraints();
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    layout.setConstraints(alinkSample, c);
-    panel.add(alinkSample);
+            
+    for(int i = 0; i< SAMPLE_KEYS.length; i++){
+        fSamples.put(SAMPLE_KEYS[i], makeSample(layout, panel, SAMPLE_KEYS[i]));
+    }
+    
     return panel;
     
+    }
+    
+    private Sample makeSample(GridBagLayout layout, Panel panel, String key){
+    Label l = new Label(getFactory().getString(key)+":", Label.RIGHT);
+    GridBagConstraints c = new GridBagConstraints();
+    layout.setConstraints(l, c);
+    panel.add(l);
+
+    TextField textField = new TextField(7);
+    textField.setText(getFactory().getPrefsString(key));
+    c = new GridBagConstraints();
+    layout.setConstraints(textField, c);
+    panel.add(textField);
+
+    ColorSample colorSample = new ColorSample(getFactory().getPrefsString(key));
+    c = new GridBagConstraints();
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    layout.setConstraints(colorSample, c);
+    panel.add(colorSample);
+    Sample sample = new Sample(textField, colorSample);
+    textField.addActionListener(sample);
+    textField.addFocusListener(sample);
+    
+    return sample;
     }
     
     /**
@@ -236,56 +170,59 @@ public class PainterFrame extends AbstractFrame implements ItemListener
             HELP_CMD };
     }
 
-    void createStyleTable()
+    private void createStyleTable()
     {
-    Vector v;
 
-    styleTable = new Hashtable(13);
+    fStyles = new ArrayList();
+    fStyleTable = new HashMap(fStyles.size());
+    
+    java.util.List colors;
 
-    /* None */
-    v = new Vector();
-    v.addElement("None"); // bgcolor
-    v.addElement("None"); // text
-    v.addElement("None"); // link
-    v.addElement("None"); // vlink
-    v.addElement("None"); // alink
-    styleTable.put(styles[0], v);
+    String style;
+    
+    style = "none";
+    style = getFactory().getString(style);
+    fStyles.add(style);
+    colors = new ArrayList();
+    colors.add("None"); // fBgcolor
+    colors.add("None"); // fText
+    colors.add("None"); // fLink
+    colors.add("None"); // fVlink
+    colors.add("None"); // fAlink
+    fStyleTable.put(style, colors);
 
-    /* Dark */
-    v = new Vector();
-    v.addElement("#000000"); // bgcolor
-    v.addElement("#ffffff"); // text
-    v.addElement("#98fb98"); // link
-    v.addElement("#ffa07a"); // vlink
-    v.addElement("#ff0000"); // alink
-    styleTable.put(styles[1], v);
+    style = "dark";
+    style = getFactory().getString(style);
+    fStyles.add(style);
+    colors = new ArrayList();
+    colors.add("#000000"); // fBgcolor
+    colors.add("#ffffff"); // fText
+    colors.add("#98fb98"); // fLink
+    colors.add("#ffa07a"); // fVlink
+    colors.add("#ff0000"); // fAlink
+    fStyleTable.put(style, colors);
 
-    /* Light */
-    v = new Vector();
-    v.addElement("#ffffff"); // bgcolor
-    v.addElement("#000000"); // text
-    v.addElement("#0000ee"); // link
-    v.addElement("#551a8b"); // vlink
-    v.addElement("#ff0000"); // alink
-    styleTable.put(styles[2], v);
+    style = "light";
+    style = getFactory().getString(style);
+    fStyles.add(style);
+    colors = new ArrayList();
+    colors.add("#ffffff"); // fBgcolor
+    colors.add("#000000"); // fText
+    colors.add("#0000ee"); // fLink
+    colors.add("#551a8b"); // fVlink
+    colors.add("#ff0000"); // fAlink
+    fStyleTable.put(style, colors);
 
-    /* Christmas */
-    v = new Vector();
-    v.addElement("#ffffff"); // bgcolor
-    v.addElement("#000000"); // text
-    v.addElement("#00ff00"); // link
-    v.addElement("#ff0000"); // vlink
-    v.addElement("#ff0000"); // alink
-    styleTable.put(styles[3], v);
-    }
-
-    void updateSamples()
-    {
-    bgcolorSample.setColor(bgcolor.getText());
-    textSample.setColor(text.getText());
-    linkSample.setColor(link.getText());
-    vlinkSample.setColor(vlink.getText());
-    alinkSample.setColor(alink.getText());
+    style = "xmas";
+    style = getFactory().getString(style);
+    fStyles.add(style);
+    colors = new ArrayList();
+    colors.add("#ffffff"); // fBgcolor
+    colors.add("#000000"); // fText
+    colors.add("#00ff00"); // fLink
+    colors.add("#ff0000"); // fVlink
+    colors.add("#ff0000"); // fAlink
+    fStyleTable.put(style, colors);
     }
 
     /**
@@ -294,36 +231,56 @@ public class PainterFrame extends AbstractFrame implements ItemListener
      */
     protected void doApply()
     {
-        getFactory().putPrefsString(
-            Painter.BGCOLOR,
-            bgcolor.getText());
-        getFactory().putPrefsString(
-            Painter.BACKGRND,
-            background.getText());
-        getFactory().putPrefsString(
-            Painter.TEXT,
-            text.getText());
-        getFactory().putPrefsString(
-            Painter.LINK,
-            link.getText());
-        getFactory().putPrefsString(
-            Painter.VLINK,
-            vlink.getText());
-        getFactory().putPrefsString(
-            Painter.ALINK,
-            alink.getText());
+        for(int i=0;i<SAMPLE_KEYS.length;i++){
+            Sample su = (Sample)fSamples.get(SAMPLE_KEYS[i]);
+            getFactory().putPrefsString(SAMPLE_KEYS[i],su.getText());
+        }
     }
 
-    public void itemStateChanged(ItemEvent event)
-    {
-    Vector v = (Vector) styleTable.get(event.getItem().toString());
-    bgcolor.setText((String) v.elementAt(0));
-    text.setText((String) v.elementAt(1));
-    link.setText((String) v.elementAt(2));
-    vlink.setText((String) v.elementAt(3));
-    alink.setText((String) v.elementAt(4));
-    updateSamples();
+    class Sample extends FocusAdapter implements ActionListener {
+        Sample(TextField tf, ColorSample cs){
+            fTextField = tf;
+            fColorSample = cs;
+        }
+        public void actionPerformed(ActionEvent event) {
+            fColorSample.setColor(fTextField.getText());
+        }
+        public void focusLost(FocusEvent e){
+            fColorSample.setColor(fTextField.getText());
+        }
+        public TextField getTextField(){
+            return fTextField;
+        }
+        public void setTextField(TextField tf){
+            fTextField = tf;
+        }
+        public ColorSample getColorSample(){
+            return fColorSample;
+        }
+        public void setText(String text){
+            fTextField.setText(text);
+            syncSampleWithText();
+        }
+        public String getText(){
+            return fTextField.getText();
+        }
+        private void syncSampleWithText(){
+            fColorSample.setColor(fTextField.getText());
+        }
+        private TextField fTextField;
+        private ColorSample fColorSample;
     }
     
+    private static final String[] SAMPLE_KEYS = new String[] {
+            Painter.BGCOLOR,
+            Painter.TEXT,
+            Painter.LINK,
+            Painter.VLINK,
+            Painter.ALINK
+    };
+    private Map fSamples = new HashMap(SAMPLE_KEYS.length);
+    private HashMap fStyleTable = null;
+    private List fStyles;
+
 }
 
