@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -30,48 +30,56 @@ import org.doit.muffin.regexp.AbstractMatcherAdapter;
  * @author bw@xmlizer.biz
  *
  */
-public class MatcherAdapter extends AbstractMatcherAdapter {
-	
-	public MatcherAdapter(java.util.regex.Matcher matcher){
-		this.fMatcher = matcher;
-	}
+public class MatcherAdapter extends AbstractMatcherAdapter
+{
 
-	/**
-	 * @see org.doit.muffin.regexp.Matcher#getStartIndex()
-	 */
-	public int getStartIndex() {
-		return fMatcher.start();
-	}
+    public MatcherAdapter(java.util.regex.Matcher matcher)
+    {
+        this.fMatcher = matcher;
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Matcher#getStartIndex(int)
-	 */
-	public int getStartIndex(int sub) {
-		return fMatcher.start(sub);
-	}
+    /**
+     * @see org.doit.muffin.regexp.Matcher#getStartIndex()
+     */
+    public int getStartIndex()
+    {
+        return fMatcher.start();
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Matcher#getEndIndex()
-	 */
-	public int getEndIndex() {
-		return fMatcher.end();
-	}
+    /**
+     * @see org.doit.muffin.regexp.Matcher#getStartIndex(int)
+     */
+    public int getStartIndex(int sub)
+    {
+        return fMatcher.start(sub);
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Matcher#getEndIndex(int)
-	 */
-	public int getEndIndex(int sub) {
-		return fMatcher.end(sub);
-	}
+    /**
+     * @see org.doit.muffin.regexp.Matcher#getEndIndex()
+     */
+    public int getEndIndex()
+    {
+        return fMatcher.end();
+    }
 
-	protected int doGetSubCount(){
-		return fMatcher.groupCount();
-	}
-	
-	protected String doGetNthSub(int n){
-		return fMatcher.group(n);
-	}
+    /**
+     * @see org.doit.muffin.regexp.Matcher#getEndIndex(int)
+     */
+    public int getEndIndex(int sub)
+    {
+        return fMatcher.end(sub);
+    }
 
-	private java.util.regex.Matcher fMatcher;
+    protected int doGetSubCount()
+    {
+        return fMatcher.groupCount();
+    }
+
+    protected String doGetNthSub(int n)
+    {
+        return fMatcher.group(n);
+    }
+
+    private java.util.regex.Matcher fMatcher;
 
 }

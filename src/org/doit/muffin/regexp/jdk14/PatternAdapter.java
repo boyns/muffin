@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -32,73 +32,81 @@ import org.doit.muffin.regexp.Factory;
  * @author bw@xmlizer.biz
  *
  */
-public class PatternAdapter extends AbstractPatternAdapter {
+public class PatternAdapter extends AbstractPatternAdapter
+{
 
-	
-	public PatternAdapter(String pattern){
-		super(pattern);
-	}
-	
-	public PatternAdapter(String pattern, boolean ignoreCase){
-		super(pattern, ignoreCase);
-	}
+    public PatternAdapter(String pattern)
+    {
+        super(pattern);
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#isMatch(java.lang.Object)
-	 */
-	public boolean matches(String input) {
-		return fPattern.matcher(input).find();
-	}
+    public PatternAdapter(String pattern, boolean ignoreCase)
+    {
+        super(pattern, ignoreCase);
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object)
-	 */
-	public Matcher getMatch(String input) {
-		java.util.regex.Matcher matcher = fPattern.matcher(input);
-		return matcher.find() ? new MatcherAdapter(matcher) : null;
-		
-		// alternative implemenation reusing other:
-		// getMatch(input, 0);
-	}
+    /**
+     * @see org.doit.muffin.regexp.Pattern#isMatch(java.lang.Object)
+     */
+    public boolean matches(String input)
+    {
+        return fPattern.matcher(input).find();
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object, int)
-	 */
-	public Matcher getMatch(String input, int index) {
-		java.util.regex.Matcher matcher = fPattern.matcher(input);
-		return (matcher.find(index)) ?	new MatcherAdapter(matcher) : null;
-	}
+    /**
+     * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object)
+     */
+    public Matcher getMatch(String input)
+    {
+        java.util.regex.Matcher matcher = fPattern.matcher(input);
+        return matcher.find() ? new MatcherAdapter(matcher) : null;
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#substituteAll(java.lang.Object, java.lang.String)
-	 */
-	public String substituteAll(String input, String replace) {
-		return fPattern.matcher(input).replaceAll(replace);
-	}
+        // alternative implemenation reusing other:
+        // getMatch(input, 0);
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.AbstractPatternAdapter#doMakePattern(java.lang.String)
-	 */
-	protected void doMakePattern(String pattern) {
-		this.fPattern = java.util.regex.Pattern.compile(pattern);
-	}
-	/**
-	 * @see org.doit.muffin.regexp.AbstractPatternAdapter#doMakePatternIgnoreCase(java.lang.String)
-	 */
-	protected void doMakePatternIgnoreCase(String pattern) {
-		this.fPattern = java.util.regex.Pattern.compile(
-			pattern,
-			java.util.regex.Pattern.CASE_INSENSITIVE
-		);
-	}
+    /**
+     * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object, int)
+     */
+    public Matcher getMatch(String input, int index)
+    {
+        java.util.regex.Matcher matcher = fPattern.matcher(input);
+        return (matcher.find(index)) ? new MatcherAdapter(matcher) : null;
+    }
 
-	private java.util.regex.Pattern fPattern;
-	
-	// Announce this implementation to the Factory.
-	// It would work in C++ where static code gets executed at any rate.
-	// Not so in Java.
-//	
-//	static {
-//		Factory.instance().addImplementation(PatternAdapter.class);
-//	}
+    /**
+     * @see org.doit.muffin.regexp.Pattern#substituteAll(java.lang.Object, java.lang.String)
+     */
+    public String substituteAll(String input, String replace)
+    {
+        return fPattern.matcher(input).replaceAll(replace);
+    }
+
+    /**
+     * @see org.doit.muffin.regexp.AbstractPatternAdapter#doMakePattern(java.lang.String)
+     */
+    protected void doMakePattern(String pattern)
+    {
+        this.fPattern = java.util.regex.Pattern.compile(pattern);
+    }
+    /**
+     * @see org.doit.muffin.regexp.AbstractPatternAdapter#doMakePatternIgnoreCase(java.lang.String)
+     */
+    protected void doMakePatternIgnoreCase(String pattern)
+    {
+        this.fPattern =
+            java.util.regex.Pattern.compile(
+                pattern,
+                java.util.regex.Pattern.CASE_INSENSITIVE);
+    }
+
+    private java.util.regex.Pattern fPattern;
+
+    // Announce this implementation to the Factory.
+    // It would work in C++ where static code gets executed at any rate.
+    // Not so in Java.
+    //	
+    //	static {
+    //		Factory.instance().addImplementation(PatternAdapter.class);
+    //	}
 }

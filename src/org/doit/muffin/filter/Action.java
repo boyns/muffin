@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -22,13 +22,17 @@
  */
 package org.doit.muffin.filter;
 
-public interface Action {
-	/**
-	 * Performs this action.	 */
-	void perform();
-	
-	/**
-	 * Returns name of this action.
-	 * 	 * @return String The name of this Action.	 */
-	String getName();
+public interface Action
+{
+    /**
+     * Performs this action.
+     */
+    void perform();
+
+    /**
+     * Returns name of this action.
+     * 
+     * @return String The name of this Action.
+     */
+    String getName();
 }

@@ -1,5 +1,3 @@
-/* $Id: DecafFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
-
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
@@ -25,132 +23,83 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import org.doit.muffin.*;
-import org.doit.util.*;
 
-public class DecafFrame extends MuffinFrame implements ActionListener, WindowListener
+public class DecafFrame extends AbstractFrame
 {
-    Prefs prefs;
-    Decaf parent;
-    Checkbox noJava, noJavaScript;
 
-    public DecafFrame(Prefs prefs, Decaf parent)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(AbstractFilterFactory)
+     */
+    public DecafFrame(Decaf factory)
     {
-	super(Strings.getString("Decaf.title"));
+        super(factory);
+        fFactory = factory;
+    }
+    
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()
+     */
+    protected Panel doMakeContent()
+    {
 
-	this.prefs = prefs;
-	this.parent = parent;
+        Panel panel = new Panel(new BorderLayout());
 
-	Panel panel = new Panel();
-	GridBagLayout layout = new GridBagLayout();
-	panel.setLayout(layout);
-	GridBagConstraints c;
+        panel.add("North", makeConfigPanel());
 
-	noJavaScript = new Checkbox(Strings.getString("Decaf.noJavaScript"));
-	noJavaScript.setState(prefs.getBoolean("Decaf.noJavaScript"));
-	noJava = new Checkbox(Strings.getString("Decaf.noJava"));
-	noJava.setState(prefs.getBoolean("Decaf.noJava"));
+        getFactory().getMessages().setEditable(false);
+        panel.add("Center", getFactory().getMessages());
 
-	c = new GridBagConstraints();
-	layout.setConstraints(noJavaScript, c);
-	panel.add(noJavaScript);
+        panel.add("South", makeButtonPanel());
 
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(noJava, c);
-	panel.add(noJava);
+        return panel;
 
-	add("North", panel);
-
-	parent.messages.setEditable(false);
-	add("Center", parent.messages);
-
-	Button b;
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button(Strings.getString("apply"));
-	b.setActionCommand("doApply");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("help"));
-	b.setActionCommand("doHelp");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-
-	add("South", buttonPanel);
-
-	addWindowListener(this);
-
-	pack();
-	setSize(getPreferredSize());
-
-	show();
+    }
+    
+    private Panel makeConfigPanel()
+    {
+        Panel panel = new Panel();
+        GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
+        GridBagConstraints c;
+    
+        noJavaScript = new Checkbox(getFactory().getString(Decaf.NOJAVASCRIPT));
+        noJavaScript.setState(getFactory().getPrefsBoolean(Decaf.NOJAVASCRIPT));
+        noJava = new Checkbox(getFactory().getString(Decaf.NOJAVA));
+        noJava.setState(getFactory().getPrefsBoolean(Decaf.NOJAVA));
+    
+        c = new GridBagConstraints();
+        layout.setConstraints(noJavaScript, c);
+        panel.add(noJavaScript);
+    
+        c = new GridBagConstraints();
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        layout.setConstraints(noJava, c);
+        panel.add(noJava);
+        return panel;
     }
 
-    public void actionPerformed(ActionEvent event)
-    {
-	String arg = event.getActionCommand();
-
-	if ("doApply".equals(arg))
-	{
-	    prefs.putBoolean("Decaf.noJavaScript", noJavaScript.getState());
-	    prefs.putBoolean("Decaf.noJava", noJava.getState());
-	}
-	else if ("doSave".equals(arg))
-	{
-	    parent.save();
-	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
-	}
-	else if ("doClear".equals(arg))
-	{
-	    parent.messages.clear();
-	}
-	else if ("doHelp".equals(arg))
-	{
-	    new HelpFrame("Decaf");
-	}
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doApply()
+     */
+    protected void doApply(){
+        getFactory().putPrefsBoolean(Decaf.NOJAVASCRIPT, noJavaScript.getState());
+        getFactory().putPrefsBoolean(Decaf.NOJAVA, noJava.getState());
     }
 
-    public void windowActivated(WindowEvent e)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+     */
+    protected String[] doMakeButtonList()
     {
+        return new String[] {
+            APPLY_CMD,
+            SAVE_CMD,
+            CLEAR_CMD,
+            CLOSE_CMD,
+            HELP_CMD };
     }
 
-    public void windowDeactivated(WindowEvent e)
-    {
-    }
-
-    public void windowClosing(WindowEvent e)
-    {
-	setVisible(false);
-    }
-
-    public void windowClosed(WindowEvent e)
-    {
-    }
-
-    public void windowIconified(WindowEvent e)
-    {
-    }
-
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
-
-    public void windowOpened(WindowEvent e)
-    {
-    }
+    
+    private Decaf fFactory;
+    private Checkbox noJava, noJavaScript;
 }

@@ -1,4 +1,4 @@
-/* $Id: AnimationKiller.java,v 1.7 2003/06/01 01:01:09 forger77 Exp $ */
+/* $Id: AnimationKiller.java,v 1.8 2003/06/03 23:09:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,33 +24,42 @@ package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
 
-public class AnimationKiller extends AbstractFilterFactory {
-	
-	final static String MAXLOOPS = "maxLoops";
-	final static String BREAK    = "break";
+public class AnimationKiller extends AbstractFilterFactory
+{
 
-	/**
-	 * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()	 */
-	protected void doSetDefaultPrefs() {
-		putPrefsInteger(MAXLOOPS, 1);
-		putPrefsBoolean(BREAK, false);
-	}
+    final static String MAXLOOPS = "maxLoops";
+    final static String BREAK = "break";
 
-	/**
-	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()	 */
-	protected Filter doMakeFilter() {
-		return new AnimationKillerFilter(this);
-	}
-	
-	/**
-	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()	 */
-	protected AbstractFrame doMakeFrame() {
-		return new AnimationKillerFrame(this);
-	}
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()
+     */
+    protected void doSetDefaultPrefs()
+    {
+        putPrefsInteger(MAXLOOPS, 1);
+        putPrefsBoolean(BREAK, false);
+    }
 
-	/**
-	 * @see org.doit.muffin.filter.AbstractFilterFactory#getName()	 */
-	public String getName(){
-		return "AnimationKiller";
-	}
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()
+     */
+    protected Filter doMakeFilter()
+    {
+        return new AnimationKillerFilter(this);
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()
+     */
+    protected AbstractFrame doMakeFrame()
+    {
+        return new AnimationKillerFrame(this);
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName()
+    {
+        return "AnimationKiller";
+    }
 }

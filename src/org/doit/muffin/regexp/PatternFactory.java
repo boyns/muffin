@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -26,6 +26,7 @@ package org.doit.muffin.regexp;
  * @author Bernhard Wagner <bw@xmlizer.biz>
  *
  */
-public interface PatternFactory {
-	public Pattern getPattern(String pattern, boolean ignoreCase);
+public interface PatternFactory
+{
+    public Pattern getPattern(String pattern, boolean ignoreCase);
 }

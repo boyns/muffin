@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -26,9 +26,10 @@ package org.doit.muffin.regexp;
  * @author bw@xmlizer.biz
  *
  */
-public abstract class AbstractMatcherAdapter implements Matcher {
+public abstract class AbstractMatcherAdapter implements Matcher
+{
 
-	/**
+    /**
      * Substitute the results of a match to create a new string.
      * This is patterned after PERL, so the tokens to watch out for are
      * <code>$0</code> through <code>$9</code>.  <code>$0</code> matches
@@ -45,42 +46,49 @@ public abstract class AbstractMatcherAdapter implements Matcher {
      * 
      * @param input A string consisting of literals and <code>$<i>n</i></code> tokens.
      */
-	public String substituteInto(String replace) {
-		StringBuffer output = new StringBuffer();
-		int pos;
+    public String substituteInto(String replace)
+    {
+        StringBuffer output = new StringBuffer();
+        int pos;
 
-		for (pos = 0; pos < replace.length() - 1; pos++) {
-			if ((replace.charAt(pos) == '$')
-				&& (Character.isDigit(replace.charAt(pos + 1)))) {
-				int val = Character.digit(replace.charAt(++pos), 10);
-				if (val <= doGetSubCount()) {
-					output.append(doGetNthSub(val));
-				}
-			} else {
-				output.append(replace.charAt(pos));
-			}
-		}
+        for (pos = 0; pos < replace.length() - 1; pos++)
+        {
+            if ((replace.charAt(pos) == '$')
+                && (Character.isDigit(replace.charAt(pos + 1))))
+            {
+                int val = Character.digit(replace.charAt(++pos), 10);
+                if (val <= doGetSubCount())
+                {
+                    output.append(doGetNthSub(val));
+                }
+            } else
+            {
+                output.append(replace.charAt(pos));
+            }
+        }
 
-		if (pos < replace.length()) {
-			output.append(replace.charAt(pos));
-		}
+        if (pos < replace.length())
+        {
+            output.append(replace.charAt(pos));
+        }
 
-		return output.toString();
-	}
-	
-	/**
-	 * Hook Method for @see substituteInto.
-	 * Returns the number of parenthesized subregexps.	 * 
-	 * @return int	 */
-	protected abstract int doGetSubCount();
-	
-	/**
-	 * Hook Method for @see substituteInto. Returns the nth parenthesized subregexp matched.
-	 * @param int Which parenthesized subregexp to return.
-	 * 
-	 * @return String The nth parenthesized subregexp.
-	 */
-	protected abstract String doGetNthSub(int n);
+        return output.toString();
+    }
 
+    /**
+     * Hook Method for @see substituteInto.
+     * Returns the number of parenthesized subregexps.
+     * 
+     * @return int
+     */
+    protected abstract int doGetSubCount();
+
+    /**
+     * Hook Method for @see substituteInto. Returns the nth parenthesized subregexp matched.
+     * @param int Which parenthesized subregexp to return.
+     * 
+     * @return String The nth parenthesized subregexp.
+     */
+    protected abstract String doGetNthSub(int n);
 
 }

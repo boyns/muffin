@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -28,16 +28,20 @@ import org.doit.muffin.regexp.Pattern;
  * @author Bernhard Wagner <bw@xmlizer.biz>
  *
  */
-public class PatternFactory implements org.doit.muffin.regexp.PatternFactory {
-	public Pattern getPattern(String pattern, boolean ignoreCase){
-		return new PatternAdapter(pattern, ignoreCase);
-	}
-	
-	private PatternFactory(){}
-	
-	public static PatternFactory instance() {
-		return gcInstance;
-	}
-	
-	private static PatternFactory gcInstance = new PatternFactory();
+public class PatternFactory implements org.doit.muffin.regexp.PatternFactory
+{
+    public Pattern getPattern(String pattern, boolean ignoreCase)
+    {
+        return new PatternAdapter(pattern, ignoreCase);
+    }
+
+    private PatternFactory()
+    {}
+
+    public static PatternFactory instance()
+    {
+        return gcInstance;
+    }
+
+    private static PatternFactory gcInstance = new PatternFactory();
 }

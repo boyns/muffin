@@ -1,4 +1,4 @@
-/* $Id: EmptyFont.java,v 1.6 2003/05/30 21:54:05 forger77 Exp $ */
+/* $Id: EmptyFont.java,v 1.7 2003/06/03 23:09:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,40 +24,55 @@ package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
 
-public class EmptyFont extends AbstractFilterFactory {
-	
-	static final String DEBUG = "debug";
+public class EmptyFont extends AbstractFilterFactory
+{
 
-	/**
-	 * 
-	 * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()
-	 */
-	protected void doSetDefaultPrefs(){
-		putPrefsBoolean(DEBUG, false);
-	}
-	
-	/**	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()	 */
-	protected AbstractFrame doMakeFrame(){
-		return new EmptyFontFrame(this);
-	}
-	
-	/**	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()	 */
-	protected Filter doMakeFilter(){
-		return new EmptyFontFilter(this);
-	}
-	
-	/**	 * @see org.doit.muffin.filter.AbstractFilterFactory#getName()	 */
-	public String getName(){
-		return "EmptyFont";
-	}
+    static final String DEBUG = "debug";
 
-	/**	 * Reports to the MessageArea if debug is true in Prefs.
-	 * Actually, all calls to debug in @see org.doit.muffin.EmptyFontFilter are
-	 * commented. Thus, this method never gets called...
-	 * @param message The message to report.	 */
-	void debug(String message) {
-		if (getPrefsBoolean(DEBUG)) {
-			report(message);
-		}
-	}
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()
+     */
+    protected void doSetDefaultPrefs()
+    {
+        putPrefsBoolean(DEBUG, false);
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()
+     */
+    protected AbstractFrame doMakeFrame()
+    {
+        return new EmptyFontFrame(this);
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()
+     */
+    protected Filter doMakeFilter()
+    {
+        return new EmptyFontFilter(this);
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName()
+    {
+        return "EmptyFont";
+    }
+
+    /**
+     * Reports to the MessageArea if debug is true in Prefs.
+     * Actually, all calls to debug in @see org.doit.muffin.EmptyFontFilter are
+     * commented. Thus, this method never gets called...
+     * @param message The message to report.
+     */
+    void debug(String message)
+    {
+        if (getPrefsBoolean(DEBUG))
+        {
+            report(message);
+        }
+    }
 }

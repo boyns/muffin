@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -32,14 +32,15 @@ import java.lang.Object;
  *
  */
 
-public interface Matcher {
+public interface Matcher
+{
 
     /**
      * Returns the index within the input text where the match in its entirety
      * began.
      */
-	int getStartIndex();
-	
+    int getStartIndex();
+
     /** 
      * Returns the index within the input string used to generate this match
      * where subexpression number <i>sub</i> begins, or <code>-1</code> if
@@ -47,8 +48,8 @@ public interface Matcher {
      *
      * @param sub Subexpression index
      */
-	int getStartIndex(int sub);
-	
+    int getStartIndex(int sub);
+
     /**
      * Returns the index within the input string where the match in
      * its entirety ends.  The return value is the next position after
@@ -66,8 +67,8 @@ public interface Matcher {
      * But you can save yourself that work, since the <code>toString()</code>
      * method (above) does exactly that for you.  
      */
-	int getEndIndex();
-    
+    int getEndIndex();
+
     /** 
      * Returns the index within the input string used to generate this match
      * where subexpression number <i>sub</i> ends, or <code>-1</code> if
@@ -75,8 +76,8 @@ public interface Matcher {
      *
      * @param sub Subexpression index
      */
-	int getEndIndex(int sub);
-	
+    int getEndIndex(int sub);
+
     /**
      * Substitute the results of this match to create a new string.
      * This is patterned after PERL, so the tokens to watch out for are
@@ -86,5 +87,5 @@ public interface Matcher {
      *
      * @param replacement A string consisting of literals and <code>$<i>n</i></code> tokens.
      */
-	String substituteInto(String replacement);
+    String substituteInto(String replacement);
 }
