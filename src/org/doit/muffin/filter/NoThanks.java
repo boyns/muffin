@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.6 1999/11/09 04:05:08 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.7 1999/11/09 04:11:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -352,6 +352,8 @@ public class NoThanks implements FilterFactory
 
     void load(Reader reader)
     {
+	cflags = 0;
+	
 	strip = new Hashtable(33);
 	redirectPatterns = new Vector();
 	redirectLocations = new Vector();
