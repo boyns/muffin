@@ -9,22 +9,36 @@
     <property name="build.compiler" value="classic"/>
     <property name="decryption.dir" value="org/doit/muffin/decryption"/>
     <property name="libdir" value="lib"/>
-    <property name="junit.jar" value="${libdir}/junit.jar"/>
+
+		<path id="classpath.path">
+				<pathelement location="${classes}"/>
+				<fileset dir="${libdir}">
+						<include name="*.jar"/>
+				</fileset>
+		</path>
+
   </target>
 
   <target name="compile" depends="init, core.compile, decryption.compile"/>
 
   <target name="core.compile" depends="init">
     <mkdir dir="${classes}" />
-    <javac srcdir="${srcdir}"
-           destdir="${classes}"
-	   includes="**/*.java"
-	   excludes="${decryption.dir}/*.java"
-	   deprecation="false"
-	   debug="true"
-           classpath="${classpath};${junit.jar}"/>
+    <javac 
+			srcdir="${srcdir}"
+			destdir="${classes}"
+			includes="**/*.java"
+			excludes="${decryption.dir}/*.java"
+			deprecation="false"
+			debug="true">
+				<classpath>
+							<path refid="classpath.path"/>
+				</classpath>
+		</javac>
     <copy todir="${classes}">
-      <fileset dir="${srcdir}" includes="**/*.properties" excludes="${decryption.dir}/**"/>
+      <fileset 
+				dir="${srcdir}"
+				includes="**/*.properties"
+				excludes="${decryption.dir}/**"/>
     </copy>
     <copy todir="${classes}/images">
       <fileset dir="images" includes="*.jpg"/>
@@ -45,7 +59,9 @@
     <copy todir="${classes}">
       <fileset dir="${srcdir}" includes="${decryption.dir}/certs"/>
     </copy>
-    <copy file="${srcdir}/${decryption.dir}/package.html" tofile="doc/https_sniffing_guide.html"/>
+    <copy 
+			file="${srcdir}/${decryption.dir}/package.html"
+			tofile="doc/https_sniffing_guide.html"/>
   </target>
   
   <target name="clean" depends="init">
@@ -63,16 +79,17 @@
     
   <target name="javadoc" description="Create Javadoc documentation">
     <mkdir dir="doc/api"/>
-    <javadoc sourcepath="src"
-             destdir="doc/api"
-             packagenames="org.doit.muffin.*"
-             author="true"
-             private="false"
-             version="true"
-             doctitle="&lt;h1&gt;Muffin&lt;/h1&gt;"
-             windowtitle="Muffin"
-             overview="src/overview.html"
-             classpath="${classpath}">
+    <javadoc 
+			sourcepath="src"
+			destdir="doc/api"
+			packagenames="org.doit.muffin.*"
+			author="true"
+			private="false"
+			version="true"
+			doctitle="&lt;h1&gt;Muffin&lt;/h1&gt;"
+			windowtitle="Muffin"
+			overview="src/overview.html"
+			classpath="${classpath}">
      </javadoc>
   </target>
 
