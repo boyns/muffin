@@ -8,7 +8,7 @@ UNIX INSTALLATION:
 
 * `cd' to the top-level muffin directory and execute `./configure'.
 
-* [optional] Compile muffin using `make'.  (requires GNU make)
+* Compile muffin using `make'.  (requires GNU make)
   This will compile all the java source files and create `muffin.jar'.
   If your java compiler can't find system classes, try:
 
@@ -23,7 +23,10 @@ UNIX INSTALLATION:
 
 WINDOWS INSTALLATION:
 
-* None yet; see RUNNING below.
+* None yet; see RUNNING below.  If you do not know how to compile Muffin
+  on your system, download the latest muffin.jar from:
+
+    http://muffin.doit.org/dist/muffin.jar
 
 
 MACINTOSH INSTALLATION:
@@ -90,4 +93,4 @@ can be specified and "ALL" matches all IP addresses.  An example
 partial IP address would be 130.191.13. which is the same as all hosts
 in the range 130.191.13.1 to 130.191.13.255.
 
-$Id: INSTALL,v 1.5 1999/03/12 15:47:27 boyns Exp $
+$Id: INSTALL,v 1.6 1999/03/19 07:38:48 boyns Exp $
