@@ -1,0 +1,107 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; U; Linux 2.4.18 i686) [Netscape]">
+   <title>How to Write a Muffin Filter</title>
+</head>
+<body>
+
+<blockquote>
+<blockquote>
+
+<center>
+<h1>
+How to Write a Muffin Filter</h1></center>
+
+<p>There are many example filters provided with Muffin. You can also
+check the mailing list <a href="http://www.geocrawler.com/redir-sf.php3?list=muffin-users">archives</a>
+or <a href="http://lists.sourceforge.net/mailman/listinfo/muffin-users">subscribe</a>
+for more help.
+
+<p>Muffin filters use the Model-View-Controller paradigm.
+"Model" means data, "view" means user interface, and "controller" means
+main logic. So most filters are made up of 3 classes, one for your data, one
+for the user interface, and one for your filter logic. For example,
+the Cache filter is implemented by the 3 classes Cache, CacheFrame,
+and CacheFilter.
+The Cache class manages the data, CacheFrame is the ui, and CacheFilter has the
+controlling logic.
+
+<p>Your filter classes go in the org.doit.muffin.filter package.
+Muffin expects you to give your data class the same name as your filter,
+and then use that name as a prefix for the names of your user interface and
+filter logic classes. Add "Frame" to create your ui class name and "Filter"
+for the name of your logic class, just like Cache, CacheFrame and CacheFilter.
+
+<p>Include a help text file for your filter in
+the doc/filters directory. The Cache filter help file is Cache.txt.
+
+<p>Your data class must implement the
+<a href="javadoc/org/doit/muffin/FilterFactory.html">FilterFactory</a>
+interface. Simple persistent data is stored in a shared instance of <b>Prefs</b>.
+Muffin passes the Prefs instance into your data class by calling
+your <b>setPrefs</b> method.
+If you need more storage, you can also keep data in files, databases, etc.
+
+<p>Your user interface class implements
+<a href="javadoc/org/doit/muffin/MuffinFrame.html">MuffinFrame</a>.
+Notice that user interface frames have a similar look, with fairly standardized
+buttons at the bottom. Muffin uses AWT for its GUI, so you'll
+probably need to implement AWT's ActionListener and WindowListener interfaces.
+For reliability and portability, it's a good idea to limit your
+AWT component layouts to just BorderLayout and GridBagLayout.
+
+<p>The interfaces you'll implement in your filter logic class depend on
+what kind of filtering you want to do. To filter requests before they go
+out to a server implement <a href="javadoc/org/doit/muffin/RequestFilter.html">RequestFilter</a>.
+If you want to respond to some or all requests without sending the request
+to a server at all, you need <a href="javadoc/org/doit/muffin/HttpFilter.html">HttpFilter</a>
+and its superinterface, <a href="javadoc/org/doit/muffin/HttpRelay.html">HttpRelay</a>.
+If you want to see or modify replies after a server responds, implement
+<a href="javadoc/org/doit/muffin/ReplyFilter.html">ReplyFilter</a>.
+
+<p>To modify the content of an HTTP server's response, as opposed to the header
+and status info, use <a href="javadoc/org/doit/muffin/ContentFilter.html">ContentFilter</a>.
+The <a href="javadoc/org/doit/io/InputObjectStream.html">InputObjectStream</a> and
+<a href="javadoc/org/doit/io/OutputObjectStream.html">OutputObjectStream</a>
+are streams of Java objects which represent the content.
+A Java object is just an instance of a class.
+The InputObjectStream will be either an
+<a href="javadoc/org/doit/io/HtmlObjectStream.html">HtmlObjectStream</a> or a plain
+<a href="javadoc/org/doit/io/SourceObjectStream.html">SourceObjectStream</a>.
+An HtmlObjectStream consists of HTML
+<a href="javadoc/org/doit/html/Token.html">Token</a> objects.
+Content which isn't an HTML MIME type is returned as a SourceObjectStream,
+which provides the entire content as a single
+<a href="javadoc/org/doit/io/ByteArray.html">ByteArray</a>.
+Because each content is filtered in its own thread,
+you must also implement <b>Runable</b> and do all your filtering in the <b>run</b>
+method. Muffin will call <b>run</b> once for each content filtered.
+
+<p>When your filter classes compile and you're ready to test, start Muffin.
+It's a good idea to start it from a shell since errors and many debugging
+messages are sent to System.out. Under the <b>Edit</b> menu select "<b>Filters...</b>".
+In the <b>Filters</b> dialog click on the "<b>New..."</b> button. Type
+in the name of your filter, for example "Cache".
+When the new filter appears in the "<b>Supported Filters</b>" list of the
+<b>Filters</b>
+dialog, select your filter and click the <b>Enable</b> button. Your filter
+is now running. Check the shell window for any errors. To test your user
+interface class, select your new filter in the "<b>Enabled Filters</b>"
+list and click the "<b>Preferences...</b>" button.
+
+<p>
+When your new filter is working, be sure to let the
+<a href="http://lists.sourceforge.net/mailman/listinfo/muffin-users">
+mailing list</a> know.
+
+<p>
+&nbsp;
+<p>Doug Porter
+
+</blockquote>
+</blockquote>
+
+</body>
+</html>
