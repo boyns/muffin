@@ -1,4 +1,4 @@
-/* $Id: Glossary.java,v 1.9 2003/05/30 17:06:30 forger77 Exp $ */
+/* $Id: Glossary.java,v 1.10 2003/06/03 23:09:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,85 +30,118 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-public class Glossary extends AbstractFilterFactory {
+public class Glossary extends AbstractFilterFactory
+{
 
-	public Glossary() {
-		fGlossaryHash = new Hashtable(33);
-	}
-	
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()	 */
-	protected void doSetDefaultPrefs(){
-		putPrefsString(GLOSSARY_FILE_KEY, "glossary");
-	}
+    public Glossary()
+    {
+        fGlossaryHash = new Hashtable(33);
+    }
 
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()	 */
-	public Filter doMakeFilter() {
-		return new GlossaryFilter(this);
-	}
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()
+     */
+    protected void doSetDefaultPrefs()
+    {
+        putPrefsString(GLOSSARY_FILE_KEY, "glossary");
+    }
 
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()	 */
-	public AbstractFrame doMakeFrame() {
-		return new GlossaryFrame(this);
-	}
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()
+     */
+    public Filter doMakeFilter()
+    {
+        return new GlossaryFilter(this);
+    }
 
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#getName()	 */
-	public String getName() {
-		return "Glossary";
-	}
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()
+     */
+    public AbstractFrame doMakeFrame()
+    {
+        return new GlossaryFrame(this);
+    }
 
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFilterFactory#doLoad()	 */
-	protected void doLoad() {
-		try {
-			UserFile file =
-				getPrefs().getUserFile(getPrefsString(GLOSSARY_FILE_KEY));
-			BufferedReader in =
-				new BufferedReader(
-					new InputStreamReader(file.getInputStream()));
-			loadFromStream(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName()
+    {
+        return "Glossary";
+    }
 
-	/**
-	 * Performs a load of a glossary via a BufferedReader.
-	 * This is manly factored out to allow for testing without dependency on
-	 * external files.	 * @param in The BufferedReader to read from.	 */
-	public void loadFromStream(BufferedReader in) {
-		try {
-			String s;
-			while ((s = in.readLine()) != null) {
-				StringTokenizer st = new StringTokenizer(s, " \t");
-				String term = st.nextToken();
-				String url = st.nextToken();
-				fGlossaryHash.put(term.toLowerCase(), url);
-			}
-			in.close();
-		} catch (FileNotFoundException e) {
-			//FIXME: is it on purpose that we don't complain ?
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doLoad()
+     */
+    protected void doLoad()
+    {
+        try
+        {
+            UserFile file =
+                getPrefs().getUserFile(getPrefsString(GLOSSARY_FILE_KEY));
+            BufferedReader in =
+                new BufferedReader(
+                    new InputStreamReader(file.getInputStream()));
+            loadFromStream(in);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Returns the Enumeration for the keys in the contained Hashtable.	 * @return Enumeration for the keys in the contained Hashtable	 */
-	public Enumeration keys() {
-		return fGlossaryHash.keys();
-	}
+    /**
+     * Performs a load of a glossary via a BufferedReader.
+     * This is manly factored out to allow for testing without dependency on
+     * external files.
+     * @param in The BufferedReader to read from.
+     */
+    public void loadFromStream(BufferedReader in)
+    {
+        try
+        {
+            String s;
+            while ((s = in.readLine()) != null)
+            {
+                StringTokenizer st = new StringTokenizer(s, " \t");
+                String term = st.nextToken();
+                String url = st.nextToken();
+                fGlossaryHash.put(term.toLowerCase(), url);
+            }
+            in.close();
+        } catch (FileNotFoundException e)
+        {
+            //FIXME: is it on purpose that we don't complain ?
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * The main functionality of this class: looks up a value for the given term.
-	 * The term is lowercased first.	 * @param term The term to look up a value for.	 * @return String The "translated" term.	 */
-	String lookup(String term) {
-		return (String) fGlossaryHash.get(term.toLowerCase());
-	}
+    /**
+     * Returns the Enumeration for the keys in the contained Hashtable.
+     * @return Enumeration for the keys in the contained Hashtable
+     */
+    public Enumeration keys()
+    {
+        return fGlossaryHash.keys();
+    }
 
-	static final String GLOSSARY_FILE_KEY = "glossaryfile";
-	private Hashtable fGlossaryHash = null;
+    /**
+     * The main functionality of this class: looks up a value for the given term.
+     * The term is lowercased first.
+     * @param term The term to look up a value for.
+     * @return String The "translated" term.
+     */
+    String lookup(String term)
+    {
+        return (String) fGlossaryHash.get(term.toLowerCase());
+    }
+
+    static final String GLOSSARY_FILE_KEY = "glossaryfile";
+    private Hashtable fGlossaryHash = null;
 }

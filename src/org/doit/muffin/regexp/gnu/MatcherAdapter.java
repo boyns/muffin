@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -28,31 +28,38 @@ import org.doit.muffin.regexp.Matcher;
  * @author bernhard.wagner
  *
  */
-public class MatcherAdapter implements Matcher {
-	
-	public MatcherAdapter(gnu.regexp.REMatch rematch){
-		this.fMatcher = rematch;
-	}
+public class MatcherAdapter implements Matcher
+{
 
-	public int getStartIndex() {
-		return fMatcher.getStartIndex();
-	}
+    public MatcherAdapter(gnu.regexp.REMatch rematch)
+    {
+        this.fMatcher = rematch;
+    }
 
-	public int getEndIndex() {
-		return fMatcher.getEndIndex();
-	}
+    public int getStartIndex()
+    {
+        return fMatcher.getStartIndex();
+    }
 
-	public int getStartIndex(int sub) {
-		return fMatcher.getStartIndex(sub);
-	}
+    public int getEndIndex()
+    {
+        return fMatcher.getEndIndex();
+    }
 
-	public int getEndIndex(int sub) {
-		return fMatcher.getEndIndex(sub);
-	}
+    public int getStartIndex(int sub)
+    {
+        return fMatcher.getStartIndex(sub);
+    }
 
-	public String substituteInto(String input) {
-		return fMatcher.substituteInto(input);
-	}
-	
-	private gnu.regexp.REMatch fMatcher;
+    public int getEndIndex(int sub)
+    {
+        return fMatcher.getEndIndex(sub);
+    }
+
+    public String substituteInto(String input)
+    {
+        return fMatcher.substituteInto(input);
+    }
+
+    private gnu.regexp.REMatch fMatcher;
 }

@@ -1,4 +1,4 @@
-/* $Id: DecafFilter.java,v 1.8 2003/06/01 01:01:09 forger77 Exp $ */
+/* $Id: DecafFilter.java,v 1.9 2003/06/03 23:09:30 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,183 +28,150 @@ import org.doit.html.*;
 import java.util.Enumeration;
 import java.io.IOException;
 
-public class DecafFilter implements ContentFilter, ReplyFilter
+public class DecafFilter extends AbstractContentFilter implements ReplyFilter
 {
-    Decaf fFactory;
-    Prefs prefs;
-    InputObjectStream in = null;
-    OutputObjectStream out = null;
-    Request request = null;
 
     DecafFilter(Decaf factory)
     {
+    super(factory);
 	this.fFactory = factory;
     }
     
-    public void setPrefs(Prefs prefs)
-    {
-	this.prefs = prefs;
-    }
-
     public void filter(Reply reply) throws FilterException
     {
-	if (prefs.getBoolean("Decaf.noJavaScript"))
+	if (getFactory().getPrefsBoolean(Decaf.NOJAVASCRIPT))
 	{
 	    String content = reply.getContentType();
 	    if (content != null && content.equalsIgnoreCase("application/x-javascript"))
 	    {
-		fFactory.report(request, "rejecting " + content);
-		throw new FilterException("Decaf " + content + " rejected");
+		fFactory.report(getRequest(), "rejecting " + content);
+		throw new FilterException(getFactory().getName() + " " + content + " rejected");
 	    }
 	}
     }
 
-    public boolean needsFiltration(Request request, Reply reply)
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()
+     */
+    protected String doGetContentIdentifier()
     {
-	this.request = request;
-	String s = reply.getContentType();
-	return s != null && s.startsWith("text/html");
+        return "text/html";
     }
     
-    public void setInputObjectStream(InputObjectStream in)
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doRun(ObjectStreamToInputStream, ObjectStreamToOutputStream)
+     */
+    protected void doRun(
+        ObjectStreamToInputStream ostis,
+        ObjectStreamToOutputStream ostos)
+        throws IOException
     {
-	this.in = in;
-    }
-
-    public void setOutputObjectStream(OutputObjectStream out)
-    {
-	this.out = out;
-    }
-    
-    public void run()
-    {
-	Thread.currentThread().setName("Decaf");
-
-	try
-	{
-	    boolean eatingJavaScript = false;
-	    boolean eatingJava = false;
-	    boolean noJavaScript = prefs.getBoolean("Decaf.noJavaScript");
-	    boolean noJava = prefs.getBoolean("Decaf.noJava");
-
-	    Tag tag;
-	    Object obj;
-	    while ((obj = in.read()) != null)
+        boolean eatingJavaScript = false;
+        boolean eatingJava = false;
+        Tag tag;
+        Object obj;
+        while ((obj = getInputObjectStream().read()) != null)
             {
-		Token token = (Token) obj;
-		if (token.getType() == Token.TT_TAG)
-		{
-		    tag = token.createTag();
+        Token token = (Token) obj;
+        if (token.getType() == Token.TT_TAG)
+        {
+            tag = token.createTag();
 
-		    if (eatingJavaScript && tag.is("/script"))
-		    {
-			eatingJavaScript = false;
-			continue;
-		    }
-		    if (eatingJava && tag.is("/applet"))
-		    {
-			eatingJava = false;
-			continue;
-		    }
-		    
-		    if (noJavaScript)
-		    {
-			if (tag.is("script"))
-			{
-			    eatingJavaScript = true;
-			    fFactory.report(request, "removed <script>");
-			}
-			else if (fFactory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
-			{
-			    StringBuffer str = new StringBuffer();
-			    String value;
+            if (eatingJavaScript && tag.is("/script"))
+            {
+            eatingJavaScript = false;
+            continue;
+            }
+            if (eatingJava && tag.is("/applet"))
+            {
+            eatingJava = false;
+            continue;
+            }
+            
+            if (getFactory().getPrefsBoolean(Decaf.NOJAVASCRIPT))
+            {
+            if (tag.is("script"))
+            {
+                eatingJavaScript = true;
+                fFactory.report(getRequest(), "removed <script>");
+            }
+            else if (fFactory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
+            {
+                StringBuffer str = new StringBuffer();
+                String value;
 
-			    Enumeration e = tag.enumerate();
-			    while (e.hasMoreElements())
-			    {
-				String attr = (String) e.nextElement();
-				if (fFactory.isJavaScriptAttr(attr))
-				{
-				    value = tag.remove(attr);
-				    if (value != null)
-				    {
-					str.append("<");
-					str.append(tag.name());
-					str.append("> ");
-					str.append(attr);
-					str.append("=\"");
-					str.append(value);
-					str.append("\" ");
-				    }
-				}
-			    }
+                Enumeration e = tag.enumerate();
+                while (e.hasMoreElements())
+                {
+                String attr = (String) e.nextElement();
+                if (fFactory.isJavaScriptAttr(attr))
+                {
+                    value = tag.remove(attr);
+                    if (value != null)
+                    {
+                    str.append("<");
+                    str.append(tag.name());
+                    str.append("> ");
+                    str.append(attr);
+                    str.append("=\"");
+                    str.append(value);
+                    str.append("\" ");
+                    }
+                }
+                }
 
-			    if (tag.has("href")
-				&& ((value = tag.get("href")) != null)
-				&& "javascript:".startsWith(value))
-			    {
-				value = tag.remove("href");
-				str.append("<");
-				str.append(tag.name());
-				str.append("> ");
-				str.append("href=\"");
-				str.append(value);
-				str.append("\" ");
-			    }
+                if (tag.has("href")
+                && ((value = tag.get("href")) != null)
+                && "javascript:".startsWith(value))
+                {
+                value = tag.remove("href");
+                str.append("<");
+                str.append(tag.name());
+                str.append("> ");
+                str.append("href=\"");
+                str.append(value);
+                str.append("\" ");
+                }
 
-			    if (tag.has("language")
-				&& tag.get("language").equalsIgnoreCase("javascript"))
-			    {
-				value = tag.remove("language");
-				str.append("<");
-				str.append(tag.name());
-				str.append("> ");
-				str.append("language=\"");
-				str.append(value);
-				str.append("\" ");
-			    }
+                if (tag.has("language")
+                && tag.get("language").equalsIgnoreCase("javascript"))
+                {
+                value = tag.remove("language");
+                str.append("<");
+                str.append(tag.name());
+                str.append("> ");
+                str.append("language=\"");
+                str.append(value);
+                str.append("\" ");
+                }
 
-			    if (str.length() > 0)
-			    {
-				fFactory.report(request, "removed " + str.toString());
-			    }
-			}
-		    }
-		    if (noJava)
-		    {
-			if (tag.is("applet"))
-			{
-			    eatingJava = true;
-			    fFactory.report(request, "removed <applet>");
-			}
-		    }
-		    if (!eatingJavaScript && !eatingJava)
-		    {
-			token.importTag(tag);
-			out.write(token);
-		    }
-		}
-		else if (!eatingJavaScript && !eatingJava)
-		{
-		    out.write(token);
-		}
-	    }
-	}
-	catch (IOException ioe)
-	{
-	    ioe.printStackTrace();
-	}
-	finally
-	{
-	    try
-	    {
-		out.flush();
-		out.close();
-	    }
-	    catch (IOException ioe)
-	    {
-	    }
-	}
+                if (str.length() > 0)
+                {
+                fFactory.report(getRequest(), "removed " + str.toString());
+                }
+            }
+            }
+            if (getFactory().getPrefsBoolean(Decaf.NOJAVA))
+            {
+            if (tag.is("applet"))
+            {
+                eatingJava = true;
+                fFactory.report(getRequest(), "removed <applet>");
+            }
+            }
+            if (!eatingJavaScript && !eatingJava)
+            {
+            token.importTag(tag);
+            getOutputObjectStream().write(token);
+            }
+        }
+        else if (!eatingJavaScript && !eatingJava)
+        {
+            getOutputObjectStream().write(token);
+        }
+        }
     }
+    
+    private Decaf fFactory;
 }
 

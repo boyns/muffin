@@ -1,4 +1,4 @@
-/* $Id: GlossaryFrame.java,v 1.8 2003/06/01 01:01:09 forger77 Exp $ */
+/* $Id: GlossaryFrame.java,v 1.9 2003/06/03 23:09:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,95 +27,118 @@ import java.awt.event.*;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
-public class GlossaryFrame extends AbstractFrame  {
+public class GlossaryFrame extends AbstractFrame
+{
 
-	TextField input = null;
+    TextField input = null;
 
-	/**
-	 * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)	 */
-	public GlossaryFrame(AbstractFilterFactory parent) {
-		super(parent);
-	}
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)
+     */
+    public GlossaryFrame(AbstractFilterFactory parent)
+    {
+        super(parent);
+    }
 
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()	 */
-	protected Panel doMakeContent(){
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()
+     */
+    protected Panel doMakeContent()
+    {
 
-		Panel panel = new Panel(new BorderLayout());
+        Panel panel = new Panel(new BorderLayout());
 
-		panel.add("Center", makeBrowseGui());
+        panel.add("Center", makeBrowseGui());
 
-		panel.add("South", makeButtonPanel());
-		
-		return panel;
+        panel.add("South", makeButtonPanel());
 
-	}
-	
-	/**
-	 * Utility method that constructs the Panel containing the browsing GUI.	 * @return Panel The constructed Panel containing the browsing GUI.	 */
-	private Panel makeBrowseGui(){
-		Panel panel = new Panel();
-		panel.setLayout(new GridBagLayout());
+        return panel;
 
-		panel.add(
-			new Label(
-				getFactory().getString(Glossary.GLOSSARY_FILE_KEY) + ":",
-				Label.RIGHT));
+    }
 
-		input = new TextField(50);
-		input.setText(getFactory().getPrefsString(Glossary.GLOSSARY_FILE_KEY));
-		panel.add(input);
+    /**
+     * Utility method that constructs the Panel containing the browsing GUI.
+     * @return Panel The constructed Panel containing the browsing GUI.
+     */
+    private Panel makeBrowseGui()
+    {
+        Panel panel = new Panel();
+        panel.setLayout(new GridBagLayout());
 
-		panel.add(makeButton(Strings.getString("browse") + "...", BROWSE_CMD));
-		
-		return panel;
-	}
-	
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()	 */
-	protected String[] doMakeButtonList(){
-		return new String[]{
-			 APPLY_CMD
-			,SAVE_CMD
-			,RELOAD_CMD
-			,CLOSE_CMD
-			,HELP_CMD
-		};
-	}
-	
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()	 */
-	protected Action[] doMakeActions(){
-		return new Action[]{
-			new BrowseAction(), // Button added in makeBrowseGui()
-			new LoadAction(RELOAD_CMD)
-		};
-	}
+        panel.add(
+            new Label(
+                getFactory().getString(Glossary.GLOSSARY_FILE_KEY) + ":",
+                Label.RIGHT));
 
-	/**
-	 * Action invoked when clicking the button
-	 * @see org.doit.muffin.filter.GlossaryFrame#BROWSE_CMD
-	 */
-	class BrowseAction implements Action {
-		public String getName(){
-			return BROWSE_CMD;
-		}
-		public void perform(){
-			FileDialog dialog = new FileDialog(getFrame(), "Glossary Load");
-			dialog.show();
-			if (dialog.getFile() != null) {
-				input.setText(dialog.getDirectory() + dialog.getFile());
-			}
-		}
-	}
-	
-	/**
-	 * 	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
-	protected void doApply(){
-		getFactory().putPrefsString(Glossary.GLOSSARY_FILE_KEY, input.getText());
-	}
-	
-	protected static final String BROWSE_CMD = "browse";
-	protected final String RELOAD_CMD = "Glossary.reload";
+        input = new TextField(50);
+        input.setText(getFactory().getPrefsString(Glossary.GLOSSARY_FILE_KEY));
+        panel.add(input);
+
+        panel.add(makeButton(Strings.getString("browse") + "...", BROWSE_CMD));
+
+        return panel;
+    }
+
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+     */
+    protected String[] doMakeButtonList()
+    {
+        return new String[] {
+            APPLY_CMD,
+            SAVE_CMD,
+            RELOAD_CMD,
+            CLOSE_CMD,
+            HELP_CMD };
+    }
+
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
+     */
+    protected Action[] doMakeActions()
+    {
+        return new Action[] {
+            new BrowseAction(),
+            // Button added in makeBrowseGui()
+            new LoadAction(RELOAD_CMD)};
+    }
+
+    /**
+     * Action invoked when clicking the button
+     * @see org.doit.muffin.filter.GlossaryFrame#BROWSE_CMD
+     */
+    class BrowseAction implements Action
+    {
+        public String getName()
+        {
+            return BROWSE_CMD;
+        }
+        public void perform()
+        {
+            FileDialog dialog = new FileDialog(getFrame(), "Glossary Load");
+            dialog.show();
+            if (dialog.getFile() != null)
+            {
+                input.setText(dialog.getDirectory() + dialog.getFile());
+            }
+        }
+    }
+
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFrame#doApply()
+     */
+    protected void doApply()
+    {
+        getFactory().putPrefsString(
+            Glossary.GLOSSARY_FILE_KEY,
+            input.getText());
+    }
+
+    protected static final String BROWSE_CMD = "browse";
+    protected final String RELOAD_CMD = "Glossary.reload";
 
 }

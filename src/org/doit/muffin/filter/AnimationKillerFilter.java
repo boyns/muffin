@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.9 2003/06/01 01:01:09 forger77 Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.10 2003/06/03 23:09:30 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,60 +31,77 @@ import java.io.IOException;
 
 import haui.gif.*;
 
-public class AnimationKillerFilter extends AbstractContentFilter
-	implements RequestFilter, ReplyFilter {
-	Request request;
+public class AnimationKillerFilter
+    extends AbstractContentFilter
+    implements RequestFilter, ReplyFilter
+{
+    Request request;
 
-	AnimationKillerFilter(AnimationKiller factory) {
-		super(factory);
-	}
+    AnimationKillerFilter(AnimationKiller factory)
+    {
+        super(factory);
+    }
 
-	/**	 * @see org.doit.muffin.RequestFilter#filter(Request)	 */
-	public void filter(Request request) throws FilterException {
-		this.request = request;
-	}
+    /**
+     * @see org.doit.muffin.RequestFilter#filter(Request)
+     */
+    public void filter(Request request) throws FilterException
+    {
+        this.request = request;
+    }
 
-	/**	 * @see org.doit.muffin.ReplyFilter#filter(Reply)	 */
-	public void filter(Reply reply) throws FilterException {
-	}
+    /**
+     * @see org.doit.muffin.ReplyFilter#filter(Reply)
+     */
+    public void filter(Reply reply) throws FilterException
+    {}
 
-	/**	 * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()	 */
-	protected String doGetContentIdentifier(){
-		return "image/gif";	
-	}
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()
+     */
+    protected String doGetContentIdentifier()
+    {
+        return "image/gif";
+    }
 
-	/**	 * @see java.lang.Runnable#run()	 */
-	protected void doRun(ObjectStreamToInputStream ostis, ObjectStreamToOutputStream ostos)
-		throws IOException {
+    /**
+     * @see java.lang.Runnable#run()
+     */
+    protected void doRun(
+        ObjectStreamToInputStream ostis,
+        ObjectStreamToOutputStream ostos)
+        throws IOException
+    {
 
-		AnimationFilter filter;
-		if (getFactory().getPrefsBoolean(AnimationKiller.BREAK)) {
-			filter = new AnimationFilter(AnimationFilter.MODE_WIPE_OUT);
-		} else {
-			switch (getFactory().getPrefsInteger(AnimationKiller.MAXLOOPS)) {
-				case 0 :
-					filter =
-						new AnimationFilter(
-							AnimationFilter.MODE_SHOW_FIRST);
-					break;
+        AnimationFilter filter;
+        if (getFactory().getPrefsBoolean(AnimationKiller.BREAK))
+        {
+            filter = new AnimationFilter(AnimationFilter.MODE_WIPE_OUT);
+        } else
+        {
+            switch (getFactory().getPrefsInteger(AnimationKiller.MAXLOOPS))
+            {
+                case 0 :
+                    filter =
+                        new AnimationFilter(AnimationFilter.MODE_SHOW_FIRST);
+                    break;
 
-				case 1 :
-					filter =
-						new AnimationFilter(AnimationFilter.MODE_SHOW_LAST);
-					break;
+                case 1 :
+                    filter =
+                        new AnimationFilter(AnimationFilter.MODE_SHOW_LAST);
+                    break;
 
-				case 2 :
-					filter =
-						new AnimationFilter(
-							AnimationFilter.MODE_INTERACTIVE);
-					break;
+                case 2 :
+                    filter =
+                        new AnimationFilter(AnimationFilter.MODE_INTERACTIVE);
+                    break;
 
-				default :
-					filter =
-						new AnimationFilter(AnimationFilter.MODE_ANIMATION);
-					break;
-			}
-		}
-		filter.filter(ostis, ostos);
-	}
+                default :
+                    filter =
+                        new AnimationFilter(AnimationFilter.MODE_ANIMATION);
+                    break;
+            }
+        }
+        filter.filter(ostis, ostos);
+    }
 }

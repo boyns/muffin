@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
@@ -36,103 +36,126 @@ import org.apache.regexp.RE;
  * @author bw@xmlizer.biz
  *
  */
-public class PatternAdapter extends AbstractPatternAdapter {
-	
-	public PatternAdapter(String pattern){
-		super(pattern);
-		fStringPattern = pattern;
-	}
-	
-	public PatternAdapter(String pattern, boolean ignoreCase){
-		super(pattern, ignoreCase);
-		fStringPattern = pattern;
-	}
-	
-	public String toString(){
-		return fStringPattern;
-	}
+public class PatternAdapter extends AbstractPatternAdapter
+{
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#isMatch(java.lang.Object)
-	 */
-	public boolean matches(String input) {
-		return fPattern.match(input);
-	}
+    public PatternAdapter(String pattern)
+    {
+        super(pattern);
+        fStringPattern = pattern;
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object)
-	 */
-	public Matcher getMatch(String input) {
-		return fPattern.match(input) ? new MatcherAdapter(fPattern) : null;
-		
-		// alternative implemenation reusing other:
-		// getMatch(input, 0);
-	}
+    public PatternAdapter(String pattern, boolean ignoreCase)
+    {
+        super(pattern, ignoreCase);
+        fStringPattern = pattern;
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object, int)
-	 */
-	public Matcher getMatch(String input, int index) {
-		return fPattern.match(input, index) ? new MatcherAdapter(fPattern) : null;
-	}
+    public String toString()
+    {
+        return fStringPattern;
+    }
 
-	/**
-	 * @see org.doit.muffin.regexp.Pattern#substituteAll(java.lang.Object, java.lang.String)
-	 */
-	public String substituteAll(String input, String replace) {
-//		unfortunately jakarta.regexp does not support the PERL $x Syntax, 
-//		thus we can't do this:
-//		return fPattern.subst(input, replace); 
+    /**
+     * @see org.doit.muffin.regexp.Pattern#isMatch(java.lang.Object)
+     */
+    public boolean matches(String input)
+    {
+        return fPattern.match(input);
+    }
 
-		String[] split = fPattern.split(input);
+    /**
+     * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object)
+     */
+    public Matcher getMatch(String input)
+    {
+        return fPattern.match(input) ? new MatcherAdapter(fPattern) : null;
 
-		int position = 0;
-		Matcher matcher;
-		List replacedMatches = new ArrayList();
-		while((matcher = getMatch(input, position)) != null){
-			int start = matcher.getStartIndex();
-			int end = matcher.getEndIndex();
-			if (start < 0) break;
-			position = end;
-			String sub = input.substring(start, end);
-			replacedMatches.add(matcher.substituteInto(replace));
-		}
+        // alternative implemenation reusing other:
+        // getMatch(input, 0);
+    }
 
-		Iterator it = replacedMatches.iterator();
-		StringBuffer result = new StringBuffer();
-		for(int i=0;i<split.length;i++){
-			result.append(split[i]);
-			if(it.hasNext()){
-				result.append(it.next());
-			}
-		}
-		return result.toString();
-	}
-	
-	protected void doMakePattern(String pattern){
-		try {
-			fPattern = new org.apache.regexp.RE(pattern);
-		} catch (RESyntaxException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected void doMakePatternIgnoreCase(String pattern){
-		try {
-			fPattern = new org.apache.regexp.RE(pattern, org.apache.regexp.RE.MATCH_CASEINDEPENDENT);
-		} catch (RESyntaxException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * @see org.doit.muffin.regexp.Pattern#getMatch(java.lang.Object, int)
+     */
+    public Matcher getMatch(String input, int index)
+    {
+        return fPattern.match(input, index)
+            ? new MatcherAdapter(fPattern)
+            : null;
+    }
 
-	private RE fPattern;
-	private String fStringPattern;
-	
-	// Announce this implementation to the Factory.
-	// It would work in C++ where static code gets executed at any rate.
-	// Not so in Java.
-//	
-//	static {
-//		Factory.instance().addImplementation(PatternAdapter.class);
-//	}
+    /**
+     * @see org.doit.muffin.regexp.Pattern#substituteAll(java.lang.Object, java.lang.String)
+     */
+    public String substituteAll(String input, String replace)
+    {
+        //		unfortunately jakarta.regexp does not support the PERL $x Syntax, 
+        //		thus we can't do this:
+        //		return fPattern.subst(input, replace); 
+
+        String[] split = fPattern.split(input);
+
+        int position = 0;
+        Matcher matcher;
+        List replacedMatches = new ArrayList();
+        while ((matcher = getMatch(input, position)) != null)
+        {
+            int start = matcher.getStartIndex();
+            int end = matcher.getEndIndex();
+            if (start < 0)
+                break;
+            position = end;
+            String sub = input.substring(start, end);
+            replacedMatches.add(matcher.substituteInto(replace));
+        }
+
+        Iterator it = replacedMatches.iterator();
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < split.length; i++)
+        {
+            result.append(split[i]);
+            if (it.hasNext())
+            {
+                result.append(it.next());
+            }
+        }
+        return result.toString();
+    }
+
+    protected void doMakePattern(String pattern)
+    {
+        try
+        {
+            fPattern = new org.apache.regexp.RE(pattern);
+        } catch (RESyntaxException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    protected void doMakePatternIgnoreCase(String pattern)
+    {
+        try
+        {
+            fPattern =
+                new org.apache.regexp.RE(
+                    pattern,
+                    org.apache.regexp.RE.MATCH_CASEINDEPENDENT);
+        } catch (RESyntaxException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private RE fPattern;
+    private String fStringPattern;
+
+    // Announce this implementation to the Factory.
+    // It would work in C++ where static code gets executed at any rate.
+    // Not so in Java.
+    //	
+    //	static {
+    //		Factory.instance().addImplementation(PatternAdapter.class);
+    //	}
 }

@@ -1,4 +1,4 @@
-/* $Id: Decaf.java,v 1.6 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: Decaf.java,v 1.7 2003/06/03 23:09:29 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,86 +28,54 @@ import java.util.Hashtable;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Factory;
 
-public class Decaf implements FilterFactory
+public class Decaf extends AbstractFilterFactory
 {
-    FilterManager manager;
-    Prefs prefs;
-    DecafFrame frame = null;
-    MessageArea messages = null;
+    
+    static final String NOJAVA = "noJava";
+    static final String NOJAVASCRIPT = "noJavaScript";
 
-    private Pattern javaScriptTags = null;
-    private Pattern javaScriptAttrs = null;
+    private static Pattern javaScriptTags = Factory.instance().getPattern("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
+    private static Pattern javaScriptAttrs = Factory.instance().getPattern("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
 
-	/**
-	 * 	 * @see org.doit.muffin.FilterFactory#setManager(FilterManager)	 */
-    public void setManager(FilterManager manager) {
-		this.manager = manager;
-	
-	    javaScriptTags = Factory.instance().getPattern("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
-	    javaScriptAttrs = Factory.instance().getPattern("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
+    protected void doSetDefaultPrefs()
+    {
+	putPrefsBoolean(NOJAVASCRIPT, true);
+	putPrefsBoolean(NOJAVA, false);
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFrame()
+     */
+    protected AbstractFrame doMakeFrame()
+    {
+        return new DecafFrame(this);
     }
     
-    public void setPrefs(Prefs prefs)
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()
+     */
+    protected Filter doMakeFilter()
     {
-	this.prefs = prefs;
-
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	prefs.putBoolean("Decaf.noJavaScript", true);
-	prefs.putBoolean("Decaf.noJava", false);
-	prefs.setOverride(o);
-
-	messages = new MessageArea();
+        return new DecafFilter(this);
     }
 
-    public Prefs getPrefs()
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName()
     {
-	return prefs;
+        return "Decaf";
     }
 
-    public void viewPrefs()
-    {
-	if (frame == null)
-	{
-	    frame = new DecafFrame(prefs, this);
-	}
-	frame.setVisible(true);
-    }
-    
-    public Filter createFilter()
-    {
-	Filter f = new DecafFilter(this);
-	f.setPrefs(prefs);
-	return f;
-    }
-
-    public void shutdown()
-    {
-	if (frame != null)
-	{
-	    frame.dispose();
-	}
-    }
-
-    public boolean isJavaScriptTag(String pattern)
+    static boolean isJavaScriptTag(String pattern)
     {
 	return javaScriptTags.matches(pattern);
     }
 
-    public boolean isJavaScriptAttr(String pattern)
+    static boolean isJavaScriptAttr(String pattern)
     {
 	return javaScriptAttrs.matches(pattern);
     }
     
-    void save()
-    {
-	manager.save(this);
-    }
-
-    void report(Request request, String message)
-    {
-	request.addLogEntry("Decaf", message);
-	messages.append(message + "\n");
-    }
 }
 

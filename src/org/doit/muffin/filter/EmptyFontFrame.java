@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFrame.java,v 1.8 2003/06/01 01:01:08 forger77 Exp $ */
+/* $Id: EmptyFontFrame.java,v 1.9 2003/06/03 23:09:30 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,73 +27,75 @@ import java.awt.event.*;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
-public class EmptyFontFrame extends AbstractFrame {
+public class EmptyFontFrame extends AbstractFrame
+{
 
-//	FIXME: use this constructor:
-//	public EmptyFontFrame(String name, FilterFactory parent) {
-	/**
-	 * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)
-	 */
-	public EmptyFontFrame(AbstractFilterFactory parent) {
-		super(parent);
-	}
-	
-	/**
-	 * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()	 */
-	protected Panel doMakeContent() {
+    //	FIXME: use this constructor:
+    //	public EmptyFontFrame(String name, FilterFactory parent) {
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(String, AbstractFilterFactory)
+     */
+    public EmptyFontFrame(AbstractFilterFactory parent)
+    {
+        super(parent);
+    }
 
-		Panel panel = new Panel(new BorderLayout());
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()
+     */
+    protected Panel doMakeContent()
+    {
 
-		panel.add("North", makeDebugPanel());
+        Panel panel = new Panel(new BorderLayout());
 
-		getFactory().getMessages().setEditable(false);
-		panel.add("Center", getFactory().getMessages());
+        panel.add("North", makeDebugPanel());
 
-		panel.add("South", makeButtonPanel());
-		
-		return panel;
+        getFactory().getMessages().setEditable(false);
+        panel.add("Center", getFactory().getMessages());
 
-	}
-	
-	/**
-	 * Utility method that constructs the Panel containing the debug Button.
-	 * @return Panel The constructed Panel containing the debug Button.
-	 */
-	private Panel makeDebugPanel(){
-		Panel panel = new Panel();
-		GridBagLayout layout = new GridBagLayout();
-		panel.setLayout(layout);
-		GridBagConstraints c;
+        panel.add("South", makeButtonPanel());
 
-		fDebug = new Checkbox(getFactory().getString(EmptyFont.DEBUG));
-		fDebug.setState(getFactory().getPrefsBoolean(EmptyFont.DEBUG));
+        return panel;
 
-		c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		layout.setConstraints(fDebug, c);
-		panel.add(fDebug);
-		return panel;
-	}
+    }
 
-	/**
-	 * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
-	 */
-	protected String[] doMakeButtonList(){
-		return new String[]{
-			 APPLY_CMD
-			,SAVE_CMD
-			,CLEAR_CMD
-			,CLOSE_CMD
-		};
-	}
-	
-	/**
-	 * @see org.doit.muffin.filter.AbstractFrame#doApply()	 */
-	protected void doApply(){
-		getFactory().putPrefsBoolean(EmptyFont.DEBUG, fDebug.getState());
-	}
-	
-	private Checkbox fDebug;
+    /**
+     * Utility method that constructs the Panel containing the debug Button.
+     * @return Panel The constructed Panel containing the debug Button.
+     */
+    private Panel makeDebugPanel()
+    {
+        Panel panel = new Panel();
+        GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
+        GridBagConstraints c;
 
-	
+        fDebug = new Checkbox(getFactory().getString(EmptyFont.DEBUG));
+        fDebug.setState(getFactory().getPrefsBoolean(EmptyFont.DEBUG));
+
+        c = new GridBagConstraints();
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        layout.setConstraints(fDebug, c);
+        panel.add(fDebug);
+        return panel;
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+     */
+    protected String[] doMakeButtonList()
+    {
+        return new String[] { APPLY_CMD, SAVE_CMD, CLEAR_CMD, CLOSE_CMD };
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doApply()
+     */
+    protected void doApply()
+    {
+        getFactory().putPrefsBoolean(EmptyFont.DEBUG, fDebug.getState());
+    }
+
+    private Checkbox fDebug;
+
 }
