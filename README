@@ -37,7 +37,7 @@ Also included in this distribution:
   by Roger Whitney <whitney@cs.sdsu.edu>
   http://www.eli.sdsu.edu/java-SDSU/
 
-* Parts of HTTPClient.Codecs.java (org.doit.util.Base64.java)
+* Part of HTTPClient.Codecs.java (org.doit.util.Base64.java)
   by Ronald Tschalaer <ronald@innovation.ch>
   http://www.innovation.ch/java/HTTPClient/
 
@@ -55,4 +55,4 @@ Also included in this distribution:
 
 Send suggestions and bug reports to <boyns@doit.org>
 
-$Id: README,v 1.9 1999/05/27 06:09:05 boyns Exp $
+$Id: README,v 1.10 1999/09/16 04:18:09 boyns Exp $

@@ -4,6 +4,27 @@ Changes since 0.8.1:
 
 * New version of ImageKill filter from Heinrich Opgenoorth.
 
+* New Translate filter from Mike Baroukh.  Translate can be
+  used to implement a reverse proxy; similar to the apache
+  ProxyPass and ProxyPassReverse directives.
+
+* Include dnsjava library which can be used by Muffin for
+  all DNS lookups.  Nameservers are configured in the Options
+  window and/or the muffin.nameservers property.
+
+* All muffin.* preferences are now stored in ~/Muffin/muffin.props.
+  muffin.* preferences found in other files will be ignored.
+  Users upgrading from previous versions may want to move all
+  muffin.* previous from default.conf to muffin.props to preserve
+  previous settings.  Also note that the muffin.enabledFilters
+  property has been renamed to FilterManager.enabledFilters.
+
+* Added Edit menu and include Disable Filtering in File menu.
+
+* upgraded to dnsjava-1.0.2 and gnu.regexp-1.0.8.
+
+* Fixed -dir command line option.
+
 Changes since 0.8:
 
 * Upgraded to GNU regexp 1.0.7.
@@ -185,4 +206,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.9 1999/03/20 22:45:23 boyns Exp $
+$Id: NEWS,v 1.10 1999/09/16 04:18:09 boyns Exp $

@@ -1,3 +1,25 @@
+1999-09-15  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/filter/DocumentInfo.java: handle multi-value
+ 	headers
+
+	* src/org/doit/muffin/Request.java: fixed POST
+
+	* src/org/doit/muffin/Handler.java: support muffin.readTimeout and
+ 	be quieter with exceptions
+	
+	* src/org/doit/muffin/FilterManager.java: added Translate filter
+
+	* src/org/doit/muffin/Main.java: fixed -dir
+
+1999-06-22  Mark R. Boyns  <boyns@doit.org>
+
+	* src/org/doit/muffin/Request.java: patch for duplicate POST data
+ 	from Nathan Kurz.
+
+	* src/org/doit/muffin/filter/DocumentInfo.java: added multi header
+ 	value patch from Denis N. Antonioli.
+
 1999-03-20  Mark R. Boyns  <boyns@doit.org>
 
 	* src/org/doit/muffin/filter/ImageKill.java: new version of
