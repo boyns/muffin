@@ -1,4 +1,4 @@
-/* $Id: ProxyCacheBypassFilter.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
+/* $Id: Factory.java,v 1.1 2003/05/25 02:51:50 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
