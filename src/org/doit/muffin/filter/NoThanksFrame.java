@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.9 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: NoThanksFrame.java,v 1.10 2003/06/07 10:44:13 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,46 +25,68 @@ package org.doit.muffin.filter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+
 import org.doit.muffin.*;
 import org.doit.util.*;
 
-public class NoThanksFrame extends MuffinFrame implements ActionListener, WindowListener
+public class NoThanksFrame extends AbstractFrame
 {
-    Prefs prefs;
-    NoThanks parent;
-    TextField input = null;
-    TextArea text = null;
-
-    public NoThanksFrame(Prefs prefs, NoThanks parent)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(AbstractFilterFactory)
+     */
+    public NoThanksFrame(NoThanks factory)
     {
-	super(Strings.getString("NoThanks.title"));
+        super(factory);
+        fFactory = factory;
+    }
 
-	this.prefs = prefs;
-	this.parent = parent;
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()
+     */
+    protected Panel doMakeContent()
+    {
+
+        Panel panel = new Panel(new BorderLayout());
+
+        panel.add("North", makeConfigPanel());
+
+        getFactory().getMessages().setEditable(false);
+        panel.add("Center", getFactory().getMessages());
+
+        panel.add("South", makeButtonPanel());
+
+        return panel;
+
+    }
+
+    protected Panel makeConfigPanel(){
+        
+    Panel panel = new Panel();
 
 	GridBagLayout layout = new GridBagLayout();
-        setLayout(layout);
+    panel.setLayout(layout);
 	GridBagConstraints c;
 	Label l;
 
-	add(new Label(Strings.getString("NoThanks.killfile")+":", Label.RIGHT));
+	panel.add(new Label(getFactory().getString(NoThanks.KILLFILE)+":", Label.RIGHT));
 
 	input = new TextField(40);
-	input.setText(prefs.getString("NoThanks.killfile"));
+	input.setText(getFactory().getPrefsString(NoThanks.KILLFILE));
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
 	c.gridwidth = 2;
 	layout.setConstraints(input, c);
-	add(input);
+	panel.add(input);
 
 	Button browse = new Button(Strings.getString("browse")+"...");
-	browse.setActionCommand("doBrowse");
+	browse.setActionCommand(BROWSE_CMD);
 	browse.addActionListener(this);
 	c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
 	c.gridwidth = 1;//GridBagConstraints.RELATIVE;
 	layout.setConstraints(browse, c);
-	add(browse);
+	panel.add(browse);
 
 
 	text = new TextArea();
@@ -79,36 +101,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	c.weighty = 1.0;
 	c.insets = new Insets(0, 10, 5, 10);
 	layout.setConstraints(text, c);
-	add(text);
-
-	Button b;
-	b = new Button(Strings.getString("apply"));
-	b.setActionCommand("doApply");
-	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	c.gridy = 1;
-	layout.setConstraints(b, c);
-	add(b);
-
-	b = new Button(Strings.getString("load"));
-	b.setActionCommand("doLoad");
-	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	add(b);
-
-	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
-	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	add(b);
+	panel.add(text);
 
 	l = new Label(Strings.getString("NoThanks.messages"));
 	c = new GridBagConstraints();
@@ -117,59 +110,33 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	c.anchor = GridBagConstraints.NORTHWEST;
 	layout.setConstraints(l, c);
-	add(l);
+	panel.add(l);
 
-	c = new GridBagConstraints();
-	c.insets = new Insets(0, 10, 5, 10);
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	c.fill = GridBagConstraints.BOTH;
-	c.gridwidth = 4;
-	c.gridheight = 4;
-	c.weightx = 1.0;
-	c.weighty = 1.0;
-	layout.setConstraints(parent.messages, c);
-	parent.messages.setEditable(false);
-	add(parent.messages);
+    return panel;
 
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 3));
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("help"));
-	b.setActionCommand("doHelp");
-	b.addActionListener(this);
-	buttonPanel.add(b);
+    }
 
-	c = new GridBagConstraints();
-	c.insets = new Insets(0, 10, 5, 10);
-	c.gridx = 0;
-	c.gridwidth = 5;
-	c.fill = GridBagConstraints.HORIZONTAL;
-	layout.setConstraints(buttonPanel, c);
-	add(buttonPanel);
-
-	addWindowListener(this);
-
-	pack();
-	setSize(getPreferredSize());
-
-	loadFile();
-
-	show();
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+     */
+    protected String[] doMakeButtonList()
+    {
+        return new String[] {
+            APPLY_CMD,
+            SAVE_CMD,
+            RELOAD_CMD,
+            CLOSE_CMD,
+            CLEAR_CMD,
+            HELP_CMD };
     }
 
     void loadFile()
     {
 	text.setText("");
 
-	UserFile file = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
+    UserFile file =
+        getFactory().getPrefs().getUserFile(getFactory().getPrefsString(NoThanks.KILLFILE));
 	InputStream in = null;
 
 	try
@@ -214,7 +181,8 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
     {
 	try
 	{
-	    UserFile file = prefs.getUserFile(prefs.getString("NoThanks.killfile"));
+        UserFile file =
+            getFactory().getPrefs().getUserFile(getFactory().getPrefsString(NoThanks.KILLFILE));
 	    if (file instanceof LocalFile)
 	    {
 		LocalFile f = (LocalFile) file;
@@ -227,7 +195,7 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	    }
 	    else
 	    {
-		Dialog d = new ErrorDialog(this, "Can't save to " + file.getName());
+		Dialog d = new ErrorDialog(getFrame(), "Can't save to " + file.getName());
 		d.show();
 		d.dispose();
 	    }
@@ -237,75 +205,103 @@ public class NoThanksFrame extends MuffinFrame implements ActionListener, Window
 	    System.out.println(e);
 	}
     }
-
-    public void actionPerformed(ActionEvent event)
-    {
-	String arg = event.getActionCommand();
-
-	if ("doApply".equals(arg))
-	{
-	    prefs.putString("NoThanks.killfile", input.getText());
-	    parent.load(new StringReader(text.getText()));
-	}
-	else if ("doSave".equals(arg))
-	{
-	    parent.save();
-	    saveFile();
-	}
-	else if ("doLoad".equals(arg))
-	{
-	    parent.load();
-	    loadFile();
-	}
-	else if ("doClear".equals(arg))
-	{
-	    parent.messages.clear();
-	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
-	}
-	else if ("doBrowse".equals(arg))
-	{
-	    FileDialog dialog = new FileDialog(this, "NoThanks Load");
-	    dialog.show();
-	    if (dialog.getFile() != null)
-	    {
-		input.setText(dialog.getDirectory() + dialog.getFile());
-	    }
-	}
-	else if ("doHelp".equals(arg))
-	{
-	    new HelpFrame("NoThanks");
-	}
+    
+    /**     * @see org.doit.muffin.filter.AbstractFrame#doApply()     */
+    protected void doApply(){
+        getFactory().putPrefsString(NoThanks.KILLFILE, input.getText());
+        fFactory.load(new StringReader(text.getText()));
+    }
+    
+    /**
+     * Since save also saves fFactory, we need to override the standard SaveAction
+     */
+    class SaveAction implements Action {
+        /**
+         * @see org.doit.muffin.filter.Action#perform()
+         */
+        public void perform()
+        {
+        doApply();
+        fFactory.save();
+        saveFile();
+        }
+        /**
+         * @see org.doit.muffin.filter.Action#getName()
+         */
+        public String getName()
+        {
+            return AbstractFrame.SAVE_CMD;
+        }
+    }
+    
+    /**
+     * Since load also loads fFactory, we need to override the standard LoadAction
+     */
+    class LoadAction implements Action {
+        /**
+         * @see org.doit.muffin.filter.Action#perform()
+         */
+        public void perform()
+        {
+        fFactory.doLoad();
+        loadFile();
+        }
+        /**
+         * @see org.doit.muffin.filter.Action#getName()
+         */
+        public String getName()
+        {
+            return RELOAD_CMD;
+        }
     }
 
-    public void windowActivated(WindowEvent e)
+
+    /**
+     * Action invoked when clicking the button
+     * @see org.doit.muffin.filter.GlossaryFrame#BROWSE_CMD
+     */
+    class BrowseAction implements Action
     {
+        public String getName()
+        {
+            return BROWSE_CMD;
+        }
+        public void perform()
+        {
+            FileDialog dialog = new FileDialog(getFrame(), "NoThanks Load");
+            dialog.show();
+            if (dialog.getFile() != null)
+            {
+                input.setText(dialog.getDirectory() + dialog.getFile());
+            }
+        }
     }
 
-    public void windowDeactivated(WindowEvent e)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
+     */
+    protected Action[] doOverrideActions()
     {
+        return new Action[]{
+            new SaveAction()
+        };
     }
 
-    public void windowClosing(WindowEvent e)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeActions()
+     */
+    protected Action[] doMakeActions()
     {
-	setVisible(false);
+        return new Action[]{
+            new LoadAction(),
+            new BrowseAction()
+        };
     }
 
-    public void windowClosed(WindowEvent e)
-    {
-    }
+    protected static final String BROWSE_CMD = "browse";
+    protected final String RELOAD_CMD = "NoThanks.reload";
 
-    public void windowIconified(WindowEvent e)
-    {
-    }
-
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
-
-    public void windowOpened(WindowEvent e)
-    {
-    }
+    private NoThanks fFactory;
+    private TextField input = null;
+    private TextArea text = null;
 }
