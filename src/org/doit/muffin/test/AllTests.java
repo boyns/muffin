@@ -40,6 +40,7 @@ public class AllTests
         suite.addTest(new TestSuite(ImageKillTest.class));
         suite.addTest(new TestSuite(DecafTest.class));
         suite.addTest(new TestSuite(NoCodeTest.class));
+        suite.addTest(new TestSuite(NoThanksTest.class));
         //$JUnit-END$
         return suite;
     }
