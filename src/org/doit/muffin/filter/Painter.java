@@ -1,5 +1,3 @@
-/* $Id: Painter.java,v 1.5 2000/01/24 04:02:20 boyns Exp $ */
-
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
@@ -25,64 +23,52 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.html.*;
 
-public class Painter implements FilterFactory
+public class Painter extends AbstractFilterFactory
 {
-    FilterManager manager;
-    Prefs prefs;
-    PainterFrame frame = null;
+    
 
-    public void setManager(FilterManager manager)
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()
+     */
+    protected void doSetDefaultPrefs() {
+    putPrefsString(BGCOLOR, "");
+    putPrefsString(BACKGRND, "");
+    putPrefsString(TEXT, "");
+    putPrefsString(ALINK, "");
+    putPrefsString(VLINK, "");
+    putPrefsString(LINK, "");
+    }
+
+    protected AbstractFrame doMakeFrame()
     {
-	this.manager = manager;
+        return new PainterFrame(this);
     }
     
-    public void setPrefs(Prefs prefs)
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doMakeFilter()
+     */
+    protected Filter doMakeFilter()
     {
-	this.prefs = prefs;
-
-	boolean o = prefs.getOverride();
-	prefs.setOverride(false);
-	prefs.putString("Painter.bgcolor", "");
-	prefs.putString("Painter.background", "");
-	prefs.putString("Painter.text", "");
-	prefs.putString("Painter.alink", "");
-	prefs.putString("Painter.vlink", "");
-	prefs.putString("Painter.link", "");
-	prefs.setOverride(o);
-    }
-
-    public Prefs getPrefs()
-    {
-	return prefs;
-    }
-
-    public void viewPrefs()
-    {
-	if (frame == null)
-	{
-	    frame = new PainterFrame(prefs, this);
-	}
-	frame.setVisible(true);
+    return new PainterFilter(this);
     }
     
-    public Filter createFilter()
-    {
-	Filter f = new PainterFilter(this);
-	f.setPrefs(prefs);
-	return f;
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFilterFactory#getName()
+     */
+    public String getName(){
+        return "Painter";
     }
 
-    public void shutdown()
-    {
-	if (frame != null)
-	{
-	    frame.dispose();
-	}
-    }
+    static final String BGCOLOR = "bgcolor";
+    static final String BACKGRND = "background";
+    static final String TEXT = "text";
+    static final String ALINK = "alink";
+    static final String VLINK = "vlink";
+    static final String LINK = "link";
+    static final String COLOR = "color";
+    static final String FONT = "font";
 
-    void save()
-    {
-	manager.save(this);
-    }
 }
+
 
