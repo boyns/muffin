@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.10 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: Http.java,v 1.11 2003/05/10 12:23:17 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -204,7 +204,7 @@ public class Http extends HttpConnection
             head.append(" ");
             head.append("HTTP/1.0");
             request.statusLine = head.toString();
-			System.out.println("____Request again="+request);
+			if (DEBUG) System.out.println("____Request again="+request);
             request.write(getOutputStream());
 
             /* flush? */

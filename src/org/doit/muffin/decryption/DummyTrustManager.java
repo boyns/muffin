@@ -26,6 +26,8 @@ import java.security.cert.X509Certificate;
 import com.sun.net.ssl.X509TrustManager;
 
 /**
+ * A Trust Manager accepting every certificate.
+ * 
  * @author Fabien Le Floc'h <fabien@31416.org>
  */
 public class DummyTrustManager implements X509TrustManager

@@ -32,7 +32,7 @@ import org.doit.muffin.Request;
  * internal fake HTTPS server, we don't have an
  * absolute URL.
  */
-public class DecryptionRequest extends Request
+class DecryptionRequest extends Request
 {
 	private int defaultPort;
 	

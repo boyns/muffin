@@ -1,4 +1,4 @@
-/* $Id: Https.java,v 1.7 2003/05/10 01:01:23 flefloch Exp $ */
+/* $Id: Https.java,v 1.8 2003/05/10 12:23:17 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -35,7 +35,7 @@ public class Https extends HttpConnection implements HttpsConnection
     Https(String host, int port) throws IOException
     {
 	super(host, port);
-	System.out.println("HTTPS - port = "+port);
+	//System.out.println("HTTPS - port = "+port);
     }
 
     public Https(String host, int port, boolean isProxy) throws IOException

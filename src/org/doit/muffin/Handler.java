@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.17 2003/05/10 01:01:22 flefloch Exp $ */
+/* $Id: Handler.java,v 1.18 2003/05/10 12:23:17 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -521,7 +521,7 @@ public class Handler implements Runnable
 
                 if ((filter != null) && filter.wantRequest(request))
                 {
-                    System.out.println("___filter___" + filter.toString());
+                    if (DEBUG) System.out.println("___filter___" + filter.toString());
                     return filter;
                 }
             }

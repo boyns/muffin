@@ -30,7 +30,7 @@ import org.doit.muffin.Request;
 /**
  * @author Fabien Le Floc'h
  */
-public class DecryptionClient extends Client
+class DecryptionClient extends Client
 {
 
     /**
@@ -38,7 +38,7 @@ public class DecryptionClient extends Client
      * @param s
      * @throws IOException
      */
-    public DecryptionClient(Socket s) throws IOException
+    DecryptionClient(Socket s) throws IOException
     {
         super(s);
     }

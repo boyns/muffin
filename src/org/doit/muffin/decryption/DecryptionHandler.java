@@ -38,7 +38,7 @@ import org.doit.muffin.SocketCreator;
 /**
  * @author Fabien Le Floc'h
  */
-public class DecryptionHandler extends Handler
+class DecryptionHandler extends Handler
 {
 
 	private SocketCreator socketCreator;
@@ -49,7 +49,7 @@ public class DecryptionHandler extends Handler
      * @param options
      * @param socket
      */
-    public DecryptionHandler(
+    DecryptionHandler(
         Monitor m,
         FilterManager manager,
         Options options,
@@ -58,7 +58,7 @@ public class DecryptionHandler extends Handler
     {
         super(m, manager, options, socket);
         this.socketCreator = creator;
-        System.out.println("DECRYPTION - DecryptionHandler constructed");
+        //System.out.println("DECRYPTION - DecryptionHandler constructed");
     }
 
     /**
@@ -76,7 +76,7 @@ public class DecryptionHandler extends Handler
         throws IOException
     {
         HttpRelay http;
-        System.out.println("DecryptionHandler request:");
+        System.out.println("DECRYPTION - DecryptionHandler request:");
         System.out.println(request.toString());
         //System.out.println(
         //    "host=" + request.getHost() + " port=" + request.getPort());

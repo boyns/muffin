@@ -39,13 +39,13 @@ import com.sun.net.ssl.SSLContext;
 /**
  * @author Fabien Le Floc'h
  */
-public class DecryptionServerSocketCreator implements ServerSocketCreator
+class DecryptionServerSocketCreator implements ServerSocketCreator
 {
 
     private SSLServerSocketFactory factory;
     private SocketCreator socketCreator;
 
-    public DecryptionServerSocketCreator(SSLContext context)
+    DecryptionServerSocketCreator(SSLContext context)
     {
         this.factory = context.getServerSocketFactory();
         this.socketCreator = new SSLSocketCreator(context);
