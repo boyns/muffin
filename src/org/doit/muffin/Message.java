@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.10 2000/03/08 15:20:57 boyns Exp $ */
+/* $Id: Message.java,v 1.11 2000/03/29 15:19:59 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -45,7 +45,7 @@ public abstract class Message
      */
     String statusLine = null;
 
-    String readLine(InputStream in) throws IOException
+    public String readLine(InputStream in) throws IOException
     {
 	char buf[] = new char[128];
 	int offset = 0;
