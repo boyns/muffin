@@ -1,4 +1,4 @@
-/* $Id: SnoopFilter.java,v 1.5 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: SnoopFilter.java,v 1.6 2000/03/30 06:32:16 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -44,9 +44,19 @@ public class SnoopFilter implements RequestFilter, ReplyFilter
 	String s = r.toString(System.getProperty("line.separator"));
 	if (r.getCommand().equals("POST"))
 	{
-	    String sep = System.getProperty("line.separator");
-	    s += sep;
-	    s += sep;
+	    // display form data 
+	    String type = r.getHeaderField("Content-type");
+	    if (type != null && "application/x-www-form-urlencoded".equals(type))
+	    {
+		String data = r.getData();
+		if (data != null)
+		{
+		    s += data;
+		    String sep = System.getProperty("line.separator");
+		    s += sep;
+		    s += sep;
+		}
+	    }
 	}
 	factory.process(s);
     }
