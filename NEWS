@@ -10,6 +10,8 @@ Changes since 0.7:
 * Fixed AnimationKiller bug which made netscape do bad things, like
   crash.
 
+* Uses GNU regexp 1.0.6.
+
 * Browser KeepAlive support is now optional.  Turning off KeepAlive
   should make Muffin appear to be faster.
 
@@ -172,4 +174,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.5 1999/03/12 15:47:27 boyns Exp $
+$Id: NEWS,v 1.6 1999/03/12 15:58:15 boyns Exp $
