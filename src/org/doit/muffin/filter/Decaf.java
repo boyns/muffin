@@ -1,4 +1,4 @@
-/* $Id: Decaf.java,v 1.7 2003/06/03 23:09:29 forger77 Exp $ */
+/* $Id: Decaf.java,v 1.8 2003/06/05 15:33:13 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -37,6 +37,8 @@ public class Decaf extends AbstractFilterFactory
     private static Pattern javaScriptTags = Factory.instance().getPattern("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
     private static Pattern javaScriptAttrs = Factory.instance().getPattern("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
 
+    /**
+     * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()     */
     protected void doSetDefaultPrefs()
     {
 	putPrefsBoolean(NOJAVASCRIPT, true);

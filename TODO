@@ -47,5 +47,8 @@ Refactorings:
   3. Run tests
 
   Work out how to refactor other filters.
+  Merge Decaf and NoCode
+  
+  Adapt the file \doc\How to write a Muffin filter.html according to new architecture.
 
-$Id: TODO,v 1.5 2003/06/03 23:06:53 forger77 Exp $
+$Id: TODO,v 1.6 2003/06/05 15:33:15 forger77 Exp $

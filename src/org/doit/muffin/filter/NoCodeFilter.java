@@ -1,5 +1,3 @@
-/* $Id: NoCodeFilter.java,v 1.5 2003/05/19 23:06:54 forger77 Exp $ */
-
 /* Based upon DecafFilter by Mark R. Boyns so here is his copyright notice: */
 
 /*
@@ -38,54 +36,46 @@ import java.io.IOException;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Factory;
 
-public class NoCodeFilter implements ContentFilter, ReplyFilter
+/**
+ * FIXME: This class duplicates code from Decaf. The two should be joined or
+ * derived from a common Baseclass.
+ *
+ */
+public class NoCodeFilter extends AbstractContentFilter implements ReplyFilter
 {
-    NoCode factory;
-    Prefs prefs;
-    InputObjectStream in = null;
-    OutputObjectStream out = null;
-    Request request = null;
 
     NoCodeFilter(NoCode factory)
     {
-	this.factory = factory;
+    super(factory);
+	fFactory = factory;
     }
     
-    public void setPrefs(Prefs prefs)
-    {
-	this.prefs = prefs;
-    }
-
+    /**     * @see org.doit.muffin.ReplyFilter#filter(Reply)     */
     public void filter(Reply reply) throws FilterException
     {
-	if (prefs.getBoolean("NoCode.noJavaScript"))
+	if (getFactory().getPrefsBoolean(NoCode.NOJAVASCRIPT))
 	{
 	    String content = reply.getContentType();
 	    if (content != null && content.equalsIgnoreCase("application/x-javascript"))
 	    {
-		factory.report(request, "rejecting " + content);
-		throw new FilterException("NoCode " + content + " rejected");
+		getFactory().report(getRequest(), "rejecting " + content);
+		throw new FilterException(getFactory().getName() + " " + content + " rejected");
 	    }
 	}
     }
 
-    public boolean needsFiltration(Request request, Reply reply)
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()
+     */
+    protected String doGetContentIdentifier()
     {
-	this.request = request;
-	String s = reply.getContentType();
-	return s != null && s.startsWith("text/html");
+        return "text/html";
     }
     
-    public void setInputObjectStream(InputObjectStream in)
-    {
-	this.in = in;
-    }
-
-    public void setOutputObjectStream(OutputObjectStream out)
-    {
-	this.out = out;
-    }
-
+    /**
+     * Utility function duplicating the functionality of java.lang.String#startsWith(String)
+     * but ignoring case.
+     *      * @param target The string to check whether it starts with matchString     * @param matchString The String to check whether target starts with it.     * @return boolean True if target starts with matchString.     */
     private static boolean startsWithIgnoreCase(String target, String matchString)
     {
 	//String startBit = target.substring(0, matchString.length());
@@ -94,9 +84,10 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 	return startBit.equalsIgnoreCase(matchString);
     }
     
-    // Convert the various language aliases to their most common form
-    // also ensuring standardised capitalisation.
-    private String BaseLanguage(String slang) {
+    /**
+     * Normalizes Language aliases.
+     * 
+     * @param slang The language to be normalized     */    private static String normalizeLanguage(String slang) {
 	// Use startsWith rather than eqauls because there can be
 	// version numbers at end of language name like JavaScript1.2.
 
@@ -119,10 +110,10 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 
     public boolean IsBadLanguage(String slang) {
 
-	boolean noJavaScript = prefs.getBoolean("NoCode.noJavaScript");
-	boolean noVBScript = prefs.getBoolean("NoCode.noVBScript");
-	boolean noEncodedScript = prefs.getBoolean("NoCode.noEncodedScript");
-	boolean noOtherScript = prefs.getBoolean("NoCode.noOtherScript");
+	final boolean noJavaScript = getFactory().getPrefsBoolean(NoCode.NOJAVASCRIPT);
+	final boolean noVBScript = getFactory().getPrefsBoolean(NoCode.NOVBSCRIPT);
+	final boolean noEncodedScript = getFactory().getPrefsBoolean(NoCode.NOENCODEDSCRIPT);
+	final boolean noOtherScript = getFactory().getPrefsBoolean(NoCode.NOOTHERSCRIPT);
 
 	if (slang.equals("JavaScript")) {
 	    if (noJavaScript)
@@ -143,29 +134,31 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 	return false;
     }
 
-    public void run()
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doRun(ObjectStreamToInputStream, ObjectStreamToOutputStream)
+     */
+    protected void doRun(
+        ObjectStreamToInputStream ostis,
+        ObjectStreamToOutputStream ostos)
+        throws IOException
     {
-	Thread.currentThread().setName("NoCode");
-
-	try
-	{
 	    boolean eatingJavaScript = false;
 	    boolean inScript = false;
 	    boolean inVBScript = false;
 	    boolean eatingJava = false;
-	    boolean noJavaScript = prefs.getBoolean("NoCode.noJavaScript");
-	    boolean noVBScript = prefs.getBoolean("NoCode.noVBScript");
-	    boolean noOtherScript = prefs.getBoolean("NoCode.noOtherScript");
-	    boolean noEncodedScript = prefs.getBoolean("NoCode.noEncodedScript");
-	    boolean removeSomeLanguage = 
+	    final boolean noJavaScript = getFactory().getPrefsBoolean(NoCode.NOJAVASCRIPT);
+	    final boolean noVBScript = getFactory().getPrefsBoolean(NoCode.NOVBSCRIPT);
+	    final boolean noOtherScript = getFactory().getPrefsBoolean(NoCode.NOOTHERSCRIPT);
+	    final boolean noEncodedScript = getFactory().getPrefsBoolean(NoCode.NOENCODEDSCRIPT);
+	    final boolean removeSomeLanguage = 
 		noJavaScript || noVBScript || noOtherScript || noEncodedScript;
-	    boolean noEvalInScript = prefs.getBoolean("NoCode.noEvalInScript");
-	    boolean noJava = prefs.getBoolean("NoCode.noJava");
+	    final boolean noEvalInScript = getFactory().getPrefsBoolean(NoCode.NOEVALINSCRIPT);
+	    final boolean noJava = getFactory().getPrefsBoolean(NoCode.NOJAVA);
 
 	    Tag tag;
 	    Object obj;
-	    while ((obj = in.read()) != null)
-            {
+	    while ((obj = getInputObjectStream().read()) != null)
+        {
 		org.doit.html.Token token = (org.doit.html.Token) obj;
 		if (token.getType() == org.doit.html.Token.TT_TAG)
 		{
@@ -194,10 +187,10 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 			    // if any languages rejected.
 			    inScript = true;
 			    if (tag.has("language")) {
-				    String baseLang = BaseLanguage(tag.get("language"));
+				    String baseLang = normalizeLanguage(tag.get("language"));
 				    if (IsBadLanguage(baseLang)) {
 					    eatingJavaScript = true;
-					    factory.report(request,
+					    getFactory().report(getRequest(),
 							   "Removed <script bad language>");
 				    }
 				    if (baseLang.equals("VBScript") || baseLang.equals("VBScript.Encode")) {
@@ -205,11 +198,11 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 				    }
 			    } else if (removeSomeLanguage) {
 				    eatingJavaScript = true;
-				    factory.report(request,
+				    getFactory().report(getRequest(),
 						   "Removed <script without language>");
 			    }
 		    }
-		    else if (factory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
+		    else if (fFactory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
 		    {
 		      // Should be less restrictive here, allowing actions written in permitted 
 		      // languages but how can it be worked out which language an action is in?
@@ -222,7 +215,7 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 			    while (e.hasMoreElements())
 			    {
 				String attr = (String) e.nextElement();
-				if (factory.isJavaScriptAttr(attr))
+				if (fFactory.isJavaScriptAttr(attr))
 				{
 				    value = tag.remove(attr);
 				    if (value != null)
@@ -269,7 +262,7 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 
 			    if (str.length() > 0)
 			    {
- 				factory.report(request, str.toString());
+ 				getFactory().report(getRequest(), str.toString());
 			    }
 			}
 		    }
@@ -278,13 +271,13 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 			if (tag.is("applet"))
 			{
 			    eatingJava = true;
-			    factory.report(request, "Removed <applet>");
+			    getFactory().report(getRequest(), "Removed <applet>");
 			}
 		    }
 		    if (!eatingJavaScript && !eatingJava)
 		    {
 			token.importTag(tag);
-			out.write(token);
+			getOutputObjectStream().write(token);
 		    }
 		} else if (!eatingJavaScript && !eatingJava) {
 			if (inScript && noEvalInScript) {
@@ -310,18 +303,10 @@ public class NoCodeFilter implements ContentFilter, ReplyFilter
 				token.erase();
 				token.append(outScript);
 			}
-			out.write(token);
+			getOutputObjectStream().write(token);
 		}
 	}
-	} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} finally {
-			try {
-				out.flush();
-				out.close();
-			} catch (IOException ioe) {
-			}
-		}
 	}
+    private NoCode fFactory;
 }
 

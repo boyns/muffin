@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
  *
@@ -41,6 +39,7 @@ public class AllTests
         suite.addTest(new TestSuite(EmptyFontTest.class));
         suite.addTest(new TestSuite(ImageKillTest.class));
         suite.addTest(new TestSuite(DecafTest.class));
+        suite.addTest(new TestSuite(NoCodeTest.class));
         //$JUnit-END$
         return suite;
     }

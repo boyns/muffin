@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
  *

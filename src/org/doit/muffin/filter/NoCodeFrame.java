@@ -1,5 +1,3 @@
-/* $Id: NoCodeFrame.java,v 1.2 2003/01/08 18:59:52 boyns Exp $ */
-
 /* Based upon DecafFrame by Mark R. Boyns so here is his copyright notice: */
 
 /*
@@ -35,19 +33,39 @@ import java.awt.event.*;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
-public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowListener
+public class NoCodeFrame extends AbstractFrame
 {
-    Prefs prefs;
-    NoCode parent;
-    Checkbox noJava, noJavaScript, noVBScript, noOtherScript;
-    Checkbox noEncodedScript, noEvalInScript;
 
-    public NoCodeFrame(Prefs prefs, NoCode parent)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(AbstractFilterFactory)
+     */
+    public NoCodeFrame(NoCode factory)
     {
-	super("Muffin: NoCode");
+        super(factory);
+    }
+    
 
-	this.prefs = prefs;
-	this.parent = parent;
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()
+     */
+    protected Panel doMakeContent()
+    {
+
+        Panel panel = new Panel(new BorderLayout());
+
+        panel.add("North", makeConfigPanel());
+
+        getFactory().getMessages().setEditable(false);
+        panel.add("Center", getFactory().getMessages());
+
+        panel.add("South", makeButtonPanel());
+
+        return panel;
+
+    }
+    
+    private Panel makeConfigPanel ()
+    {
 
 	Panel panel = new Panel();
 	GridBagLayout layout = new GridBagLayout();
@@ -55,22 +73,22 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
 	GridBagConstraints c;
 
 	noJavaScript = new Checkbox(Strings.getString("NoCode.noJavaScript"));
-	noJavaScript.setState(prefs.getBoolean("NoCode.noJavaScript"));
+	noJavaScript.setState(getFactory().getPrefsBoolean(NoCode.NOJAVASCRIPT));
 
 	noVBScript = new Checkbox(Strings.getString("NoCode.noVBScript"));
-	noVBScript.setState(prefs.getBoolean("NoCode.noVBScript"));
+	noVBScript.setState(getFactory().getPrefsBoolean(NoCode.NOVBSCRIPT));
 
 	noOtherScript = new Checkbox(Strings.getString("NoCode.noOtherScript"));
-	noOtherScript.setState(prefs.getBoolean("NoCode.noOtherScript"));
+	noOtherScript.setState(getFactory().getPrefsBoolean(NoCode.NOOTHERSCRIPT));
 
 	noEncodedScript = new Checkbox(Strings.getString("NoCode.noEncodedScript"));
-	noEncodedScript.setState(prefs.getBoolean("NoCode.noEncodedScript"));
+	noEncodedScript.setState(getFactory().getPrefsBoolean(NoCode.NOENCODEDSCRIPT));
 
 	noEvalInScript = new Checkbox(Strings.getString("NoCode.noEvalInScript"));
-	noEvalInScript.setState(prefs.getBoolean("NoCode.noEvalInScript"));
+	noEvalInScript.setState(getFactory().getPrefsBoolean(NoCode.NOEVALINSCRIPT));
 
 	noJava = new Checkbox(Strings.getString("NoCode.noJava"));
-	noJava.setState(prefs.getBoolean("NoCode.noJava"));
+	noJava.setState(getFactory().getPrefsBoolean(NoCode.NOJAVA));
 
 	c = new GridBagConstraints();
 	layout.setConstraints(noJavaScript, c);
@@ -93,103 +111,36 @@ public class NoCodeFrame extends MuffinFrame implements ActionListener, WindowLi
 	c.gridwidth = GridBagConstraints.REMAINDER;
 	layout.setConstraints(noJava, c);
 	panel.add(noJava);
+    
+    return panel;
 
-	add("North", panel);
-
-	parent.messages.setEditable(false);
-	add("Center", parent.messages);
-
-	Button b;
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button(Strings.getString("apply"));
-	b.setActionCommand("doApply");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("help"));
-	b.setActionCommand("doHelp");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-
-	add("South", buttonPanel);
-
-	addWindowListener(this);
-
-	pack();
-	setSize(getPreferredSize());
-
-	show();
     }
 
-    public void actionPerformed(ActionEvent event)
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doApply()
+     */
+    protected void doApply(){
+        getFactory().putPrefsBoolean(NoCode.NOJAVASCRIPT, noJavaScript.getState());
+        getFactory().putPrefsBoolean(NoCode.NOVBSCRIPT, noVBScript.getState());
+        getFactory().putPrefsBoolean(NoCode.NOOTHERSCRIPT, noOtherScript.getState());
+        getFactory().putPrefsBoolean(NoCode.NOENCODEDSCRIPT, noEncodedScript.getState());
+        getFactory().putPrefsBoolean(NoCode.NOEVALINSCRIPT, noEvalInScript.getState());
+        getFactory().putPrefsBoolean(NoCode.NOJAVA, noJava.getState());
+    }
+
+    /**
+     * @see org.doit.muffin.filter.AbstractFrame#doMakeButtonList()
+     */
+    protected String[] doMakeButtonList()
     {
-	String arg = event.getActionCommand();
-
-	if ("doApply".equals(arg))
-	{
-	    prefs.putBoolean("NoCode.noJavaScript", noJavaScript.getState());
-	    prefs.putBoolean("NoCode.noVBScript", noVBScript.getState());
-	    prefs.putBoolean("NoCode.noOtherScript", noOtherScript.getState());
-	    prefs.putBoolean("NoCode.noEncodedScript", noEncodedScript.getState());
-	    prefs.putBoolean("NoCode.noEvalInScript", noEvalInScript.getState());
-	    prefs.putBoolean("NoCode.noJava", noJava.getState());
-	}
-	else if ("doSave".equals(arg))
-	{
-	    parent.save();
-	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
-	}
-	else if ("doClear".equals(arg))
-	{
-	    parent.messages.clear();
-	}
-	else if ("doHelp".equals(arg))
-	{
-	    new HelpFrame("NoCode");
-	}
+        return new String[] {
+            APPLY_CMD,
+            SAVE_CMD,
+            CLEAR_CMD,
+            CLOSE_CMD,
+            HELP_CMD };
     }
 
-    public void windowActivated(WindowEvent e)
-    {
-    }
-
-    public void windowDeactivated(WindowEvent e)
-    {
-    }
-
-    public void windowClosing(WindowEvent e)
-    {
-	setVisible(false);
-    }
-
-    public void windowClosed(WindowEvent e)
-    {
-    }
-
-    public void windowIconified(WindowEvent e)
-    {
-    }
-
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
-
-    public void windowOpened(WindowEvent e)
-    {
-    }
+    private Checkbox noJava, noJavaScript, noVBScript, noOtherScript;
+    private Checkbox noEncodedScript, noEvalInScript;
 }
