@@ -5,3 +5,4 @@ Muffin BUGS - Known bugs
 
 * Glossary reads entire document into memory before processing.
 
+$Id: BUGS,v 1.2 1998/08/13 05:41:36 boyns Exp $

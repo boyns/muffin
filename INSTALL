@@ -87,3 +87,4 @@ can be specified and "ALL" matches all IP addresses.  An example
 partial IP address would be 130.191.13. which is the same as all hosts
 in the range 130.191.13.1 to 130.191.13.255.
 
+$Id: INSTALL,v 1.2 1998/08/13 05:41:37 boyns Exp $
