@@ -57,29 +57,24 @@ public class GlossaryTest extends TestCase
         fGlossary.loadFromStream(
             Utils.makeBufferedReaderFromString(SAMPLE_GLOSSARY));
         fGlossaryFilter = (ContentFilter) fGlossary.createFilter();
+        fReply = Utils.makeReply(SAMPLE_RESPONSE);
     }
 
     public void testGlossaryFilterPresence() throws IOException
     {
         assertNotNull(fGlossaryFilter);
 
-        Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        assertNotNull(reply);
+        assertNotNull(fReply);
 
-        assertTrue(fGlossaryFilter.needsFiltration(null, reply));
+        assertTrue(fGlossaryFilter.needsFiltration(null, fReply));
     }
 
     public void testReplacing()
     {
-        Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fGlossaryFilter,
-            reply.getContent(),
-            os,
             SAMPLE_RESPONSE.length(),
-            reply);
-        String result = os.toString();
+            fReply);
 
         Pattern pat =
             org.doit.muffin.regexp.Factory.instance().getPattern("java");

@@ -92,14 +92,10 @@ public class ImageKillTest extends TestCase
     public void testReplacing()
     {
         Reply reply = Utils.makeReply(SAMPLE_RESPONSE);
-        OutputStream os = new ByteArrayOutputStream();
-        Utils.filter(
+        String result = Utils.filter(
             fImageKillFilter,
-            reply.getContent(),
-            os,
             SAMPLE_RESPONSE.length(),
             reply);
-        String result = os.toString();
 
         Pattern pat =
             org.doit.muffin.regexp.Factory.instance().getPattern(
