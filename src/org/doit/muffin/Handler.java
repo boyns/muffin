@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.21 2003/06/04 21:07:53 flefloch Exp $ */
+/* $Id: Handler.java,v 1.22 2003/06/07 10:10:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -51,19 +51,19 @@ public class Handler implements Runnable
 {
     static final boolean DEBUG = false;
 
-    Monitor monitor = null;
-    FilterManager manager = null;
-    Options options = null;
-    Client client = null;
-    Socket socket = null;
+    private Monitor monitor = null;
+    private FilterManager manager = null;
+    private Options options = null;
+    private Client client = null;
+    private Socket socket = null;
     Request request = null;
     Reply reply = null;
-    HttpRelay http = null;
-    int currentLength = -1;
-    int contentLength = -1;
-    Filter filterList[];
-    long idle = 0;
-    double bytesPerSecond = 0;
+    private HttpRelay http = null;
+    private int currentLength = -1;
+    private int contentLength = -1;
+    private Filter filterList[];
+    private long idle = 0;
+    private double bytesPerSecond = 0;
 
     /**
      * Create a Handler.
@@ -83,7 +83,7 @@ public class Handler implements Runnable
     /**
      * Close all connections associated with this handler.
      */
-    synchronized void close()
+    private synchronized void close()
     {
         if (client != null)
         {
@@ -100,7 +100,7 @@ public class Handler implements Runnable
     /**
      * Flush all data to the client.
      */
-    void flush()
+    private void flush()
     {
         if (client != null)
         {
@@ -221,7 +221,7 @@ public class Handler implements Runnable
         close();
     }
 
-    protected boolean verifyUrlSyntax(Request request)
+    private  boolean verifyUrlSyntax(Request request)
     {
         boolean syntaxOk = true;
         String url = request.getURL();
@@ -247,12 +247,12 @@ public class Handler implements Runnable
         return syntaxOk;
     }
 
-    protected Client createClient(Socket socket) throws IOException
+    private  Client createClient(Socket socket) throws IOException
     {
         return new Client(socket);
     }
 
-    boolean processRequest() throws IOException, FilterException
+    private boolean processRequest() throws IOException, FilterException
     {
         boolean keepAlive = false;
 
@@ -461,7 +461,7 @@ public class Handler implements Runnable
         return keepAlive;
     }
 
-    HttpRelay createHttpsRelay() throws IOException
+    private HttpRelay createHttpsRelay() throws IOException
     {
         HttpRelay http;
 
@@ -481,7 +481,7 @@ public class Handler implements Runnable
         return http;
     }
 
-    protected HttpRelay createHttpRelay(Request request, Socket socket)
+    private  HttpRelay createHttpRelay(Request request, Socket socket)
         throws IOException
     {
         HttpRelay http;
@@ -511,7 +511,7 @@ public class Handler implements Runnable
         return http;
     }
 
-    HttpRelay createHttpFilter(Request request)
+    private HttpRelay createHttpFilter(Request request)
     {
         for (int i = 0; i < filterList.length; i++)
         {
@@ -529,7 +529,7 @@ public class Handler implements Runnable
         return null;
     }
 
-    InputStream readChunkedTransfer(InputStream in) throws IOException
+    private InputStream readChunkedTransfer(InputStream in) throws IOException
     {
         ByteArrayOutputStream chunks = new ByteArrayOutputStream(8192);
         int size = 0;
@@ -549,7 +549,7 @@ public class Handler implements Runnable
         return new ByteArrayInputStream(chunks.toByteArray());
     }
 
-    void processContent() throws IOException
+    private void processContent() throws IOException
     {
         InputStream in;
         boolean chunked = false;
@@ -613,7 +613,7 @@ public class Handler implements Runnable
      *
      * @param r a request
      */
-    String redirect(Request r)
+    private String redirect(Request r)
     {
         for (int i = 0; i < filterList.length; i++)
         {
@@ -635,7 +635,7 @@ public class Handler implements Runnable
      *
      * @param r a reply
      */
-    void filter(Reply r) throws FilterException
+    private void filter(Reply r) throws FilterException
     {
         for (int i = 0; i < filterList.length; i++)
         {
@@ -651,7 +651,7 @@ public class Handler implements Runnable
      *
      * @param r a request
      */
-    void filter(Request r) throws FilterException
+    private void filter(Request r) throws FilterException
     {
         for (int i = 0; i < filterList.length; i++)
         {
@@ -662,7 +662,7 @@ public class Handler implements Runnable
         }
     }
 
-    boolean contentNeedsFiltration()
+    private boolean contentNeedsFiltration()
     {
         for (int i = 0; i < filterList.length; i++)
         {
@@ -678,7 +678,7 @@ public class Handler implements Runnable
         return false;
     }
 
-    void filter(
+    private void filter(
         InputStream in,
         OutputStream out,
         int length,
@@ -754,7 +754,7 @@ public class Handler implements Runnable
     /**
      * Uncompress gzip encoded content.
      */
-    void uncompressContent(Reply reply) throws IOException
+    private void uncompressContent(Reply reply) throws IOException
     {
         String type = reply.getHeaderField("Content-type");
         if (type != null && type.toLowerCase().startsWith("text/html"))
@@ -796,7 +796,7 @@ public class Handler implements Runnable
      * @param e exception that occurred
      * @param r request
      */
-    void error(OutputStream out, Exception e, Request r)
+    private void error(OutputStream out, Exception e, Request r)
     {
         StringBuffer buf = new StringBuffer();
         buf.append(
@@ -827,7 +827,7 @@ public class Handler implements Runnable
      * @param out OutputStream
      * @param monitored Update the Monitor
      */
-    void copy(InputStream in, OutputStream out, int length, boolean monitored)
+    private void copy(InputStream in, OutputStream out, int length, boolean monitored)
         throws IOException
     {
         if (length == 0)
@@ -912,7 +912,7 @@ public class Handler implements Runnable
      * @param out OutputStream
      * @param monitored Update the Monitor
      */
-    void flushCopy(
+    private void flushCopy(
         InputStream in,
         OutputStream out,
         int length,
@@ -988,7 +988,7 @@ public class Handler implements Runnable
      * @param out OutputStream
      * @param monitored Update the Monitor
      */
-    void copy(InputObjectStream in, OutputStream out, boolean monitored)
+    private void copy(InputObjectStream in, OutputStream out, boolean monitored)
         throws IOException
     {
         Object obj;
