@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.5 1999/03/17 05:38:49 boyns Exp $ */
+/* $Id: Message.java,v 1.6 1999/09/16 04:11:48 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-99 Mark R. Boyns <boyns@doit.org>
@@ -68,7 +68,6 @@ public abstract class Message
 		{
 		    if (! (in instanceof PushbackInputStream))
 		    {
-			System.out.println("creaing PushbackInputStream");
 			in = new PushbackInputStream(in);
 		    }
 		    ((PushbackInputStream) in).unread(tmpch);
