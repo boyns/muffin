@@ -1,4 +1,4 @@
-/* $Id: LogFile.java,v 1.3 2000/01/26 03:53:20 boyns Exp $ */
+/* $Id: LogFile.java,v 1.4 2000/03/27 04:23:50 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,17 +23,18 @@
 
 package org.doit.muffin;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.*;
 import java.util.*;
+import java.util.zip.*;
 
 public class LogFile
 {
     private static SimpleDateFormat format;
     private static String zoneString;
-    
     private String filename = null;
+    private long maxLogFileSize;
+    private int maxLogFileHistory;
 
     static
     {
@@ -45,6 +46,9 @@ public class LogFile
     public LogFile(String filename)
     {
 	setLogFile(filename);
+
+	maxLogFileSize = Main.getOptions().getLong("muffin.maxLogFileSize");
+	maxLogFileHistory = Main.getOptions().getInteger("muffin.maxLogFileHistory");
     }
 
     public void setLogFile(String filename)
@@ -76,6 +80,58 @@ public class LogFile
 	    buf.append("0");
 	buf.append(mins);
 	return buf.toString();
+    }
+
+    private void gzip(File src)
+    {
+	File dst =new File(src.getAbsolutePath() + ".gz");
+	FileInputStream in;
+	GZIPOutputStream out;
+	byte[] buf = new byte[8192];
+	int n;
+
+        try
+        {
+            in = new FileInputStream(src);
+            out = new GZIPOutputStream(new FileOutputStream(dst), buf.length);
+
+            while ((n = in.read(buf)) >= 0)
+            {
+                out.write(buf, 0, n);
+            }
+
+	    in.close();
+	    out.close();
+        }
+	catch (IOException e)
+	{
+	    System.out.println(e);
+	}
+    }
+
+    private void rotate(int max)
+    {
+	File f;
+	
+	for (int i = max - 2; i >= 1; i--)
+	{
+	    f = new File(filename + "." + i + ".gz");
+	    if (f.exists())
+	    {
+		f.renameTo(new File(filename + "." + (i+1) + ".gz"));
+	    }
+	}
+
+	f = new File(filename + ".0");
+	if (f.exists())
+	{
+	    gzip(f);
+	    f = new File(filename + ".0.gz");
+	    f.renameTo(new File(filename + ".1.gz"));
+	}
+
+	f = new File(filename);
+	f.renameTo(new File(filename + ".0"));
     }
     
     public synchronized void log(Request request, Reply reply)
@@ -130,6 +186,12 @@ public class LogFile
 	
 	try
 	{
+	    File file = new File(filename);
+	    if (file.length() > maxLogFileSize)
+	    {
+		rotate(maxLogFileHistory);
+	    }
+	    
 	    FileOutputStream out = new FileOutputStream(filename, true);
 	    out.write(buf.toString().getBytes());
 	    out.close();
