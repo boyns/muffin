@@ -1,4 +1,4 @@
-/* $Id: Token.java,v 1.6 2000/01/24 04:02:05 boyns Exp $ */
+/* $Id: Token.java,v 1.7 2003/05/10 23:10:22 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -43,85 +43,88 @@ public class Token extends ByteArray
 
     public Token(int type)
     {
-	this.type = type;
+        this.type = type;
     }
 
     public Token(Token token)
     {
-	super(token.toString());
-	this.type = token.type;
+        super(token.toString());
+        this.type = token.type;
     }
 
     public int getType()
     {
-	return type;
+        return type;
     }
 
     public Tag createTag()
     {
-	if (cachedTag != null)
-	{
-	    return cachedTag;
-	}
-	
-	int start = 0, end = 0, rest = 0;
+        if (cachedTag != null)
+        {
+            return cachedTag;
+        }
 
-	while (start < offset)
-	{
-	    switch ((char)bytes[++start])
-	    {
-	    case ' ':
-	    case '\t':
-	    case '\r':
-	    case '\n':
-	    case '>':
-		continue;
-	    }
-	    break;
-	}
+        int start = 0, end = 0, rest = 0;
 
-	end = start;
+        while (start < offset)
+        {
+            switch ((char)bytes[++start])
+            {
+            case ' ':
+            case '\t':
+            case '\r':
+            case '\n':
+            case '>':
+                continue;
+            }
+            break;
+        }
+
+        end = start;
  loop:  while (end < offset)
-	{
-	    switch ((char)bytes[++end])
-	    {
-	    case ' ':
-	    case '\t':
-	    case '\r':
-	    case '\n':
-		rest = end+1;
-		break loop;
-		
-	    case '>':
-		rest = -1;
-		break loop;
-	    }
-	}
+        {
+            switch ((char)bytes[++end])
+            {
+            case ' ':
+            case '\t':
+            case '\r':
+            case '\n':
+                rest = end+1;
+                break loop;
 
-	String name = new String(bytes, start, end - start).toLowerCase();
-	String data = null;
-	if (rest > 0 && offset - rest -1 > 0)
-	{
-	    data = new String(bytes, rest, offset - rest - 1);
-	}
+            case '>':
+                rest = -1;
+                break loop;
+            }
+        }
 
-	cachedTag = new Tag(name, data);
-	return cachedTag;
+        // use deprecated String constructors for performance reasons
+        // to work correctly encoding from response or HTML document would have to be used
+
+        String name = new String(bytes, 0, start, end - start).toLowerCase();
+        String data = null;
+        if (rest > 0 && offset - rest -1 > 0)
+        {
+            data = new String(bytes, 0, rest, offset - rest - 1);
+        }
+
+        cachedTag = new Tag(name, data);
+        return cachedTag;
     }
 
 
     public void importTag(Tag newTag)
     {
-	// AJP modification: newTag may be a replacement tag but may not be
-	// marked as modified so check tag "name" is the same(also do check
-	// for cachedTag, just in case)
-	if (newTag.isModified()
-	    || cachedTag == null
-	    || !cachedTag.name().equals(newTag.name()))
-	{
-	    bytes = newTag.toString().getBytes();
-	    offset = bytes.length;
-	    cachedTag = newTag;
-	}
+        // AJP modification: newTag may be a replacement tag but may not be
+        // marked as modified so check tag "name" is the same(also do check
+        // for cachedTag, just in case)
+        if (newTag.isModified()
+            || cachedTag == null
+            || !cachedTag.name().equals(newTag.name()))
+        {
+            bytes = newTag.toString().getBytes();
+            offset = bytes.length;
+            cachedTag = newTag;
+        }
     }
 }
