@@ -1,5 +1,7 @@
 1999-11-08  Mark R. Boyns  <boyns@doit.org>
 
+	* Muffin 0.9.1 released
+
 	* doc/filter/NoThanks.txt: documented options.
 
 	* src/org/doit/muffin/filter/NoThanks.java: new options command
