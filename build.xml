@@ -121,9 +121,6 @@
 
   <target name="muffin.jar" depends="compile">
     <delete dir="${builddir}"/>
-    <mkdir dir="${builddir}"/>
-    <mkdir dir="${builddir}/WEB-INF"/>
-    <mkdir dir="${builddir}/WEB-INF/lib"/>
     <mkdir dir="${builddir}/WEB-INF/classes"/>
 
     <copy todir="${builddir}/WEB-INF/classes">
