@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.11 2000/03/08 15:26:28 boyns Exp $ */
+/* $Id: NoThanks.java,v 1.12 2000/03/29 14:57:42 boyns Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -36,7 +36,7 @@ public class NoThanks implements FilterFactory
     Prefs prefs;
     NoThanksFrame frame = null;
     MessageArea messages = null;
-    
+
     private RE kill = null;
     private RE comment = null;
     private RE content = null;
@@ -55,8 +55,8 @@ public class NoThanks implements FilterFactory
     private Vector scriptPatterns = null;
     private Vector scriptReplace = null;
     private Vector scriptStrip = null;
-    private Hashtable headerStrip = null;
-    private Hashtable headerReplace = null;
+    private Hashtable headerStrip = new Hashtable();
+    private Hashtable headerReplace = new Hashtable();
     private Hashtable headerReplaceValue = null;
 
     private RE hyperTags = null;
