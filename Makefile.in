@@ -32,8 +32,9 @@ docs:
 
 clean:
 	(cd src; $(MAKE) $(MFLAGS) clean)
-	$(RM) Makefile config.status config.cache config.log
 
 distclean: clean
+	$(RM) Makefile config.status config.cache config.log
+	(cd src; $(MAKE) $(MFLAGS) distclean)
 
 release: all docs clean
