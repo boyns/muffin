@@ -1,4 +1,4 @@
-/* $Id: PainterFilter.java,v 1.7 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: PainterFilter.java,v 1.8 2003/06/28 15:03:58 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,111 +27,87 @@ import org.doit.io.*;
 import org.doit.html.*;
 import java.io.*;
 
-public class PainterFilter implements ContentFilter
+public class PainterFilter extends AbstractContentFilter
 {
     private static final String PATTERN1 = "^(body|td|table)$";
     private static final String PATTERN2 = "^(tr|th)$";
 
-    Painter factory;
-    Prefs prefs;
-    InputObjectStream in = null;
-    OutputObjectStream out = null;
-    Request request = null;
-
     PainterFilter(Painter factory)
     {
-	this.factory = factory;
+        super(factory);
     }
     
-    public void setPrefs(Prefs prefs)
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doGetContentIdentifier()
+     */
+    protected String doGetContentIdentifier()
     {
-	this.prefs = prefs;
-    }
-
-    public boolean needsFiltration(Request request, Reply reply)
-    {
-	this.request = request;
-	String s = reply.getContentType();
-	return s != null && s.startsWith("text/html");
+        return "text/html";
     }
     
-    public void setInputObjectStream(InputObjectStream in)
+    /**
+     * @see org.doit.muffin.filter.AbstractContentFilter#doRun(ObjectStreamToInputStream, ObjectStreamToOutputStream)
+     */
+    public void doRun(
+        ObjectStreamToInputStream ostis,
+        ObjectStreamToOutputStream ostos)
+        throws IOException
     {
-	this.in = in;
-    }
+        Tag tag;
+        Object obj;
 
-    public void setOutputObjectStream(OutputObjectStream out)
-    {
-	this.out = out;
+        while ((obj = getInputObjectStream().read()) != null) {
+            Token token = (Token) obj;
+            if (token.getType() == Token.TT_TAG) {
+                tag = token.createTag();
+
+                if (tag.matches(PATTERN1)) {
+                    String value;
+                    
+                    if(fixIt(Painter.BGCOLOR, tag)){
+                        tag.remove(Painter.BACKGRND);
+                    }else{
+                        fixIt(Painter.BACKGRND, tag);
+                        tag.remove(Painter.BGCOLOR);
+                    }
+
+                    fixIt(Painter.TEXT, tag);
+
+                    fixIt(Painter.LINK, tag);
+
+                    fixIt(Painter.ALINK, tag);
+
+                    fixIt(Painter.VLINK, tag);
+                } else if (tag.matches(PATTERN2) && tag.has(Painter.BGCOLOR)) {
+                    fixIt(Painter.BGCOLOR, tag);
+                } else if (tag.is(Painter.FONT) && tag.has(Painter.COLOR)) {
+                    String value = getFactory().getPrefsString(Painter.TEXT);
+                    if (value.length() > 0) {
+                        if (value.equalsIgnoreCase("None")) {
+                            tag.remove(Painter.COLOR);
+                        } else {
+                            tag.put(Painter.COLOR, value);
+                        }
+                    }
+                }
+
+                token.importTag(tag);
+            }
+            getOutputObjectStream().write(token);
+        }
     }
     
-	public void run() {
-		Thread.currentThread().setName("Painter");
-
-		try {
-			Tag tag;
-			Object obj;
-
-			while ((obj = in.read()) != null) {
-				Token token = (Token) obj;
-				if (token.getType() == Token.TT_TAG) {
-					tag = token.createTag();
-
-					if (tag.matches(PATTERN1)) {
-						String value;
-						
-						if(fixIt("bgcolor", tag)){
-							tag.remove("background");
-						}else{
-							fixIt("background", tag);
-							tag.remove("bgcolor");
-						}
-
-						fixIt("text", tag);
-
-						fixIt("link", tag);
-
-						fixIt("alink", tag);
-
-						fixIt("vlink", tag);
-					} else if (tag.matches(PATTERN2) && tag.has("bgcolor")) {
-						fixIt("bgcolor", tag);
-					} else if (tag.is("font") && tag.has("color")) {
-						String value = prefs.getString("Painter.text");
-						if (value.length() > 0) {
-							if (value.equalsIgnoreCase("None")) {
-								tag.remove("color");
-							} else {
-								tag.put("color", value);
-							}
-						}
-					}
-
-					token.importTag(tag);
-				}
-				out.write(token);
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} finally {
-			try {
-				out.flush();
-				out.close();
-			} catch (IOException ioe) {
-			}
-		}
-	}
-	
-	private boolean fixIt (String key, Tag tag){
-		String value = prefs.getString("Painter." + key);
-		if (value.length() > 0) {
-			if (value.equalsIgnoreCase("None")) {
-				tag.remove(key);
-			} else {
-				tag.put(key, value);
-			}
-			return true;
-		}
-		return false;
-	}
+    private boolean fixIt (String key, Tag tag){
+        String value = getFactory().getPrefsString(key);
+        if (value.length() > 0) {
+            if (value.equalsIgnoreCase("None")) {
+                tag.remove(key);
+            } else {
+                tag.put(key, value);
+            }
+            return true;
+        }
+        return false;
+    }
 }
+
