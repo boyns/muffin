@@ -1,7 +1,8 @@
-/* $Id: CookieMonsterFrame.java,v 1.6 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: CookieMonsterFrame.java,v 1.7 2003/05/24 21:04:41 cmallwitz Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
+ * Copyright (C) 2003 Christian Mallwitz <christian@mallwitz.com>
  *
  * This file is part of Muffin.
  *
@@ -32,102 +33,144 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
 {
     Prefs prefs;
     CookieMonster parent;
-    Checkbox eatReply, eatRequest;
+    Checkbox filterReply, filterRequest, allowSessionCookies;
+    TextField expire = null;
 
     public CookieMonsterFrame(Prefs prefs, CookieMonster parent)
     {
-	super(Strings.getString("CookieMonster.title"));
+        super(Strings.getString("CookieMonster.title"));
 
-	this.prefs = prefs;
-	this.parent = parent;
+        this.prefs = prefs;
+        this.parent = parent;
 
-	Panel panel;
-	GridBagLayout layout;
-	GridBagConstraints c;
+        // if new prefs have not been configured simulated them based on old prefs
+        if (prefs.getString("CookieMonster.filterRequestCookies") == null &&
+            prefs.getString("CookieMonster.filterResponseCookies") == null)
+        {
+            if (prefs.getBoolean("CookieMonster.eatRequestCookies"))
+            {
+                prefs.putBoolean("CookieMonster.filterRequestCookies", true);
+            }
 
-	panel = new Panel();
-	layout = new GridBagLayout();
-	panel.setLayout(layout);
+            if (prefs.getBoolean("CookieMonster.eatReplyCookies"))
+            {
+                prefs.putBoolean("CookieMonster.filterReplyCookies", true);
+                prefs.putBoolean("CookieMonster.allowSessionCookies", false);
+                prefs.putString("CookieMonster.expirePersistentCookiesInMinutes", "0");
+            }
+        }
 
-	eatRequest = new Checkbox(Strings.getString("CookieMonster.eatReplyCookies"));
-	eatRequest.setState(prefs.getBoolean("CookieMonster.eatRequestCookies"));
-	eatReply = new Checkbox(Strings.getString("CookieMonster.eatReplyCookies"));
-	eatReply.setState(prefs.getBoolean("CookieMonster.eatReplyCookies"));
+        Panel panel;
+        GridBagLayout layout;
+        GridBagConstraints c;
 
-	c = new GridBagConstraints();
-	layout.setConstraints(eatRequest, c);
-	panel.add(eatRequest);
+        panel = new Panel();
+        layout = new GridBagLayout();
+        panel.setLayout(layout);
 
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(eatReply, c);
-	panel.add(eatReply);
+        filterRequest = new Checkbox(Strings.getString("CookieMonster.filterRequestCookies"));
+        filterRequest.setState(prefs.getBoolean("CookieMonster.filterRequestCookies"));
 
-	add("North", panel);
+        c = new GridBagConstraints();
+        layout.setConstraints(filterRequest, c);
+        panel.add(filterRequest);
 
-	parent.messages.setEditable(false);
-	//parent.messages.setFont(new Font("Fixed", Font.PLAIN, 10));
-	add("Center", parent.messages);
+        filterReply = new Checkbox(Strings.getString("CookieMonster.filterReplyCookies"));
+        filterReply.setState(prefs.getBoolean("CookieMonster.filterReplyCookies"));
 
-	Button b;
-	Panel buttonPanel = new Panel();
-	buttonPanel.setLayout(new GridLayout(1, 5));
-	b = new Button(Strings.getString("apply"));
-	b.setActionCommand("doApply");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("save"));
-	b.setActionCommand("doSave");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("clear"));
-	b.setActionCommand("doClear");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("close"));
-	b.setActionCommand("doClose");
-	b.addActionListener(this);
-	buttonPanel.add(b);
-	b = new Button(Strings.getString("help"));
-	b.setActionCommand("doHelp");
-	b.addActionListener(this);
-	buttonPanel.add(b);
+        c = new GridBagConstraints();
+        layout.setConstraints(filterReply, c);
+        panel.add(filterReply);
 
-	add("South", buttonPanel);
+        allowSessionCookies = new Checkbox(Strings.getString("CookieMonster.allowSessionCookies"));
+        allowSessionCookies.setState(prefs.getBoolean("CookieMonster.allowSessionCookies"));
 
-	addWindowListener(this);
+        c = new GridBagConstraints();
+        layout.setConstraints(allowSessionCookies, c);
+        panel.add(allowSessionCookies);
 
-	pack();
-	setSize(getPreferredSize());
+        Label label = new Label(Strings.getString("CookieMonster.expire"), Label.RIGHT);
+        c = new GridBagConstraints();
+        // c.anchor = GridBagConstraints.WEST;
+        layout.setConstraints(label, c);
+        panel.add(label);
 
-	show();
+        expire = new TextField(4);
+        expire.setText(prefs.getString("CookieMonster.expirePersistentCookiesInMinutes"));
+
+        c = new GridBagConstraints();
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        // c.anchor = GridBagConstraints.WEST;
+        layout.setConstraints(expire, c);
+        panel.add(expire);
+
+        add("North", panel);
+
+        parent.messages.setEditable(false);
+        //parent.messages.setFont(new Font("Fixed", Font.PLAIN, 10));
+        add("Center", parent.messages);
+
+        Button b;
+        Panel buttonPanel = new Panel();
+        buttonPanel.setLayout(new GridLayout(1, 5));
+        b = new Button(Strings.getString("apply"));
+        b.setActionCommand("doApply");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("save"));
+        b.setActionCommand("doSave");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("clear"));
+        b.setActionCommand("doClear");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("close"));
+        b.setActionCommand("doClose");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+        b = new Button(Strings.getString("help"));
+        b.setActionCommand("doHelp");
+        b.addActionListener(this);
+        buttonPanel.add(b);
+
+        add("South", buttonPanel);
+
+        addWindowListener(this);
+
+        pack();
+        setSize(getPreferredSize());
+
+        show();
     }
 
     public void actionPerformed(ActionEvent event)
     {
-	String arg = event.getActionCommand();
+        String arg = event.getActionCommand();
 
-	if ("doApply".equals(arg))
-	{
-	    prefs.putBoolean("CookieMonster.eatReplyCookies", eatReply.getState());
-	    prefs.putBoolean("CookieMonster.eatRequestCookies", eatRequest.getState());
-	}
-	else if ("doSave".equals(arg))
-	{
-	    parent.save();
-	}
-	else if ("doClose".equals(arg))
-	{
-	    setVisible(false);
-	}
-	else if ("doClear".equals(arg))
-	{
-	    parent.messages.clear();
-	}
-	else if ("doHelp".equals(arg))
-	{
-	    new HelpFrame("CookieMonster");
-	}
+        if ("doApply".equals(arg))
+        {
+            prefs.putBoolean("CookieMonster.filterReplyCookies", filterReply.getState());
+            prefs.putBoolean("CookieMonster.filterRequestCookies", filterRequest.getState());
+            prefs.putBoolean("CookieMonster.allowSessionCookies", allowSessionCookies.getState());
+            prefs.putString("CookieMonster.expirePersistentCookiesInMinutes", expire.getText());
+        }
+        else if ("doSave".equals(arg))
+        {
+            parent.save();
+        }
+        else if ("doClose".equals(arg))
+        {
+            setVisible(false);
+        }
+        else if ("doClear".equals(arg))
+        {
+            parent.messages.clear();
+        }
+        else if ("doHelp".equals(arg))
+        {
+            new HelpFrame("CookieMonster");
+        }
     }
 
     public void windowActivated(WindowEvent e)
@@ -140,7 +183,7 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
 
     public void windowClosing(WindowEvent e)
     {
-	setVisible(false);
+        setVisible(false);
     }
 
     public void windowClosed(WindowEvent e)

@@ -12,19 +12,31 @@ Concerned?  If so, use the CookieMonster.
 
 The CookieMonster monitors all HTTP requests and replies for HTTP
 cookies.  When found, the CookieMonster monster can be configured to
-eat cookies in requests, replies, or both.  "Eat" in this case means
-that the corresponding HTTP header will be removed before being sent
-to the browser or server.  Servers send cookies using the Set-Cookie
-header while browsers use Cookie.
+filter cookies in requests, replies, or both.  Servers send cookies
+using the Set-Cookie header while browsers use Cookie.
 
 This filter has the following configurable preferences:
 
-* CookieMonster.eatReplyCookies
+* CookieMonster.filterReplyCookies
 
-  Eat cookies sent by the server.  This will remove all Set-Cookie
-  headers.
+  Enables filtering of reply cookies in headers. Actual behaviour
+  depends on CookieMonster.allowSessionCookies and
+  CookieMonster.expirePersistentCookiesInMinutes preferences.
 
-* CookieMonster.eatRequestCookies
+* CookieMonster.filterRequestCookies
 
-  Eat cookies sent by the browser.  This will remove all Cookie
-  headers.
+  Enables filtering of request cookies in headers.  This will remove
+  all Cookie headers from browser requests.
+
+* CookieMonster.allowSessionCookies
+
+  If enabled session cookies (cookies which are not going to be stored
+  on your hard disk) will be allowed in server responses.
+
+* CookieMonster.expirePersistentCookiesInMinutes
+
+  Peristent cookie expire time will be limited to the number of
+  minutes specified i.e. '30' will change all expire times to 30
+  minutes in the future.  '0' means remove cookies completely from
+  server response headers.
+ 
