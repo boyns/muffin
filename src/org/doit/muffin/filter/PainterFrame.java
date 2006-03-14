@@ -1,4 +1,4 @@
-/* $Id: PainterFrame.java,v 1.8 2003/06/29 16:17:33 forger77 Exp $ */
+/* $Id: PainterFrame.java,v 1.9 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,15 +31,11 @@ import java.awt.GridBagConstraints;
 import java.awt.Label;
 import java.awt.TextField;
 import java.awt.event.*;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.HashMap;
-import org.doit.muffin.*;
 import org.doit.util.*;
 
 public class PainterFrame extends AbstractFrame

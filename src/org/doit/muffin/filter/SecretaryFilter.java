@@ -1,4 +1,4 @@
-/* $Id: SecretaryFilter.java,v 1.7 2000/01/24 04:02:21 boyns Exp $ */
+/* $Id: SecretaryFilter.java,v 1.8 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,6 @@ package org.doit.muffin.filter;
 import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
-import java.util.Enumeration;
 import java.io.*;
 
 public class SecretaryFilter implements ContentFilter

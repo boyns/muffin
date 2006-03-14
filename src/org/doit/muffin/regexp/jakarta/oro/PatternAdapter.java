@@ -25,8 +25,6 @@ package org.doit.muffin.regexp.jakarta.oro;
 //import java.util.regex.Pattern;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
-import org.doit.muffin.regexp.Factory;
-;
 
 /**
  * @author bw@xmlizer.biz

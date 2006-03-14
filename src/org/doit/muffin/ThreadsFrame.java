@@ -1,4 +1,4 @@
-/* $Id: ThreadsFrame.java,v 1.8 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: ThreadsFrame.java,v 1.9 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,18 +24,13 @@ package org.doit.muffin;
 
 import org.doit.util.*;
 import java.awt.Button;
-import java.awt.Color;
-import java.awt.Event;
-import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
 
 /**
  * @author Mark Boyns

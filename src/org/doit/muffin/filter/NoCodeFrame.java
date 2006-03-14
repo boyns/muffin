@@ -29,8 +29,6 @@
 package org.doit.muffin.filter;
 
 import java.awt.*;
-import java.awt.event.*;
-import org.doit.muffin.*;
 import org.doit.util.*;
 
 public class NoCodeFrame extends AbstractFrame

@@ -1,4 +1,4 @@
-/* $Id: HtmlObjectStream.java,v 1.5 2000/01/24 04:02:09 boyns Exp $ */
+/* $Id: HtmlObjectStream.java,v 1.6 2006/03/14 17:00:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,6 @@ package org.doit.io;
 import org.doit.html.*;
 import org.doit.io.FixedBufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class HtmlObjectStream extends SourceObjectStream
 {

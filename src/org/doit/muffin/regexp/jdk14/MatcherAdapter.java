@@ -23,7 +23,6 @@
 package org.doit.muffin.regexp.jdk14;
 
 //import java.util.regex.Matcher;
-import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractMatcherAdapter;
 
 /**

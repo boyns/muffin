@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.9 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: Tag.java,v 1.10 2006/03/14 17:00:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -26,7 +26,6 @@ package org.doit.html;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import org.doit.muffin.regexp.Factory;
-import org.doit.muffin.regexp.Pattern;
 
 public class Tag
 {

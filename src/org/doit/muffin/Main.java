@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.36 2003/06/05 19:57:45 flefloch Exp $ */
+/* $Id: Main.java,v 1.37 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -53,7 +53,7 @@ import org.doit.util.ThreadPool;
 public class Main
     implements ActionListener, WindowListener, ConfigurationListener
 {
-    private final static String version = "0.9.4";
+    private final static String version = "0.9.5";
     private final static String url = "http://muffin.doit.org/";
 
     private static InetAddress host;

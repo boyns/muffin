@@ -29,10 +29,8 @@
  */
 package org.doit.muffin.filter;
 
-import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
-import java.util.Enumeration;
 import java.io.IOException;
 
 public class ImageKillFilter extends AbstractContentFilter

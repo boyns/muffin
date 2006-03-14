@@ -20,10 +20,7 @@
  */
 package org.doit.muffin.decryption;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -32,15 +29,7 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-
-import org.doit.muffin.FilterManager;
-import org.doit.muffin.Handler;
-import org.doit.muffin.Monitor;
-import org.doit.muffin.Options;
 import org.doit.muffin.Prefs;
-import org.doit.muffin.ServerSocketCreator;
 
 import com.sun.net.ssl.KeyManagerFactory;
 import com.sun.net.ssl.SSLContext;

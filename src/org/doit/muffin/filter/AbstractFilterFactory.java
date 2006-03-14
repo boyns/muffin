@@ -22,8 +22,6 @@
  */
 package org.doit.muffin.filter;
 
-import java.awt.*;
-
 import org.doit.muffin.*;
 import org.doit.util.Strings;
 

@@ -26,10 +26,8 @@ package org.doit.muffin.regexp.gnu;
 //import gnu.regexp.Matcher;
 import gnu.regexp.REException;
 
-import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractPatternAdapter;
-import org.doit.muffin.regexp.Factory;
 ;
 
 /**

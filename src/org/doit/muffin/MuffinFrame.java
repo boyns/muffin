@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.14 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: MuffinFrame.java,v 1.15 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,15 +22,14 @@
  */
 package org.doit.muffin;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.*;
 import java.net.URL;
 import java.util.Vector;
@@ -43,9 +42,20 @@ public class MuffinFrame extends Frame
 {
     static Vector frames = new Vector();
 
+    private final int minWidth; 
+    private final int minHeight; 
+
     public MuffinFrame(String title)
     {
+	this(title,250,150);
+    }
+
+    public MuffinFrame(String title, int min_width, int min_height )
+    {
 	super(title);
+
+	minWidth = min_width;
+	minHeight = min_height;
 
 	if (!Main.getOptions().getBoolean("muffin.noWindow"))
 	{
@@ -53,6 +63,20 @@ public class MuffinFrame extends Frame
 	    setIcon();
 	    configColors(this);
 	}
+
+	addComponentListener( 
+	    new ComponentAdapter()
+	    {
+		public void componentResized (ComponentEvent e)
+		{
+		    final int width = Math.max( e.getComponent().getWidth(), minWidth ); 
+		    final int height = Math.max( e.getComponent().getHeight(), minHeight );
+		    
+		    if( e.getComponent().getWidth() != width || e.getComponent().getHeight() != height )
+			setSize( width, height );
+		}
+	    }
+	);
 
 	frames.addElement(this);
     }

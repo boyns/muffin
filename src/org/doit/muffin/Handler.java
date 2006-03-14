@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.25 2003/07/04 21:25:15 cmallwitz Exp $ */
+/* $Id: Handler.java,v 1.26 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.doit.io.ByteArray;
 import org.doit.io.HtmlObjectStream;
@@ -46,7 +47,7 @@ import org.doit.util.ReusableThread;
  * each HTTP transaction.  Given a socket, the handler will deal with
  * the request, reply, and invoke request, reply, and content filters.
  *
- * @see muffin.Server
+ * @see Server
  * @author Mark Boyns
  * @author Fabien Le Floc'h (decryption server option, ContentFilter threads fix)
  */
@@ -215,9 +216,12 @@ public class Handler implements Runnable
                 if (request != null)
                 {
                     System.out.println(
-                        "Exception getting url: " + request.getURL());
+                        "Exception '"+reason.getMessage()+"' getting url: " + request.getURL());
                 }
-                reason.printStackTrace();
+		else
+		{
+		    reason.printStackTrace(System.out);
+                }
             }
         }
 
@@ -453,7 +457,8 @@ public class Handler implements Runnable
                         client.close();
                     }
 
-                    reply.getContent().close();
+		    if (reply.getContent() != null) // fix for NPE on Connection timed out 
+			reply.getContent().close();
                 }
                 else
                 {
@@ -577,34 +582,97 @@ public class Handler implements Runnable
             return;
         }
 
-        if (options.getBoolean("muffin.passthru"))
+        if (options.getBoolean("muffin.passthru") || ! contentNeedsFiltration())
         {
-            client.write(reply);
-            copy(in, client.getOutputStream(), contentLength, true);
+	    writeReply(in, contentLength, true);
         }
-        else if (contentNeedsFiltration())
+        else
         {
             if (options.getBoolean("muffin.proxyKeepAlive"))
             {
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
                 filter(in, buffer, contentLength, !chunked);
-                reply.setHeaderField("Content-length", buffer.size());
-                client.write(reply);
-                copy(
-                    new ByteArrayInputStream(buffer.toByteArray()),
-                    client.getOutputStream(),
-                    buffer.size(),
-                    false);
+                writeReply( new ByteArrayInputStream(buffer.toByteArray()),
+                            buffer.size(),
+                            false);
             }
             else
             {
                 reply.removeHeaderField("Content-length");
-                client.write(reply);
+		OutputStream os = writeReplyAndGetOutputStream();
                 filter(
                     in,
-                    client.getOutputStream(),
+		    os,
                     -1,
-                    chunked ? false : true);
+                    !chunked);
+		if (os instanceof GZIPOutputStream)
+		{
+		    ((GZIPOutputStream) os).finish();
+		}
+	    }
+        }
+    }
+
+    private OutputStream writeReplyAndGetOutputStream() throws IOException
+    {
+	if( contentNeededToGzip() )
+	{
+	    reply.setHeaderField("Content-Encoding", "gzip");
+	    reply.removeHeaderField("Content-length");
+
+	    client.write(reply);
+	    return new GZIPOutputStream(client.getOutputStream());
+	}
+	else
+	{
+	    client.write(reply);
+	    return client.getOutputStream();
+	}
+    }
+
+    private boolean contentNeededToGzip()
+    {
+	boolean force_gzip_content = options.getBoolean("muffin.forceGzipContent");
+	boolean gzip_content = (force_gzip_content || options.getBoolean("muffin.gzipContent")) &&
+                               reply.getHeaderField("Content-Encoding") == null &&
+	                       reply.getContentType().startsWith( "text/" );
+	if (gzip_content)
+	{
+	    if (force_gzip_content)   return true;
+	    final String accept_encoding = request.getHeaderField("accept-encoding");
+	    return  null != accept_encoding && accept_encoding.toLowerCase().indexOf("gzip") >= 0;
+	}
+	return false;
+    }
+
+    private void writeReply(InputStream in, int length, boolean monitored) throws IOException
+    {
+	boolean gzip_content = contentNeededToGzip();
+
+	if( gzip_content )
+        {
+	    reply.setHeaderField("Content-Encoding", "gzip");
+            if( length >= 0 )
+            {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+                {
+		    GZIPOutputStream os = new GZIPOutputStream(bos);
+                    copy(in, os, length, false);
+                    os.close();
+                }
+		reply.setHeaderField("Content-length", bos.size());
+                client.write(reply);
+                copy(new ByteArrayInputStream(bos.toByteArray()), client.getOutputStream(), bos.size(), monitored);
+            }
+	    else
+	    {
+		reply.removeHeaderField("Content-length");
+		client.write(reply);
+                GZIPOutputStream os = new GZIPOutputStream(client.getOutputStream());
+
+                copy(in, os, length, monitored);
+		os.finish();
+                client.getOutputStream().flush();
             }
         }
         else

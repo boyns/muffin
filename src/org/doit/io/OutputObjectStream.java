@@ -1,4 +1,4 @@
-/* $Id: OutputObjectStream.java,v 1.5 2000/01/24 04:02:09 boyns Exp $ */
+/* $Id: OutputObjectStream.java,v 1.6 2006/03/14 17:00:05 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,7 +23,6 @@
 package org.doit.io;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 
 /**
  * Output-side of an ObjectStream.

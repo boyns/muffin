@@ -1,3 +1,359 @@
+2006-03-13 Yaroslav Sokolov
+
+	* src/org/doit/muffin/FilterManagerFrame.java:
+	* fix: name of command was finally not trimmed: name.trim() - result
+	 was never used in handling NEW_CMD disabling actions buttons when no
+	 item is selected
+
+	* src/org/doit/muffin/filter/CacheFrame.java,src/org/doit/muffin/filter/CookieMonsterFrame.java:
+	* fixed autosizing controls on dialog window size changing
+
+	* src/org/doit/muffin/ConfigurationFrame.java,src/org/doit/muffin/FilterManagerFrame.java:
+	* GUI: improved buttons size, autoresize of listbox and text area in 
+	 ConfigurationFrame
+
+	* src/org/doit/muffin/BigList.java,src/org/doit/muffin/FilterManagerFrame.java,src/org/doit/muffin/MuffinFrame.java:
+	 GUI: added minimal MuffinFrame size, added BigList autoextending on
+	 frame window resize
+
+2006-03-09 Yaroslav Sokolov
+
+	* src/org/doit/muffin/Handler.java, src/org/doit/muffin/OptionsFrame.java:
+	* added gzipping of output stream: new properties muffin.gzipContent
+	 and muffin.forceGzipContent
+	 
+	* fixed: NPE on Connection timed out
+	 
+	* src/org/doit/muffin/Http.java:
+	* fixed: java.lang.ArrayIndexOutOfBoundsException
+	
+	* not to print all the exceptions stack traces (just message and url) 
+	
+2005-01-10  flefloch
+
+	* JDK 1.5 compatibility
+
+2003-09-03  flefloch
+
+	* default filters in properties file
+
+2003-07-31  flefloch
+  
+  	* src/org/doit/muffin/OptionsFrame.java:
+	* Gerhard Froehlich patch for JDK 1.3.1 on Linux  
+  
+2003-07-27  flefloch  
+
+	* fix actions. Enable Button is now working 
+
+2003-07-04  cmallwitz
+  
+ 	* src/haui/gif/GIFInputStream.java, src/org/doit/muffin/filter/AbstractContentFilter.java: 
+  	* fixed handling of exception in GIFInputStream when image was actually
+  	 not a GIF
+  	 
+  	* src/org/doit/muffin/Handler.java:
+  	* 1.) Ungzip all content because e.g. www.jboss.org returns gzip encoded
+  	 images which break when send 'as is' through AnimationKiller 2.)
+  	 comment out copy() lookup optimization because it breaks most sites
+  	 for me (including google)
+
+2003-06-28  forger77
+
+	* PainterFrame.java, Painter.java:  
+  	* integrated into new architecture
+  	 
+  	* added test for integrating Painter into new architecture
+  
+2003-06-27  flefloch
+
+	* new muffin.dns=true/false option so that xbill lookup system name
+         servers. And muffin.bg is now the control system color
+
+2003-06-26  flefloch
+
+	* close OutputObjectStream on ContentFilter copy exception. It will
+	 make the corresponding ReusableThread available. The former patch was
+	 terminating other threads nicely but I forgot that one. I am happy to
+	 see that all ContentFilter Threads are now terminating properly
+
+2003-06-20  flefloch
+
+	* src/org/doit/muffin/test/ContentFilterTest.java:
+	* test if content filter threads are stopped when the client stream
+	 gets unexpectingly stopped. CLOSE your Muffin before running this
+	 test (there is a main method for it)
+	 
+	* fix content filter never stopping threads when the user clicks on his
+	 browser stop button
+
+2003-06-16  flefloch
+
+	* fix: does not filter muffin web administration pages anymore
+	* fix javadoc generation
+	
+	* src/rcm/snapshot/SnapshotMap.java:
+	* expose snapshot map outside
+
+2003-06-11  flefloch
+
+	* src/org/doit/muffin/Request.java:
+	* throw proper exception and cancel nicely when bad status line
+
+2003-06-09  Mark R. Boyns
+
+	* updated build to unjar lib jars into WEB-INF/classes
+	* removed gnu.getopt sources
+
+2003-06-08  forger77
+
+	* src/org/doit/muffin/FilterManagerFrame.java:
+	* added support for Keyboard Control of FilterManagerFrame
+
+2003-06-07  forger77
+
+	* made private what can be private to narrow public interface
+	
+	* src/org/doit/muffin/filter/AbstractFrame.java, src/org/doit/muffin/filter/AbstractContentFilter.java: 
+	* added possibility to override existing Actions
+	
+	* changed French translation for reload
+	* moved NoThanks into new architecture
+	* turned Maps of tags and attrs into Sets
+	* initialization of tags and attrs now in static initializer
+	* added label for Reload
+	* added NoThanksTest
+	* added hooks for customized action in load, save, browse
+	* moved BrowseAction from Glossary and NoThanks to AbstractFrame
+	
+	* src/org/doit/muffin/FilterManagerFrame.java:
+	* added doubleclick functionality for enabling/configuring filter
+	* made stuff private to narrow public interface
+	* removed deprecated stuff (code is jdk 1.3 and 1.4 compatible)
+
+2003-06-05  flefloch
+
+	* now can start Muffin without muffin.jar, using a manual classpath
+	* src/org/doit/muffin/Main.java, src/org/doit/muffin/DefaultHttpd.java: 
+	* loopback is back
+
+2003-06-05  forger77
+
+	* removed creating of parent dirs since mkdir does this for you 
+	  (http://ant.apache.org/manual/CoreTasks/mkdir.html)
+	* added NoCodeTest
+
+2003-06-04  flefloch
+
+	* src/org/doit/muffin/filter/History.java:
+	* fixed nullpointerexception when file not found
+	
+	* moved personal log to my own aspectj package and switched DEBUG to false
+	* src/org/doit/muffin/decryption/package.html:
+	* better configuration documentation
+
+2003-06-04  Mark R. Boyns
+
+	* new Muffin loader and jar packaging
+	* muffin.jar is now similar to a war with WEB-INF/lib and WEB-INF/classes
+	* lib jar entries are extracted to tmpdir
+	* classes entries are loaded directly
+	* added dnsjava and gnu-regexp jars to lib
+	* removed sources for dnsjava and gnu-regexp
+	* muffin.jar is now built from the build directory - see build.xml
+
+2003-06-04  forger77
+
+	* added DecafTest
+	
+	* src/org/doit/muffin/HttpdFactory.java:
+	* removed personal log, moving them to my independent AspectJ package
+
+2003-06-02  flefloch
+
+	* better InetAddress handling for Muffin main ServerSocket creation
+	* better InetAddress handling for Decryption ServerSocket creation (by
+	  default now only on 127.0.0.1 instead of all local addresses)
+	 
+
+2003-06-01  cmallwitz
+
+	* bug fix: when 3rd party classes/jars where available at compile time
+	  but are not at runtime an exception was thrown - added extra test and
+	  redefined order in which factories are checked
+	* fixed status line - when option -bindaddress was used it still
+	  displayed different IP
+		
+2003-06-01  forger77
+
+	* changed ImageKill now according new architecture.
+	* added ImageKillTest
+	* added ImageKillStrings
+	* added AbstractContentFilter
+
+2003-05-30  forger77
+
+	* added jakarta-regexp-1.2.jar
+	* added AbstractFilerFactory, AbstractFrame. These factor common code
+	  from FilterFactories and Frames
+	* added Action. This interface is used for handling actionPerformed
+	* added GlossaryTest to test functionality of Glossary Filter
+	* added Utils.java Utility to help testing of ContentFilters
+	* changed Glossary. provided possibility to define Glossary from Test
+	  without the need for external file
+	* changed GlossaryTest no longer depends on external file
+	* fixed jakarta.regexp didn't properly do substituteAll. Now does
+	* added EmptyFontTest
+	* changed EmptyFont now uses new architecture
+	
+
+2003-05-27  forger77
+
+	* added PatternFactory for each Implementation. This avoids the use of
+	  reflection on every call to getPattern
+	 (See posting by Fabien Le Floc'h, Fr 23.05.2003 21:26)
+
+2003-05-25  cmallwitz
+
+	* hashtable implementation limiting the number of entries in the hash
+	  table in a LRU manner
+	* maintain an internal cache with tag regexp matching results
+
+2003-05-24  cmallwitz
+
+	* fix incorrect multibyte characters suggested by Holly Lee on 
+	  sourceforge.net discussion list
+	* new CookieMonster - allow/disallow session cookies and expire
+	  persistent cookies - see doc/filter/CookieMonster.txt
+	* initialize Enable/Disable Menu based on muffin.passthru - changing
+	  the menu item doesn't change muffin.passthru though...
+	* new filter to always set Cache-Control and Pragma headers to no-cache
+	  therefore overriding any downstream proxy caches
+		  
+2003-05-24  flefloch
+
+	* better httpd and HttpError handling
+	* fix decryption compilation independence
+	
+2003-05-23  forger77
+
+	* added FactoryException to normalize Execptions
+	* removed static dependencies from regexp.Factory of Impls. Now using
+	  reflection instead
+
+2003-05-22  flefloch
+
+	* remove Velocity dependency
+	* now can compile without regexp or junit if they are not present in
+	  lib directory or classpath
+
+2003-05-20  flefloch
+
+	* Httpd independence through HttpdFactory
+
+2003-05-20  forger77
+
+	* added first JUnit tests
+	* added abstract Matcher and Pattern to factor out common code
+	* added lib dir and dependency on junit.jar
+	* added dependency on jakarta-regexp.jar
+	* added TODOs
+	
+
+2003-05-18  flefloch
+
+	* src/org/doit/util/InetAddressHelper.java, src/org/doit/muffin/MuffinResolver.java:
+	* compatible with 1.3 fix
+	
+2003-05-13  flefloch
+
+	* src/org/doit/muffin/filter/ImageKill.java:
+	* isExcluded FIX (check if string is null) now filter work on google
+	 
+2003-05-12  cmallwitz
+
+	* src/org/doit/muffin/RegexFrame.java: 
+	* unselect previous match if new match fails
+	
+	* src/org/doit/muffin/Reply.java:
+	* updated handling of status code 304
+
+2003-05-11  cmallwitz
+   	
+	* /cvsroot/muffin/muffin/src/org/doit/html/Tag.java:
+   	* tuned tag parsing
+   	
+	* /cvsroot/muffin/muffin/src/org/doit/html/Token.java:
+	* changed string constructor for performance
+	
+	* /cvsroot/muffin/muffin/src/org/doit/html/HtmlTokenizer.java: 
+	* commented out silly output to stdout
+
+2003-05-10  flefloch
+
+	* https decryption is now a filter
+	* fix add Panel for JDK 1.4
+	* decryption filter doc
+
+2003-05-08  flefloch
+
+	* new obscure filter and https decryption
+	
+	* src/org/doit/muffin/decryption/package.html, src/overview.html:
+	* javadoc
+	
+	* obscure filter
+	* request sendme bug fix (now uses InetAddr and not host name) to avoid
+	  infinite loop
+
+2003-05-05  Mark R. Boyns
+
+	* added french filter docs from nicolasfr 
+
+2003-05-03  flefloch
+
+	* https decryption merge
+	* certificate in classpath
+	* separate decryption package compilation
+	* added option -decrypt 
+
+2003-01-11  dougporter
+
+	* fix gzip decompression for text/html content with explicit charset
+
+2003-01-08  Mark R. Boyns
+
+	* Muffin localization support.  Muffin strings are in 
+	  LocalStrings.properties. All filter strings are in 
+	  <FilterName>Strings.properties. Strings.java is used to manage all
+	  string resource bundles which are located automatically by the
+	  filtermanager. Currently only english strings are available.
+
+2003-01-08 dougporter
+
+	* New docs, filters, and touchups
+
+2003-01-04 dougporter
+
+	* Muffin filter HOWTO
+	* added javadocs: Junkbuster.txt, PlainHtml.txt, Cache.txt  
+ 	 
+2003-01-03  Mark R. Boyns
+
+	* updated to compile and run with JDK 1.3.1
+	* updated build.xml compile and build with ant
+	  use `ant' and `ant muffin.jar'
+
+2001-07-02  Mark R. Boyns
+
+	* batch o changes - many different changes (?) 
+
+2000        Mark R. Boyns
+
+	* upgraded to dnsjava 1.1.6
+	* updates for Muffin 0.9.4
+	* fixed bug 110421
+	
 2000-04-03  Mark R. Boyns  <boyns@doit.org>
 
 	* Muffin 0.9.3a released

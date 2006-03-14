@@ -21,7 +21,6 @@
 package org.doit.muffin;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 import java.io.StringBufferInputStream;
 import java.io.SequenceInputStream;

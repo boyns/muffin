@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.11 2003/06/07 14:27:34 forger77 Exp $ */
+/* $Id: NoThanksFrame.java,v 1.12 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,7 +23,6 @@
 package org.doit.muffin.filter;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 import org.doit.muffin.*;

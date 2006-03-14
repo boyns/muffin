@@ -1,4 +1,4 @@
-/* $Id: GlossaryFrame.java,v 1.11 2003/06/28 15:03:29 forger77 Exp $ */
+/* $Id: GlossaryFrame.java,v 1.12 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,8 +23,6 @@
 package org.doit.muffin.filter;
 
 import java.awt.*;
-import java.awt.event.*;
-import org.doit.muffin.*;
 import org.doit.util.*;
 
 public class GlossaryFrame extends AbstractFrame

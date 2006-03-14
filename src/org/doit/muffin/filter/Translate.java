@@ -26,7 +26,6 @@
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
-import org.doit.html.*;
 
 import java.io.*;
 import java.util.StringTokenizer;

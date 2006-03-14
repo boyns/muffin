@@ -1,6 +1,11 @@
 Muffin NEWS - user-visible changes
 
+
 Changes since 0.9.3:
+
+* gzipping of text/* content by Yaroslav Sokolov
+
+* Bug Fixes
 
 * New Obscure filter allowing to surf more
   anonymously by obscuring ips and urls.
@@ -275,4 +280,4 @@ Changes since 0.3:
 
 * New web site http://muffin.doit.org/
 
-$Id: NEWS,v 1.20 2003/05/10 12:24:22 flefloch Exp $
+$Id: NEWS,v 1.21 2006/03/14 17:00:04 flefloch Exp $

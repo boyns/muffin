@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.13 2003/06/04 21:07:53 flefloch Exp $ */
+/* $Id: Http.java,v 1.14 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -38,7 +38,6 @@ public class Http extends HttpConnection
     static final int MAX_PENDING_REQUESTS = 1;
 
     static Hashtable cache = new Hashtable(33);
-    private static Object httpLock = new Object();
 
     String host;
     int port;
@@ -322,10 +321,10 @@ public class Http extends HttpConnection
     {
         Http http = null;
 
-        synchronized (httpLock)
-        {
-            Vector v = cacheLookup(host, port);
-            if (v != null)
+	Vector v = cacheLookup(host, port);
+	if (v != null)
+	{
+	    synchronized (v) // fix: avoid java.lang.ArrayIndexOutOfBoundsException 
             {
                 for (int i = 0; i < v.size(); i++)
                 {
@@ -338,13 +337,13 @@ public class Http extends HttpConnection
                         break;
                     }
                 }
+            }
 
-                if (http != null)
-                {
-                    http.idle = 0;
-                    if (DEBUG)
-                        System.out.println("REUSE " + http);
-                }
+	    if (http != null)
+	    {
+		http.idle = 0;
+		if (DEBUG)
+		    System.out.println("REUSE " + http);
             }
         }
 

@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.12 2003/07/27 21:26:42 flefloch Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.13 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,23 +22,8 @@
  */
 package org.doit.muffin;
 
-import java.awt.Button;
-import java.awt.Choice;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +37,7 @@ import sdsu.util.SortedList;
 /**
  * GUI interface to the FilterManager.
  *
- * @see muffin.FilterManager
+ * @see FilterManager
  * @author Mark Boyns
  */
 class FilterManagerFrame
@@ -75,6 +60,14 @@ class FilterManagerFrame
     private static final String SAVE_CMD = "doSave";
     private static final String UP_CMD = "doUp";
 
+    private final static int MIN_WIDTH = 300;
+    private final static int MIN_HEIGHT = 320;
+
+    private final Button btnPrefs;
+    private final Button btnUp;
+    private final Button btnDown;
+    private final Button btnDisable;
+
     /**
      * Create the FilterManagerFrame.
      *
@@ -82,7 +75,7 @@ class FilterManagerFrame
      */
     FilterManagerFrame(FilterManager manager)
     {
-	super(Strings.getString("fm.title"));
+	super(Strings.getString("fm.title"), MIN_WIDTH, MIN_HEIGHT);
 
 	this.manager = manager;
 
@@ -94,6 +87,16 @@ class FilterManagerFrame
 	enabledFiltersList = new BigList(10, false);
     enabledFiltersList.addMouseListener(new MyMouseListener(PREFS_CMD));
     enabledFiltersList.addKeyListener(new MyKeyListener());
+
+	enabledFiltersList.addItemListener( 
+	    new ItemListener()
+	    {
+		public void itemStateChanged (ItemEvent e)
+		{
+		    enableEnabledFiltersListButtons( enabledFiltersList.getSelectedIndex() >= 0 );
+		}
+	    }
+	);
 
 	Label l;
 	Button b;
@@ -112,107 +115,81 @@ class FilterManagerFrame
 	p.add(configurationChoice);
 	add("North", p);
 
-	Panel panel = new Panel();
-	GridBagLayout layout = new GridBagLayout();
-	panel.setLayout(layout);
+	Panel panel = new Panel(new GridBagLayout());
 
 	l = new Label(Strings.getString("fm.available"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(l, c);
-	panel.add(l);
+	panel.add(l, c);
 
 	c = new GridBagConstraints();
 	c.gridheight = 4;
 	c.insets = new Insets(0, 10, 5, 10);
-	layout.setConstraints(supportedFiltersList, c);
-	panel.add(supportedFiltersList);
+	c.weightx = c.weighty = 1;
+	c.fill = GridBagConstraints.BOTH;
+	panel.add(supportedFiltersList, c);
+	
+	GridBagConstraints bc = new GridBagConstraints();
+	bc.gridwidth = GridBagConstraints.REMAINDER;
+	bc.anchor = GridBagConstraints.NORTHWEST;
+	bc.insets = new Insets( 0, 0, 1, 10 );
+	bc.fill = GridBagConstraints.HORIZONTAL;
 
 	b = new Button(Strings.getString("fm.enable"));
 	b.setActionCommand(ENABLE_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	b = new Button(Strings.getString("fm.new"));
 	b.setActionCommand(NEW_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	b = new Button(Strings.getString("fm.delete"));
 	b.setActionCommand(DELETE_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	b = new Button(Strings.getString("fm.help"));
 	b.setActionCommand(HELP_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	l = new Label(Strings.getString("fm.enabled"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(l, c);
-	panel.add(l);
+	panel.add(l, c);
 
 	c = new GridBagConstraints();
 	c.gridheight = 4;
 	c.insets = new Insets(0, 10, 5, 10);
-	layout.setConstraints(enabledFiltersList, c);
-	panel.add(enabledFiltersList);
+	c.weightx = c.weighty = 1;
+	c.fill = GridBagConstraints.BOTH;
+	panel.add(enabledFiltersList, c);
 
-	b = new Button(Strings.getString("fm.prefs"));
+	btnPrefs = b = new Button(Strings.getString("fm.prefs"));
 	b.setActionCommand(PREFS_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
-	b = new Button(Strings.getString("fm.up"));
+	btnUp = b = new Button(Strings.getString("fm.up"));
 	b.setActionCommand(UP_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
-	b = new Button(Strings.getString("fm.down"));
+	btnDown = b = new Button(Strings.getString("fm.down"));
 	b.setActionCommand(DOWN_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
-	b = new Button(Strings.getString("fm.disable"));
+	btnDisable = b = new Button(Strings.getString("fm.disable"));
 	b.setActionCommand(DISABLE_CMD);
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
+
+	enableEnabledFiltersListButtons( false );
 
 	add("Center", panel);
 
@@ -234,6 +211,14 @@ class FilterManagerFrame
 
  	setSize(getPreferredSize());
  	pack();
+    }
+
+    private void enableEnabledFiltersListButtons( boolean enabled )
+    {
+	btnPrefs.setEnabled( enabled );
+	btnUp.setEnabled( enabled );
+	btnDown.setEnabled( enabled );
+	btnDisable.setEnabled( enabled );
     }
 
     public void configurationChanged(String name)
@@ -385,8 +370,7 @@ class FilterManagerFrame
 	    String name = dialog.getAnswer();
 	    if (name != null && name.length() > 0)
 	    {
-		name.trim();
-		manager.append(name);
+		manager.append(name.trim());
 	    }
 	    dialog.dispose();
 	}
@@ -440,6 +424,8 @@ class FilterManagerFrame
 		enabledFiltersList.select(i+1);
 	    }
 	}
+
+	enableEnabledFiltersListButtons( enabledFiltersList.getSelectedIndex() >= 0 );
     }
 
     public void itemStateChanged(ItemEvent e)

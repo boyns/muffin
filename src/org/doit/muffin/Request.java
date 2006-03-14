@@ -1,4 +1,4 @@
-/* $Id: Request.java,v 1.14 2003/06/11 20:57:36 flefloch Exp $ */
+/* $Id: Request.java,v 1.15 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -33,7 +33,6 @@ import java.util.Vector;
 import org.doit.muffin.regexp.Factory;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
-import org.doit.io.*;
 
 /** Http/https request.
  * @author Mark Boyns

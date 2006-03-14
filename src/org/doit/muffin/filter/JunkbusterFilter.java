@@ -21,8 +21,6 @@
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
-import org.doit.io.*;
-import org.doit.html.*;
 import java.util.*;
 import java.io.*;
 import org.doit.muffin.regexp.Pattern;
