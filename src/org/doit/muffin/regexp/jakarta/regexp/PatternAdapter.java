@@ -25,10 +25,8 @@ package org.doit.muffin.regexp.jakarta.regexp;
 import java.util.*;
 
 import org.apache.regexp.RESyntaxException;
-import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractPatternAdapter;
-import org.doit.muffin.regexp.Factory;
 
 import org.apache.regexp.RE;
 

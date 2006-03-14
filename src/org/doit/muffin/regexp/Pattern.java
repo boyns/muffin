@@ -21,8 +21,6 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 package org.doit.muffin.regexp;
-import java.lang.StringBuffer;
-import java.lang.Object;
 import java.lang.String;
 /**
  * @author bw@xmlizer.biz

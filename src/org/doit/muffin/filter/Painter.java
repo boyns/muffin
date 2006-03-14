@@ -21,7 +21,6 @@
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
-import org.doit.html.*;
 
 public class Painter extends AbstractFilterFactory
 {

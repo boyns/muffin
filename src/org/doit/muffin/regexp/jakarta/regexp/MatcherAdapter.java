@@ -22,7 +22,6 @@
  */
 package org.doit.muffin.regexp.jakarta.regexp;
 
-import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractMatcherAdapter;
 
 import org.apache.regexp.RE;

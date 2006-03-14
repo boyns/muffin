@@ -1,4 +1,4 @@
-/* $Id: CookieMonsterFrame.java,v 1.7 2003/05/24 21:04:41 cmallwitz Exp $ */
+/* $Id: CookieMonsterFrame.java,v 1.8 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -25,7 +25,6 @@ package org.doit.muffin.filter;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import org.doit.muffin.*;
 import org.doit.util.*;
 
@@ -38,7 +37,7 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
 
     public CookieMonsterFrame(Prefs prefs, CookieMonster parent)
     {
-        super(Strings.getString("CookieMonster.title"));
+        super(Strings.getString("CookieMonster.title"),750,200);
 
         this.prefs = prefs;
         this.parent = parent;

@@ -26,8 +26,6 @@
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 public class TranslateFilter implements RequestFilter, ReplyFilter
 {

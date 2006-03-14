@@ -1,4 +1,4 @@
-/* $Id: NoThanks.java,v 1.17 2003/06/07 10:38:13 forger77 Exp $ */
+/* $Id: NoThanks.java,v 1.18 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,9 +23,7 @@
  */
 package org.doit.muffin.filter;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;

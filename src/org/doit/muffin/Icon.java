@@ -1,4 +1,4 @@
-/* $Id: Icon.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: Icon.java,v 1.6 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,7 +24,6 @@ package org.doit.muffin;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;

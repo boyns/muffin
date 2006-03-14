@@ -1,4 +1,4 @@
-/* $Id: BigList.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: BigList.java,v 1.6 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -52,16 +52,6 @@ public class BigList extends List
 	width = w;
     }
 	
-    public Dimension getPreferredSize()
-    {
-	return new Dimension(width, height);
-    }
-
-    public Dimension getPreferredSize(int rows)
-    {
-	return new Dimension(width, height);
-    }
-
     public Dimension getMinimumSize()
     {
 	return new Dimension(width, height);

@@ -1,4 +1,4 @@
-/* $Id: MessageArea.java,v 1.6 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: MessageArea.java,v 1.7 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,10 +23,6 @@
 
 package org.doit.muffin;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.*;
-import java.util.*;
 
 public class MessageArea extends java.awt.TextArea
 {

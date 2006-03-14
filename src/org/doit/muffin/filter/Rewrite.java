@@ -1,4 +1,4 @@
-/* $Id: Rewrite.java,v 1.9 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: Rewrite.java,v 1.10 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,7 +23,6 @@
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
-import org.doit.html.*;
 
 import java.io.*;
 import java.util.StringTokenizer;

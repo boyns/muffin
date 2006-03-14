@@ -20,8 +20,6 @@
  */
 package org.doit.muffin;
 
-import java.io.OutputStream;
-import java.io.IOException;
 
 /** Determines whether a filters wants to process a request itself, rather than let that request be sent to a server.
  *

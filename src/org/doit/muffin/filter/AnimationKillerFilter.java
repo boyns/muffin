@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFilter.java,v 1.10 2003/06/03 23:09:30 forger77 Exp $ */
+/* $Id: AnimationKillerFilter.java,v 1.11 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,9 +24,6 @@ package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
 import org.doit.io.*;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 
 import haui.gif.*;

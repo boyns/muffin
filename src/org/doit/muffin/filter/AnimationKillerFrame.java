@@ -1,13 +1,7 @@
-/* $Id: AnimationKillerFrame.java,v 1.9 2003/06/03 23:09:30 forger77 Exp $ */
+/* $Id: AnimationKillerFrame.java,v 1.10 2006/03/14 17:00:03 flefloch Exp $ */
 package org.doit.muffin.filter;
 
 import java.awt.*;
-import java.awt.event.*;
-
-import org.doit.muffin.FilterFactory;
-import org.doit.muffin.HelpFrame;
-import org.doit.muffin.Prefs;
-import org.doit.util.Strings;
 
 public class AnimationKillerFrame extends AbstractFrame
 {

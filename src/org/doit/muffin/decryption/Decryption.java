@@ -28,7 +28,6 @@ import org.doit.muffin.Filter;
 import org.doit.muffin.FilterFactory;
 import org.doit.muffin.FilterManager;
 import org.doit.muffin.Main;
-import org.doit.muffin.Options;
 import org.doit.muffin.Prefs;
 import org.doit.muffin.Server;
 import org.doit.muffin.TextMonitor;

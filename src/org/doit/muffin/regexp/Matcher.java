@@ -22,7 +22,6 @@
  */
 package org.doit.muffin.regexp;
 import java.lang.String;
-import java.lang.Object;
 /**
  * @author bw@xmlizer.biz
  * 

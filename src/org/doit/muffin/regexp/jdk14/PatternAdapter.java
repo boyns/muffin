@@ -23,10 +23,8 @@
 package org.doit.muffin.regexp.jdk14;
 
 //import java.util.regex.Pattern;
-import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 import org.doit.muffin.regexp.AbstractPatternAdapter;
-import org.doit.muffin.regexp.Factory;
 
 /**
  * @author bw@xmlizer.biz

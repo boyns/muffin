@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.13 2003/07/31 19:34:46 flefloch Exp $ */
+/* $Id: OptionsFrame.java,v 1.14 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -49,6 +49,8 @@ class OptionsFrame extends MuffinFrame
     ColorSample fgSample, bgSample;
     Checkbox proxyKeepAlive;
     Checkbox logFilters;
+    Checkbox gzipContent;
+    Checkbox forceGzipContent;
     TextField nameservers;
     TextField readTimeout;
 
@@ -72,7 +74,6 @@ class OptionsFrame extends MuffinFrame
         panel.setLayout(layout);
 
         Label l;
-        TextField t;
         Button b;
         GridBagConstraints c;
 
@@ -315,6 +316,18 @@ class OptionsFrame extends MuffinFrame
         layout.setConstraints(logFilters, c);
         panel.add(logFilters);
 
+	gzipContent = new Checkbox("Gzip output if browser supports",
+	                           options.getBoolean("muffin.gzipContent"));
+
+	layout.setConstraints(gzipContent, c);
+	panel.add(gzipContent);
+
+	forceGzipContent = new Checkbox("Force gzip output",
+	                                options.getBoolean("muffin.forceGzipContent"));
+
+	layout.setConstraints(forceGzipContent, c);
+	panel.add(forceGzipContent);
+
         add("Center", panel);
 
         Panel buttonPanel = new Panel();
@@ -395,6 +408,8 @@ class OptionsFrame extends MuffinFrame
         MuffinFrame.getFrame(Strings.getString("muffin.title")).updateGeometry(options.getString("muffin.geometry"));
         options.putBoolean("muffin.proxyKeepAlive", proxyKeepAlive.getState());
         options.putBoolean("muffin.dontLogFilters", logFilters.getState());
+	options.putBoolean("muffin.gzipContent", gzipContent.getState());
+	options.putBoolean("muffin.forceGzipContent", forceGzipContent.getState());
         options.putString("muffin.nameservers", nameservers.getText());
         options.putString("muffin.readTimeout", readTimeout.getText());
         options.sync();

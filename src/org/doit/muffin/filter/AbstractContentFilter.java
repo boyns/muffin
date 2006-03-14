@@ -26,8 +26,6 @@ import java.io.StreamCorruptedException;
 
 import org.doit.io.*;
 import org.doit.muffin.ContentFilter;
-import org.doit.muffin.ReplyFilter;
-import org.doit.muffin.FilterException;
 import org.doit.muffin.Prefs;
 import org.doit.muffin.Reply;
 import org.doit.muffin.Request;

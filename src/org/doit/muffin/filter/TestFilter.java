@@ -1,4 +1,4 @@
-/* $Id: TestFilter.java,v 1.5 2000/01/24 04:02:22 boyns Exp $ */
+/* $Id: TestFilter.java,v 1.6 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,12 +23,9 @@
 package org.doit.muffin.filter;
 
 import org.doit.muffin.*;
-import org.doit.io.*;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
-import java.util.Hashtable;
 import java.util.Enumeration;
 
 public class TestFilter implements HttpFilter, RequestFilter

@@ -1,4 +1,4 @@
-/* $Id: HttpRelay.java,v 1.6 2003/01/08 16:54:20 dougporter Exp $ */
+/* $Id: HttpRelay.java,v 1.7 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,8 +22,6 @@
  */
 package org.doit.muffin;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 
 /** Used by a filter to process a request directly, instead of letting that request be sent to a server.

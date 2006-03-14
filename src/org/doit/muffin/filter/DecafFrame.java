@@ -21,8 +21,6 @@
 package org.doit.muffin.filter;
 
 import java.awt.*;
-import java.awt.event.*;
-import org.doit.muffin.*;
 
 public class DecafFrame extends AbstractFrame
 {

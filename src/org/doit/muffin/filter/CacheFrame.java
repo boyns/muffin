@@ -225,8 +225,6 @@ implements ActionListener, WindowListener
         panel.setLayout(layout);
 	GridBagConstraints c;
 
-        addBlankRow (panel, layout);
-
 	Label l = new Label(Strings.getString("Cache.messages"));
 	c = new GridBagConstraints();
 	// c.insets = new Insets(0, 10, 5, 10);
@@ -238,7 +236,8 @@ implements ActionListener, WindowListener
 	c = new GridBagConstraints();
 	// c.insets = new Insets(0, 10, 5, 10);
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.CENTER;
+	c.weightx = c.weighty = 1;
+	c.fill = GridBagConstraints.BOTH;
 	layout.setConstraints(messages, c);
 	messages.setEditable(false);
 	panel.add(messages);

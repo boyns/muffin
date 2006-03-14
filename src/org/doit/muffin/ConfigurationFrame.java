@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.9 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.10 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -45,7 +45,7 @@ class ConfigurationFrame extends MuffinFrame
 
     ConfigurationFrame(Configuration configs)
     {
-	super(Strings.getString("config.title"));
+	super(Strings.getString("config.title"),250,350);
 
 	this.configs = configs;
 
@@ -57,87 +57,75 @@ class ConfigurationFrame extends MuffinFrame
 	Button b;
 	GridBagConstraints c;
 
-	Panel panel = new Panel();
-	GridBagLayout layout = new GridBagLayout();
-	panel.setLayout(layout);
+	Panel panel = new Panel( new GridBagLayout() );
 
 	Label currentLabel = new Label();
 	//currentLabel.setFont(new Font("Fixed", Font.PLAIN, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(currentLabel, c);
-	panel.add(currentLabel);
+	panel.add(currentLabel, c);
 
 	l = new Label(Strings.getString("config.available"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(l, c);
-	panel.add(l);
+	panel.add(l, c);
 
 	c = new GridBagConstraints();
 	c.gridheight = 4;
 	c.insets = new Insets(0, 10, 5, 10);
-	layout.setConstraints(configNamesList, c);
-	panel.add(configNamesList);
+	c.weightx = c.weighty = 1;
+	c.fill = GridBagConstraints.BOTH;
+	panel.add(configNamesList, c);
+	
+	GridBagConstraints bc = new GridBagConstraints();
+	bc.gridwidth = GridBagConstraints.REMAINDER;
+	bc.anchor = GridBagConstraints.NORTHWEST;
+	bc.insets = new Insets( 0, 0, 1, 10 );
+	bc.fill = GridBagConstraints.HORIZONTAL;
 
 	b = new Button(Strings.getString("config.new"));
 	b.setActionCommand("doNew");
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	b = new Button(Strings.getString("config.select"));
 	b.setActionCommand("doSelect");
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	b = new Button(Strings.getString("config.scan"));
 	b.setActionCommand("doRescan");
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	b = new Button(Strings.getString("config.delete"));
 	b.setActionCommand("doDelete");
 	b.addActionListener(this);
-	c = new GridBagConstraints();
-	c.gridwidth = GridBagConstraints.REMAINDER;
-	c.anchor = GridBagConstraints.NORTHWEST;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	panel.add(b, bc);
 
 	l = new Label(Strings.getString("config.auto"));
 	//l.setFont(new Font("Fixed", Font.BOLD, 12));
 	c = new GridBagConstraints();
-	layout.setConstraints(l, c);
-	panel.add(l);
+	panel.add(l, c);
 
 	b = new Button(Strings.getString("config.example"));
 	b.setActionCommand("doExample");
 	b.addActionListener(this);
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(b, c);
-	panel.add(b);
+	c.insets = bc.insets;
+	panel.add(b, c);
 
 	text = new TextArea(10, 40);
 	text.setEditable(true);
 	//text.setFont(new Font("Fixed", Font.PLAIN, 12));
 	c = new GridBagConstraints();
 	c.gridwidth = GridBagConstraints.REMAINDER;
-	layout.setConstraints(text, c);
-	panel.add(text);
+	c.insets = new Insets(0, 10, 5, 10);
+	c.weightx = c.weighty = 1;
+	c.fill = GridBagConstraints.BOTH;
+	panel.add(text, c);
 
 	add("Center", panel);
 

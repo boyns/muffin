@@ -34,10 +34,8 @@ import java.awt.Panel;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.doit.muffin.FilterFactory;
 import org.doit.muffin.HelpFrame;
 import org.doit.muffin.MuffinFrame;
-import org.doit.muffin.Prefs;
 import org.doit.util.Strings;
 
 public abstract class AbstractFrame implements ActionListener, WindowListener

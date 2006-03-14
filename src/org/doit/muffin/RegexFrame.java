@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.9 2003/05/19 23:06:54 forger77 Exp $ */
+/* $Id: RegexFrame.java,v 1.10 2006/03/14 17:00:04 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,9 +24,6 @@ package org.doit.muffin;
 
 import org.doit.util.*;
 import java.awt.Button;
-import java.awt.Color;
-import java.awt.Event;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -38,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
 import org.doit.muffin.regexp.Factory;
 import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;

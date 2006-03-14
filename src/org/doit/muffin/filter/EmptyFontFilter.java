@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFilter.java,v 1.9 2003/06/03 23:09:29 forger77 Exp $ */
+/* $Id: EmptyFontFilter.java,v 1.10 2006/03/14 17:00:03 flefloch Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -22,7 +22,6 @@
  */
 package org.doit.muffin.filter;
 
-import org.doit.muffin.*;
 import org.doit.io.*;
 import org.doit.html.*;
 import java.io.*;
