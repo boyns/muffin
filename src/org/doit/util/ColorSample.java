@@ -1,4 +1,4 @@
-/* $Id: ColorSample.java,v 1.5 2000/01/24 04:02:26 boyns Exp $ */
+/* $Id: ColorSample.java,v 1.6 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,6 +29,11 @@ import java.awt.Graphics;
 
 public class ColorSample extends Canvas
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Color color = null;
     final int width = 60;
     final int height = 20;

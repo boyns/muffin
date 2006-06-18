@@ -1,4 +1,4 @@
-/* $Id: LRUHashtable.java,v 1.2 2005/01/10 11:12:34 flefloch Exp $ */
+/* $Id: LRUHashtable.java,v 1.3 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * This file is part of Muffin.
@@ -45,6 +45,11 @@ import java.util.Vector;
 
 public class LRUHashtable implements Serializable
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     /**
      * This member contains the maximum number of items.
      */
@@ -726,6 +731,11 @@ public class LRUHashtable implements Serializable
 
     public static class ListNode implements Serializable
     {
+        /**
+    	 * Serializable should define this:
+    	 */
+    	private static final long serialVersionUID = 1L;
+
         /**
          * This member holds a reference to the node's data element.
          */

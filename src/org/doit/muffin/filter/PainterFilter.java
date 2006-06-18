@@ -1,4 +1,4 @@
-/* $Id: PainterFilter.java,v 1.9 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: PainterFilter.java,v 1.10 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -61,8 +61,6 @@ public class PainterFilter extends AbstractContentFilter
                 tag = token.createTag();
 
                 if (tag.matches(PATTERN1)) {
-                    String value;
-                    
                     if(fixIt(Painter.BGCOLOR, tag)){
                         tag.remove(Painter.BACKGRND);
                     }else{

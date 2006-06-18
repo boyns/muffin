@@ -30,6 +30,11 @@ package sdsu.util;
 
 public class ConversionException extends java.io.IOException 
 	{
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Constructs an ConversionException with no detail message.
 	 */

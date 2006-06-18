@@ -1,4 +1,4 @@
-/* $Id: ConfigurationFrame.java,v 1.10 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: ConfigurationFrame.java,v 1.11 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -39,7 +39,11 @@ import org.doit.util.*;
 class ConfigurationFrame extends MuffinFrame
     implements ActionListener, ItemListener, WindowListener, ConfigurationListener
 {
-    BigList configNamesList = null;
+    /**
+	 * Seriarlizable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+	BigList configNamesList = null;
     Configuration configs = null;
     TextArea text = null;
 
@@ -198,7 +202,7 @@ class ConfigurationFrame extends MuffinFrame
 	while (e.hasMoreElements())
 	{
 	    String name = (String) e.nextElement();
-	    configNamesList.addItem(name); // DEPRECATION: use add()
+	    configNamesList.add(name);
 	}
     }
 
@@ -222,7 +226,7 @@ class ConfigurationFrame extends MuffinFrame
 	else if ("doNew".equals(arg))
 	{
 	    TextDialog dialog = new TextDialog(this, Strings.getString("config.new.name") + ":");
-	    dialog.show();
+	    dialog.setVisible(true);
 	    String name = dialog.getAnswer();
 	    if (name != null && name.length() > 0)
 	    {
@@ -242,7 +246,7 @@ class ConfigurationFrame extends MuffinFrame
 		    updateConfigNamesList();
 
 		    YesNoDialog dialog = new YesNoDialog(this, Strings.getString("config.delete.file", name));
-		    dialog.show();
+		    dialog.setVisible(true);
 		    if (dialog.isYes())
 		    {
 			configs.deleteUserConfigFile(name);
@@ -288,8 +292,8 @@ class ConfigurationFrame extends MuffinFrame
 		}
 		else
 		{
-                    Dialog d = new ErrorDialog(this, Strings.getString("config.error.save", file.getName()));
-		    d.show();
+            Dialog d = new ErrorDialog(this, Strings.getString("config.error.save", file.getName()));
+		    d.setVisible(true);
 		    d.dispose();
 		}
 	    }

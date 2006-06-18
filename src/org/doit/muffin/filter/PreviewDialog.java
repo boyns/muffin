@@ -1,4 +1,4 @@
-/* $Id: PreviewDialog.java,v 1.7 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: PreviewDialog.java,v 1.8 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,6 +30,11 @@ import java.io.*;
 
 class PreviewDialog extends Dialog implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     byte content[] = null;
     boolean accepted = true;
     TextArea text = null;
@@ -113,7 +118,7 @@ class PreviewDialog extends Dialog implements ActionListener, WindowListener
 	    try
 	    {
 		FileDialog dialog = new FileDialog(frame, Strings.getString("Preview.save"));
-		dialog.show();
+		dialog.setVisible(true);
 		if ( dialog.getFile() != null )
 		{
 		    File f = new File(dialog.getDirectory(), dialog.getFile());

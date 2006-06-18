@@ -1,4 +1,4 @@
-/* $Id: UserPrefs.java,v 1.11 2000/03/29 15:16:58 boyns Exp $ */
+/* $Id: UserPrefs.java,v 1.12 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -32,7 +32,11 @@ import org.doit.util.*;
  */
 class UserPrefs extends Prefs
 {
-    String rcfile = "unknown";
+    /**
+	 * Serializable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+	String rcfile = "unknown";
     boolean loaded = false;
 
     UserPrefs()
@@ -107,7 +111,7 @@ class UserPrefs extends Prefs
 	    if (file instanceof LocalFile)
 	    {
 		OutputStream out = file.getOutputStream();
-		props.save(out, null);
+		props.store(out, null);
 		out.close();
 	    }
 	    else

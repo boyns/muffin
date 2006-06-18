@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -31,7 +31,7 @@ import org.doit.muffin.regexp.AbstractPatternAdapter;
 import org.apache.regexp.RE;
 
 /**
- * @author bw@xmlizer.biz
+ * @author muffinsrc@xmlizer.biz
  *
  */
 public class PatternAdapter extends AbstractPatternAdapter
@@ -104,7 +104,6 @@ public class PatternAdapter extends AbstractPatternAdapter
             if (start < 0)
                 break;
             position = end;
-            String sub = input.substring(start, end);
             replacedMatches.add(matcher.substituteInto(replace));
         }
 

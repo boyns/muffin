@@ -1,4 +1,4 @@
-/* $Id: SecretaryFilter.java,v 1.8 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: SecretaryFilter.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -68,7 +68,6 @@ public class SecretaryFilter implements ContentFilter
 	
 	try
 	{
-	    String s;
 	    boolean inform = false;
 	    String selectName = null;
 
@@ -121,7 +120,6 @@ public class SecretaryFilter implements ContentFilter
 			    tag.remove("selected");
 			}
 			
-			String value = tag.get("value");
 			if (factory.get(selectName).equals(tag.get("value")))
 			{
 			    tag.put("selected", "");

@@ -53,7 +53,12 @@ public class AnimationFilter {
     return image;
   }
 
-  class AbortException extends RuntimeException {}
+  class AbortException extends RuntimeException {
+
+  /**
+   * Serializable class should declare this:
+   */
+  private static final long serialVersionUID = 1L;}
 
   public void filter(InputStream in, OutputStream out) throws IOException {
     GIFInputStream gin = new GIFInputStream(in);

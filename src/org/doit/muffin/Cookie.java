@@ -1,4 +1,4 @@
-/* $Id: Cookie.java,v 1.6 2003/05/24 21:04:41 cmallwitz Exp $ */
+/* $Id: Cookie.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,9 +28,14 @@ import java.util.StringTokenizer;
 
 public class Cookie extends Hashtable
 {
-    // maybe the Hashtable is no longed needed but I'm not sure if I cover all possible cookie entries ...
 
-    private String expires = null;
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	// maybe the Hashtable is no longed needed but I'm not sure if I cover all possible cookie entries ...
+	private String expires = null;
     private String domain  = null;
     private String path    = null;
     private String version = null;

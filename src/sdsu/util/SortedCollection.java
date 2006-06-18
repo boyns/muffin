@@ -2,9 +2,7 @@
  
 package sdsu.util;
 
-import java.util.Vector;
 import sdsu.compare.Comparer;
-import java.util.Enumeration;
 
 
 /**

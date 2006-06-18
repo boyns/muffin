@@ -20,12 +20,10 @@
  
 package sdsu.util;
 
-import java.io.StringBufferInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PushbackInputStream;
+import java.io.StringBufferInputStream;
 
 /**
  * This class performs some simple parsing of strings or streams. The input is a sequence of 

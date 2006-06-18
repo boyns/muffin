@@ -92,8 +92,7 @@ public class DefaultHttpd extends HttpConnection
 
         SimpleDateFormat format =
             new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-        TimeZone tz = TimeZone.getDefault();
-        format.setTimeZone(tz.getTimeZone("GMT"));
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
         str = format.format(new Date());
 
         return str;

@@ -159,7 +159,6 @@ public class Template
 				}
 				
 			foundVariable = template.substring( beginMarker + markerLength, endMarker);
-			foundVariable = foundVariable;
 			
 			finalHtml.append( variables.getProperty( foundVariable, "" ) );
 			

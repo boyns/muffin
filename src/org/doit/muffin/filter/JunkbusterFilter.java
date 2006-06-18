@@ -34,7 +34,6 @@ public class JunkbusterFilter implements RequestFilter, HttpFilter
     final char DomainSeparator = '/';
     private final Integer HashPlaceholder = new Integer (1);
     private Junkbuster factory;
-    private Prefs prefs;
     private Hashtable blockedBy = new Hashtable ();
     private Hashtable bypassedBlocks = new Hashtable ();
     private boolean verboseMatch = false;
@@ -46,7 +45,6 @@ public class JunkbusterFilter implements RequestFilter, HttpFilter
     
     public void setPrefs (Prefs prefs)
     {
-	this.prefs = prefs;
     }
 
     public void filter (Request request) throws FilterException {
@@ -79,8 +77,7 @@ public class JunkbusterFilter implements RequestFilter, HttpFilter
     
     public Reply recvReply (Request request) {
 
-        String url = request.getURL ();
-	StringBuffer text = new StringBuffer ();
+        StringBuffer text = new StringBuffer ();
         /*
 	text.append ("<h2>Url blocked by Muffin Junkbuster filter</h2>\n");
 	text.append ("<hr>\n");
@@ -119,9 +116,6 @@ public class JunkbusterFilter implements RequestFilter, HttpFilter
     private synchronized boolean isBlocked (String url) {
         final String UnblockPrefix = "~";
         boolean blocked = false;
-        
-        Pattern re;
-        // factory.report ("Checking "+ url);
         
         if (url.startsWith (factory.getBypassUrlPrefix ())) {
             

@@ -52,7 +52,12 @@ Configuration properties can be set in a muffin configuration file (default is d
 <a name="doc.Usage"></a>
 <h3>Usage Example</h3>
 <p>
-The easiest way to try HTTPS sniffing is to start Muffin and use the GUI to add the org.doit.muffin.decryption.Decryption filter (Options,filters,select the filter and save/apply). Then you should wait a second or two so that you see the filter being added to the active filter list. It takes little bit of time because it needs to start a new ServerSocket and initialize the Random number generator.
+The easiest way to try HTTPS sniffing is to start Muffin and use the GUI to add the org.doit.muffin.decryption.Decryption filter (Options,filters,select the filter and save/apply). Then you should wait a second or two so that you see the filter being added to the active filter list. It takes little bit of time because it needs to start a new ServerSocket and initialize the Random number generator
+</p>
+<p>
+If you want to configure HTTPS sniffing only for your localhost, add the following line to the autoconfig:
+<br>^localhost    sniff.conf
+<br>Then you should create "sniff.conf" configuration and add org.doit.muffin.decryption.Decryption filter to its filter list. We specify only ^localhost and not ^https://localhost because we want to activate the filter on the browser "CONNECT localhost" command.
 </p>
 
 <a name="doc.FAQ"></a>

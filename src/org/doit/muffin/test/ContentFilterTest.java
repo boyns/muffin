@@ -2,11 +2,9 @@ package org.doit.muffin.test;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 import java.lang.reflect.*;
 import junit.framework.*;
 
-import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.filter.*;
 
@@ -166,7 +164,7 @@ public class ContentFilterTest extends TestCase
         try
         {
             Main.processArgs(new String[] {"-nw"});
-            Main main = new Main();
+            new Main();
             Constructor handlerConstructor =
                 Handler.class.getDeclaredConstructor(
                     new Class[] { Monitor.class,
@@ -198,7 +196,7 @@ public class ContentFilterTest extends TestCase
                     {
                         try
                         {
-                            Thread.currentThread().sleep(3000);
+                            Thread.sleep(3000);
                             out.breakNow();
                         }
                         catch (Exception e)
@@ -228,12 +226,12 @@ public class ContentFilterTest extends TestCase
     {
     	try
     	{
-            Thread.currentThread().sleep(2000);
+            Thread.sleep(2000);
     	} catch(Exception e)
     	{
     	}
         Thread list[] = new Thread[1024];
-        int count = Thread.currentThread().enumerate(list);
+        int count = Thread.enumerate(list);
         for (int i=0;i<count;i++)
         {
         	String threadName = list[i].getName();

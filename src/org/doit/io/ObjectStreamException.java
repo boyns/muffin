@@ -2,7 +2,12 @@ package org.doit.io;
 
 public class ObjectStreamException extends java.io.IOException
 {
-    public ObjectStreamException()
+    /**
+	 * Seriarlizable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ObjectStreamException()
     {
         super();
     }

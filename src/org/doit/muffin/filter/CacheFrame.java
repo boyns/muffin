@@ -32,6 +32,11 @@ public class CacheFrame
 extends MuffinFrame
 implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     static final String Name = "Cache";
     final String ApplyCommand = "doApply";
     final String SaveCommand = "doSave";
@@ -47,7 +52,6 @@ implements ActionListener, WindowListener
     final String BrowseRulesCommand = "doBrowseRules";
 
     private TextField cacheDirectory = null;
-    private TextField patternsFilename = null;
     private TextArea patterns = null;
     private Checkbox checkForUpdatesOncePerSession = null;
     private Checkbox checkForUpdatesAlways = null;
@@ -303,7 +307,7 @@ implements ActionListener, WindowListener
 
     private void browseCacheDir () {
         FileDialog dialog = new FileDialog(this, "Select cache directory");
-        dialog.show();
+        dialog.setVisible(true);
         if (dialog.getFile() != null)
         {
             // System.out.println ("dialog.getDirectory(): " + dialog.getDirectory()); //DEBUG

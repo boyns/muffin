@@ -1,4 +1,4 @@
-/* $Id: RewriteFrame.java,v 1.8 2003/01/08 18:59:53 boyns Exp $ */
+/* $Id: RewriteFrame.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -30,6 +30,11 @@ import org.doit.util.*;
 
 public class RewriteFrame extends MuffinFrame implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Prefs prefs;
     Rewrite parent;
     TextField input = null;
@@ -217,7 +222,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	    else
 	    {
 		Dialog d = new ErrorDialog(this, "Can't save to " + file.getName());
-		d.show();
+		d.setVisible(true);
 		d.dispose();
 	    }
 	}
@@ -257,7 +262,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	else if ("doBrowse".equals(arg))
 	{
 	    FileDialog dialog = new FileDialog(this, "Rewrite Load");
-	    dialog.show();
+	    dialog.setVisible(true);
 	    if (dialog.getFile() != null)
 	    {
 		input.setText(dialog.getDirectory() + dialog.getFile());

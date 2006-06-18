@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -25,7 +25,7 @@ package org.doit.muffin.regexp.gnu;
 import org.doit.muffin.regexp.Pattern;
 
 /**
- * @author Bernhard Wagner <bw@xmlizer.biz>
+ * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  */
 public class PatternFactory implements org.doit.muffin.regexp.PatternFactory

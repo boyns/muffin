@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -24,7 +24,6 @@ import java.io.*;
 
 import org.doit.io.*;
 import org.doit.muffin.*;
-import org.doit.muffin.regexp.*;
 
 public class Utils
 {

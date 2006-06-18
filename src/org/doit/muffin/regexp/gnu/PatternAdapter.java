@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -31,7 +31,7 @@ import org.doit.muffin.regexp.AbstractPatternAdapter;
 ;
 
 /**
- * @author bw@xmlizer.biz
+ * @author muffinsrc@xmlizer.biz
  *
  */
 public class PatternAdapter extends AbstractPatternAdapter

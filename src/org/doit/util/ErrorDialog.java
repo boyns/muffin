@@ -1,4 +1,4 @@
-/* $Id: ErrorDialog.java,v 1.1 2000/03/08 15:33:00 boyns Exp $ */
+/* $Id: ErrorDialog.java,v 1.2 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -28,6 +28,11 @@ import java.awt.event.*;
 public class ErrorDialog
     extends Dialog implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     public ErrorDialog(Frame frame, String message)
     {
 	super(frame, "Muffin: Error", true);

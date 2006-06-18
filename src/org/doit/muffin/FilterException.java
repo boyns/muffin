@@ -1,4 +1,4 @@
-/* $Id: FilterException.java,v 1.5 2000/01/24 04:02:13 boyns Exp $ */
+/* $Id: FilterException.java,v 1.6 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,7 +24,12 @@ package org.doit.muffin;
 
 public class FilterException extends Exception
 {
-    public FilterException()
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public FilterException()
     {
 	super();
     }

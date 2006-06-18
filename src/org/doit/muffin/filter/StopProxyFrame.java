@@ -1,4 +1,4 @@
-/* $Id: StopProxyFrame.java,v 1.6 2003/01/08 18:59:53 boyns Exp $ */
+/* $Id: StopProxyFrame.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,6 +29,11 @@ import org.doit.util.*;
 
 public class StopProxyFrame extends MuffinFrame implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Prefs prefs;
     StopProxy parent;
     TextField input = null;

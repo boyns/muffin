@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -21,17 +21,13 @@
 package org.doit.muffin.test;
 
 import java.io.*;
-import java.util.*;
 import junit.framework.TestCase;
 
-import org.doit.io.*;
 import org.doit.muffin.*;
-import org.doit.muffin.regexp.*;
-
 import org.doit.muffin.filter.NoCode;
 
 /**
- * @author Bernhard Wagner <bw@xmlizer.biz>
+ * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
  * 
  * TestCase testing the NoCode.
  *
@@ -95,7 +91,6 @@ public class NoCodeTest extends TestCase
     public void testReplacingJs()
     {
         Reply reply = Utils.makeReply(SAMPLE_RESPONSEJS);
-        OutputStream os = new ByteArrayOutputStream();
         String result = Utils.filter(
             fNoCodeFilter,
             SAMPLE_PAGEJS.length(),
@@ -187,7 +182,6 @@ public class NoCodeTest extends TestCase
 
     private NoCode fNoCode;
     private ContentFilter fNoCodeFilter;
-    private Reply fReply;
     private Prefs fPrefs;
 
 }

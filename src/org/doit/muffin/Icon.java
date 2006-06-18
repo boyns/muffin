@@ -1,4 +1,4 @@
-/* $Id: Icon.java,v 1.6 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: Icon.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -41,7 +41,12 @@ import java.net.URL;
   
 class Icon extends java.awt.Canvas implements MouseListener
 {
-    private boolean raised = true;
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private boolean raised = true;
     private Image icon = null;
     private Image nomuff = null;
     private Options options = null;

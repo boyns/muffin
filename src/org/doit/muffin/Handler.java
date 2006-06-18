@@ -1,4 +1,4 @@
-/* $Id: Handler.java,v 1.26 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: Handler.java,v 1.27 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -1127,7 +1127,7 @@ public class Handler implements Runnable
             if (monitored)
             {
                 monitor.update(this);
-                Thread.currentThread().yield();
+                Thread.yield();
             }
 
             now = System.currentTimeMillis();

@@ -1,4 +1,4 @@
-/* $Id: HostnameExpanderFilter.java,v 1.6 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: HostnameExpanderFilter.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -86,7 +86,6 @@ public class HostnameExpanderFilter implements RedirectFilter
     String expandHostname(String host)
     {
         String resolve;
-        int pos;
         InetAddress address;
                 
 	// this could be a local address attempt to resolve

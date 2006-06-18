@@ -163,17 +163,15 @@ public class Reply extends Message
                                    " response - length " + getHeaderField("Content-length") + " " +
                                    getHeaderField("Server"));
 
-                int contentLength = 0;
                 try
                 {
-                    contentLength = Integer.parseInt(getHeaderField("Content-length"));
+                    Integer.parseInt(getHeaderField("Content-length"));
                 }
                 catch (NumberFormatException e)
                 {
                 }
-                int n;
                 byte buffer[] = new byte[8192];
-                while ((n = in.read(buffer, 0, buffer.length)) > 0)
+                while ((in.read(buffer, 0, buffer.length)) > 0)
                 {
                     /* ignore */
                 }
@@ -220,7 +218,7 @@ public class Reply extends Message
         if (statusCode == -1)
         {
             StringTokenizer st = new StringTokenizer(statusLine);
-            String protocol = (String) st.nextToken();
+            /* String protocol = (String) */ st.nextToken();
             String status = (String) st.nextToken();
 
             try

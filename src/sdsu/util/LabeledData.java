@@ -66,6 +66,11 @@ import java.io.PrintStream;
 public class LabeledData extends Properties
 	{
 
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * String used for value in key-value pair when no value is available.
 	 */ 

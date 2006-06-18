@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.10 2006/03/14 17:00:05 flefloch Exp $ */
+/* $Id: Tag.java,v 1.11 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -232,7 +232,7 @@ public class Tag
                 {
                     case BEFORE_KEY_STATE: // 1
                     {
-                        if (Character.isSpace(c))
+                        if (Character.isWhitespace(c))
                         {
                             // remain in BEFORE_KEY_STATE
                         }
@@ -260,7 +260,7 @@ public class Tag
                             state = BEFORE_VALUE_STATE;
                             start = -1;
                         }
-                        else if (Character.isSpace(c))
+                        else if (Character.isWhitespace(c))
                         {
                             key = s.substring(start, i);
                             // System.out.println("key=" + key);
@@ -299,7 +299,7 @@ public class Tag
                             state = BEFORE_VALUE_STATE;
                             start = -1;
                         }
-                        else if (Character.isSpace(c))
+                        else if (Character.isWhitespace(c))
                         {
                             // remain in AFTER_KEY_STATE
                         }
@@ -322,7 +322,7 @@ public class Tag
                             start = i;
                             quote_char = c;
                         }
-                        else if (Character.isSpace(c))
+                        else if (Character.isWhitespace(c))
                         {
                             // remain in BEFORE_VALUE_STATE
                         }
@@ -336,7 +336,7 @@ public class Tag
 
                     case IN_VALUE_STATE: // 6
                     {
-                        if (Character.isSpace(c))
+                        if (Character.isWhitespace(c))
                         {
                             value = s.substring(start, i);
                             // System.out.println("value=" + value);
@@ -375,7 +375,7 @@ public class Tag
 
                     case AFTER_VALUE_STATE: // 8
                     {
-                        if (Character.isSpace(c))
+                        if (Character.isWhitespace(c))
                         {
                             // remain in AFTER_VALUE_STATE
                         }

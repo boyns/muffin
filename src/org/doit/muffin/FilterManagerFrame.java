@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.13 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.14 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -44,7 +44,12 @@ class FilterManagerFrame
     extends MuffinFrame
     implements ActionListener, ItemListener, WindowListener, ConfigurationListener
 {
-    private FilterManager manager;
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private FilterManager manager;
     private BigList supportedFiltersList = null;
     private BigList enabledFiltersList = null;
     private Choice configurationChoice = null;
@@ -366,7 +371,7 @@ class FilterManagerFrame
 	else if (NEW_CMD.equals(arg))
 	{
 	    TextDialog dialog = new TextDialog(this, Strings.getString("fm.new.prompt") + ":");
-	    dialog.show();
+	    dialog.setVisible(true);
 	    String name = dialog.getAnswer();
 	    if (name != null && name.length() > 0)
 	    {

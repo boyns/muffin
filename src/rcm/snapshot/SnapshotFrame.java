@@ -1,4 +1,4 @@
-/* $Id: SnapshotFrame.java,v 1.2 2003/05/10 01:05:05 flefloch Exp $ */
+/* $Id: SnapshotFrame.java,v 1.3 2006/06/18 23:25:51 forger77 Exp $ */
 package rcm.snapshot;
 
 import java.awt.*;
@@ -7,6 +7,11 @@ import org.doit.muffin.*;
 
 public class SnapshotFrame extends MuffinFrame implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Prefs prefs;
     Snapshot parent;
     TextField directory;
@@ -23,8 +28,6 @@ public class SnapshotFrame extends MuffinFrame implements ActionListener, Window
 	GridBagLayout layout = new GridBagLayout();
         setLayout(layout);
 	GridBagConstraints c;
-	Label l;
-	
 	add(new Label("Directory:", Label.RIGHT));
 
 	directory = new TextField(40);
@@ -126,7 +129,7 @@ public class SnapshotFrame extends MuffinFrame implements ActionListener, Window
 	else if ("doBrowse".equals(arg))
 	{
 	    FileDialog dialog = new FileDialog(this, "Snapshot Directory");
-	    dialog.show();
+	    dialog.setVisible(true);
 	    if (dialog.getFile() != null)
 	    {
 		directory.setText(dialog.getDirectory());

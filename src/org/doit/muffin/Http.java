@@ -1,4 +1,4 @@
-/* $Id: Http.java,v 1.14 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: Http.java,v 1.15 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -215,8 +215,6 @@ public class Http extends HttpConnection
     {
         Reply reply = new Reply(getInputStream());
         reply.read();
-
-        String conn = reply.getHeaderField("Connection");
 
         if (DEBUG)
             System.out.println("RECV " + reply.statusLine);
