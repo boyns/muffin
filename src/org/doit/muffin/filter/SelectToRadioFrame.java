@@ -1,3 +1,12 @@
+/**
+ * ImageKillFrame.java -- kill images that match a certain size ratio
+ *
+ * @author  Heinrich Opgenoorth <opgenoorth@gmd.de>
+ * @version 0.2
+ *
+ * Last update: 98/11/30 H.O.
+ */
+
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
  *
@@ -22,17 +31,18 @@ package org.doit.muffin.filter;
 
 import java.awt.*;
 
-public class DecafFrame extends AbstractFrame
+public class SelectToRadioFrame extends AbstractFrame
 {
 
     /**
      * @see org.doit.muffin.filter.AbstractFrame#AbstractFrame(AbstractFilterFactory)
      */
-    public DecafFrame(Decaf factory)
+    public SelectToRadioFrame(SelectToRadio factory)
     {
         super(factory);
+        fFactory = factory;
     }
-    
+
     /**
      * @see org.doit.muffin.filter.AbstractFrame#doMakeContent()
      */
@@ -51,36 +61,23 @@ public class DecafFrame extends AbstractFrame
         return panel;
 
     }
-    
+
+    /**
+     * Utility method that constructs the config panel.
+     * @return Panel The constructed config panel.
+     */
     private Panel makeConfigPanel()
     {
         Panel panel = new Panel();
         GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
-        GridBagConstraints c;
-    
-        noJavaScript = new Checkbox(getFactory().getString(Decaf.NOJAVASCRIPT));
-        noJavaScript.setState(getFactory().getPrefsBoolean(Decaf.NOJAVASCRIPT));
-        noJava = new Checkbox(getFactory().getString(Decaf.NOJAVA));
-        noJava.setState(getFactory().getPrefsBoolean(Decaf.NOJAVA));
-    
-        c = new GridBagConstraints();
-        layout.setConstraints(noJavaScript, c);
-        panel.add(noJavaScript);
-    
-        c = new GridBagConstraints();
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        layout.setConstraints(noJava, c);
-        panel.add(noJava);
-        return panel;
-    }
 
-    /**
-     * @see org.doit.muffin.filter.AbstractFrame#doApply()
-     */
-    protected void doApply(){
-        getFactory().putPrefsBoolean(Decaf.NOJAVASCRIPT, noJavaScript.getState());
-        getFactory().putPrefsBoolean(Decaf.NOJAVA, noJava.getState());
+        fTitleLabel = new Label("Replace <SELECT> by <INPUT TYPE=\"RADIO\">");
+        panel.add(fTitleLabel);
+        fVerticalCheckbox = new Checkbox("vertical");
+        panel.add(fVerticalCheckbox);
+
+        return panel;
     }
 
     /**
@@ -96,6 +93,8 @@ public class DecafFrame extends AbstractFrame
             HELP_CMD };
     }
 
-    
-    private Checkbox noJava, noJavaScript;
+    private Label fTitleLabel;
+    private Checkbox fVerticalCheckbox;
+
+    private SelectToRadio fFactory;
 }

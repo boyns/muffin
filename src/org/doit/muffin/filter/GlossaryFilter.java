@@ -1,4 +1,4 @@
-/* $Id: GlossaryFilter.java,v 1.8 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: GlossaryFilter.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -70,17 +70,14 @@ public class GlossaryFilter extends AbstractContentFilter
 
         ByteArrayInputStream html =
             new ByteArrayInputStream(htmlbuf.toByteArray());
-        MultiSearchReader root;
-        int start;
         BufferedReader cookedSource =
             new BufferedReader(new InputStreamReader(html));
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Writer sink = new OutputStreamWriter(buffer);
         Enumeration terms = fGlossary.keys();
-        root = new MultiSearchReader(terms, false, sink);
+        MultiSearchReader root = new MultiSearchReader(terms, false, sink);
 
         MultiSearchResult match = new MultiSearchResult(-1, " ");
-        start = 0;
         while (match != null)
         {
             match =

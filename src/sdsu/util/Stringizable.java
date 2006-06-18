@@ -22,9 +22,6 @@
 package sdsu.util;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * An interface for objects that can convert itself to a string and "recreate" itself from 

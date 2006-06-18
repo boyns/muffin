@@ -47,7 +47,6 @@ public class NoCodeFilter extends AbstractContentFilter implements ReplyFilter
     NoCodeFilter(NoCode factory)
     {
     super(factory);
-	fFactory = factory;
     }
     
     /**     * @see org.doit.muffin.ReplyFilter#filter(Reply)     */
@@ -202,7 +201,7 @@ public class NoCodeFilter extends AbstractContentFilter implements ReplyFilter
 						   "Removed <script without language>");
 			    }
 		    }
-		    else if (fFactory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
+		    else if (NoCode.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
 		    {
 		      // Should be less restrictive here, allowing actions written in permitted 
 		      // languages but how can it be worked out which language an action is in?
@@ -215,7 +214,7 @@ public class NoCodeFilter extends AbstractContentFilter implements ReplyFilter
 			    while (e.hasMoreElements())
 			    {
 				String attr = (String) e.nextElement();
-				if (fFactory.isJavaScriptAttr(attr))
+				if (NoCode.isJavaScriptAttr(attr))
 				{
 				    value = tag.remove(attr);
 				    if (value != null)
@@ -307,6 +306,5 @@ public class NoCodeFilter extends AbstractContentFilter implements ReplyFilter
 		}
 	}
 	}
-    private NoCode fFactory;
 }
 

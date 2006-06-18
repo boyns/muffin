@@ -1,4 +1,4 @@
-/* $Id: SortedProperties.java,v 1.6 2000/01/24 04:02:26 boyns Exp $ */
+/* $Id: SortedProperties.java,v 1.7 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,6 +29,11 @@ import sdsu.util.SortedList;
 
 public class SortedProperties extends Properties
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     public Enumeration keys()
     {
 	Enumeration e = super.keys();

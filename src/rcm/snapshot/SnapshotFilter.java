@@ -1,8 +1,6 @@
 package rcm.snapshot;
 
 import org.doit.muffin.*;
-import java.net.*;
-import java.util.*;
 import java.io.*;
 
 public class SnapshotFilter implements RequestFilter, ReplyFilter, HttpFilter {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -21,17 +21,15 @@
 package org.doit.muffin.test;
 
 import java.io.*;
-import java.util.*;
 import junit.framework.TestCase;
 
-import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.regexp.*;
 
 import org.doit.muffin.filter.Glossary;
 
 /**
- * @author Bernhard Wagner <bw@xmlizer.biz>
+ * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
  * 
  * TestCase testing the Glossary.
  *
@@ -89,11 +87,6 @@ public class GlossaryTest extends TestCase
                 "<a href=\"http://muffin.doit.org/\">muffin</a>");
 
         assertEquals(expected, result);
-    }
-
-    private InputStream makeInputStream()
-    {
-        return Utils.makeInputStreamFromString(SAMPLE_RESPONSE);
     }
 
     private static final String SAMPLE_PAGE =

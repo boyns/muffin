@@ -1,4 +1,4 @@
-/* $Id: OptionsFrame.java,v 1.14 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: OptionsFrame.java,v 1.15 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -32,6 +32,11 @@ import org.doit.util.*;
 class OptionsFrame extends MuffinFrame
     implements ActionListener, WindowListener//, ConfigurationListener
 {
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Options options;
 //     Configuration configs;
     TextField httpProxyHost;

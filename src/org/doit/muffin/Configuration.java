@@ -1,4 +1,4 @@
-/* $Id: Configuration.java,v 1.17 2003/06/04 21:07:53 flefloch Exp $ */
+/* $Id: Configuration.java,v 1.18 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -40,7 +40,11 @@ public class Configuration extends Prefs
     //        create a new kind of HashMap that matches regexes instead of keys
     //        because this functionality is used in several places.
 
-    String autoConfigFile = "autoconfig";
+    /**
+	 * Seriarlizable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+	String autoConfigFile = "autoconfig";
     String currentConfig = null;
     String defaultConfig = null;
     Vector autoConfigPatterns = null;

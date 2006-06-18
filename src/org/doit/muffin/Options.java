@@ -1,4 +1,4 @@
-/* $Id: Options.java,v 1.14 2003/06/27 21:51:47 flefloch Exp $ */
+/* $Id: Options.java,v 1.15 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -36,6 +36,11 @@ import java.util.Vector;
  */
 public class Options extends UserPrefs
 {
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     OptionsFrame frame;
     Vector hostsAllow;
     Vector hostsDeny;

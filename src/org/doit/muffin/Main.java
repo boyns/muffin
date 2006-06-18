@@ -1,4 +1,4 @@
-/* $Id: Main.java,v 1.37 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: Main.java,v 1.38 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2003 Mark R. Boyns <boyns@doit.org>
@@ -24,13 +24,11 @@ package org.doit.muffin;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
-import java.awt.Button;
 import java.awt.Canvas;
 import java.awt.Label;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -64,17 +62,19 @@ public class Main
     private static ThreadPool pool;
 
     static {
-        Strings.addBundle(
-            ResourceBundle.getBundle("org.doit.muffin.LocalStrings"));
+    	try {
+	        Strings.addBundle(
+	            ResourceBundle.getBundle("org.doit.muffin.LocalStrings"));
+    	} catch (Throwable e) {
+    		System.err.println("couldn't get bundle:"+e);
+    	}
     }
 
     private Server server;
     private String infoString;
-    private Button suspendButton;
     private MenuBar menuBar;
     private Monitor monitor;
     private Label infoLabel;
-    private Panel controlPanel;
     private MuffinFrame frame;
 
     /**
@@ -371,7 +371,7 @@ public class Main
         }
         else
         {
-            frame.hide();
+            frame.setVisible(false);
             frame.setSize(frame.getPreferredSize());
             frame.pack();
             frame.show();
@@ -490,7 +490,7 @@ public class Main
 
     public static void stopMuffin(Main theMuffin)
     {
-        theMuffin.manager.disableAll();
+        Main.manager.disableAll();
         if (theMuffin.frame != null)
         {
             theMuffin.frame.setVisible(false);
@@ -517,7 +517,6 @@ public class Main
     public static void processArgs(String[] argv) throws NumberFormatException
     {
         int c;
-        String arg;
         LongOpt longopts[] = new LongOpt[16];
 
         longopts[0] = new LongOpt("port", LongOpt.REQUIRED_ARGUMENT, null, 'p');

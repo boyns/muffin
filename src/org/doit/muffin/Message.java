@@ -1,4 +1,4 @@
-/* $Id: Message.java,v 1.14 2003/05/24 21:04:41 cmallwitz Exp $ */
+/* $Id: Message.java,v 1.15 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -348,7 +348,6 @@ public abstract class Message
     {
         ByteArray buf = new ByteArray();
         Key key;
-        String value;
         Vector v;
         int i = 0;
 

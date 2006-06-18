@@ -23,7 +23,7 @@ expression (regex) syntax.  Here are some examples:
     "a" followed by a number       a[0-9]
     "a" not followed by a number   a[^0-9]
     starts with "http"             ^http
-    ends with "thend"              theend$
+    ends with "theend"             theend$
     one "a"                        a
     one or more "a"                a+
     zero or more "a"               a*

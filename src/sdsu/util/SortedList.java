@@ -22,8 +22,13 @@
 package sdsu.util;
 
 import java.util.Vector;
-import sdsu.compare.*;
-import java.util.Enumeration;
+
+import sdsu.compare.Comparer;
+import sdsu.compare.DoubleComparer;
+import sdsu.compare.IntegerComparer;
+import sdsu.compare.ReverseOrderComparer;
+import sdsu.compare.StringComparer;
+import sdsu.compare.StringIgnoreCaseComparer;
 
 
 /**

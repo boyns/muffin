@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -26,7 +26,7 @@ package org.doit.muffin.regexp.jdk14;
 import org.doit.muffin.regexp.AbstractMatcherAdapter;
 
 /**
- * @author bw@xmlizer.biz
+ * @author muffinsrc@xmlizer.biz
  *
  */
 public class MatcherAdapter extends AbstractMatcherAdapter

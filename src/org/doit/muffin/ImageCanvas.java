@@ -1,4 +1,4 @@
-/* $Id: ImageCanvas.java,v 1.5 2000/01/24 04:02:14 boyns Exp $ */
+/* $Id: ImageCanvas.java,v 1.6 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -38,8 +38,12 @@ import java.net.URL;
  */
 public class ImageCanvas extends java.awt.Canvas
 {
-    private Image image = null;
-    private Color bg = null;
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Image image = null;
     private boolean border = false;
 
     /**
@@ -63,7 +67,6 @@ public class ImageCanvas extends java.awt.Canvas
 	    e.printStackTrace();
 	}
 	
-	this.bg = bg;
 	this.border = border;
 
 	if (bg != null)

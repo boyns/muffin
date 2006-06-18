@@ -1,4 +1,4 @@
-/* $Id: HelpFrame.java,v 1.7 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: HelpFrame.java,v 1.8 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,14 +31,20 @@ import org.doit.util.*;
 
 public class HelpFrame extends MuffinFrame implements ActionListener, WindowListener
 {
-    public HelpFrame(String helpFile)
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public HelpFrame(String helpFile)
     {
 	super(Strings.getString("help.title", helpFile));
 
 	TextArea text = new TextArea();
 	text.setEditable(false);
+    String resourcePath = "/doc/" + helpFile + ".txt";
 
-	URL url = getClass().getResource("/doc/" + helpFile + ".txt");
+	URL url = getClass().getResource(resourcePath);
 	if (url != null)
 	{
 	    try
@@ -59,7 +65,7 @@ public class HelpFrame extends MuffinFrame implements ActionListener, WindowList
 	}
 	else
 	{
-	    text.append(Strings.getString("help.none"));
+	    text.append(Strings.getString("not found: "+resourcePath));
 	}
 
 	add("Center", text);

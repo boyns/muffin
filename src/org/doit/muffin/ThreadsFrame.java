@@ -1,4 +1,4 @@
-/* $Id: ThreadsFrame.java,v 1.9 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: ThreadsFrame.java,v 1.10 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -38,7 +38,12 @@ import java.awt.event.WindowEvent;
 class ThreadsFrame
     extends MuffinFrame implements ActionListener, WindowListener
 {
-    Thread startThread;
+    /**
+	 * Serializable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	Thread startThread;
     TextArea text;
 
     ThreadsFrame(Thread startThread)
@@ -107,7 +112,7 @@ class ThreadsFrame
 	text.setText("");
 
 	Thread list[] = new Thread[1024];
-	int count = startThread.enumerate(list);
+	int count = Thread.enumerate(list);
 
 	for (int i = 0; i < count; i++)
 	{

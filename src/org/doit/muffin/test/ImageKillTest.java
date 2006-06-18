@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -21,17 +21,15 @@
 package org.doit.muffin.test;
 
 import java.io.*;
-import java.util.*;
 import junit.framework.TestCase;
 
-import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.regexp.*;
 
 import org.doit.muffin.filter.ImageKill;
 
 /**
- * @author Bernhard Wagner <bw@xmlizer.biz>
+ * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
  * 
  * TestCase testing the ImageKill.
  *
@@ -106,17 +104,15 @@ public class ImageKillTest extends TestCase
         assertEquals(expected, result);
     }
 
-    private static final String SAMPLE_PAGE =
-        ""
-            + "<head><title>Test Page</title></head>\n"
+    private static final String SAMPLE_PAGE = ""
+            + "<html><head><title>Test Page</title></head>\n"
             + "<body><h1><font>\t</font>Test Page</h1>\n"
             + "muffin<font></font> is<font> </font> a <font>funky</font> java project.\n"
             + "<img width=\"301\" height=\"50\" src=\"blabla.gif\" >\n"
-            + "</body>\n"
+            + "</body></html>\n"
             + "";
 
-    private static final String SAMPLE_RESPONSE =
-        "HTTP/1.0 302 Found\n"
+    private static final String SAMPLE_RESPONSE = "HTTP/1.0 302 Found\n"
             + "Content-Type: text/html\n"
             + "Location: http://xmlizer.biz:8080/index.html\n"
             + "Content-Length: 300\n"
@@ -127,7 +123,6 @@ public class ImageKillTest extends TestCase
 
     private ImageKill fImageKill;
     private ContentFilter fImageKillFilter;
-    private Reply fReply;
     private Prefs fPrefs;
 
 }

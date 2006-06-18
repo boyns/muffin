@@ -1,4 +1,4 @@
-/* $Id: LogFile.java,v 1.4 2000/03/27 04:23:50 boyns Exp $ */
+/* $Id: LogFile.java,v 1.5 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -136,10 +136,7 @@ public class LogFile
     
     public synchronized void log(Request request, Reply reply)
     {
-	int offset;
-	Date date;
-
-	date = new Date();
+	Date date = new Date();
 	
 	StringBuffer buf = new StringBuffer();
 	buf.append(request.getClient().getInetAddress().getHostAddress());

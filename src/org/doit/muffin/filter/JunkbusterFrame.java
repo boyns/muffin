@@ -1,4 +1,4 @@
-/* $Id: JunkbusterFrame.java,v 1.2 2003/01/08 18:59:52 boyns Exp $ */
+/* $Id: JunkbusterFrame.java,v 1.3 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -32,6 +32,11 @@ import org.doit.util.*;
 
 public class JunkbusterFrame extends MuffinFrame implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Prefs prefs;
     Junkbuster parent;
     TextField blockfile = null;
@@ -123,7 +128,7 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	if ("doBrowse".equals(arg))
 	{
 	    FileDialog dialog = new FileDialog(this, Strings.getString("load"));
-	    dialog.show();
+	    dialog.setVisible(true);
 	    if (dialog.getFile() != null)
 	    {
 		blockfile.setText(dialog.getDirectory() + dialog.getFile());

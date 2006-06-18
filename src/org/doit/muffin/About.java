@@ -1,4 +1,4 @@
-/* $Id: About.java,v 1.8 2003/01/08 18:59:51 boyns Exp $ */
+/* $Id: About.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,19 +24,18 @@ package org.doit.muffin;
 
 import java.awt.Button;
 import java.awt.Color;
-import java.awt.Event;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowEvent;
 import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.StringTokenizer;
-import org.doit.util.*;
+
+import org.doit.util.Strings;
 
 /**
  * Create an about window.
@@ -46,6 +45,11 @@ import org.doit.util.*;
 class About extends MuffinFrame implements ActionListener, WindowListener
 {
     /**
+	 * Seriarlizable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Create About.
      *
      */

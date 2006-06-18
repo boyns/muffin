@@ -34,6 +34,11 @@ import org.doit.util.*;
 public class TranslateFrame extends MuffinFrame
     implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Prefs prefs;
     Translate parent;
     TextField input = null;
@@ -221,7 +226,7 @@ public class TranslateFrame extends MuffinFrame
 	    else
 	    {
 		Dialog d = new ErrorDialog(this, "Can't save to " + file.getName());
-		d.show();
+		d.setVisible(true);
 		d.dispose();
 	    }
 	}
@@ -261,7 +266,7 @@ public class TranslateFrame extends MuffinFrame
 	else if ("doBrowse".equals(arg))
 	{
 	    FileDialog dialog = new FileDialog(this, "Translate Load");
-	    dialog.show();
+	    dialog.setVisible(true);
 	    if (dialog.getFile() != null)
 	    {
 		input.setText(dialog.getDirectory() + dialog.getFile());

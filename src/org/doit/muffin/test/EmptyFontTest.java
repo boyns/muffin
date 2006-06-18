@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2006 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -21,17 +21,15 @@
 package org.doit.muffin.test;
 
 import java.io.*;
-import java.util.*;
 import junit.framework.TestCase;
 
-import org.doit.io.*;
 import org.doit.muffin.*;
 import org.doit.muffin.regexp.*;
 
 import org.doit.muffin.filter.EmptyFont;
 
 /**
- * @author Bernhard Wagner <bw@xmlizer.biz>
+ * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
  * 
  * TestCase testing the EmptyFont.
  *
@@ -83,8 +81,7 @@ public class EmptyFontTest extends TestCase
         assertEquals(expected, result);
     }
 
-    private static final String SAMPLE_PAGE =
-        ""
+    private static final String SAMPLE_PAGE = ""
             + "<head><title>Test Page</title></head>\n"
             + "<body><h1><font>\t</font>Test Page</h1>\n"
             + "muffin<font></font> is<font> </font> a <font>funky</font> java project.\n"

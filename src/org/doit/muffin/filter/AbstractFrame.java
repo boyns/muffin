@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -137,7 +137,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
         fFrame.pack();
         fFrame.setSize(fFrame.getPreferredSize());
 
-        fFrame.show();
+        fFrame.setVisible(true);
     }
 
     /**
@@ -284,7 +284,7 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
         public void perform()
         {
             FileDialog dialog = new FileDialog(getFrame(), fTitle);
-            dialog.show();
+            dialog.setVisible(true);
             if (dialog.getFile() != null)
             {
                 doBrowse(dialog.getDirectory() + dialog.getFile());
@@ -301,7 +301,6 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
      */
     protected final Panel makeButtonPanel()
     {
-        Button b;
         Panel buttonPanel = new Panel();
         String[] cmds = doMakeButtonList();
         buttonPanel.setLayout(new GridLayout(1, cmds.length));

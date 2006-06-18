@@ -1,4 +1,4 @@
-/* $Id: TextDialog.java,v 1.5 2000/01/24 04:02:26 boyns Exp $ */
+/* $Id: TextDialog.java,v 1.6 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -27,6 +27,11 @@ import java.awt.event.*;
 
 public class TextDialog extends Dialog implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     TextField text;
     
     public TextDialog(Frame frame, String question)

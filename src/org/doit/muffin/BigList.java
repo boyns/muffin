@@ -1,4 +1,4 @@
-/* $Id: BigList.java,v 1.6 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: BigList.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -34,7 +34,11 @@ import java.awt.List;
  */
 public class BigList extends List
 {
-    int width = 200;
+    /**
+	 * Seriarlizable class should declare this:
+	 */
+	private static final long serialVersionUID = 1L;
+	int width = 200;
     int height = 150;
     
     public BigList(int rows, boolean mult)

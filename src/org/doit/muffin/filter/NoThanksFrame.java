@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.12 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: NoThanksFrame.java,v 1.13 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -195,7 +195,7 @@ public class NoThanksFrame extends AbstractFrame
 	    else
 	    {
 		Dialog d = new ErrorDialog(getFrame(), "Can't save to " + file.getName());
-		d.show();
+		d.setVisible(true);
 		d.dispose();
 	    }
 	}

@@ -42,14 +42,13 @@ public class Decryption implements FilterFactory
     public static final String PORT = "Decryption.port";
     public static final String HOST = "Decryption.host";
     public static final String CERTIFICATE = "Decryption.certificate";
-    public static final String KEYSTORE_PASSWORD =
-        "Decryption.keystorePassword";
+    public static final String KEYSTORE_PASSWORD = "Decryption.keystorePassword";
     public static final String KEY_PASSWORD = "Decryption.keyPassword";
-	public static final String DUMMY_TRUST = "Decryption.dummyTrust";
-	public static final String CLIENT_AUTH = "Decryption.clientAuthentication";
+    public static final String DUMMY_TRUST = "Decryption.dummyTrust";
+    public static final String CLIENT_AUTH = "Decryption.clientAuthentication";
     private Prefs prefs;
     private Server decryptionServer;
-	private FilterManager manager;
+    private FilterManager manager;
 	
     public Decryption()
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -27,7 +27,7 @@ import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 
 /**
- * @author Bernhard Wagner <bw@xmlizer.biz>
+ * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
  * 
  * TestCase testing the Regexes.
  *
@@ -294,7 +294,6 @@ public class RegexpTest extends TestCase
             matcher.getEndIndex(2));
     }
 
-    private static Map IMPLS = Factory.instance().getFactoryMap();
-    private static int NOF_IMPLS = IMPLS.size();
+    private static Map IMPLS = Factory.getFactoryMap();
 
 }

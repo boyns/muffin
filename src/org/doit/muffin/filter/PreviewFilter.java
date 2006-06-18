@@ -1,4 +1,4 @@
-/* $Id: PreviewFilter.java,v 1.8 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: PreviewFilter.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -110,7 +110,7 @@ public class PreviewFilter implements ContentFilter
 							  request,
 							  reply,
 							  buffer.getBytes());
-		dialog.show();
+		dialog.setVisible(true);
 		if (dialog.accept())
 		{
 		    content = dialog.getContent();

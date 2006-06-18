@@ -1,4 +1,4 @@
-/* $Id: ThreadPool.java,v 1.3 2000/10/10 04:51:09 boyns Exp $ */
+/* $Id: ThreadPool.java,v 1.4 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -26,12 +26,10 @@ import java.util.*;
 
 public class ThreadPool implements Cleanable
 {
-    private String name;
     private Vector pool = new Vector();
     
     public ThreadPool(String name)
     {
-	this.name = name;
     }
 
     public synchronized ReusableThread get()

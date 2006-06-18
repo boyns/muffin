@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.10 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: RegexFrame.java,v 1.11 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -44,6 +44,11 @@ import org.doit.muffin.regexp.Matcher;
  */
 class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     private TextArea text;
     private TextField pattern;
     private Matcher match = null;

@@ -61,9 +61,6 @@ implements FilterFactory
     private Prefs prefs;
     private Frame frame = null;
     MessageArea messages = new MessageArea();
-    private long noCacheListLastModified = 0;
-    private Vector noCacheList = new Vector ();
-
     public void setManager(FilterManager manager)
     {
 	this.manager = manager;
@@ -493,7 +490,7 @@ implements FilterFactory
         int count = in.read (buffer);
         while (count >= 0) {
             // factory.report ("copying " + String.valueOf (count) + " bytes"); //DEBUG
-            Thread.currentThread ().yield ();
+            Thread.yield ();
             out.flush ();
             out.write (buffer, 0, count);
             count = in.read (buffer);

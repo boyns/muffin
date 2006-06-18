@@ -1,4 +1,4 @@
-/* $Id: HistoryData.java,v 1.4 2000/01/24 04:02:20 boyns Exp $ */
+/* $Id: HistoryData.java,v 1.5 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,7 +24,12 @@ package org.doit.muffin.filter;
 
 class HistoryData implements java.io.Serializable
 {
-    String url;
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	String url;
     long time;
     long count;
 }

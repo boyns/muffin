@@ -74,10 +74,6 @@ public class ImageKillFilter extends AbstractContentFilter
         final String REPLACEURL =
             getFactory().getPrefsString(ImageKill.REPLACEURL_PREF);
 
-        int w = 0;
-        int h = 0;
-
-        Tag tag;
         Object obj;
 
         while ((obj = getInputObjectStream().read()) != null)
@@ -85,13 +81,15 @@ public class ImageKillFilter extends AbstractContentFilter
             Token token = (Token) obj;
             if (token.getType() == Token.TT_TAG)
             {
-                tag = token.createTag();
+                Tag tag = token.createTag();
                 if (tag.is("img")
                     && tag.has("width")
                     && tag.has("height")
                     && !(KEEPMAPS && tag.has("usemap"))
                     && !fFactory.isExcluded(tag.get("src")))
                 {
+                	int w = 0;
+                	int h = 0;
                     try
                     {
                         w = Integer.parseInt(tag.get("width"));

@@ -1,4 +1,4 @@
-/* $Id: DecafFilter.java,v 1.9 2003/06/03 23:09:30 forger77 Exp $ */
+/* $Id: DecafFilter.java,v 1.10 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -95,7 +95,7 @@ public class DecafFilter extends AbstractContentFilter implements ReplyFilter
                 eatingJavaScript = true;
                 fFactory.report(getRequest(), "removed <script>");
             }
-            else if (fFactory.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
+            else if (Decaf.isJavaScriptTag(tag.name()) && tag.attributeCount() > 0)
             {
                 StringBuffer str = new StringBuffer();
                 String value;
@@ -104,7 +104,7 @@ public class DecafFilter extends AbstractContentFilter implements ReplyFilter
                 while (e.hasMoreElements())
                 {
                 String attr = (String) e.nextElement();
-                if (fFactory.isJavaScriptAttr(attr))
+                if (Decaf.isJavaScriptAttr(attr))
                 {
                     value = tag.remove(attr);
                     if (value != null)

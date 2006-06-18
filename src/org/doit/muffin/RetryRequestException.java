@@ -1,4 +1,4 @@
-/* $Id: RetryRequestException.java,v 1.6 2003/05/10 01:01:22 flefloch Exp $ */
+/* $Id: RetryRequestException.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -24,7 +24,12 @@ package org.doit.muffin;
 
 public class RetryRequestException extends Exception
 {
-    RetryRequestException()
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	RetryRequestException()
     {
 	super();
     }

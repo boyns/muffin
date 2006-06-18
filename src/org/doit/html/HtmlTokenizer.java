@@ -1,4 +1,4 @@
-/* $Id: HtmlTokenizer.java,v 1.6 2003/05/10 23:13:09 cmallwitz Exp $ */
+/* $Id: HtmlTokenizer.java,v 1.7 2006/06/18 23:25:52 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -31,7 +31,6 @@ public class HtmlTokenizer extends PushbackInputStream
 {
     private final int badPattern[] = { '>', '<', '>' };
     private final int scriptPattern[] = { '<', ' ', '/', 's', 'c', 'r', 'i', 'p', 't', ' ', '>' };
-    private InputStream in;
     private int nextTokenType = Token.TT_NONE;
 
     public HtmlTokenizer(InputStream in)

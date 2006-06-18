@@ -1,4 +1,4 @@
-/* $Id: MuffinFrame.java,v 1.15 2006/03/14 17:00:04 flefloch Exp $ */
+/* $Id: MuffinFrame.java,v 1.16 2006/06/18 23:25:51 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -40,7 +40,12 @@ import org.doit.util.*;
 
 public class MuffinFrame extends Frame
 {
-    static Vector frames = new Vector();
+    /**
+	 * Serializable class should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
+	static Vector frames = new Vector();
 
     private final int minWidth; 
     private final int minHeight; 
@@ -137,7 +142,7 @@ public class MuffinFrame extends Frame
     public void show()
     {
 	moveNearMuffin();
-	super.show();
+	super.show(); // changing to setVisible(true) will cause endless recursion.
     }
 
     public void dispose()
@@ -213,7 +218,7 @@ public class MuffinFrame extends Frame
 			}
 		}
 
-		hide();
+		setVisible(false);
 		setSize(loc != null ? loc : getPreferredSize());
 		pack();
 		if (pos != null) {

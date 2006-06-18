@@ -31,6 +31,11 @@ public class PlainHtmlFrame
 extends MuffinFrame
 implements ActionListener, WindowListener
 {
+    /**
+	 * Serializable should define this:
+	 */
+	private static final long serialVersionUID = 1L;
+
     Prefs prefs;
     PlainHtml parent;
     Checkbox noJava, noJavaScript, noVBScript, noOtherScript;
@@ -46,10 +51,6 @@ implements ActionListener, WindowListener
 	Panel panel = new Panel ();
 	GridBagLayout layout = new GridBagLayout ();
 	panel.setLayout (layout);
-	GridBagConstraints c;
-
-        // if we need any controls, they go here
-
 	add ("North", panel);
 
 	parent.messages.setEditable (false);

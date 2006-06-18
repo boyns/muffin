@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- * Copyright (C) 2003 Bernhard Wagner <bw@xmlizer.biz>
+ * Copyright (C) 2003 Bernhard Wagner <muffinsrc@xmlizer.biz>
  *
  * This file is part of Muffin.
  *
@@ -27,7 +27,7 @@ import org.doit.muffin.regexp.Pattern;
 import org.doit.muffin.regexp.Matcher;
 
 /**
- * @author bw@xmlizer.biz
+ * @author muffinsrc@xmlizer.biz
  *
  */
 public class PatternAdapter implements Pattern
@@ -101,24 +101,6 @@ public class PatternAdapter implements Pattern
                 + input
                 + "> replace <"
                 + replace
-                + ">");
-    }
-
-    private void makePattern(String pattern)
-    {
-        throw new RuntimeException(
-            "org.doit.muffin.regexp.jakarta.oro.PatternAdapter.substituteAll"
-                + " not yet implemented. Args were input <"
-                + pattern
-                + ">");
-    }
-
-    private void makePatternIgnoreCase(String pattern)
-    {
-        throw new RuntimeException(
-            "org.doit.muffin.regexp.jakarta.oro.PatternAdapter.makePatternIgnoreCase"
-                + " not yet implemented. Args were input <"
-                + pattern
                 + ">");
     }
 
