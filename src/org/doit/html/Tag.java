@@ -1,4 +1,4 @@
-/* $Id: Tag.java,v 1.11 2006/06/18 23:25:52 forger77 Exp $ */
+/* $Id: Tag.java,v 1.12 2006/10/27 23:24:30 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -42,6 +42,11 @@ public class Tag
         this.data = data;
     }
 
+    public Tag(String name)
+    {
+        this(name, null);
+    }
+
     private void parse()
     {
         parsed = true;
@@ -73,17 +78,27 @@ public class Tag
         return name.equals(s);
     }
 
-    public boolean has(String key)
+    /**
+     * Indicates whether the tag has an attribute with the given name.
+     * @param name
+     * @return True if this tag has an attribute with the given name.
+     */
+    public boolean has(String name)
     {
         if (!parsed) parse();
-        return attributes != null ? attributes.containsKey(key) : false;
+        return attributes != null && attributes.containsKey(name);
     }
 
-    public String get(String key)
+    /**
+     * Gets the attribute value for the given name.
+     * @param name The name of the attribute for which to retrieve the value.
+     * @return The attributes value or null if no such attribute exists.
+     */
+    public String get(String name)
     {
         if (!parsed) parse();
         if (attributes == null) return null;
-        Object obj = attributes.get(key);
+        Object obj = attributes.get(name);
         if (obj instanceof String)
         {
             return(String) obj;
@@ -100,26 +115,36 @@ public class Tag
         }
     }
 
-    public void put(String key, String value)
+    /**
+     * Saves the attribute with the given name and the given value.
+     * @param name The name of the attribute.
+     * @param value The attribute's value.
+     */
+    public void put(String name, String value)
     {
         if (!parsed) parse();
         if (attributes == null)
         {
             attributes = new Hashtable(13);
         }
-        attributes.put(key.toLowerCase(),
+        attributes.put(name.toLowerCase(),
                         (value == null) ? new NoValue() : (Object) value);
         modified = true;
     }
 
-    public String remove(String key)
+    /**
+     * Removes the attribute with the given name
+     * @param name
+     * @return
+     */
+    public String remove(String name)
     {
         String value = null;
 
         if (!parsed) parse();
         if (attributes != null)
         {
-            Object obj = attributes.remove(key);
+            Object obj = attributes.remove(name);
             modified = true;
             if (obj != null)
             {
@@ -129,12 +154,20 @@ public class Tag
         return value;
     }
 
+    /**
+     * Renames this Tag.
+     * @param newName The new name.
+     */
     public void rename(String newName)
     {
         name = newName;
         modified = true;
     }
 
+    /**
+     * Reports whether this tag has been modified.
+     * @return True if this tag has been modified.
+     */
     public boolean isModified()
     {
         return modified;
@@ -146,6 +179,10 @@ public class Tag
         return attributes != null ? attributes.keys() : null;
     }
 
+    /**
+     * Reports the number of attributes in this tag.
+     * @return The number of attributes in this tag.
+     */
     public int attributeCount()
     {
         if (!parsed) parse();

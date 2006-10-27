@@ -1,10 +1,35 @@
 /**
- * ImageKillFilter.java -- kill images that match a certain size ratio
+ * SelectToRadio.java -- transforms html selects to radio buttons
+ * 
+ * A client of mine was complaining about the web client of his
+ * issue tracking tool ("TestTrack Pro", http://www.seapine.com/ttpro.html).
+ * There are lots of selects where radio buttons would be a better
+ * ui, because all options would be visible at once.
+ * 
+ * TODO:
+ * - javascript attributes of element 
+ *    select       input (type = radio or checkbox)   option     optgroup
+ *  - onBlur       yes                                yes        no
+ *  - onChange     yes                                no         no
+ *  - onClick      yes                                yes        yes
+ *  - onDblClick   yes                                yes        yes
+ *  - onFocus      yes                                no         no
+ *  - onKeyDown    yes                                yes        yes
+ *  - onKeyPress   yes                                yes        yes
+ *  - onKeyUp      yes                                yes        yes
+ *  - onMouseDown  yes                                yes        yes
+ *  - onMouseMove  yes                                yes        yes
+ *  - onMouseOut   yes                                yes        yes
+ *  - onMouseOver  yes                                yes        yes
+ *  - onMouseUp    yes                                yes        yes
  *
- * @author  Heinrich Opgenoorth <opgenoorth@gmd.de>
- * @version 0.2
+ * - properly treat optgroup elements (@see org.doit.muffin.test.SelectToRadioTest#testSelfHtml5())
+ * - introduce properties that can be saved: Horizontal layout of generated UI-components.
  *
- * Last update: 98/11/30 H.O.
+ * @author  Bernhard Wagner <muffinsrc@xmlizer.biz>
+ * @version 0.1
+ *
+ * Last update: 28/10/06 B.W.
  */
 
 /*
@@ -31,10 +56,13 @@ package org.doit.muffin.filter;
 
 import org.doit.io.*;
 import org.doit.html.*;
+
 import java.io.IOException;
 
 public class SelectToRadioFilter extends AbstractContentFilter
 {
+	
+	private static boolean HORIZONTAL = false; // FIXME: make this a configurable property
 
     /**
      * @param factory
@@ -72,26 +100,60 @@ public class SelectToRadioFilter extends AbstractContentFilter
             if (token.getType() == Token.TT_TAG)
             {
                 Tag tag = token.createTag();
+//                System.out.println(tag);
                 if (tag.is("select"))
                 {
                     name = tag.get("name");
                     multiple = tag.has("multiple");
+                    // FIXME: get all other attributes of select tag
+                    // http://www.htmlhelp.com/reference/html40/forms/select.html
+                    // http://www.w3.org/TR/html401/index/attributes.html
+                  	injectTag(new Tag("table border=\"1\""));
+                  	injectTag(new Tag("tr"));
+                  	injectTag(new Tag("td"));
                     continue;
                 } else if (tag.is("option")){
-                    String value = tag.get("value");
-                    boolean selected = tag.has("selected");
+                	// A bit of a hack here...
+                	// if the tag has no value attribute, we have to read what's
+                	// between <option> and </option>
+                	// see http://www.selfhtml.net/html/formulare/auswahl.htm
+                    String value = null;
+                    Token tmp = null;
+                    if (tag.has("value")) {
+                    	value = tag.get("value");
+                    } else {
+                    	tmp = (Token) getInputObjectStream().read();
+                    	value = tmp.toString();
+                    }
                     Tag myTag = new Tag("input",
                         "type=\""+(multiple ? "checkbox" : "radio")+"\" name=\""+name+
                         "\" value=\""+value+"\""+
-                        (selected ? " checked" : ""));
-                    token.importTag(myTag);
+                        (tag.has("selected") ? " checked" : ""));
+                    if(tag.has("value")) {
+                        token.importTag(myTag);                    	
+                    } else {
+                    	injectTag(myTag);
+                    	token = tmp;
+                    }
                 } else if (tag.is("/select")) {
+                  	injectTag(new Tag("/td"));
+                  	injectTag(new Tag("/tr"));
+                  	injectTag(new Tag("/table"));
                     continue;
                 } else if (tag.is("/option")) {
+                	if(!HORIZONTAL) {
+	                  	injectTag(new Tag("br/"));
+                	}
                     continue;
                }
             }
             getOutputObjectStream().write(token);
         }
     }
+
+	private void injectTag(Tag tag) throws IOException {
+		Token token = new Token(Token.TT_TAG);
+		token.importTag(tag);
+		getOutputObjectStream().write(token);
+	}
 }

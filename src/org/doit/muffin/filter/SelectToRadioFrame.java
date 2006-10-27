@@ -1,10 +1,15 @@
 /**
- * ImageKillFrame.java -- kill images that match a certain size ratio
+ * SelectToRadio.java -- transforms html selects to radio buttons
+ * 
+ * A client of mine was complaining about the web client of his
+ * issue tracking tool ("TestTrack Pro", http://www.seapine.com/ttpro.html).
+ * There are lots of selects where radio buttons would be a better
+ * ui, because all options would be visible at once.
  *
- * @author  Heinrich Opgenoorth <opgenoorth@gmd.de>
- * @version 0.2
+ * @author  Bernhard Wagner <muffinsrc@xmlizer.biz>
+ * @version 0.1
  *
- * Last update: 98/11/30 H.O.
+ * Last update: 06/10/06 B.W.
  */
 
 /*
@@ -74,7 +79,7 @@ public class SelectToRadioFrame extends AbstractFrame
 
         fTitleLabel = new Label("Replace <SELECT> by <INPUT TYPE=\"RADIO\">");
         panel.add(fTitleLabel);
-        fVerticalCheckbox = new Checkbox("vertical");
+        fVerticalCheckbox = new Checkbox("vertical", true);
         panel.add(fVerticalCheckbox);
 
         return panel;
