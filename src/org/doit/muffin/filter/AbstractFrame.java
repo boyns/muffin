@@ -466,12 +466,12 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
         
     }
 
-    protected static final String HELP_CMD = "help";
-    protected static final String CLOSE_CMD = "close";
-    protected static final String CLEAR_CMD = "clear";
-    protected static final String SAVE_CMD = "save";
-    protected static final String APPLY_CMD = "apply";
-    protected static final String LOAD_CMD = "load";
+    protected static final String HELP_CMD   = "help";
+    protected static final String CLOSE_CMD  = "close";
+    protected static final String CLEAR_CMD  = "clear";
+    protected static final String SAVE_CMD   = "save";
+    protected static final String APPLY_CMD  = "apply";
+    protected static final String LOAD_CMD   = "load";
     protected static final String BROWSE_CMD = "browse";
 
     private Frame fFrame;
