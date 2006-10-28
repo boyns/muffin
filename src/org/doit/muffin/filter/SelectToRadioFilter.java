@@ -24,6 +24,21 @@
  *  - onMouseUp    yes                                yes        yes
  *
  * - properly treat optgroup elements (@see org.doit.muffin.test.SelectToRadioTest#testSelfHtml5())
+ * - properly treat all possible attributes of the involved elements
+ *               // http://www.htmlhelp.com/reference/html40/forms/select.html
+ *               // http://www.w3.org/TR/html401/index/attributes.html
+ *               - name -> ok
+ *               - size -> ignore
+ *               - multiple -> ok
+ *               - disabled -> map to which element?
+ *               - tabindex -> map to which element?
+ *               - onfocus
+ *               - onblur
+ *               - onchange
+ *               - id
+ *               - class
+ *               
+ * 
  * - introduce properties that can be saved: Horizontal layout of generated UI-components.
  *
  * @author  Bernhard Wagner <muffinsrc@xmlizer.biz>
@@ -62,8 +77,6 @@ import java.io.IOException;
 public class SelectToRadioFilter extends AbstractContentFilter
 {
 	
-	private static boolean HORIZONTAL = false; // FIXME: make this a configurable property
-
     /**
      * @param factory
      */
@@ -141,7 +154,8 @@ public class SelectToRadioFilter extends AbstractContentFilter
                   	injectTag(new Tag("/table"));
                     continue;
                 } else if (tag.is("/option")) {
-                	if(!HORIZONTAL) {
+//                	if(!getFactory().getPrefsBoolean(SelectToRadio.HORIZONTAL)) {
+                    if(true) {
 	                  	injectTag(new Tag("br/"));
                 	}
                     continue;

@@ -1,4 +1,4 @@
-/* $Id: JunkbusterFrame.java,v 1.3 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: JunkbusterFrame.java,v 1.4 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -68,7 +68,7 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	layout.setConstraints(browse, c);
 	panel.add(browse);
 
-	add("North", panel);
+	add(BorderLayout.NORTH, panel);
 
 	panel = new Panel();
 	layout = new GridBagLayout();
@@ -90,7 +90,7 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	parent.messages.setEditable(false);
 	panel.add(parent.messages);
 
-	add("Center", panel);
+	add(BorderLayout.CENTER, panel);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 4));
@@ -112,7 +112,7 @@ public class JunkbusterFrame extends MuffinFrame implements ActionListener, Wind
 	b.addActionListener(this);
 	buttonPanel.add(b);
 
-        add("South", buttonPanel);
+        add(BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener(this);
 

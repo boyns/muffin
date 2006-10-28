@@ -41,12 +41,12 @@ public class DecafFrame extends AbstractFrame
 
         Panel panel = new Panel(new BorderLayout());
 
-        panel.add("North", makeConfigPanel());
+        panel.add(BorderLayout.NORTH, makeConfigPanel());
 
         getFactory().getMessages().setEditable(false);
-        panel.add("Center", getFactory().getMessages());
+        panel.add(BorderLayout.CENTER, getFactory().getMessages());
 
-        panel.add("South", makeButtonPanel());
+        panel.add(BorderLayout.SOUTH, makeButtonPanel());
 
         return panel;
 

@@ -51,10 +51,10 @@ implements ActionListener, WindowListener
 	Panel panel = new Panel ();
 	GridBagLayout layout = new GridBagLayout ();
 	panel.setLayout (layout);
-	add ("North", panel);
+	add (BorderLayout.NORTH, panel);
 
 	parent.messages.setEditable (false);
-	add ("Center", parent.messages);
+	add (BorderLayout.CENTER, parent.messages);
 
 	Button b;
 	Panel buttonPanel = new Panel ();
@@ -80,7 +80,7 @@ implements ActionListener, WindowListener
 	b.addActionListener (this);
 	buttonPanel.add (b);
 
-	add ("South", buttonPanel);
+	add (BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener (this);
 

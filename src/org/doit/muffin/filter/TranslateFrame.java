@@ -70,7 +70,7 @@ public class TranslateFrame extends MuffinFrame
 	layout.setConstraints(browse, c);
 	panel.add(browse);
 
-	add("North", panel);
+	add(BorderLayout.NORTH, panel);
 
 	panel = new Panel();
 	layout = new GridBagLayout();
@@ -135,7 +135,7 @@ public class TranslateFrame extends MuffinFrame
 	parent.messages.setEditable(false);
 	panel.add(parent.messages);
 
-	add("Center", panel);
+	add(BorderLayout.CENTER, panel);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
@@ -151,7 +151,7 @@ public class TranslateFrame extends MuffinFrame
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	add("South", buttonPanel);
+	add(BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener(this);
 

@@ -1,4 +1,4 @@
-/* $Id: FilterManagerFrame.java,v 1.14 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: FilterManagerFrame.java,v 1.15 2006/10/28 19:12:41 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -118,7 +118,7 @@ class FilterManagerFrame
 	configurationChoice.addItemListener(this);
 	manager.configs.addConfigurationListener(this);
 	p.add(configurationChoice);
-	add("North", p);
+	add(BorderLayout.NORTH, p);
 
 	Panel panel = new Panel(new GridBagLayout());
 
@@ -196,7 +196,7 @@ class FilterManagerFrame
 
 	enableEnabledFiltersListButtons( false );
 
-	add("Center", panel);
+	add(BorderLayout.CENTER, panel);
 
 	Panel buttonPanel = new Panel();
 	b = new Button(Strings.getString("save"));
@@ -207,7 +207,7 @@ class FilterManagerFrame
 	b.setActionCommand(CLOSE_CMD);
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	add("South", buttonPanel);
+	add(BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener(this);
 

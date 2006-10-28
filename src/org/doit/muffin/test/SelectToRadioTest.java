@@ -553,7 +553,7 @@ public class SelectToRadioTest extends TestCase
 //    	+ "";
 //    private static String SELFHTML_6_RESULT = ""
 //    	+ "";
-
+    
     
     private String selfHtmlTests(String source){
     	String response = makeResponse(source);

@@ -45,7 +45,6 @@ public class SelectToRadioFrame extends AbstractFrame
     public SelectToRadioFrame(SelectToRadio factory)
     {
         super(factory);
-        fFactory = factory;
     }
 
     /**
@@ -56,12 +55,12 @@ public class SelectToRadioFrame extends AbstractFrame
 
         Panel panel = new Panel(new BorderLayout());
 
-        panel.add("North", makeConfigPanel());
+        panel.add(BorderLayout.NORTH, makeConfigPanel());
 
         getFactory().getMessages().setEditable(false);
-        panel.add("Center", getFactory().getMessages());
+        panel.add(BorderLayout.CENTER, getFactory().getMessages());
 
-        panel.add("South", makeButtonPanel());
+        panel.add(BorderLayout.SOUTH, makeButtonPanel());
 
         return panel;
 
@@ -79,10 +78,20 @@ public class SelectToRadioFrame extends AbstractFrame
 
         fTitleLabel = new Label("Replace <SELECT> by <INPUT TYPE=\"RADIO\">");
         panel.add(fTitleLabel);
-        fVerticalCheckbox = new Checkbox("vertical", true);
-        panel.add(fVerticalCheckbox);
+        fHorizontalCheckbox = new Checkbox(SelectToRadio.HORIZONTAL, true);
+        fHorizontalCheckbox.setState(getFactory().getPrefsBoolean(SelectToRadio.HORIZONTAL));
+        panel.add(fHorizontalCheckbox);
 
         return panel;
+    }
+
+    /**
+     * 
+     * @see org.doit.muffin.filter.AbstractFrame#doApply()
+     */
+    protected void doApply()
+    {
+        getFactory().putPrefsBoolean(SelectToRadio.HORIZONTAL, fHorizontalCheckbox.getState());
     }
 
     /**
@@ -99,7 +108,6 @@ public class SelectToRadioFrame extends AbstractFrame
     }
 
     private Label fTitleLabel;
-    private Checkbox fVerticalCheckbox;
+    private Checkbox fHorizontalCheckbox;
 
-    private SelectToRadio fFactory;
 }

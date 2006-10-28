@@ -1,4 +1,4 @@
-/* $Id: EmptyFontFrame.java,v 1.10 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: EmptyFontFrame.java,v 1.11 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -45,12 +45,12 @@ public class EmptyFontFrame extends AbstractFrame
 
         Panel panel = new Panel(new BorderLayout());
 
-        panel.add("North", makeDebugPanel());
+        panel.add(BorderLayout.NORTH, makeDebugPanel());
 
         getFactory().getMessages().setEditable(false);
-        panel.add("Center", getFactory().getMessages());
+        panel.add(BorderLayout.CENTER, getFactory().getMessages());
 
-        panel.add("South", makeButtonPanel());
+        panel.add(BorderLayout.SOUTH, makeButtonPanel());
 
         return panel;
 

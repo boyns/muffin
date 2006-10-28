@@ -1,4 +1,4 @@
-/* $Id: RewriteFrame.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: RewriteFrame.java,v 1.10 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -66,7 +66,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	layout.setConstraints(browse, c);
 	panel.add(browse);
 
-	add("North", panel);
+	add(BorderLayout.NORTH, panel);
 
 	panel = new Panel();
 	layout = new GridBagLayout();
@@ -131,7 +131,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	parent.messages.setEditable(false);
 	panel.add(parent.messages);
 
-	add("Center", panel);
+	add(BorderLayout.CENTER, panel);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 3));
@@ -147,7 +147,7 @@ public class RewriteFrame extends MuffinFrame implements ActionListener, WindowL
 	b.setActionCommand("doHelp");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	add("South", buttonPanel);
+	add(BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener(this);
 
