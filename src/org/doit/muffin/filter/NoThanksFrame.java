@@ -1,4 +1,4 @@
-/* $Id: NoThanksFrame.java,v 1.13 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: NoThanksFrame.java,v 1.14 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -48,12 +48,12 @@ public class NoThanksFrame extends AbstractFrame
 
         Panel panel = new Panel(new BorderLayout());
 
-        panel.add("North", makeConfigPanel());
+        panel.add(BorderLayout.NORTH, makeConfigPanel());
 
         getFactory().getMessages().setEditable(false);
-        panel.add("Center", getFactory().getMessages());
+        panel.add(BorderLayout.CENTER, getFactory().getMessages());
 
-        panel.add("South", makeButtonPanel());
+        panel.add(BorderLayout.SOUTH, makeButtonPanel());
 
         return panel;
 

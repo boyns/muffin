@@ -1,4 +1,4 @@
-/* $Id: HostnameExpanderFrame.java,v 1.7 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: HostnameExpanderFrame.java,v 1.8 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -80,10 +80,10 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	layout.setConstraints(suffix, c);
 	panel.add(suffix);
 
-	add("North", panel);
+	add(BorderLayout.NORTH, panel);
 
         parent.messages.setEditable(false);
-        add("Center", parent.messages);
+        add(BorderLayout.CENTER, parent.messages);
 
 	Button b;
 	Panel buttonPanel = new Panel();
@@ -109,7 +109,7 @@ public class HostnameExpanderFrame extends MuffinFrame implements ActionListener
 	b.addActionListener(this);
 	buttonPanel.add(b);
 
-	add("South", buttonPanel);
+	add(BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener(this);
 

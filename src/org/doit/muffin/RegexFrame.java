@@ -1,4 +1,4 @@
-/* $Id: RegexFrame.java,v 1.11 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: RegexFrame.java,v 1.12 2006/10/28 19:12:41 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -23,6 +23,8 @@
 package org.doit.muffin;
 
 import org.doit.util.*;
+
+import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -76,7 +78,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
         layout.setConstraints(b, c);
         panel.add(b);
 
-        add("North", panel);
+        add(BorderLayout.NORTH, panel);
 
         text = new TextArea();
         text.setEditable(true);
@@ -86,7 +88,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
         	+"BTW: using regexp engine:\n"
         	+ Factory.instance().getPattern("").getClass().getName()
         );
-        add("Center", text);
+        add(BorderLayout.CENTER, text);
 
         Panel buttonPanel = new Panel();
         buttonPanel.setLayout(new GridLayout(1, 2));
@@ -98,7 +100,7 @@ class RegexFrame extends MuffinFrame implements ActionListener, WindowListener
         b.setActionCommand("doClose");
         b.addActionListener(this);
         buttonPanel.add(b);
-        add("South", buttonPanel);
+        add(BorderLayout.SOUTH, buttonPanel);
 
         addWindowListener(this);
 

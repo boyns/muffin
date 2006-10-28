@@ -64,9 +64,9 @@ implements ActionListener, WindowListener
 	this.prefs = prefs;
 	this.factory = factory;
 
-	add("North", getNorthPanel ());
-	add("Center", getCenterPanel ());
-        add("South", getSouthPanel ());
+	add(BorderLayout.NORTH, getNorthPanel ());
+	add(BorderLayout.CENTER, getCenterPanel ());
+        add(BorderLayout.SOUTH, getSouthPanel ());
 
 	addWindowListener(this);
 

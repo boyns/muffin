@@ -1,4 +1,4 @@
-/* $Id: TextDialog.java,v 1.6 2006/06/18 23:25:52 forger77 Exp $ */
+/* $Id: TextDialog.java,v 1.7 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -40,9 +40,9 @@ public class TextDialog extends Dialog implements ActionListener, WindowListener
 
 	setFont(new Font("Helvetica", Font.BOLD, 12));
 
-	add("North", new Label(question));
+	add(BorderLayout.NORTH, new Label(question));
 	text = new TextField(32);
-	add("Center", text);
+	add(BorderLayout.CENTER, text);
 
 	Panel buttonPanel = new Panel();
 	buttonPanel.setLayout(new GridLayout(1, 2));
@@ -55,7 +55,7 @@ public class TextDialog extends Dialog implements ActionListener, WindowListener
 	b.setActionCommand("doCancel");
 	b.addActionListener(this);
 	buttonPanel.add(b);
-	add("South", buttonPanel);
+	add(BorderLayout.SOUTH, buttonPanel);
 
 	addWindowListener(this);
 	pack();

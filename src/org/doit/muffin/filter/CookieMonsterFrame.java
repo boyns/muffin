@@ -1,4 +1,4 @@
-/* $Id: CookieMonsterFrame.java,v 1.9 2006/06/18 23:25:51 forger77 Exp $ */
+/* $Id: CookieMonsterFrame.java,v 1.10 2006/10/28 19:12:40 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -108,11 +108,11 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
         layout.setConstraints(expire, c);
         panel.add(expire);
 
-        add("North", panel);
+        add(BorderLayout.NORTH, panel);
 
         parent.messages.setEditable(false);
         //parent.messages.setFont(new Font("Fixed", Font.PLAIN, 10));
-        add("Center", parent.messages);
+        add(BorderLayout.CENTER, parent.messages);
 
         Button b;
         Panel buttonPanel = new Panel();
@@ -138,7 +138,7 @@ public class CookieMonsterFrame extends MuffinFrame implements ActionListener, W
         b.addActionListener(this);
         buttonPanel.add(b);
 
-        add("South", buttonPanel);
+        add(BorderLayout.SOUTH, buttonPanel);
 
         addWindowListener(this);
 

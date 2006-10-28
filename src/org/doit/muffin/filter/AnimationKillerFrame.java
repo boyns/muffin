@@ -1,4 +1,4 @@
-/* $Id: AnimationKillerFrame.java,v 1.10 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: AnimationKillerFrame.java,v 1.11 2006/10/28 19:12:40 forger77 Exp $ */
 package org.doit.muffin.filter;
 
 import java.awt.*;
@@ -20,10 +20,10 @@ public class AnimationKillerFrame extends AbstractFrame
     protected Panel doMakeContent()
     {
         Panel p = new Panel(new BorderLayout());
-        p.add("North", makeTopPanel());
+        p.add(BorderLayout.NORTH, makeTopPanel());
         getFactory().getMessages().setEditable(false);
-        p.add("Center", getFactory().getMessages());
-        p.add("South", makeButtonPanel());
+        p.add(BorderLayout.CENTER, getFactory().getMessages());
+        p.add(BorderLayout.SOUTH, makeButtonPanel());
         return p;
     }
 
@@ -52,22 +52,22 @@ public class AnimationKillerFrame extends AbstractFrame
         panel.setLayout(layout);
         GridBagConstraints c;
 
-        fBreakem = new Checkbox(getFactory().getString("break"));
-        fBreakem.setState(getFactory().getPrefsBoolean("break"));
+        fBreakem = new Checkbox(getFactory().getString(AnimationKiller.BREAK));
+        fBreakem.setState(getFactory().getPrefsBoolean(AnimationKiller.BREAK));
         c = new GridBagConstraints();
         c.anchor = GridBagConstraints.WEST;
         layout.setConstraints(fBreakem, c);
         panel.add(fBreakem);
 
         Label label =
-            new Label(getFactory().getString("maxLoops") + ":", Label.RIGHT);
+            new Label(getFactory().getString(AnimationKiller.MAXLOOPS) + ":", Label.RIGHT);
         c = new GridBagConstraints();
         c.anchor = GridBagConstraints.WEST;
         layout.setConstraints(label, c);
         panel.add(label);
 
         fMaxLoops = new TextField(2);
-        fMaxLoops.setText(getFactory().getPrefsString("maxLoops"));
+        fMaxLoops.setText(getFactory().getPrefsString(AnimationKiller.MAXLOOPS));
         c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
@@ -82,8 +82,8 @@ public class AnimationKillerFrame extends AbstractFrame
      */
     protected void doApply()
     {
-        getFactory().putPrefsString("maxLoops", fMaxLoops.getText());
-        getFactory().putPrefsBoolean("break", fBreakem.getState());
+        getFactory().putPrefsString(AnimationKiller.MAXLOOPS, fMaxLoops.getText());
+        getFactory().putPrefsBoolean(AnimationKiller.BREAK, fBreakem.getState());
     }
 
     private Checkbox fBreakem;

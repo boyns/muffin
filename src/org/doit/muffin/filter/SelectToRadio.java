@@ -38,12 +38,15 @@ import org.doit.muffin.Filter;
 
 public class SelectToRadio extends AbstractFilterFactory
 {
+	
+    final static String HORIZONTAL = "horizontal";
 
     /**
      * @see org.doit.muffin.filter.AbstractFilterFactory#doSetDefaultPrefs()
      */
     protected void doSetDefaultPrefs()
     {
+        putPrefsBoolean(HORIZONTAL, false);
     }
 
     /**
