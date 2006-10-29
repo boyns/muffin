@@ -26,8 +26,11 @@ import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.Checkbox;
 import java.awt.Frame;
 import java.awt.Panel;
 
@@ -465,6 +468,16 @@ public abstract class AbstractFrame implements ActionListener, WindowListener
         }
         
     }
+
+    protected final void addNotify(Component comonent) {
+    	comonent.addMouseListener(new MouseAdapter(){
+
+			public void mouseReleased(MouseEvent e) {
+				doApply();
+			}
+
+        });
+	}
 
     protected static final String HELP_CMD   = "help";
     protected static final String CLOSE_CMD  = "close";
