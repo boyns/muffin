@@ -44,7 +44,7 @@ public abstract class AbstractFilterFactory implements FilterFactory
 
     /**
      * Sets the Prefs of this FilterFactory.
-     * It makes shure that after setting the Prefs at least the default prefs
+     * It makes sure that after setting the Prefs at least the default prefs
      * are still there in case the given Prefs do not contain all necessary entries.
      * 
      * Note to subclass implementors: You define what the necessary defaults 
@@ -167,7 +167,7 @@ public abstract class AbstractFilterFactory implements FilterFactory
      * @param key The string to be prepended with the name of the concrete FilterFactory.
      * @return String The given String prependend with the name of the concrete FilterFactory.
      */
-    final String makeNameSpace(String key)
+    public final String makeNameSpace(String key)
     {
         StringBuffer sb = new StringBuffer();
         sb.append(getName());
