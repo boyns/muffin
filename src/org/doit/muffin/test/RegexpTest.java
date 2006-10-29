@@ -160,7 +160,7 @@ public class RegexpTest extends TestCase
     {
         Factory.instance().setRegexType(regexpType);
         Pattern pattern = Factory.instance().getPattern("(a|b)");
-        Matcher matcher = pattern.getMatch("shure");
+        Matcher matcher = pattern.getMatch("sure");
         assertNull(matcher);
     }
 
@@ -169,7 +169,7 @@ public class RegexpTest extends TestCase
         Factory.instance().setRegexType(regexpType);
         Pattern pattern = Factory.instance().getPattern("(a|b)");
         assertTrue(pattern.matches("but"));
-        assertTrue(!pattern.matches("shure"));
+        assertTrue(!pattern.matches("sure"));
         pattern = Factory.instance().getPattern("(.)\\1");
         assertTrue(!pattern.matches("but"));
         assertTrue(pattern.matches("google"));
@@ -208,16 +208,16 @@ public class RegexpTest extends TestCase
         Factory.instance().setRegexType(regexpType);
         Pattern pattern = Factory.instance().getPattern("(A|B)");
         assertTrue(!pattern.matches("but"));
-        assertTrue(!pattern.matches("shure"));
+        assertTrue(!pattern.matches("sure"));
         pattern = Factory.instance().getPattern("(A|B)", true);
         assertTrue(pattern.matches("but"));
-        assertTrue(!pattern.matches("shure"));
+        assertTrue(!pattern.matches("sure"));
         pattern = Factory.instance().getPattern("(a|b)", true);
         assertTrue(pattern.matches("BUT"));
-        assertTrue(!pattern.matches("SHURE"));
+        assertTrue(!pattern.matches("sure"));
         pattern = Factory.instance().getPattern("(a|b)");
         assertTrue(!pattern.matches("BUT"));
-        assertTrue(!pattern.matches("SHURE"));
+        assertTrue(!pattern.matches("sure"));
     }
 
     private void testSubstituteAll(String regexpType)
