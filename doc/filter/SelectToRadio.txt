@@ -1,13 +1,12 @@
-SelectToRadio replaces <SELECT> (combobox) by <INPUT TYPE="RADIO"> (radio button).
+SelectToRadio replaces <SELECT> (combobox) by another GUI component that
+displays all available choices at once.
 Often comboboxes are much clumsier to operate than radio buttons where all
 options are visible at once.
 
 
 This filter has the following configurable preferences:
 
-* SelectToRadio.vertical
+* SelectToRadio.horizontal
 
   Indicates whether the radio buttons should be oriented vertically. Default is
-  false, i.e. the radio buttons are oriented horizontally.
-
-  FIXME: This preference is not yet implemented!
+  false, i.e. the radio buttons are oriented vertically.

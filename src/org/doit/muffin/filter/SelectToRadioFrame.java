@@ -34,7 +34,15 @@
  */
 package org.doit.muffin.filter;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Checkbox;
+import java.awt.GridBagLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SelectToRadioFrame extends AbstractFrame
 {
@@ -76,16 +84,33 @@ public class SelectToRadioFrame extends AbstractFrame
         GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
 
-        fTitleLabel = new Label("Replace <SELECT> by <INPUT TYPE=\"RADIO\">");
+        fTitleLabel = new Label("Replace <SELECT> by a GUI component that displays all choices");
         panel.add(fTitleLabel);
         fHorizontalCheckbox = new Checkbox(SelectToRadio.HORIZONTAL, true);
         fHorizontalCheckbox.setState(getFactory().getPrefsBoolean(SelectToRadio.HORIZONTAL));
         panel.add(fHorizontalCheckbox);
+        
+        
+//      addNotify(fHorizontalCheckbox); 
+//		unfortunately the checkbox's state isn't updated
+//      by the time the MouseListener fires a MouseClicked event.
+//      http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4346632
+//      http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4072631
+//		So we have to use the following workaround:
+        fHorizontalCheckbox.addItemListener(new ItemListener(){
+
+			public void itemStateChanged(ItemEvent e) {
+				doApply();
+				
+			}
+        	
+        });
+        
 
         return panel;
     }
 
-    /**
+	/**
      * 
      * @see org.doit.muffin.filter.AbstractFrame#doApply()
      */

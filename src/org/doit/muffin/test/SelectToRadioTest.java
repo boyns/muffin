@@ -20,11 +20,16 @@
  */
 package org.doit.muffin.test;
 
-import java.io.*;
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
-import org.doit.muffin.*;
+import org.doit.muffin.ContentFilter;
+import org.doit.muffin.Filter;
+import org.doit.muffin.Prefs;
+import org.doit.muffin.Reply;
 import org.doit.muffin.filter.SelectToRadio;
+import org.doit.muffin.filter.SelectToRadioFilter;
 
 /**
  * @author Bernhard Wagner <muffinsrc@xmlizer.biz>
@@ -46,7 +51,10 @@ public class SelectToRadioTest extends TestCase
 
     public void setUp()
     {
-        fSelectToRadioFilter = (ContentFilter) new SelectToRadio().createFilter();
+        fSelectToRadio = new SelectToRadio();
+        fPrefs = new Prefs();
+        fSelectToRadio.setPrefs(fPrefs);
+        fSelectToRadioFilter = (ContentFilter) fSelectToRadio.createFilter();
     }
 
     public void testSelectToRadioFilterPresence() throws IOException
@@ -69,6 +77,19 @@ public class SelectToRadioTest extends TestCase
             reply);
 
         assertEquals(RADIO_PAGE, result);
+    }
+
+    public void testReplacingHoriz()
+    {
+    	fPrefs.putBoolean(fSelectToRadio.makeNameSpace(SelectToRadio.HORIZONTAL), true);
+       String response = makeResponse(SELECT_PAGE);
+       Reply reply = Utils.makeReply(response);
+        String result = Utils.filter(
+            fSelectToRadioFilter,
+            response.length(),
+            reply);
+
+        assertEquals(RADIO_PAGE_HORIZONTAL, result);
     }
 
     private static final String SELECT_PAGE = ""
@@ -576,5 +597,8 @@ public class SelectToRadioTest extends TestCase
     }
 
     private ContentFilter fSelectToRadioFilter;
+
+    private Prefs fPrefs;
+	private SelectToRadio fSelectToRadio;
 
 }
