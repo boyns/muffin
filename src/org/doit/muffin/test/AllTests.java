@@ -30,20 +30,21 @@ import junit.framework.TestSuite;
 public class AllTests
 {
 
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite("Test for org.doit.muffin.test");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(RegexpTest.class));
-        suite.addTest(new TestSuite(GlossaryTest.class));
-        suite.addTest(new TestSuite(EmptyFontTest.class));
-        suite.addTest(new TestSuite(ImageKillTest.class));
-        suite.addTest(new TestSuite(DecafTest.class));
-        suite.addTest(new TestSuite(NoCodeTest.class));
-        suite.addTest(new TestSuite(NoThanksTest.class));
-        suite.addTest(new TestSuite(PainterTest.class));
-        
-        //$JUnit-END$
-        return suite;
-    }
+	public static Test suite()
+	{
+		TestSuite suite = new TestSuite("Test for org.doit.muffin.test");
+		//$JUnit-BEGIN$
+		suite.addTestSuite(NoCodeTest.class);
+		suite.addTestSuite(PainterTest.class);
+		suite.addTestSuite(ImageKillTest.class);
+		suite.addTestSuite(GlossaryTest.class);
+		suite.addTestSuite(EmptyFontTest.class);
+		suite.addTestSuite(RegexpTest.class);
+		suite.addTestSuite(ContentFilterTest.class); // this test causes exception
+		suite.addTestSuite(NoThanksTest.class);
+		suite.addTestSuite(SelectToRadioTest.class);
+		suite.addTestSuite(DecafTest.class);
+		//$JUnit-END$
+		return suite;
+	}
 }
