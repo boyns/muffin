@@ -48,8 +48,8 @@ public class DecafTest extends TestCase
     {
         fDecaf = new Decaf();
         fPrefs = new Prefs();
-        fPrefs.putBoolean("Decaf.noJava", true);
-        fPrefs.putBoolean("Decaf.noJavaScript", true);
+        fPrefs.putBoolean(fDecaf.makeNameSpace(Decaf.NOJAVA), true);
+        fPrefs.putBoolean(fDecaf.makeNameSpace(Decaf.NOJAVASCRIPT), true);
         fDecaf.setPrefs(fPrefs);
         fDecafFilter = (ContentFilter) fDecaf.createFilter();
     }

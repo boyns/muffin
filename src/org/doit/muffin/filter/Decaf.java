@@ -1,4 +1,4 @@
-/* $Id: Decaf.java,v 1.9 2006/03/14 17:00:03 flefloch Exp $ */
+/* $Id: Decaf.java,v 1.10 2006/10/29 13:08:20 forger77 Exp $ */
 
 /*
  * Copyright (C) 1996-2000 Mark R. Boyns <boyns@doit.org>
@@ -29,8 +29,8 @@ import org.doit.muffin.regexp.Factory;
 public class Decaf extends AbstractFilterFactory
 {
     
-    static final String NOJAVA = "noJava";
-    static final String NOJAVASCRIPT = "noJavaScript";
+    public static final String NOJAVA = "noJava";
+    public static final String NOJAVASCRIPT = "noJavaScript";
 
     private static Pattern javaScriptTags = Factory.instance().getPattern("^(a|input|body|form|area|select|frameset|label|textarea|button|applet|base|basefont|bdo|br|font|frame|head|html|iframe|isindex|meta|param|script|style|title)$");
     private static Pattern javaScriptAttrs = Factory.instance().getPattern("^(onload|onunload|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onfocus|onblur|onkeypress|onkeydown|onkeyup|onsubmit|onreset|onselect|onchange)$");
