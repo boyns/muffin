@@ -154,8 +154,7 @@ public class SelectToRadioFilter extends AbstractContentFilter
                   	injectTag(new Tag("/table"));
                     continue;
                 } else if (tag.is("/option")) {
-//                	if(!getFactory().getPrefsBoolean(SelectToRadio.HORIZONTAL)) {
-                    if(true) {
+                	if(!getFactory().getPrefsBoolean(SelectToRadio.HORIZONTAL)) {
 	                  	injectTag(new Tag("br/"));
                 	}
                     continue;
