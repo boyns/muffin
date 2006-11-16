@@ -170,4 +170,11 @@
      </javadoc>
   </target>
 
+  <target name="muffin-src.jar" depends="init">
+    <delete file="muffin-src.jar"/>
+    <jar jarfile="muffin-src.jar" basedir="."
+         compress="true"
+	 includes="**,lib/**,src/**,bin/**,doc/**"
+         excludes="**/CVS/**,muffin-src.jar,${classes},${builddir}"/>
+  </target>
 </project>
