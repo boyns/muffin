@@ -174,7 +174,7 @@
     <delete file="muffin-src.jar"/>
     <jar jarfile="muffin-src.jar" basedir="."
          compress="true"
-	 includes="**,lib/**,src/**,bin/**,doc/**"
+	 includes="*,lib/**,src/**,bin/**,doc/**"
          excludes="**/CVS/**,muffin-src.jar,${classes},${builddir},**/*.bak,**/*~"/>
   </target>
 </project>
